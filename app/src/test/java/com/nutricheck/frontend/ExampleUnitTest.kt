@@ -1,4 +1,4 @@
-package com.frontend.nutricheck
+package com.nutricheck.frontend
 
 import org.junit.Test
 

@@ -1,6 +1,9 @@
+<<<<<<<< HEAD:app/src/main/java/com/frontend/nutricheck/client/ui/theme/Theme.kt
 package com.frontend.nutricheck.client.ui.theme
+========
+package com.nutricheck.frontend.ui.theme
+>>>>>>>> origin/main:app/src/main/java/com/nutricheck/frontend/ui/theme/Theme.kt
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

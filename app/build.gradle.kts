@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.frontend.nutricheck"
+    namespace = "com.nutricheck.frontend"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.frontend.nutricheck"
+        applicationId = "com.nutricheck.frontend"
         minSdk = 29
         targetSdk = 35
         versionCode = 1

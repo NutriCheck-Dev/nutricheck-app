@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:app/src/main/java/com/frontend/nutricheck/client/ui/theme/Type.kt
 package com.frontend.nutricheck.client.ui.theme
+========
+package com.nutricheck.frontend.ui.theme
+>>>>>>>> origin/main:app/src/main/java/com/nutricheck/frontend/ui/theme/Type.kt
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
