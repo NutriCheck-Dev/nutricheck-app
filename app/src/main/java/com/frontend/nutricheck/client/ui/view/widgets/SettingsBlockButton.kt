@@ -1,5 +1,6 @@
-package com.frontend.nutricheck.util
+package com.frontend.nutricheck.client.ui.view.widgets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun EinstellungButton(
+fun SettingsBlockButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,                      // Compose-Icon statt Android.Icon
     title: String,
@@ -34,6 +35,7 @@ fun EinstellungButton(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .background(Color(0xFF1F1F1F))
             .clickable(enabled = onClick != null) { onClick?.invoke() }
             .padding(horizontal = 8.dp, vertical = 22.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -70,8 +72,8 @@ fun EinstellungButton(
 
 @Preview
 @Composable
-fun EinstellungButtonPreview() {
-    EinstellungButton(
+fun SettingsBlockButtonPreview() {
+    SettingsBlockButton(
         icon = Icons.Default.Person,
         title = "Persönliche Daten & Ziel",
         trailingContent = {

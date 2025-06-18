@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.util
+package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InfoKarte(
+fun InfoCard(
     data: List<Pair<String, String>>,
     modifier: Modifier = Modifier
 ) {
@@ -30,7 +30,7 @@ fun InfoKarte(
         Column(
             modifier = Modifier
                 .padding(start = 20.dp, end = 20.dp, bottom = 24.dp, top = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp) // gleichmäßiger Abstand
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             data.forEach { (label, value) ->
                 Row(
@@ -56,12 +56,12 @@ fun InfoKarte(
 
 @Preview
 @Composable
-fun InforkartePreview() {
+fun InfoCardPreview() {
     val userData = listOf(
         "Alter" to "20 Jahre",
         "Gewicht" to "80 kg",
         "Größe" to "180 cm"
     )
 
-    InfoKarte(data = userData)
+    InfoCard(data = userData)
 }

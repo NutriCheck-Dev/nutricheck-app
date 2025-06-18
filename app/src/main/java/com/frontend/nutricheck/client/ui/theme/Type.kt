@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.ui.theme
+package com.frontend.nutricheck.client.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

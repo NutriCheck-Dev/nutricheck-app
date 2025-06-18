@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.ui.theme
+package com.frontend.nutricheck.client.ui.theme
 
 import android.app.Activity
 import android.os.Build

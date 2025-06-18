@@ -1,0 +1,13 @@
+package com.frontend.nutricheck.client.model.data_layer
+
+data class Recipe(override val id: FoodComponentId,
+                  override val name: String,
+                  override val amountInGrams: Double,
+                  override val energyInKcal: Int,
+                  override val proteinInGrams: Double,
+                  override val carbohydratesInGrams: Double,
+                  override val fatInGrams: Double,
+                  val description: String? = null,
+                  val reports: List<RecipeReport> = emptyList(),
+                  val hasBeenReported: Boolean = false,
+) : IFoodComponent
