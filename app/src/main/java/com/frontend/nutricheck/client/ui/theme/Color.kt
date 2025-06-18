@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/frontend/nutricheck/client/ui/theme/Color.kt
-package com.frontend.nutricheck.client.ui.theme
-========
 package com.nutricheck.frontend.ui.theme
->>>>>>>> origin/main:app/src/main/java/com/nutricheck/frontend/ui/theme/Color.kt
 
 import androidx.compose.ui.graphics.Color
 
