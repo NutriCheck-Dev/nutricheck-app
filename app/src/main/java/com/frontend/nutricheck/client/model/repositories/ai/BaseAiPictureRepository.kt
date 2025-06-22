@@ -1,6 +1,6 @@
-package com.frontend.nutricheck.client.model.repositories
+package com.frontend.nutricheck.client.model.repositories.ai
 
-interface IAiPictureRepository {
+interface BaseAiPictureRepository {
     /**
      * Uploads a picture to the AI service for processing.
      *

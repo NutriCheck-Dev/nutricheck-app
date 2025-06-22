@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.data_layer
 
-class Meal (val name: String, private val entries: List<IFoodComponent>) {
+class Meal (val name: String, private val entries: List<FoodComponent>) {
     /**
      * Calculates the total energy in kcal for the meal.
      * @return Total energy in kcal.
@@ -21,7 +21,7 @@ class Meal (val name: String, private val entries: List<IFoodComponent>) {
      * @param id The ID of the food component to find.
      * @return The food component with the specified ID, or null if not found.
      */
-    fun getComponentById(id: FoodComponentId): IFoodComponent? {
+    fun getComponentById(id: FoodComponentId): FoodComponent? {
         return entries.find { it.id == id }
     }
 

@@ -7,4 +7,4 @@ data class Food (override val id: FoodComponentId,
                  override val proteinInGrams: Double,
                  override val carbohydratesInGrams: Double,
                  override val fatInGrams: Double
-) : IFoodComponent
+) : FoodComponent

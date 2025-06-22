@@ -1,4 +1,14 @@
 package com.frontend.nutricheck.client.ui.view_model
 
-class ProfileViewModel {
+import com.frontend.nutricheck.client.model.data_layer.UserData
+import com.frontend.nutricheck.client.ui.view_model.profile.BaseProfileViewModel
+
+class ProfileViewModel : BaseProfileViewModel<UserData>(UserData()) {
+    override fun onNameClicked(newName: UserData) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onWeightClicked(newWeight: UserData) {
+        TODO("Not yet implemented")
+    }
 }

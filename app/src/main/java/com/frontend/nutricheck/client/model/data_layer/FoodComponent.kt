@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.data_layer
 
-interface IFoodComponent {
+interface FoodComponent {
     /**
      * Returns the id of the food component
      */
