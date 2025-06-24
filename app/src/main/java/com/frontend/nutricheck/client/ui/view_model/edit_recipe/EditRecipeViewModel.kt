@@ -48,4 +48,13 @@ class EditRecipeViewModel : BaseEditRecipeViewModel<Recipe>(
     override fun saveChanges() {
         // Logic to save changes made to the recipe draft
     }
+    override fun rateRecipe() {
+        // Logic to rate the recipe
+    }
+    override fun onClickRateRecipe() {
+        // Logic to handle the click event for rating the recipe
+    }
+    override fun sendRating() {
+        // Logic to send the rating for the recipe
+    }
 }

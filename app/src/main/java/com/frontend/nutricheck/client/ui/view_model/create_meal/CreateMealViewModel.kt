@@ -3,7 +3,7 @@ package com.frontend.nutricheck.client.ui.view_model.create_meal
 import com.frontend.nutricheck.client.ui.view_model.create_meal.BaseCreateMealViewModel
 
 class CreateMealViewModel : BaseCreateMealViewModel() {
-    override fun onAddFoodClicked() {
+    override fun onAddFoodProductClicked() {
         TODO("Not yet implemented")
     }
 
@@ -18,10 +18,10 @@ class CreateMealViewModel : BaseCreateMealViewModel() {
     override fun displayMealDetails() {
         TODO("Not yet implemented")
     }
-    override fun displayFoodHistory() {
+    override fun displayFoodProductHistory() {
         TODO("Not yet implemented")
     }
-    override fun onFoodHistoryItemClicked(foodId: String) {
+    override fun onFoodProductHistoryItemClicked(foodId: String) {
         TODO("Not yet implemented")
     }
     override fun onMyRecipesClick() {
