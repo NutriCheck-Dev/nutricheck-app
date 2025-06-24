@@ -4,7 +4,7 @@ import com.frontend.nutricheck.client.ui.view_model.weight_history.BaseRecentlyA
 
  class RecentlyAddedViewModel : BaseRecentlyAddedViewModel() {
 
-   override fun displayRecentlyAddedItems(timePeriod: String) {
-       // Implementation for displaying recently added items
-   }
-}
+     override fun displayRecentlyAddedItems() {
+         TODO("Not yet implemented")
+     }
+ }

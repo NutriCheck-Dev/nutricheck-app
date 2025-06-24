@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class EditRecipeViewModel(
-    private val repository: BaseRecipeRepository
-) : BaseEditRecipeViewModel<Recipe>(
+class EditRecipeViewModel : BaseEditRecipeViewModel<Recipe>(
     initialDraft = Recipe()
 ) {
 

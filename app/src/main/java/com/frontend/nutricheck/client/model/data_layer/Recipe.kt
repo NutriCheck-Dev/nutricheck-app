@@ -16,7 +16,7 @@ data class Recipe(
     val ingredients: List<FoodComponent> = emptyList(),
     val description: String? = null,
     val reports: List<RecipeReport> = emptyList(),
-    val ratingCount: Int = reports.size,
+    val rating: Rating,
     val averageRating: Float = 0f,
     val hasBeenReported: Boolean = false,
 ) : FoodComponent

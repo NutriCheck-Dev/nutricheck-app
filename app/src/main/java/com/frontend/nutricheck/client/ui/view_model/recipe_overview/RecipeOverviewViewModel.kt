@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.model.data_layer.FoodComponentId
 import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.model.repositories.recipe.BaseRecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.recipe_list.BaseRecipeOverviewViewModel
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.stateIn
 class RecipeOverviewViewModel  : BaseRecipeOverviewViewModel<Recipe>(
     initialDraft = Recipe()
 ) {
-    private val repository: BaseRecipeRepository<Recipe> = TODO("Not yet implemented")
 
     val title = draft.map { it.name }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
     val ingredients = draft.map { it.ingredients }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -20,14 +20,6 @@ class RecipeOverviewViewModel  : BaseRecipeOverviewViewModel<Recipe>(
 
 
     override fun onDraftChanged(newDraft: Recipe) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onFoodClicked(foodId: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onAddFoodClicked() {
         TODO("Not yet implemented")
     }
 
@@ -40,5 +32,13 @@ class RecipeOverviewViewModel  : BaseRecipeOverviewViewModel<Recipe>(
     }
     override fun displayPublicRecipes() {
         // Implementation to display public recipes
+    }
+
+    override fun onRecipeClick(foodId: FoodComponentId) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAddRecipeClicked() {
+        TODO("Not yet implemented")
     }
 }

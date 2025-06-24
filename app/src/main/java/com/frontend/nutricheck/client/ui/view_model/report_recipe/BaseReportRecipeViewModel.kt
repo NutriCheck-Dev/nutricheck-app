@@ -9,11 +9,6 @@ import kotlinx.coroutines.launch
 
 abstract class BaseReportRecipeViewModel : BaseViewModel () {
 
-    sealed interface UiState {
-        object Ready : UiState
-        data class Error(val message: String) : UiState
-    }
-
     protected val _close = MutableSharedFlow<Unit>()
     val close: SharedFlow<Unit> = _close.asSharedFlow()
 

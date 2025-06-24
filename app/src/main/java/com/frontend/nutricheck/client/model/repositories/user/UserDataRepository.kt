@@ -11,7 +11,7 @@ class UserDataRepository(private val context: Context): BaseUserDataRepository {
     override val commandInvoker: CommandInvoker
         get() = invoker
 
-    private val userDataDAo = DatabaseProvider.getDatabase(context).userDataDao()
+    private val userDataDao = DatabaseProvider.getDatabase(context).userDataDao()
 
     override suspend fun getUserData(): List<UserData> {
         TODO("Not yet implemented")

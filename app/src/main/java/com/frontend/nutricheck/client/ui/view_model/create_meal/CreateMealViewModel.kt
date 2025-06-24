@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.create_meal
 
-import com.frontend.nutricheck.client.ui.view_model.BaseCreateMealViewModel
+import com.frontend.nutricheck.client.ui.view_model.create_meal.BaseCreateMealViewModel
 
 class CreateMealViewModel : BaseCreateMealViewModel() {
     override fun onAddFoodClicked() {

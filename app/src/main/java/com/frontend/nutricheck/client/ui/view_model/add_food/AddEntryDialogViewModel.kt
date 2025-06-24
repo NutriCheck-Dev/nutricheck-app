@@ -19,13 +19,13 @@ class AddEntryDialogViewModel : BaseAddDialogViewModel() {
     private val _events = MutableSharedFlow<DialogEvent>()
     val events: SharedFlow<DialogEvent> = _events.asSharedFlow()
 
-    fun onAddMealClick() { emitEvent(DialogEvent.AddMeal) }
+    override fun onAddMealClick() { emitEvent(DialogEvent.AddMeal) }
 
-    fun onScanFoodClick() { emitEvent(DialogEvent.ScanFood) }
+    override fun onScanFoodClick() { emitEvent(DialogEvent.ScanFood) }
 
-    fun onAddRecipeClick() { emitEvent(DialogEvent.AddRecipe) }
+    override fun onAddRecipeClick() { emitEvent(DialogEvent.AddRecipe) }
 
-    fun onDismiss() {}
+    override fun onDismiss() {}
 
     private fun emitEvent(event: DialogEvent) = viewModelScope.launch { _events.emit(event) }
 }
