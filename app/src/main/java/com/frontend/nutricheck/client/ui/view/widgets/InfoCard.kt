@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+//This file represents the Users Info Card in the Profile Page.
 @Composable
 fun InfoCard(
     data: List<Pair<String, String>>,

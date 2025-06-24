@@ -4,11 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun WeightHistoryPage(
+fun RecipeOverview(
     modifier: Modifier = Modifier,
-    title: String = "Gewichtshistorie",
-    onPeriodSelected: (String) -> Unit = {},
+    title: String = "Rezept",
+    onFoodClick: (String) -> Unit = {},
+    onEditClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
-) {
-
-}
+) {}

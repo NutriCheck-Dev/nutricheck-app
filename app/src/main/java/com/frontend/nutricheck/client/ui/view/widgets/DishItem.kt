@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+//This file represents a DishItemButton composable function that displays a button for a dish item.
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,

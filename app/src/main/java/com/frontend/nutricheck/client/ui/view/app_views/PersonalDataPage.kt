@@ -8,7 +8,8 @@ fun PersonalDataPage(
     modifier: Modifier = Modifier,
     title: String = "Persönliche Daten",
     onSaveClick: () -> Unit = {},
-    onEditClick: () -> Unit = {}
+    onEditClick: () -> Unit = {},
+    onBackClick: () -> Unit = {}
 ) {
 
 }

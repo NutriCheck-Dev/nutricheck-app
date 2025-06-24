@@ -8,5 +8,5 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 fun HistoryPage(
     modifier: Modifier = Modifier,
     actions: NavigationActions,
-    onSwitch: (String) -> Unit = {},
+    onSwitchClick: (String) -> Unit = {},
 ) {}

@@ -68,6 +68,18 @@ fun MealFooter(
     }
 }
 
+//This file represents a meal block that is used in the History Page
+@Composable
+fun MealBlock(
+    modifier: Modifier = Modifier,
+    mealName: String,
+    calories: Int,
+    addOnClick: () -> Unit = {},
+    optionsOnClick: () -> Unit = {}
+) {
+
+}
+
 @Preview
 @Composable
 fun MealFooterPreview() {

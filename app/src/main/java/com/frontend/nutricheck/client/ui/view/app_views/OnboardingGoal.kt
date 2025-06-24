@@ -4,11 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun OnboardingWelcome(
+fun OnboardingGoal(
     modifier: Modifier = Modifier,
-    name: String = "NutriCheck",
-    title: String = "Willkommen bei NutriCheck!",
+    question: String = "Welches Ziel verfolgst du?",
+    options: List<String> = listOf("Zunehmen", "Abnehmen", "Gewicht halten"),
+    onOptionClick: (String) -> Unit = {},
     onNextClick: () -> Unit = {}
-) {
-
-}
+) {}

@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+// This file defines a composable function for displaying a calorie summary widget.
 @Composable
 fun CalorieSummary(
     modifier: Modifier = Modifier,

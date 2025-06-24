@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+// This file defines a DateSelector composable function that allows users to select a date.
 @Composable
 fun DateSelector(
     modifier: Modifier = Modifier,

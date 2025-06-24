@@ -8,7 +8,7 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 fun HomePage(
     modifier: Modifier = Modifier,
     actions: NavigationActions,
-    onPeriodSelected: (String) -> Unit = {}
+    onPeriodSelectedClick: (String) -> Unit = {}
 ) {
 
 }
