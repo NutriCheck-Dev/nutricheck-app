@@ -3,7 +3,6 @@ package com.frontend.nutricheck.client.model.logic.commands.user
 import com.frontend.nutricheck.client.model.data_layer.UserData
 import com.frontend.nutricheck.client.model.logic.commands.Command
 import com.frontend.nutricheck.client.model.logic.commands.CommandResult
-import com.frontend.nutricheck.client.model.logic.commands.UserDataParams
 
 class UpdateUserDataCommand(
     private val userData: UserData

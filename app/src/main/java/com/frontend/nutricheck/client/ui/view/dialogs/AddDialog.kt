@@ -1,7 +1,15 @@
 package com.frontend.nutricheck.client.ui.view.dialogs
 
-import android.widget.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
-fun AddDialog() {}
+fun AddDialog(
+    modifier: Modifier = Modifier,
+    onAddMealClick: () -> Unit = {},
+    onAddRecipeClick: () -> Unit = {},
+    onScanFoodClick: () -> Unit = {},
+    onDismissRequest: () -> Unit = {}
+) {
+
+}

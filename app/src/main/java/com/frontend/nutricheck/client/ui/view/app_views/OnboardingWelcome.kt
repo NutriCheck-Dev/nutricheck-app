@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun WeightHistoryPage(
+fun OnboardingWelcome(
     modifier: Modifier = Modifier,
-    title: String = "Gewichtshistorie",
-    onPeriodSelected: (String) -> Unit = {},
-    onBackClick: () -> Unit = {}
+    name: String = "NutriCheck",
+    title: String = "Willkommen bei NutriCheck!",
+    onNextClick: () -> Unit = {}
 ) {
 
 }

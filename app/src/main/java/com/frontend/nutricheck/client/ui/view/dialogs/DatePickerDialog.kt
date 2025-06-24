@@ -1,14 +1,15 @@
 package com.frontend.nutricheck.client.ui.view.dialogs
 
+import android.app.DatePickerDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ChooseLanguageDialog(
+fun DatePickerDialog(
     modifier: Modifier = Modifier,
-    languages: List<String> = listOf("English", "German"),
-    onLanguageSelected: (String) -> Unit = {},
+    onDateSelected: (year: Int, month: Int, dayOfMonth: Int) -> Unit,
+    initialYear: Int,
+    initialMonth: Int,
+    initialDayOfMonth: Int,
     onDismissRequest: () -> Unit = {}
-) {
-
-}
+) {}
