@@ -1,13 +1,13 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.search_food_product
 
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.ui.view_model.search_food.BaseSearchFoodViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.BaseSearchFoodProductViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class FoodSearchViewModel : BaseSearchFoodViewModel() {
+class FoodProductSearchViewModel : BaseSearchFoodProductViewModel() {
 
     sealed interface DialogEvent {
         object Entry : DialogEvent
@@ -20,13 +20,13 @@ class FoodSearchViewModel : BaseSearchFoodViewModel() {
 
     private fun emitEvent(event: DialogEvent) = viewModelScope.launch { _events.emit(event)}
 
-    override fun onClickSearchFood() {
-        // Logic to handle search food click
+    override fun onClickSearchFoodProduct() {
+        // Logic to handle search food product click
     }
-    override fun searchFood(query: String) {
-        // Logic to handle food search with the provided query
+    override fun searchFoodProduct(query: String) {
+        // Logic to handle food product search with the provided query
     }
-    override fun onClickAddFood() {
-        // Logic to handle add food click
+    override fun onClickAddFoodProduct() {
+        // Logic to handle add food product click
     }
 }
