@@ -1,11 +1,18 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
-import com.frontend.nutricheck.client.model.data_layer.FoodComponentId
+import android.content.Context
 import com.frontend.nutricheck.client.model.data_layer.Recipe
-import kotlinx.coroutines.flow.Flow
+import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
+import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 
-class OfflineRecipeRepository: BaseRecipeRepository {
-    override suspend fun getRecipe(recipeId: FoodComponentId): Recipe? {
+class OfflineRecipeRepository(private val context: Context) : BaseRecipeRepository {
+    private val invoker = CommandInvoker()
+    override val commandInvoker: CommandInvoker
+        get() = invoker
+    
+    private val recipeDao = DatabaseProvider.getDatabase(context).recipeDao()
+
+    override suspend fun getRecipe(recipeId: String): Recipe? {
         TODO("Not yet implemented")
     }
 
@@ -13,11 +20,9 @@ class OfflineRecipeRepository: BaseRecipeRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteRecipe(recipeId: FoodComponentId) {
+    override suspend fun deleteRecipe(recipeId: String) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun observeLocalRecipes(): Flow<Set<FoodComponentId>> {
-        TODO("Not yet implemented")
-    }
+    suspend fun getAllRecipes(): List<Recipe> = recipeDao.getAll()
 }

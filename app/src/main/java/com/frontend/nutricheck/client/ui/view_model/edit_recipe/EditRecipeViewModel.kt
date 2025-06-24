@@ -17,7 +17,7 @@ class EditRecipeViewModel(
     val title = draft.map { it.name }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
     val ingredients = draft.map { it.ingredients }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val description = draft.map { it.description }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
-    val energyInKcal = draft.map { it.energyInKcal }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    val energyInKcal = draft.map { it.calories }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
     override fun validate(draft: Recipe): Boolean {
         TODO("Not yet implemented")

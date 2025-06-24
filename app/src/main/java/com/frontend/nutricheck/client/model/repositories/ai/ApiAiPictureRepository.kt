@@ -1,6 +1,13 @@
 package com.frontend.nutricheck.client.model.repositories.ai
 
-class ApiAiPictureRepository: BaseAiPictureRepository {
+import android.content.Context
+import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
+
+class ApiAiPictureRepository(private val context: Context): BaseAiPictureRepository {
+    private val invoker = CommandInvoker()
+    override val commandInvoker: CommandInvoker
+        get() = invoker
+
     override suspend fun uploadPicture(imagePath: String): String {
         TODO("Not yet implemented")
     }

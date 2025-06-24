@@ -1,8 +1,9 @@
 package com.frontend.nutricheck.client.model.data_layer
 
+import androidx.room.Entity
 import kotlinx.serialization.Serializable
 
-@Serializable
+@Serializable @Entity(tableName = "user_data")
 data class UserData(
     val username: String? = "",
     val age: Int? = 0,

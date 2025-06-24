@@ -4,7 +4,7 @@ interface FoodComponent {
     /**
      * Returns the id of the food component
      */
-    val id: FoodComponentId
+    val id: String
 
     /**
      * Returns the name of the food component.
@@ -12,27 +12,22 @@ interface FoodComponent {
     val name: String
 
     /**
-     * Returns the amount of the food component in grams.
-     */
-    val amountInGrams: Double
-
-    /**
      * Returns the energy content of the food component in kilocalories.
      */
-    val energyInKcal: Int
+    val calories: Int
 
     /**
      * Returns the protein content of the food component in grams.
      */
-    val proteinInGrams: Double
+    val protein: Int
 
     /**
      * Returns the carbohydrate content of the food component in grams.
      */
-    val carbohydratesInGrams: Double
+    val carbs: Int
 
     /**
      * Returns the fat content of the food component in grams.
      */
-    val fatInGrams: Double
+    val fat: Int
 }

@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe_list
 
-import com.frontend.nutricheck.client.model.data_layer.FoodComponentId
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +15,7 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
     abstract fun onDraftChanged(newDraft: DRAFT)
 
     // Handle food item click, e.g., navigate to food details
-    abstract fun onFoodClicked(foodId: FoodComponentId)
+    abstract fun onFoodClicked(foodId: String)
 
     // Handle add food button click, e.g., open food selection dialog
     abstract fun onAddFoodClicked()

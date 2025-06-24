@@ -1,6 +1,9 @@
 package com.frontend.nutricheck.client.model.repositories.ai
 
+import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
+
 interface BaseAiPictureRepository {
+    val commandInvoker: CommandInvoker
     /**
      * Uploads a picture to the AI service for processing.
      *

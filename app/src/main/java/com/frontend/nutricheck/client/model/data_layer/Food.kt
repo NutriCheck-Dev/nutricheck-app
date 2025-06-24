@@ -1,10 +1,15 @@
 package com.frontend.nutricheck.client.model.data_layer
 
-data class Food (override val id: FoodComponentId,
-                 override val name: String,
-                 override val amountInGrams: Double,
-                 override val energyInKcal: Int,
-                 override val proteinInGrams: Double,
-                 override val carbohydratesInGrams: Double,
-                 override val fatInGrams: Double
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
+
+@Serializable @Entity(tableName = "foods")
+data class Food (
+    @PrimaryKey override val id: String = "",
+    override val name: String,
+    override val calories: Int,
+    override val protein: Int,
+    override val carbs: Int,
+    override val fat: Int
 ) : FoodComponent

@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.model.services
 
 import com.frontend.nutricheck.client.model.data_layer.Recipe
-import com.frontend.nutricheck.client.model.data_layer.FoodComponentId
 import com.frontend.nutricheck.client.model.repositories.IRecipeRepository
 
 class RecipeService(
@@ -12,7 +11,7 @@ class RecipeService(
         recipeRepository.addRecipe(recipe)
     }
 
-    override suspend fun deleteRecipe(recipeId: FoodComponentId) {
+    override suspend fun deleteRecipe(recipeId: String) {
         recipeRepository.removeRecipe(recipeId)
     }
 }

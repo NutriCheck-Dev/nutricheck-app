@@ -15,6 +15,7 @@ class AddEntryDialogViewModel : BaseAddDialogViewModel() {
         object AddRecipe : DialogEvent
     }
 
+
     private val _events = MutableSharedFlow<DialogEvent>()
     val events: SharedFlow<DialogEvent> = _events.asSharedFlow()
 
