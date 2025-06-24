@@ -21,4 +21,16 @@ class ReportRecipeViewModel : BaseReportRecipeViewModel() {
     fun onSendReport() { emitEvent(DialogEvent.SendReport) }
 
     private fun emitEvent(event: DialogEvent) = viewModelScope.launch { _events.emit(event) }
+
+    override fun onClickMessage() {
+        // Logic to handle message click
+    }
+
+    override fun onClickSendReport() {
+        // Logic to handle send report click
+    }
+
+    override fun onClickCancel() {
+        // Logic to handle cancel click
+    }
 }

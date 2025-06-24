@@ -30,5 +30,18 @@ class CreateRecipeViewModel(
     override suspend fun persistDraft(draft: Recipe): Result<Unit> {
         TODO("Not yet implemented")
     }
+    override fun onClickAddIngredient() {
+        // Logic to add an ingredient to the recipe draft
+    }
+    override fun onClickRemoveIngredient(ingredientId: String) {
+        // Logic to remove an ingredient from the recipe draft
+    }
+    override fun onClickSaveRecipe() {
+        // Logic to save the recipe draft
+    }
+    override fun onClickDiscardDraft() {
+        // Logic to discard the recipe draft
+    }
+   
 
 }

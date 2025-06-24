@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class RecipeOverviewViewModel(
-    private val repository: BaseRecipeRepository
-): BaseRecipeOverviewViewModel<Recipe>(
+class RecipeOverviewViewModel  : BaseRecipeOverviewViewModel<Recipe>(
     initialDraft = Recipe()
 ) {
+    private val repository: BaseRecipeRepository<Recipe> = TODO("Not yet implemented")
+
     val title = draft.map { it.name }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
     val ingredients = draft.map { it.ingredients }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val description = draft.map { it.description }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
@@ -32,27 +32,14 @@ class RecipeOverviewViewModel(
         TODO("Not yet implemented")
     }
 
-    override fun onSaveClicked() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onCancelClicked() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onDeleteClicked() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onShareClicked() {
-        TODO("Not yet implemented")
-    }
-
     override fun onEditClicked() {
         TODO("Not yet implemented")
     }
 
-    override fun onReportClicked() {
-        TODO("Not yet implemented")
+    override fun displayOwnerRecipes() {
+        // Implementation to display recipes owned by the user
+    }
+    override fun displayPublicRecipes() {
+        // Implementation to display public recipes
     }
 }

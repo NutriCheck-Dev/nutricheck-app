@@ -20,5 +20,15 @@ abstract class BaseEditRecipeViewModel<DRAFT>(
     protected fun resetDraft() {
         //_draft.value = _draft.value This should reset to the initial state, but we need a way to store the initial state.
     }
+    abstract fun onClickEditRecipe() 
+    abstract fun onClickUploadRecipe()
+    abstract fun onDeleteRecipe()
+    abstract fun displayEditMenu() 
+
+    abstract fun addIngredient(ingredientId: String)
+    abstract fun removeIngredient(ingredientId: String)
+    abstract fun saveChanges()
+    abstract fun onClickDiscardDraft()
+
 
 }

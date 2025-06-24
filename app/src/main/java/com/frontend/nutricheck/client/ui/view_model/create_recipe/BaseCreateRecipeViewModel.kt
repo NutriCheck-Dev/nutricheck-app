@@ -17,4 +17,10 @@ abstract class BaseCreateRecipeViewModel<DRAFT>(
     protected abstract suspend fun persistDraft(draft: DRAFT): Result<Unit>
 
     fun save(onSuccess: () -> Unit = {}) {}
+
+    abstract fun onClickAddIngredient()
+    abstract fun onClickRemoveIngredient(ingredientId: String)  
+    abstract fun onClickSaveRecipe()
+    abstract fun onClickDiscardDraft()
+   
 }

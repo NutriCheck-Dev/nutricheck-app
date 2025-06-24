@@ -19,8 +19,12 @@ class AddEntryDialogViewModel : BaseAddDialogViewModel() {
     val events: SharedFlow<DialogEvent> = _events.asSharedFlow()
 
     fun onAddMealClick() { emitEvent(DialogEvent.AddMeal) }
+
     fun onScanFoodClick() { emitEvent(DialogEvent.ScanFood) }
+
     fun onAddRecipeClick() { emitEvent(DialogEvent.AddRecipe) }
+
+    fun onDismiss() {}
 
     private fun emitEvent(event: DialogEvent) = viewModelScope.launch { _events.emit(event) }
 }
