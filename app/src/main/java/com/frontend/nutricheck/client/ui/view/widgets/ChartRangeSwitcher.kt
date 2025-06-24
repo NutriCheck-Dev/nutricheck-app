@@ -1,12 +1,14 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun WeightHistoryPage(
+fun ChartRangeSwitcher(
     modifier: Modifier = Modifier,
-    title: String = "Gewichtshistorie",
+    firstPeriod: String? = "",
+    secondPeriod: String? = "",
+    thirdPeriod: String? = "",
     onPeriodSelected: (String) -> Unit = {}
 ) {
 

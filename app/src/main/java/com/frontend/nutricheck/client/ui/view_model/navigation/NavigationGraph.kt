@@ -21,8 +21,8 @@ fun NavigationGraph(modifier: Modifier = Modifier) {
         startDestination = Screen.Home.route,
         modifier = modifier
     ) {
-        composable(Screen.Home.route) { HomePage(actions) }
-        composable(Screen.Diary.route) { DiaryPage(actions) }
-        composable(Screen.Profile.route) { ProfilePage(actions) }
+        composable(Screen.Home.route) { HomePage(actions = actions) }
+        composable(Screen.Diary.route) { DiaryPage(actions = actions) }
+        composable(Screen.Profile.route) { ProfilePage(actions = actions) }
     }
 }

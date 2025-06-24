@@ -2,13 +2,13 @@ package com.frontend.nutricheck.client.ui.view.app_views
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 @Composable
-fun PersonalDataPage(
+fun OnboardingWelcome(
     modifier: Modifier = Modifier,
-    title: String = "Persönliche Daten",
-    onSaveClick: () -> Unit = {},
-    onEditClick: () -> Unit = {}
+    title: String = "Willkommen bei NutriCheck!",
+    actions: NavigationActions
 ) {
 
 }
