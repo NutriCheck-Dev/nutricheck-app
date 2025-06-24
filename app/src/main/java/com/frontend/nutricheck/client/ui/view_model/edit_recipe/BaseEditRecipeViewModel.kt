@@ -30,4 +30,5 @@ abstract class BaseEditRecipeViewModel<DRAFT>(
     abstract fun saveChanges()
     abstract fun onClickDiscardDraft()
 
+
 }

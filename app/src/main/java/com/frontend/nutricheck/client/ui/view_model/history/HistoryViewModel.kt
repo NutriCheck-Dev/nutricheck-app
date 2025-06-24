@@ -8,6 +8,4 @@ class HistoryViewModel : BaseHistoryViewModel() {
     override fun selectDate(date: String) {}
     override fun displayNutritionOfDay(day: String) {}
     override fun displayMealsOfDay(day: String) {}
-    
-    
 }

@@ -13,6 +13,7 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
     protected val _draft = MutableStateFlow(initialDraft)
     val draft: StateFlow<DRAFT> = _draft.asStateFlow()
 
+
     abstract fun displayOwnerRecipes()
     abstract fun displayPublicRecipes()
     abstract fun onDraftChanged(newDraft: DRAFT)
@@ -25,6 +26,5 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
 
     // Handle edit button click, e.g., enable editing mode for the recipe draft
     abstract fun onEditClicked()
-
 
 }

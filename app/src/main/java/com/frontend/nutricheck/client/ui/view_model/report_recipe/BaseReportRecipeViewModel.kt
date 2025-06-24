@@ -19,8 +19,8 @@ abstract class BaseReportRecipeViewModel : BaseViewModel () {
 
     fun closeDialog() {viewModelScope.launch { _close.emit(Unit) }}
 
+
     abstract fun onClickMessage() 
     abstract fun onClickSendReport()
     abstract fun onClickCancel()
-    
 }

@@ -11,6 +11,7 @@ class ProfileViewModel : BaseProfileViewModel<UserData>(UserData()) {
     override fun onWeightClicked(newWeight: UserData) {
         TODO("Not yet implemented")
     }
+
     override fun onHeightClicked(newHeight: UserData) {
         TODO("Not yet implemented")
     }

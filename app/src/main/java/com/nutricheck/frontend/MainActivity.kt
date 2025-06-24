@@ -1,4 +1,4 @@
-package com.nutricheck.frontend
+package com.frontend.nutricheck
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

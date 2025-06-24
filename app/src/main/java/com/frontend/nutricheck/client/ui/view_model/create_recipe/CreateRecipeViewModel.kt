@@ -42,6 +42,6 @@ class CreateRecipeViewModel(
     override fun onClickDiscardDraft() {
         // Logic to discard the recipe draft
     }
-    
+   
 
 }

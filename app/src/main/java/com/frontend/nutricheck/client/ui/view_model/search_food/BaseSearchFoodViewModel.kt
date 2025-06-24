@@ -13,8 +13,9 @@ abstract class BaseSearchFoodViewModel : BaseViewModel () {
     val close: SharedFlow<Unit> = _close.asSharedFlow()
 
     fun closeDialog() { viewModelScope.launch { _close.emit(Unit) } }
-
+    
     abstract fun onClickSearchFood()
     abstract fun searchFood(query: String)
     abstract fun onClickAddFood()
+
 }

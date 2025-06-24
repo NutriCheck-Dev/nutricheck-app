@@ -22,5 +22,5 @@ abstract class BaseCreateRecipeViewModel<DRAFT>(
     abstract fun onClickRemoveIngredient(ingredientId: String)  
     abstract fun onClickSaveRecipe()
     abstract fun onClickDiscardDraft()
-    
+   
 }

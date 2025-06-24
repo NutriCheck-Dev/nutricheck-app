@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.model.data_layer
 
 import kotlinx.serialization.Serializable
+
 import com.frontend.nutricheck.client.model.data_layer.Gender
 
 @Serializable

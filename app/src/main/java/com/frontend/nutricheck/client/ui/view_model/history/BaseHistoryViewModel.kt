@@ -11,7 +11,6 @@ abstract class BaseHistoryViewModel : BaseViewModel () {
     abstract fun displayMealsOfDay(day: String)
     abstract fun onFoodClicked()
 
-
     fun onRecipeClick() = RecipeListViewModel.onRecipeClick()
 
 }
