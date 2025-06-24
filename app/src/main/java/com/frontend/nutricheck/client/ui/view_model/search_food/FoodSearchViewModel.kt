@@ -19,4 +19,14 @@ class FoodSearchViewModel : BaseSearchFoodViewModel() {
     fun onSearchClick() { emitEvent(DialogEvent.Entry) }
 
     private fun emitEvent(event: DialogEvent) = viewModelScope.launch { _events.emit(event)}
+
+    override fun onClickSearchFood() {
+        // Logic to handle search food click
+    }
+    override fun searchFood(query: String) {
+        // Logic to handle food search with the provided query
+    }
+    override fun onClickAddFood() {
+        // Logic to handle add food click
+    }
 }

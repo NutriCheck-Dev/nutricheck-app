@@ -13,4 +13,9 @@ abstract class BaseAddDialogViewModel : BaseViewModel() {
     val close: SharedFlow<Unit> = _close.asSharedFlow()
 
     fun closeDialog() { viewModelScope.launch { _close.emit(Unit) } }
+
+    abstract fun onAddMealClick()
+    abstract fun onScanFoodClick()
+    abstract fun onAddRecipeClick()
+    abstract fun onDismiss()
 }

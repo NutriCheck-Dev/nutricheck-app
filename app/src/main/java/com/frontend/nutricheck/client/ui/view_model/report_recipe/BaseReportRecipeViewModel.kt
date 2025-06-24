@@ -18,4 +18,9 @@ abstract class BaseReportRecipeViewModel : BaseViewModel () {
     val close: SharedFlow<Unit> = _close.asSharedFlow()
 
     fun closeDialog() {viewModelScope.launch { _close.emit(Unit) }}
+
+
+    abstract fun onClickMessage() 
+    abstract fun onClickSendReport()
+    abstract fun onClickCancel()
 }
