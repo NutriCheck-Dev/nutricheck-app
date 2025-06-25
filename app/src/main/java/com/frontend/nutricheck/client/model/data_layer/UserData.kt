@@ -2,8 +2,6 @@ package com.frontend.nutricheck.client.model.data_layer
 
 import kotlinx.serialization.Serializable
 
-import com.frontend.nutricheck.client.model.data_layer.Gender
-
 @Serializable
 data class UserData(
     val username: String? = "",
@@ -12,4 +10,20 @@ data class UserData(
     val weight: Double? = 0.0,
     val height: Double? = 0.0,
     val targetCalories: Int? = 0
-)
+) {
+    fun changeUsername(newUsername: String): UserData {
+        return this.copy(username = newUsername)
+    }
+    fun changeAge(newAge: Int): UserData {
+        return this.copy(age = newAge)
+    }
+    fun changeGender(newGender: Gender): UserData {
+        return this.copy(gender = newGender)
+    }
+    fun changeWeight(newWeight: Double): UserData {
+        return this.copy(weight = newWeight)
+    }
+    fun changeHeight(newHeight: Double): UserData {
+        return this.copy(height = newHeight)
+    }
+}

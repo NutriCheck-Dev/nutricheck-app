@@ -4,7 +4,6 @@ import android.content.Context
 import com.frontend.nutricheck.client.model.data_layer.UserData
 import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
-import com.frontend.nutricheck.client.model.persistence.dao.UserDataDao
 
 class UserDataRepository(private val context: Context): BaseUserDataRepository {
     private val invoker = CommandInvoker()
@@ -16,5 +15,7 @@ class UserDataRepository(private val context: Context): BaseUserDataRepository {
     override suspend fun getUserData(): List<UserData> {
         TODO("Not yet implemented")
     }
+
+
 
 }

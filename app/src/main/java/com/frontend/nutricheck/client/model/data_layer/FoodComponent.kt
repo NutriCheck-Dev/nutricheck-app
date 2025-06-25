@@ -14,20 +14,20 @@ interface FoodComponent {
     /**
      * Returns the energy content of the food component in kilocalories.
      */
-    val calories: Int
+    val calories: Double
 
     /**
      * Returns the carbohydrate content of the food component in grams.
      */
-    val carbohydrates: Int
+    val carbohydrates: Double
 
     /**
      * Returns the protein content of the food component in grams.
      */
-    val protein: Int
+    val protein: Double
 
     /**
      * Returns the fat content of the food component in grams.
      */
-    val fat: Int
+    val fat: Double
 }

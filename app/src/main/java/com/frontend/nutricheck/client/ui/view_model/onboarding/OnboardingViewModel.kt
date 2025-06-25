@@ -1,10 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model
-
-
-import com.frontend.nutricheck.client.ui.view_model.onboarding.BaseOnboardingViewModel
-
-import com.frontend.nutricheck.client.ui.view_model.onboarding.SportFrequency
-import com.frontend.nutricheck.client.ui.view_model.onboarding.WeightGoal
+package com.frontend.nutricheck.client.ui.view_model.onboarding
 
 
 class OnboardingViewModel : BaseOnboardingViewModel() {

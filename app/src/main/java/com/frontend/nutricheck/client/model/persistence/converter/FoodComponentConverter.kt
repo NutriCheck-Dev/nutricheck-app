@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.persistence.converter
 
 import androidx.room.TypeConverter
-import com.frontend.nutricheck.client.model.data_layer.Food
+import com.frontend.nutricheck.client.model.data_layer.FoodProduct
 import com.frontend.nutricheck.client.model.data_layer.FoodComponent
 import com.frontend.nutricheck.client.model.data_layer.Recipe
 import kotlinx.serialization.PolymorphicSerializer
@@ -14,7 +14,7 @@ class FoodComponentConverter {
 
     private val module = SerializersModule {
         polymorphic(FoodComponent::class) {
-            subclass(Food::class, Food.serializer())
+            subclass(FoodProduct::class, FoodProduct.serializer())
             subclass(Recipe::class, Recipe.serializer())
         }
     }
