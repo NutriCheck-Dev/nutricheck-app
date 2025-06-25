@@ -2,7 +2,6 @@ package com.frontend.nutricheck.client.model.persistence
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.frontend.nutricheck.client.model.data_layer.Food
 import com.frontend.nutricheck.client.model.data_layer.History

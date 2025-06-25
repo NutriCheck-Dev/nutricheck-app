@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model
 
-import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.ui.view_model.recipe.create.BaseCreateRecipeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,11 +7,8 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
 data class CreateRecipeState(
     val draft: Recipe = Recipe(),
@@ -23,9 +19,9 @@ data class CreateRecipeState(
 sealed interface CreateRecipeEvent {
     data class AddIngredient(val ingredientId: String) : CreateRecipeEvent
     data class RemoveIngredient(val ingredientId: String) : CreateRecipeEvent
-    object SaveRecipe : CreateRecipeEvent
-    object DiscardDraft : CreateRecipeEvent
-    object IngredientClick : CreateRecipeEvent
+    data object SaveRecipe : CreateRecipeEvent
+    data object DiscardDraft : CreateRecipeEvent
+    data object IngredientClick : CreateRecipeEvent
 }
 
 @HiltViewModel

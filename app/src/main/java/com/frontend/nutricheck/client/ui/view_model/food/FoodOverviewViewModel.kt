@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 
 sealed interface FoodOverviewEvent {
     data class AddToMealClick(val id: String) : FoodOverviewEvent
-    object OnEditClick : FoodOverviewEvent
+    data object OnEditClick : FoodOverviewEvent
 }
 
 @HiltViewModel

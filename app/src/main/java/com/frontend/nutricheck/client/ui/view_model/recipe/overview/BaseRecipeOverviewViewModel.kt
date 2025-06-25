@@ -10,7 +10,7 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
     initialDraft: DRAFT
 ) : BaseViewModel() {
 
-    protected val _draft = MutableStateFlow(initialDraft)
+    private val _draft = MutableStateFlow(initialDraft)
     val draft: StateFlow<DRAFT> = _draft.asStateFlow()
 
     abstract fun displayOwnerRecipes()

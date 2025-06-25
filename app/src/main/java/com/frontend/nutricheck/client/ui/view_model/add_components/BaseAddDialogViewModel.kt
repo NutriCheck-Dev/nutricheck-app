@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseAddDialogViewModel : BaseViewModel() {
 
-    protected val _close = MutableSharedFlow<Unit>()
+    private val _close = MutableSharedFlow<Unit>()
     val close: SharedFlow<Unit> = _close.asSharedFlow()
 
     fun closeDialog() { viewModelScope.launch { _close.emit(Unit) } }

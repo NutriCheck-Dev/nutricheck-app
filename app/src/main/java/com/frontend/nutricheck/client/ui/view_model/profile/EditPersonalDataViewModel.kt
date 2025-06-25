@@ -1,8 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
 import com.frontend.nutricheck.client.model.data_layer.UserData
-import com.frontend.nutricheck.client.ui.view_model.CreateRecipeEvent
-import com.frontend.nutricheck.client.ui.view_model.CreateRecipeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,8 +15,8 @@ data class UserDataState(
 
 sealed interface EditPersonalDataEvent {
     data class SaveData(val userData: UserData) : EditPersonalDataEvent
-    object EditClick : EditPersonalDataEvent
-    object CancelClick : EditPersonalDataEvent
+    data object EditClick : EditPersonalDataEvent
+    data object CancelClick : EditPersonalDataEvent
 }
 
 @HiltViewModel

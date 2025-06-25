@@ -5,7 +5,7 @@ import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 
-class OfflineRecipeRepository(private val context: Context) : BaseRecipeRepository {
+class OfflineRecipeRepository(context: Context) : BaseRecipeRepository {
     private val invoker = CommandInvoker()
     override val commandInvoker: CommandInvoker
         get() = invoker

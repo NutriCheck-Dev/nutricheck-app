@@ -9,7 +9,7 @@ abstract class BaseProfileOverviewViewModel<DATA>(
     initialData: DATA
 ) : BaseViewModel() {
 
-    protected val _data = MutableStateFlow(initialData)
+    private val _data = MutableStateFlow(initialData)
     val data: StateFlow<DATA> = _data.asStateFlow()
 
     abstract fun onPersonalDataClick()

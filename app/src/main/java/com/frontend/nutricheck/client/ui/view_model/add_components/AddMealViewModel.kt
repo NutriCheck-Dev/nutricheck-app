@@ -2,7 +2,6 @@ package com.frontend.nutricheck.client.ui.view_model.add_components
 
 import com.frontend.nutricheck.client.model.data_layer.FoodComponent
 import com.frontend.nutricheck.client.model.repositories.recipe.BaseRecipeRepository
-import com.frontend.nutricheck.client.ui.view_model.HistoryState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,10 +20,10 @@ sealed interface AddMealEvent {
     data class AddFoodProduct(val foodId: String) : AddMealEvent
     data class SaveMeal(val mealName: String) : AddMealEvent
     data class SaveAsRecipe(val recipeName: String) : AddMealEvent
-    object DisplayMealDetails : AddMealEvent
+    data object DisplayMealDetails : AddMealEvent
     data class FoodComponentClick(val foodId: String) : AddMealEvent
-    object MyRecipesClick : AddMealEvent
-    object AddClick : AddMealEvent
+    data object MyRecipesClick : AddMealEvent
+    data object AddClick : AddMealEvent
 }
 
 @HiltViewModel

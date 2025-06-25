@@ -17,9 +17,9 @@ data class AddDialogState(
 )
 
 sealed interface AddDialogEvent {
-    object AddMeal : AddDialogEvent
-    object ScanFood : AddDialogEvent
-    object AddRecipe : AddDialogEvent
+    data object AddMeal : AddDialogEvent
+    data object ScanFood : AddDialogEvent
+    data object AddRecipe : AddDialogEvent
 }
 
 @HiltViewModel

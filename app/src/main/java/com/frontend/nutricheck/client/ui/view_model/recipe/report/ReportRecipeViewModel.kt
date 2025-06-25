@@ -16,8 +16,8 @@ data class ReportRecipeState(
 )
 
 sealed interface ReportRecipeEvent {
-    object TextInput : ReportRecipeEvent
-    object SendReport : ReportRecipeEvent
+    data object TextInput : ReportRecipeEvent
+    data object SendReport : ReportRecipeEvent
 }
 
 @HiltViewModel

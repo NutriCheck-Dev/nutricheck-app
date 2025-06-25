@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard
 
-import com.frontend.nutricheck.client.ui.view_model.HistoryState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

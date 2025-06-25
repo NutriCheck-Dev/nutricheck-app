@@ -16,10 +16,10 @@ data class AddAiMealState(
 )
 
 sealed interface AddAiMealEvent {
-    object TakeFoto : AddAiMealEvent
-    object SaveMeal : AddAiMealEvent
-    object SaveAsRecipe : AddAiMealEvent
-    object DisplayMealDetails : AddAiMealEvent
+    data object TakeFoto : AddAiMealEvent
+    data object SaveMeal : AddAiMealEvent
+    data object SaveAsRecipe : AddAiMealEvent
+    data object DisplayMealDetails : AddAiMealEvent
 }
 
 @HiltViewModel

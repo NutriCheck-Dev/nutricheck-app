@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.stateIn
 
 sealed interface RecipeOverviewEvent {
     data class RecipeClick(val recipeId: String) : RecipeOverviewEvent
-    object AddRecipe : RecipeOverviewEvent
-    object EditRecipe : RecipeOverviewEvent
-    object RateRecipe : RecipeOverviewEvent
-    object DisplayOwnerRecipes : RecipeOverviewEvent
-    object DisplayPublicRecipes : RecipeOverviewEvent
+    data object AddRecipe : RecipeOverviewEvent
+    data object EditRecipe : RecipeOverviewEvent
+    data object RateRecipe : RecipeOverviewEvent
+    data object DisplayOwnerRecipes : RecipeOverviewEvent
+    data object DisplayPublicRecipes : RecipeOverviewEvent
 }
 
 @HiltViewModel

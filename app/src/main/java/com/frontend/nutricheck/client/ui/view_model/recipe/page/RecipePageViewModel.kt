@@ -33,8 +33,8 @@ class RecipePageViewModel @Inject constructor(
     val offlineRepository: OfflineRecipeRepository
 ) : BaseRecipePageViewModel() {
 
-    private val _RecipePageState = MutableStateFlow(RecipePageState())
-    val createRecipeState = _RecipePageState.asStateFlow()
+    private val _recipePageState = MutableStateFlow(RecipePageState())
+    val createRecipeState = _recipePageState.asStateFlow()
 
     private val _events = MutableSharedFlow<RecipePageEvent>()
     val events: SharedFlow<RecipePageEvent> = _events.asSharedFlow()

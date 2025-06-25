@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model
 
-import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_layer.FoodComponent
 import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.BaseEditRecipeViewModel
@@ -9,11 +8,8 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
 data class EditRecipeState(
     val title: String = "",

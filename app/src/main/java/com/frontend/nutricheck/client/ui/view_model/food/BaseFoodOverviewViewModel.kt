@@ -9,7 +9,7 @@ abstract class BaseFoodOverviewViewModel<DRAFT>(
     initialDraft: DRAFT
 ) :BaseViewModel() {
 
-    protected val _draft = MutableStateFlow(initialDraft)
+    private val _draft = MutableStateFlow(initialDraft)
     val draft: StateFlow<DRAFT> = _draft.asStateFlow()
 
     abstract fun addToMealClick(id: String)

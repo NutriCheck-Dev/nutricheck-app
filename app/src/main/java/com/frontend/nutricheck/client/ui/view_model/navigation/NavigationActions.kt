@@ -3,11 +3,11 @@ package com.frontend.nutricheck.client.ui.view_model.navigation
 import androidx.navigation.NavHostController
 
 sealed class Screen(val route: String) {
-    object Home : Screen("home")
-    object Diary : Screen("diary")
-    object Profile : Screen("profile")
-    object Recipe : Screen("recipe")
-    object History : Screen("history")
+    data object Home : Screen("home")
+    data object Diary : Screen("diary")
+    data object Profile : Screen("profile")
+    data object Recipe : Screen("recipe")
+    data object History : Screen("history")
 
 }
 
