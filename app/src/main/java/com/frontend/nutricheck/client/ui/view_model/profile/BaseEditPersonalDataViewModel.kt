@@ -5,16 +5,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-abstract class BaseProfileOverviewViewModel<DATA>(
+abstract class BaseEditPersonalDataViewModel<DATA>(
     initialData: DATA
 ) : BaseViewModel() {
 
     private val _data = MutableStateFlow(initialData)
     val data: StateFlow<DATA> = _data.asStateFlow()
 
-    abstract fun onPersonalDataClick()
-    abstract fun onWeightHistoryClick()
-    abstract fun onSelectLanguageClick()
-    abstract fun onSelectThemeClick()
+    abstract fun validate(data: DATA): Boolean
+    abstract suspend fun persistData(data: DATA): Result<Unit>
+    abstract fun onEditClick()
+    protected fun updateData(newData: DATA) {
+        _data.value = newData
+    }
 
 }
