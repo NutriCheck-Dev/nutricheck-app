@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.recently_added
+package com.frontend.nutricheck.client.ui.view_model.dashboard.recently_added
 
 import com.frontend.nutricheck.client.ui.view_model.weight_history.BaseRecentlyAddedViewModel
 

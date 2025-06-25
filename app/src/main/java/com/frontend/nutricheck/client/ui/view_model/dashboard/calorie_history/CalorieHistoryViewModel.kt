@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.calorie_history
+package com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history
 
 import com.frontend.nutricheck.client.ui.view_model.weight_history.BaseCalorieHistoryViewModel
 
