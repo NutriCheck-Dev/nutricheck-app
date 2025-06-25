@@ -12,8 +12,10 @@ import com.frontend.nutricheck.client.ui.view.app_views.HomePage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 
 @Composable
-fun NavigationGraph(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
+fun NavigationGraph(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     val actions = remember(navController) { NavigationActions(navController)}
 
     NavHost(

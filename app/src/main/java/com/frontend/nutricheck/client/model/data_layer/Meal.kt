@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable @Entity(tableName = "meals")
 data class Meal (
     @PrimaryKey val id: String = "",
-    val name: String,
-    private val entries: List<FoodComponent>
+    val name: String = "",
+    private val entries: List<FoodComponent> = emptyList()
 ) {
     /**
      * Calculates the total energy in kcal for the meal.

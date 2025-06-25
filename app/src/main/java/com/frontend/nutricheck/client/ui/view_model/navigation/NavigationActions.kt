@@ -6,6 +6,9 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Diary : Screen("diary")
     object Profile : Screen("profile")
+    object Recipe : Screen("recipe")
+    object History : Screen("history")
+
 }
 
 class NavigationActions(private val navController: NavHostController) {
