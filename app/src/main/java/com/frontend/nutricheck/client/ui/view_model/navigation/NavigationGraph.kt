@@ -19,11 +19,20 @@ fun NavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.HomePage.route,
         modifier = modifier
     ) {
-        composable(Screen.Home.route) { HomePage(actions = actions) }
-        composable(Screen.Diary.route) { DiaryPage(actions = actions) }
-        composable(Screen.Profile.route) { ProfilePage(actions = actions) }
+        composable(Screen.HomePage.route) { HomePage(actions = actions) }
+        composable(Screen.DiaryPage.route) { DiaryPage(actions = actions) }
+        composable(Screen.ProfilePage.route) { ProfilePage(actions = actions) }
+        composable(Screen.Onboarding.route) {  }
+        composable(Screen.RecipePage.route) {  }
+        composable(Screen.HistoryPage.route) {  }
+        composable(Screen.PersonalDataPage.route) {  }
+        composable(Screen.RecipeOverview.route) {  }
+        composable(Screen.SearchPage.route) {  }
+        composable(Screen.DishItemOverview.route) {  }
+        composable(Screen.WeightHistoryPage.route) {  }
+
     }
 }

@@ -5,9 +5,8 @@ import androidx.compose.ui.Modifier
 import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 @Composable
-fun FoodOverview(
-    modifier: Modifier = Modifier,
+fun Onboarding(
+    modifier: Modifier,
     actions: NavigationActions,
-    title: String = "Food Overview",
-    onBackClick: () -> Unit = {}
+    onNextClick: () -> Unit
 ) {}
