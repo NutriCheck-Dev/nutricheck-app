@@ -8,7 +8,7 @@ import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
-class HistoryRepository(context: Context) : BaseHistoryRepository {
+class HistoryRepository(private val context: Context) : BaseHistoryRepository {
     private val invoker = CommandInvoker()
     override val commandInvoker: CommandInvoker
         get() = invoker

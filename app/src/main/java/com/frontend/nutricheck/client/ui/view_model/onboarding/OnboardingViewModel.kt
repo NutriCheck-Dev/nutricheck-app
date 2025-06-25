@@ -1,35 +1,7 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.onboarding
 
 
-import com.frontend.nutricheck.client.ui.view_model.onboarding.BaseOnboardingViewModel
-import com.frontend.nutricheck.client.ui.view_model.onboarding.SportFrequency
-import com.frontend.nutricheck.client.ui.view_model.onboarding.WeightGoal
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Inject
-
-sealed interface OnboardingEvent {
-    data class StartOnboarding(val step: Int) : OnboardingEvent
-    data class CompleteOnboarding(val success: Boolean) : OnboardingEvent
-    data class EnterName(val name: String) : OnboardingEvent
-    data class EnterBirthdate(val birthdate: String) : OnboardingEvent
-    data class EnterGender(val gender: String) : OnboardingEvent
-    data class EnterHeight(val height: Double) : OnboardingEvent
-    data class EnterWeight(val weight: Double) : OnboardingEvent
-    data class EnterSportFrequency(val sportFrequency: SportFrequency) : OnboardingEvent
-    data class EnterWeightGoal(val weightGoal: WeightGoal) : OnboardingEvent
-    data class EnterTargetWeight(val targetWeight: Double) : OnboardingEvent
-}
-
-@HiltViewModel
-class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
-
-    val _events = MutableSharedFlow<OnboardingEvent>()
-    val events: SharedFlow<OnboardingEvent> = _events.asSharedFlow()
-
-    fun onEvent(event: OnboardingEvent) {}
+class OnboardingViewModel : BaseOnboardingViewModel() {
 
     override fun startOnboarding() {
         // Logic to start the onboarding process

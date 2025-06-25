@@ -6,15 +6,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.app_views.DiaryPage
 import com.frontend.nutricheck.client.ui.view.app_views.HomePage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 
 @Composable
-fun NavigationGraph(
-    modifier: Modifier = Modifier,
-    navController: NavHostController
-) {
+fun NavigationGraph(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
     val actions = remember(navController) { NavigationActions(navController)}
 
     NavHost(
