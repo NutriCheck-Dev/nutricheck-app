@@ -5,7 +5,7 @@ import com.frontend.nutricheck.client.model.data_layer.UserData
 import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 
-class UserDataRepository(private val context: Context): BaseUserDataRepository {
+class UserDataRepository(context: Context): BaseUserDataRepository {
     private val invoker = CommandInvoker()
     override val commandInvoker: CommandInvoker
         get() = invoker

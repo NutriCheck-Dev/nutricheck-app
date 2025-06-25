@@ -1,6 +1,6 @@
-package com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history
+package com.frontend.nutricheck.client.ui.view_model.weight_history
 
-import com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history.BaseWeightHistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.weight_history.BaseWeightHistoryViewModel
 
  class WeightHistoryBaseViewModel : BaseWeightHistoryViewModel() {
 
