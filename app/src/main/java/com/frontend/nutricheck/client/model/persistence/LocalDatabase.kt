@@ -3,7 +3,7 @@ package com.frontend.nutricheck.client.model.persistence
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.frontend.nutricheck.client.model.data_layer.Food
+import com.frontend.nutricheck.client.model.data_layer.FoodProduct
 import com.frontend.nutricheck.client.model.data_layer.History
 import com.frontend.nutricheck.client.model.data_layer.Meal
 import com.frontend.nutricheck.client.model.data_layer.Recipe
@@ -23,7 +23,7 @@ import com.frontend.nutricheck.client.model.persistence.dao.WeightDao
 
 @Database(
     entities = [
-        Food::class,
+        FoodProduct::class,
         Recipe::class,
         Meal::class,
         History::class,

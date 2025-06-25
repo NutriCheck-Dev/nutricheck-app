@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RecipeReport(
     val id: String? = "",
+    val description: String? = "",
     val recipeId: String? = "",
-    val comment: String? = "",
+    val recipeName: String? = "",
+    val recipeInstructions: String? = ""
 )
