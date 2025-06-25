@@ -29,9 +29,6 @@ abstract class BaseEditRecipeViewModel<DRAFT>(
     abstract fun removeIngredient(ingredientId: String)
     abstract fun saveChanges()
     abstract fun onClickDiscardDraft()
-    abstract fun onClickRateRecipe()
-    abstract fun rateRecipe()
-    abstract fun sendRating()
 
 
 }
