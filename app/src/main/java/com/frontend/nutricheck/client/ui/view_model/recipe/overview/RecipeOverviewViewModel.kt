@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.model.data_layer.FoodComponentId
 import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.BaseRecipeOverviewViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,12 +28,11 @@ class RecipeOverviewViewModel @Inject constructor() : BaseRecipeOverviewViewMode
 
     val title = draft.map { it.name }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
     val ingredients = draft.map { it.ingredients }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-    val description = draft.map { it.description }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
+    val instructions = draft.map { it.instructions }.stateIn(viewModelScope, SharingStarted.Eagerly, "")
     val calories = draft.map { it.calories }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
     val fats = draft.map { it.fat }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
-    val carbs = draft.map { it.carbs }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    val carbs = draft.map { it.carbohydrates }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
     val proteins = draft.map { it.protein }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
-
     val _events = MutableSharedFlow<RecipeOverviewEvent>()
     val events: SharedFlow<RecipeOverviewEvent> = _events.asSharedFlow()
 
@@ -73,7 +71,7 @@ class RecipeOverviewViewModel @Inject constructor() : BaseRecipeOverviewViewMode
         // Implementation to display public recipes
     }
 
-    override fun onFoodComponentClick(foodId: FoodComponentId) {
+    override fun onFoodComponentClick(foodId: String) {
         TODO("Not yet implemented")
     }
 
