@@ -68,5 +68,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.fragment)
+
 
 }

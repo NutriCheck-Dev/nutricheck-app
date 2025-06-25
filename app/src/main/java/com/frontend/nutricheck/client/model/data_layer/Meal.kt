@@ -5,15 +5,15 @@ import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import kotlin.collections.plus
 
-@Serializable @Entity(tableName = "meals")
+@Entity(tableName = "meals")
 data class Meal (
     @PrimaryKey val id: String = "",
-    val name: String,
+    val name: String = "",
     val calories: Double = 0.0,
     val carbohydrates: Double = 0.0,
     val protein: Double = 0.0,
     val fat: Double = 0.0,
-    private val items: Set<FoodProduct>
+    private val items: Set<FoodProduct> = emptySet()
 ) {
 
     fun addProduct(foodProduct: FoodProduct): Meal {

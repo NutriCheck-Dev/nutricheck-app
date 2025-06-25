@@ -4,10 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
-@Serializable @Entity(tableName = "ingredients")
+@Entity(tableName = "ingredients")
 data class Ingredient (
     @PrimaryKey val recipeId: String = "",
-    val foodProductId: String,
-    val foodProduct: FoodProduct,
-    val quantity: Double
+    val foodProductId: String = "",
+    val foodProduct: FoodProduct = FoodProduct(),
+    val quantity: Double = 0.0,
 )

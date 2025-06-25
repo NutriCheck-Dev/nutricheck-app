@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.ui.view_model.ProfileOverviewViewModel
 
 //This file represents the Users Info Card in the Profile Page.
 @Composable

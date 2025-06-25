@@ -6,11 +6,11 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.Date
 
-@Serializable @Entity(tableName = "histories")
+@Entity(tableName = "histories")
 data class History(
     @PrimaryKey val id: String = "",
-    @Contextual val date: Date,
-    val meals: List<Meal>,
+    val date: Date = Date(),
+    val meals: List<Meal> = emptyList(),
     val carbohydrates: Int = 0,
     val protein: Int = 0,
     val fat: Int = 0,

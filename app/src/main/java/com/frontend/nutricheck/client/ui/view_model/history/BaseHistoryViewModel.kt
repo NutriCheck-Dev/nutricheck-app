@@ -3,7 +3,7 @@ package com.frontend.nutricheck.client.ui.view_model.history
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.RecipePageViewModel
 
-abstract class BaseHistoryViewModel : BaseViewModel () {
+abstract class BaseHistoryViewModel : BaseViewModel() {
 
     abstract fun onAddEntryClick()
     abstract fun selectDate(date: String)

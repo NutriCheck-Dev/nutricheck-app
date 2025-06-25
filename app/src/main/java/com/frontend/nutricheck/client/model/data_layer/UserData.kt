@@ -1,13 +1,13 @@
 package com.frontend.nutricheck.client.model.data_layer
 
-import kotlinx.serialization.Serializable
+import androidx.room.Entity
 
-@Serializable
+@Entity(tableName = "user_data")
 data class UserData(
     val username: String? = "",
     val age: Int? = 0,
     val gender: Gender? = Gender.DIVERS,
-    val weight: Double? = 0.0,
+    val weight: Weight = Weight(),
     val height: Double? = 0.0,
     val targetCalories: Int? = 0
 ) {
@@ -20,7 +20,7 @@ data class UserData(
     fun changeGender(newGender: Gender): UserData {
         return this.copy(gender = newGender)
     }
-    fun changeWeight(newWeight: Double): UserData {
+    fun changeWeight(newWeight: Weight): UserData {
         return this.copy(weight = newWeight)
     }
     fun changeHeight(newHeight: Double): UserData {

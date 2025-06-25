@@ -2,18 +2,12 @@ package com.frontend.nutricheck.client.model.persistence
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import com.frontend.nutricheck.client.model.data_layer.FoodProduct
 import com.frontend.nutricheck.client.model.data_layer.History
 import com.frontend.nutricheck.client.model.data_layer.Meal
 import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.model.data_layer.UserData
 import com.frontend.nutricheck.client.model.data_layer.Weight
-import com.frontend.nutricheck.client.model.persistence.converter.FoodComponentConverter
-import com.frontend.nutricheck.client.model.persistence.converter.HistoryConverter
-import com.frontend.nutricheck.client.model.persistence.converter.MealConverter
-import com.frontend.nutricheck.client.model.persistence.converter.UserDataConverter
-import com.frontend.nutricheck.client.model.persistence.converter.WeightConverter
 import com.frontend.nutricheck.client.model.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.persistence.dao.HistoryDao
 import com.frontend.nutricheck.client.model.persistence.dao.MealDao
@@ -33,13 +27,7 @@ import com.frontend.nutricheck.client.model.persistence.dao.WeightDao
     version = 1,
     exportSchema = false
 )
-@TypeConverters(
-    FoodComponentConverter::class,
-    HistoryConverter::class,
-    MealConverter::class,
-    UserDataConverter::class,
-    WeightConverter::class
-)
+
 
 abstract class LocalDatabase : RoomDatabase() {
 

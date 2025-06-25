@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe.overview
 
-import com.frontend.nutricheck.client.model.data_layer.FoodComponentId
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +18,7 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
 
     abstract fun onDraftChanged(newDraft: DRAFT)
 
-    abstract fun onFoodComponentClick(foodId: FoodComponentId)
+    abstract fun onFoodComponentClick(foodId: String)
 
     abstract fun onAddRecipeClicked()
 

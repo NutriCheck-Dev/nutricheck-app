@@ -4,6 +4,7 @@ convertergson = "2.11.0"
 gson = "2.11.0"
 hiltAndroid = "2.56.2"
 hiltNavigationCompose = "1.2.0"
+hiltNavigationFragment = "1.0.0"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -21,6 +22,7 @@ retrofit = "2.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hiltNavigationFragment" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "convertergson" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }

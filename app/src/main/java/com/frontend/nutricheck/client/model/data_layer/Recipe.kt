@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
-@Serializable @Entity(tableName = "recipes")
+@Entity(tableName = "recipes")
 data class Recipe(
     @PrimaryKey override val id: String = "",
     override val name: String = "",
@@ -36,7 +36,6 @@ data class Recipe(
         return this.copy(instructions = newInstructions)
     }
     fun calculateNutritionalValues(): Recipe {
-        FoodProduct
         val totalCalories = ingredients.sumOf { it.foodProduct.calories }
         val totalCarbohydrates = ingredients.sumOf { it.foodProduct.carbohydrates }
         val totalProtein = ingredients.sumOf { it.foodProduct.protein }
