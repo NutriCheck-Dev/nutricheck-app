@@ -1,0 +1,32 @@
+package com.frontend.nutricheck.client.ui.view_model.search_food_product
+
+import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.BaseSearchFoodProductViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
+
+class FoodProductSearchViewModel : BaseSearchFoodProductViewModel() {
+
+    sealed interface DialogEvent {
+        object Entry : DialogEvent
+    }
+
+    private val _events = MutableSharedFlow<DialogEvent>()
+    val events: SharedFlow<DialogEvent> = _events.asSharedFlow()
+
+    fun onSearchClick() { emitEvent(DialogEvent.Entry) }
+
+    private fun emitEvent(event: DialogEvent) = viewModelScope.launch { _events.emit(event)}
+
+    override fun onClickSearchFoodProduct() {
+        // Logic to handle search food product click
+    }
+    override fun searchFoodProduct(query: String) {
+        // Logic to handle food product search with the provided query
+    }
+    override fun onClickAddFoodProduct() {
+        // Logic to handle add food product click
+    }
+}

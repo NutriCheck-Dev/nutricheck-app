@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.onboarding
 
-enum class SportFrequency(private val displayName: String) {
+enum class SportFrequency(val displayName: String) {
     NEVER("Never"),
     OCCASIONALLY("Occasionally"),
     REGULARLY("Regularly"),

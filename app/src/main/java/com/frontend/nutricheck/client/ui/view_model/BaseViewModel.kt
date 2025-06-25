@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 abstract class BaseViewModel : ViewModel() {
 
     sealed interface UiState {
-        data object Ready : UiState
-        data object Loading : UiState
+        object Ready : UiState
+        object Loading : UiState
         data class Error(val message: String) : UiState
     }
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.Ready)
+    protected val _uiState = MutableStateFlow<UiState>(UiState.Ready)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     protected fun setLoading() { _uiState.value = UiState.Loading }

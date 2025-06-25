@@ -1,53 +1,38 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import com.frontend.nutricheck.client.model.data_layer.UserData
-import com.frontend.nutricheck.client.model.repositories.user.BaseUserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.profile.BaseProfileOverviewViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 
-data class ProfileOverviewState(
-    val userData: UserData = UserData(),
-    val weightHistory: List<Int> = emptyList(),
-    val selectedLanguage: String = "German",
-    val selectedTheme: String = "Dark"
-)
-
-sealed interface ProfileOverviewEvent {
-    data class DisplayPersonalData(val userData: UserData) : ProfileOverviewEvent
-    data class DisplayWeightHistory(val weightHistory: List<Int>) : ProfileOverviewEvent
-    data class SelectLanguage(val language: String) : ProfileOverviewEvent
-    data class SelectTheme(val theme: String) : ProfileOverviewEvent
-}
-
-@HiltViewModel
-class ProfileOverviewViewModel @Inject constructor(
-    initialState: ProfileOverviewState = ProfileOverviewState(),
-    val userRepository: BaseUserDataRepository
-) : BaseProfileOverviewViewModel<UserData>(UserData()) {
-
-    val _events = MutableSharedFlow<ProfileOverviewEvent>()
-    val events: SharedFlow<ProfileOverviewEvent> = _events.asSharedFlow()
-
-
-    fun onEvent(event: ProfileOverviewEvent) {}
-
-    override fun onPersonalDataClick() {
+class ProfileOverviewViewModel : BaseProfileOverviewViewModel<UserData>(UserData()) {
+    override fun onNameClicked(newName: UserData) {
         TODO("Not yet implemented")
     }
 
-    override fun onWeightHistoryClick() {
+    override fun onWeightClicked(newWeight: UserData) {
         TODO("Not yet implemented")
     }
 
-    override fun onSelectLanguageClick() {
-        TODO("Not yet implemented")
-    }
-    override fun onSelectThemeClick() {
+    override fun onHeightClicked(newHeight: UserData) {
         TODO("Not yet implemented")
     }
 
+    override fun displayProfile() {
+        TODO("Not yet implemented")
+    }
+
+    override fun selectLanguage() {
+        TODO("Not yet implemented")
+    }
+    override fun selectTheme() {
+        TODO("Not yet implemented")
+    }
+    override fun addWeight(weight: UserData) {
+        TODO("Not yet implemented")
+    }
+    override fun onTargetClicked(newTarget: UserData) {
+        TODO("Not yet implemented")
+    }
+    override fun changeTargetWeight(newTargetWeight: UserData) {
+        TODO("Not yet implemented")
+    }
 }
