@@ -1,9 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.model.data_layer.FoodComponentId
+import com.frontend.nutricheck.client.model.data_layer.FoodComponent
 import com.frontend.nutricheck.client.model.data_layer.Recipe
-import com.frontend.nutricheck.client.model.repositories.recipe.BaseRecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.recipe_list.BaseRecipeOverviewViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -34,7 +33,7 @@ class RecipeOverviewViewModel  : BaseRecipeOverviewViewModel<Recipe>(
         // Implementation to display public recipes
     }
 
-    override fun onRecipeClick(foodId: FoodComponentId) {
+    override fun onRecipeClick(foodId: FoodComponent) {
         TODO("Not yet implemented")
     }
 
