@@ -3,9 +3,14 @@ package com.frontend.nutricheck.client.model.repositories.user
 import android.content.Context
 import com.frontend.nutricheck.client.model.data_layer.UserData
 import com.frontend.nutricheck.client.model.data_layer.Weight
+import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 
 class UserDataRepositoryImpl(context: Context): UserDataRepository {
+    private val invoker = CommandInvoker()
+    override val commandInvoker: CommandInvoker
+        get() = invoker
+
     private val userDataDao = DatabaseProvider.getDatabase(context).userDataDao()
     private val weightDao = DatabaseProvider.getDatabase(context).weightDao()
 

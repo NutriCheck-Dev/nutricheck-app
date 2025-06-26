@@ -2,8 +2,10 @@ package com.frontend.nutricheck.client.model.repositories.user
 
 import com.frontend.nutricheck.client.model.data_layer.UserData
 import com.frontend.nutricheck.client.model.data_layer.Weight
+import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 
 interface UserDataRepository {
+    val commandInvoker: CommandInvoker
     suspend fun getUserData() : List<UserData>
     suspend fun getWeightHistory(): List<Weight>
     suspend fun getAllWeights(): List<Weight>?
