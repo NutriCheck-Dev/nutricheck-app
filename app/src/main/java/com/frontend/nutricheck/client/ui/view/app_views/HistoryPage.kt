@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
-import java.util.Date
 
 @Composable
 fun HistoryPage(

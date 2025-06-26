@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.model.data_layer
 
-import kotlinx.serialization.Serializable
 
 
 data class RecipeReport(
