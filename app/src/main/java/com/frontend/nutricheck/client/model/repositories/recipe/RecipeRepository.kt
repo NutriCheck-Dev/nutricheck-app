@@ -5,13 +5,10 @@ import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 
 interface RecipeRepository {
     val commandInvoker: CommandInvoker
-    suspend fun getRecipeLocal(recipeId: String): List<Recipe>
-    suspend fun getRecipeRemote(recipeId: String): List<Recipe>
+    suspend fun searchRecipe(recipeName: String): List<Recipe>
     suspend fun saveRecipe(recipe: Recipe)
     suspend fun deleteRecipe(recipeId: String)
-    suspend fun uploadRecipe(recipe: Recipe): String
     suspend fun getAllRecipes(): List<Recipe>
     suspend fun createRecipe(recipe: Recipe)
-    suspend fun reportRecipe(recipeId: String, description: String): Boolean
     suspend fun changeRecipe(recipe: Recipe)
 }

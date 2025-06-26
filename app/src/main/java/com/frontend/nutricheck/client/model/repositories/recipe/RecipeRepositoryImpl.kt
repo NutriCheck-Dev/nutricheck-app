@@ -11,12 +11,10 @@ class RecipeRepositoryImpl(private val context: Context) : RecipeRepository {
         get() = invoker
     private val recipeDao = DatabaseProvider.getDatabase(context).recipeDao()
 
-    override suspend fun getRecipeLocal(recipeId: String): List<Recipe> {
+    override suspend fun searchRecipe(recipeName: String): List<Recipe> {
         TODO("Not yet implemented")
     }
-    override suspend fun getRecipeRemote(recipeId: String): List<Recipe> {
-        TODO("Not yet implemented")
-    }
+
     override suspend fun saveRecipe(recipe: Recipe) {
         TODO("Not yet implemented")
     }
@@ -25,16 +23,9 @@ class RecipeRepositoryImpl(private val context: Context) : RecipeRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun uploadRecipe(recipe: Recipe): String {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun getAllRecipes(): List<Recipe> = recipeDao.getAll()
-    override suspend fun createRecipe(recipe: Recipe) {
-        TODO("Not yet implemented")
-    }
 
-    override suspend fun reportRecipe(recipeId: String, description: String): Boolean {
+    override suspend fun createRecipe(recipe: Recipe) {
         TODO("Not yet implemented")
     }
 

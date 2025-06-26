@@ -4,6 +4,7 @@ import com.frontend.nutricheck.client.model.data_layer.FoodProduct
 import com.frontend.nutricheck.client.model.data_layer.Meal
 import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.model.data_layer.RemoteApi
+import com.frontend.nutricheck.client.model.mapper.RecipeMapper
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -17,9 +18,7 @@ class ApiRepositoryImpl : BaseApiRepository {
         TODO("Not yet implemented")
         api.searchFoodProduct(query)
     }
-    override suspend fun uploadRecipe(recipe: Recipe): Result<String> {
-        TODO("Not yet implemented")
-    }
+
     override suspend fun getAiMeal(): Result<Meal> {
         TODO("Not yet implemented")
     }
@@ -27,7 +26,10 @@ class ApiRepositoryImpl : BaseApiRepository {
     override suspend fun getRecipesByQuery(query: String): Result<List<Recipe>> {
         TODO("Not yet implemented")
     }
-
+    override suspend fun uploadRecipe(recipe: Recipe): Result<String> {
+        TODO("Not yet implemented")
+        api.uploadRecipe(RecipeMapper.toDto(recipe))
+    }
     override suspend fun reportRecipe(recipeId: String, description: String): Result<String> {
         TODO("Not yet implemented")
     }
