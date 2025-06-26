@@ -6,11 +6,11 @@ import androidx.compose.ui.Modifier
 @Composable
 fun ActionConfirmation(
     modifier: Modifier = Modifier,
-    title: String,
-    description: String,
+    title: String = "",
+    description: String = "",
     confirmText: String = "Bestätigen",
     cancelText: String = "Abbrechen",
-    onConfirm: () -> Unit,
-    onCancel: () -> Unit,
+    onConfirm: () -> Unit = {},
+    onCancel: () -> Unit = {},
     onDismissRequest: () -> Unit = {}
 ) {}
