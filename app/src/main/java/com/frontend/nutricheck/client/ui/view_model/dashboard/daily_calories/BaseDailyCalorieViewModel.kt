@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.dashboard_daily_cal
+package com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories
 
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 

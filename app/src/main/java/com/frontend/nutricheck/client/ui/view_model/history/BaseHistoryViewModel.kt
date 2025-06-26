@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.history
 
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.RecipePageViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
 abstract class BaseHistoryViewModel : BaseViewModel() {
 

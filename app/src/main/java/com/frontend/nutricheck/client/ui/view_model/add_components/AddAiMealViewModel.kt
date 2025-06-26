@@ -35,7 +35,7 @@ class AddAiMealViewModel @Inject constructor(
 
     fun onEvent(event: AddAiMealEvent) {}
 
-    override fun retakeFoto() {
+    override fun takeFoto() {
         TODO("Not yet implemented")
     }
 

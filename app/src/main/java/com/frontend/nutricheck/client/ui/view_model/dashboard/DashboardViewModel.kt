@@ -42,12 +42,15 @@ sealed interface DashboardEvent {
          TODO("Not yet implemented")
      }
 
-     override fun displayWeightHistory() {
+     override fun displayWeightHistory(timePeriod: Int) {
          TODO("Not yet implemented")
      }
 
-     override fun displayCalorieHistory() {
+     override fun displayCalorieHistory(timePeriod: Int) {
          TODO("Not yet implemented")
      }
+        override fun displayRecentlyAddedItems() {
+            TODO("Not yet implemented")
+        }
 
  }

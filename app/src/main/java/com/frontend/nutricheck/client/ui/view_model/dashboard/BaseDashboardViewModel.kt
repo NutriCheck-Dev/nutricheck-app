@@ -6,6 +6,7 @@ abstract class BaseDashboardViewModel : BaseViewModel() {
 
     abstract fun displayDailyCalories()
     abstract fun displayDailyMacros()
-    abstract fun displayWeightHistory()
-    abstract fun displayCalorieHistory()
+    abstract fun displayWeightHistory(timePeriod: Int)
+    abstract fun displayCalorieHistory(timePeriod: Int)
+    abstract fun displayRecentlyAddedItems()
 }

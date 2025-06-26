@@ -49,5 +49,11 @@ class ProfileOverviewViewModel @Inject constructor(
     override fun onSelectThemeClick() {
         TODO("Not yet implemented")
     }
+    override fun displayWeightHistory() {
+        // Implementation for displaying weight history
+    }
+    override fun displayPersonalData() {
+        // Implementation for displaying personal data
+    }
 
 }

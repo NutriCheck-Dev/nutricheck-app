@@ -16,5 +16,7 @@ abstract class BaseProfileOverviewViewModel<DATA>(
     abstract fun onWeightHistoryClick()
     abstract fun onSelectLanguageClick()
     abstract fun onSelectThemeClick()
+    abstract fun displayWeightHistory()
+    abstract fun displayPersonalData()
 
 }
