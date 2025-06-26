@@ -2,11 +2,9 @@ package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.model.data_layer.HistoryDay
 import com.frontend.nutricheck.client.model.data_layer.Meal
-import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 import java.util.Date
 
 interface HistoryRepository {
-    val commandInvoker: CommandInvoker
     suspend fun getCalorieHistory(): List<HistoryDay>
     suspend fun getDailyHistory(date: Date): HistoryDay
     suspend fun requestAiMeal()
