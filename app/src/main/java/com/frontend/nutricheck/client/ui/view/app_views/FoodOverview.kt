@@ -13,4 +13,6 @@ fun FoodOverview(
     foodOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
     title: String = "Food Overview",
     onBackClick: () -> Unit = {}
-) {}
+) {
+
+}
