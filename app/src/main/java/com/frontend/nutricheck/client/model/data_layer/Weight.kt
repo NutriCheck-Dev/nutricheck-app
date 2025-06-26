@@ -8,6 +8,6 @@ import java.util.Date
 @Entity(tableName = "weights")
 data class Weight(
     @PrimaryKey val id: String = "",
-    val value: Float = 0f,
+    val value: Double = 0.0,
     @Contextual val enterDate: Date = Date()
 )

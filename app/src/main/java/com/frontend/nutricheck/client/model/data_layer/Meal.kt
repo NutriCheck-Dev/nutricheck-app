@@ -8,6 +8,7 @@ import kotlin.collections.plus
 data class Meal (
     @PrimaryKey val id: String = "",
     val historyDayId: String = "",
+    val dayTime: DayTime = DayTime.BREAKFAST,
     val items: Set<MealItem> = emptySet()
 ) {
     fun addItem(item: MealItem): Meal {
