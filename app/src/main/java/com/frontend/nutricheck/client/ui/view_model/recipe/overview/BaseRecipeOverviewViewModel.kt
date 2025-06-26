@@ -28,8 +28,6 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
 
     abstract fun onDeleteRecipe()
 
-    abstract fun rateRecipe()
-
     abstract fun addToMealClick(id: String)
 
 }
