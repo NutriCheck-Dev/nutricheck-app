@@ -52,9 +52,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
-    implementation(libs.androidx.room.runtime.jvm)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
+    implementation (libs.androidx.hilt.navigation.compose)
+    implementation(libs.jakarta.inject.api)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,9 +67,5 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.hilt.navigation.fragment)
-
 
 }

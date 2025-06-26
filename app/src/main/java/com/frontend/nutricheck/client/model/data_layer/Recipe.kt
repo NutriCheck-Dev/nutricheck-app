@@ -14,6 +14,7 @@ data class Recipe(
     val servings: Int = 1,
     val ingredients: Set<Ingredient> = emptySet(),
     val instructions: String? = null,
+    val visibility: RecipeVisibility = RecipeVisibility.OWNER,
 ) : FoodComponent
 {
     fun changeName(newName: String): Recipe {

@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import com.frontend.nutricheck.client.model.data_layer.UserData
-import com.frontend.nutricheck.client.model.repositories.user.BaseUserDataRepository
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.profile.BaseProfileOverviewViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -26,7 +26,7 @@ sealed interface ProfileOverviewEvent {
 @HiltViewModel
 class ProfileOverviewViewModel @Inject constructor(
     initialState: ProfileOverviewState = ProfileOverviewState(),
-    val userRepository: BaseUserDataRepository
+    val userRepository: UserDataRepository
 ) : BaseProfileOverviewViewModel<UserData>(UserData()) {
 
     val _events = MutableSharedFlow<ProfileOverviewEvent>()

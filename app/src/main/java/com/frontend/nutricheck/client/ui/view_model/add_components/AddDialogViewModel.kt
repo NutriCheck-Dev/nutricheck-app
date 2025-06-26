@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.model.repositories.recipe.BaseRecipeRepository
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.add_components.BaseAddDialogViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -25,7 +25,7 @@ sealed interface AddDialogEvent {
 @HiltViewModel
 class AddDialogViewModel @Inject constructor(
     initialState: AddDialogState = AddDialogState(),
-    private val recipeRepository: BaseRecipeRepository
+    private val recipeRepository: RecipeRepository
 ) : BaseAddDialogViewModel() {
     private val _addDialogState = MutableStateFlow(AddDialogState())
     val createRecipeState = _addDialogState.asStateFlow()

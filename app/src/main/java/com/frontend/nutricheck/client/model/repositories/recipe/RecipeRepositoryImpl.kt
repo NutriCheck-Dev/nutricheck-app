@@ -5,11 +5,10 @@ import com.frontend.nutricheck.client.model.data_layer.Recipe
 import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 
-class OfflineRecipeRepository(context: Context) : BaseRecipeRepository {
+class RecipeRepositoryImpl(private val context: Context) : RecipeRepository {
     private val invoker = CommandInvoker()
     override val commandInvoker: CommandInvoker
         get() = invoker
-    
     private val recipeDao = DatabaseProvider.getDatabase(context).recipeDao()
 
     override suspend fun getRecipe(recipeId: String): Recipe? {
@@ -24,5 +23,20 @@ class OfflineRecipeRepository(context: Context) : BaseRecipeRepository {
         TODO("Not yet implemented")
     }
 
-    suspend fun getAllRecipes(): List<Recipe> = recipeDao.getAll()
+    override suspend fun uploadRecipe(recipe: Recipe): String {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllRecipes(): List<Recipe> = recipeDao.getAll()
+    override suspend fun createRecipe(recipe: Recipe) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun reportRecipe(recipeId: String, description: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun changeRecipe(recipe: Recipe) {
+        TODO("Not yet implemented")
+    }
 }

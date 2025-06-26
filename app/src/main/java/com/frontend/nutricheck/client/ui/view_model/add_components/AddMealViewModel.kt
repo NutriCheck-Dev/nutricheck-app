@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.add_components
 
 import com.frontend.nutricheck.client.model.data_layer.FoodComponent
-import com.frontend.nutricheck.client.model.repositories.recipe.BaseRecipeRepository
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +29,7 @@ sealed interface AddMealEvent {
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
     initialState: AddMealState = AddMealState(),
-    private val recipeRepository: BaseRecipeRepository
+    private val recipeRepository: RecipeRepository
 ) : BaseAddMealViewModel() {
     private val _addMealState = MutableStateFlow(AddMealState())
     val createRecipeState = _addMealState.asStateFlow()

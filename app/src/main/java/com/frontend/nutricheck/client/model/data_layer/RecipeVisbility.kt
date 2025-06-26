@@ -1,4 +1,6 @@
 package com.frontend.nutricheck.client.model.data_layer
 
-class AiMeal {
+enum class RecipeVisibility {
+    PUBLIC,
+    OWNER
 }
