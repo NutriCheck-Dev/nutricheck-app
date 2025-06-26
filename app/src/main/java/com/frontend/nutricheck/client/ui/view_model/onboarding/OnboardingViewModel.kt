@@ -1,9 +1,6 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.onboarding
 
 
-import com.frontend.nutricheck.client.ui.view_model.onboarding.BaseOnboardingViewModel
-import com.frontend.nutricheck.client.ui.view_model.onboarding.SportFrequency
-import com.frontend.nutricheck.client.ui.view_model.onboarding.WeightGoal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

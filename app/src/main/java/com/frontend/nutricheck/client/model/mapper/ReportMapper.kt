@@ -6,7 +6,6 @@ import com.frontend.nutricheck.client.model.data_layer.RecipeReport
 object ReportMapper {
     fun toDto(report: RecipeReport): ReportDTO =
         ReportDTO(
-            id = report.id,
             description = report.description,
             recipeId = report.recipeId,
             recipeName = report.recipeName,

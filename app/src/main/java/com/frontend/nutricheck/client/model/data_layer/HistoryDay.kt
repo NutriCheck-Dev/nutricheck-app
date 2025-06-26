@@ -5,17 +5,12 @@ import androidx.room.PrimaryKey
 import java.util.Date
 
 @Entity(tableName = "histories")
-data class History(
+data class HistoryDay(
     @PrimaryKey val id: String = "",
     val date: Date = Date(),
+    val calories: Double = 0.0,
+    val carbohydrates: Double = 0.0,
+    val protein: Double = 0.0,
+    val fat: Double = 0.0,
     val meals: List<Meal> = emptyList(),
-    val carbohydrates: Int = 0,
-    val protein: Int = 0,
-    val fat: Int = 0,
-) {
-    private var totalCalories: Int? = 0
-
-    fun updateTotalCalories() {
-
-    }
-}
+)
