@@ -17,4 +17,9 @@ object IngredientMapper {
         foodProduct = FoodProductMapper.toEntity(ingredientDTO.foodProduct),
         quantity = ingredientDTO.quantity
     )
+    fun toEntityList(ingredientDTOs: List<IngredientDTO>): List<Ingredient> =
+        ingredientDTOs.map { toEntity(it) }
+    fun toDTOList(ingredients: List<Ingredient>): List<IngredientDTO> {
+        TODO("Implement the conversion from List<Ingredient> to List<IngredientDTO>")
+    }
 }

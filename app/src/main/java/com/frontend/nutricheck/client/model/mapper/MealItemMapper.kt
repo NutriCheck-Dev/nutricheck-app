@@ -7,4 +7,7 @@ object MealItemMapper {
     fun toEntity(mealItemDto: MealItemDTO): MealFoodItem {
         TODO("Implement the conversion from MealItemDTO to MealFoodItem")
     }
+    fun toEntityList(mealItemDtos: List<MealItemDTO>): List<MealFoodItem> {
+        return mealItemDtos.map { toEntity(it) }
+    }
 }
