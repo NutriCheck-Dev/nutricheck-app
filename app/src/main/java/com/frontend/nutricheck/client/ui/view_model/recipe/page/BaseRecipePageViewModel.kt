@@ -13,4 +13,8 @@ abstract class BaseRecipePageViewModel : BaseViewModel () {
     abstract fun onMyRecipesClick()
 
     abstract fun onOnlieRecipesClick()
+
+    abstract fun displayPublicRecipes()
+
+    abstract fun displayOwnerRecipes()
 }

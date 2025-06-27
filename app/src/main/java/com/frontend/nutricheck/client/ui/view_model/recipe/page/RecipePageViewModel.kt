@@ -45,6 +45,12 @@ class RecipePageViewModel @Inject constructor(
     override fun onDetailsClick() { emitEvent(RecipePageEvent.ClickDetails) }
     override fun onMyRecipesClick() { emitEvent(RecipePageEvent.ClickMyRecipes) }
     override fun onOnlieRecipesClick() { emitEvent(RecipePageEvent.ClickOnlineRecipes) }
+    override fun displayPublicRecipes() {
+        // Implementation to display public recipes
+    }
+    override fun displayOwnerRecipes() {
+        // Implementation to display recipes owned by the user
+    }
 
     private fun emitEvent(event: RecipePageEvent) = viewModelScope.launch { _events.emit(event) }
 

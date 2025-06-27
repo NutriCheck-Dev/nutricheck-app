@@ -47,19 +47,8 @@ class RecipeOverviewViewModel @Inject constructor() : BaseRecipeOverviewViewMode
         TODO("Not yet implemented")
     }
 
-    override fun onClickRateRecipe() {
-        TODO("Not yet implemented")
-    }
-
     override fun addToMealClick(id: String) {
         TODO("Not yet implemented")
-    }
-
-    override fun displayOwnerRecipes() {
-        // Implementation to display recipes owned by the user
-    }
-    override fun displayPublicRecipes() {
-        // Implementation to display public recipes
     }
 
     override fun onFoodComponentClick(foodId: String) {
@@ -69,4 +58,9 @@ class RecipeOverviewViewModel @Inject constructor() : BaseRecipeOverviewViewMode
     override fun onAddRecipeClicked() {
         TODO("Not yet implemented")
     }
+
+    override fun onDeleteRecipe() {
+        TODO("Not yet implemented")
+    }
+
 }
