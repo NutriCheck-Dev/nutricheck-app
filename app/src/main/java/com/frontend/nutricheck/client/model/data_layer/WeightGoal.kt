@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.onboarding
+package com.frontend.nutricheck.client.model.data_layer
 
 enum class WeightGoal(private val displayName: String) {
     LOSE_WEIGHT("Lose Weight"),

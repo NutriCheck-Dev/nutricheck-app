@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.onboarding
 
+import com.frontend.nutricheck.client.model.data_layer.ActivityLevel
+import com.frontend.nutricheck.client.model.data_layer.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 
 abstract class BaseOnboardingViewModel : BaseViewModel () {
@@ -10,7 +12,7 @@ abstract class BaseOnboardingViewModel : BaseViewModel () {
     abstract fun enterGender(gender: String)
     abstract fun enterHeight(height: Double)
     abstract fun enterWeight(weight: Double)
-    abstract fun enterSportFrequency(sportFrequency: SportFrequency)
+    abstract fun enterSportFrequency(activityLevel: ActivityLevel)
     abstract fun enterWeightGoal(weightGoal: WeightGoal)
     abstract fun enterTargetWeight(targetWeight: Double)
     abstract fun completeOnboarding()

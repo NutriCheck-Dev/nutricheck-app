@@ -1,6 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model.onboarding
 
 
+import com.frontend.nutricheck.client.model.data_layer.ActivityLevel
+import com.frontend.nutricheck.client.model.data_layer.WeightGoal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,7 +17,7 @@ sealed interface OnboardingEvent {
     data class EnterGender(val gender: String) : OnboardingEvent
     data class EnterHeight(val height: Double) : OnboardingEvent
     data class EnterWeight(val weight: Double) : OnboardingEvent
-    data class EnterSportFrequency(val sportFrequency: SportFrequency) : OnboardingEvent
+    data class EnterSportFrequency(val activityLevel: ActivityLevel) : OnboardingEvent
     data class EnterWeightGoal(val weightGoal: WeightGoal) : OnboardingEvent
     data class EnterTargetWeight(val targetWeight: Double) : OnboardingEvent
 }
@@ -56,7 +58,7 @@ class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
         // Logic to enter the user's weight
     }
 
-    override fun enterSportFrequency(sportFrequency: SportFrequency) {
+    override fun enterSportFrequency(activityLevel: ActivityLevel) {
         // Logic to enter the user's sport frequency
     }
 
