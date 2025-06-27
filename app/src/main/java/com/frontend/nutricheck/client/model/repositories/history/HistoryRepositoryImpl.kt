@@ -3,15 +3,10 @@ package com.frontend.nutricheck.client.model.repositories.history
 import android.content.Context
 import com.frontend.nutricheck.client.model.data_layer.HistoryDay
 import com.frontend.nutricheck.client.model.data_layer.Meal
-import com.frontend.nutricheck.client.model.logic.commands.CommandInvoker
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 import java.util.Date
 
 class HistoryRepositoryImpl(context: Context) : HistoryRepository {
-    private val invoker = CommandInvoker()
-    override val commandInvoker: CommandInvoker
-        get() = invoker
-
     private val historyDao = DatabaseProvider.getDatabase(context).historyDao()
     override suspend fun getCalorieHistory(): List<HistoryDay> {
         TODO("Not yet implemented")
@@ -21,7 +16,7 @@ class HistoryRepositoryImpl(context: Context) : HistoryRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun requestAiMeal() {
+    override suspend fun requestAiMeal(): Meal {
         TODO("Not yet implemented")
     }
 
