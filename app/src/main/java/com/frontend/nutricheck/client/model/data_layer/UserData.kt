@@ -1,14 +1,15 @@
 package com.frontend.nutricheck.client.model.data_layer
 
 import androidx.room.Entity
+import java.util.Date
 
 @Entity(tableName = "user_data")
 data class UserData(
     val username: String? = "",
-    val age: Int? = 0,
+    val birthdate: Date,
     val gender: Gender? = Gender.DIVERS,
     val height: Double? = 0.0,
-    val targetCalories: Int? = 0,
+    val targetCalories: Double? = 0.0,
     val weightGoal: WeightGoal = WeightGoal.MAINTAIN_WEIGHT,
     val targetWeight: Double? = 0.0,
     val activityLevel: ActivityLevel = ActivityLevel.NEVER,
@@ -18,8 +19,8 @@ data class UserData(
     fun changeUsername(newUsername: String): UserData {
         return this.copy(username = newUsername)
     }
-    fun changeAge(newAge: Int): UserData {
-        return this.copy(age = newAge)
+    fun changeAge(birthdate: Date): UserData {
+        return this.copy(birthdate = birthdate)
     }
     fun changeGender(newGender: Gender): UserData {
         return this.copy(gender = newGender)
@@ -34,7 +35,7 @@ data class UserData(
     fun changeTheme(newTheme: String): UserData {
         return this.copy(theme = newTheme)
     }
-    fun changeTargetCalories(newTargetCalories: Int): UserData {
+    fun changeTargetCalories(newTargetCalories: Double): UserData {
         return this.copy(targetCalories = newTargetCalories)
     }
     fun changeWeightGoal(newWeightGoal: WeightGoal): UserData {
