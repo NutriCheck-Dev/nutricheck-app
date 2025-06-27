@@ -24,8 +24,6 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
 
     abstract fun onEditClicked()
 
-    abstract fun onClickRateRecipe()
-
     abstract fun onDeleteRecipe()
 
     abstract fun addToMealClick(id: String)
