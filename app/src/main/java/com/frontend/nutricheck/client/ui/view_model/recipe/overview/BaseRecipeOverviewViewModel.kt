@@ -12,10 +12,6 @@ abstract class BaseRecipeOverviewViewModel<DRAFT>(
     private val _draft = MutableStateFlow(initialDraft)
     val draft: StateFlow<DRAFT> = _draft.asStateFlow()
 
-    abstract fun displayOwnerRecipes()
-
-    abstract fun displayPublicRecipes()
-
     abstract fun onDraftChanged(newDraft: DRAFT)
 
     abstract fun onFoodComponentClick(foodId: String)
