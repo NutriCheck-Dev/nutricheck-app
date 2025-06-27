@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.weight
 
-import com.frontend.nutricheck.client.model.data_layer.Weight
+import com.frontend.nutricheck.client.model.persistence.data_layer.Weight
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 
 abstract class BaseWeightHistoryRepository : BaseViewModel() {

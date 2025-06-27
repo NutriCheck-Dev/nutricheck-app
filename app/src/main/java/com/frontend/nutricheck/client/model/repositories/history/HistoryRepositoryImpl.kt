@@ -1,8 +1,8 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
 import android.content.Context
-import com.frontend.nutricheck.client.model.data_layer.HistoryDay
-import com.frontend.nutricheck.client.model.data_layer.Meal
+import com.frontend.nutricheck.client.model.persistence.data_layer.HistoryDay
+import com.frontend.nutricheck.client.model.persistence.data_layer.Meal
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 import java.util.Date
 

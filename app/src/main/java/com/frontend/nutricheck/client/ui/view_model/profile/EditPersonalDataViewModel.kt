@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
-import com.frontend.nutricheck.client.model.data_layer.UserData
+import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +22,9 @@ sealed interface EditPersonalDataEvent {
 @HiltViewModel
 class EditPersonalDataViewModel @Inject constructor(
     private val initialState: UserDataState = UserDataState()
-) : BaseEditPersonalDataViewModel<UserData>(UserData()) {
+) : BaseEditPersonalDataViewModel<UserData>(
+    UserData()
+) {
 
     private val _userDataState = MutableStateFlow(UserDataState())
     val createRecipeState = _userDataState.asStateFlow()

@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
 import android.content.Context
-import com.frontend.nutricheck.client.model.data_layer.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 
 class RecipeRepositoryImpl(private val context: Context) : RecipeRepository {

@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.add_components
 
-import com.frontend.nutricheck.client.model.data_layer.FoodComponent
+import com.frontend.nutricheck.client.model.persistence.data_layer.FoodComponent
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject

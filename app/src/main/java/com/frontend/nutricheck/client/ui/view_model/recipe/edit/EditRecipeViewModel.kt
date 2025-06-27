@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe.edit
 
-import com.frontend.nutricheck.client.model.data_layer.FoodComponent
-import com.frontend.nutricheck.client.model.data_layer.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.persistence.data_layer.FoodComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

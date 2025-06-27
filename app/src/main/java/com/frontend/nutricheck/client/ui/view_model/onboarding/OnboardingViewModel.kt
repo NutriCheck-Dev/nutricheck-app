@@ -1,8 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model.onboarding
 
 
-import com.frontend.nutricheck.client.model.data_layer.ActivityLevel
-import com.frontend.nutricheck.client.model.data_layer.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.persistence.data_layer.ActivityLevel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

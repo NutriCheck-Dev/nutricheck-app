@@ -1,8 +1,8 @@
 package com.frontend.nutricheck.client.model.repositories.user
 
 import android.content.Context
-import com.frontend.nutricheck.client.model.data_layer.UserData
-import com.frontend.nutricheck.client.model.data_layer.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.persistence.data_layer.Weight
 import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
 
 class UserDataRepositoryImpl(context: Context): UserDataRepository {

@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
-import com.frontend.nutricheck.client.model.data_layer.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 
 interface RecipeRepository {
     suspend fun searchRecipe(recipeName: String): List<Recipe>

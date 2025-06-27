@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model
 
-import com.frontend.nutricheck.client.model.data_layer.Meal
+import com.frontend.nutricheck.client.model.persistence.data_layer.Meal
 import com.frontend.nutricheck.client.ui.view_model.history.BaseHistoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
