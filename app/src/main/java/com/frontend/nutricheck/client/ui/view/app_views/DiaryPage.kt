@@ -14,5 +14,4 @@ fun DiaryPage(
     historyViewModel: HistoryViewModel = hiltViewModel(),
     recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
 ) {
-
 }
