@@ -51,10 +51,6 @@ class RecipeOverviewViewModel @Inject constructor() : BaseRecipeOverviewViewMode
         TODO("Not yet implemented")
     }
 
-    override fun onDeleteRecipe() {
-        TODO("Not yet implemented")
-    }
-
     override fun addToMealClick(id: String) {
         TODO("Not yet implemented")
     }
