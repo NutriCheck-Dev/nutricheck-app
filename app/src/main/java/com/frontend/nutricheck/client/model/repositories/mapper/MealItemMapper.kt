@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.mapper
 
 import com.frontend.nutricheck.client.dto.MealItemDTO
-import com.frontend.nutricheck.client.model.persistence.data_layer.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 
 object MealItemMapper {
     fun toEntity(mealItemDto: MealItemDTO): MealFoodItem {

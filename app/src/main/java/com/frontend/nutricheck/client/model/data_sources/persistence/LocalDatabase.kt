@@ -6,14 +6,14 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
-import com.frontend.nutricheck.client.model.persistence.data_layer.HistoryDay
-import com.frontend.nutricheck.client.model.persistence.data_layer.Meal
-import com.frontend.nutricheck.client.model.persistence.data_layer.Weight
-import com.frontend.nutricheck.client.model.persistence.dao.FoodDao
-import com.frontend.nutricheck.client.model.persistence.dao.HistoryDao
-import com.frontend.nutricheck.client.model.persistence.dao.RecipeDao
-import com.frontend.nutricheck.client.model.persistence.dao.UserDataDao
-import com.frontend.nutricheck.client.model.persistence.dao.WeightDao
+import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDataDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
 
 @Database(
     entities = [

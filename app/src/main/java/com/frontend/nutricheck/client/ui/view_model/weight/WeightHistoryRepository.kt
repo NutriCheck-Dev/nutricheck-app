@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.weight
 
-import com.frontend.nutricheck.client.model.persistence.data_layer.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

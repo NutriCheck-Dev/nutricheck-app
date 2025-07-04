@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
-import com.frontend.nutricheck.client.model.persistence.data_layer.HistoryDay
-import com.frontend.nutricheck.client.model.persistence.data_layer.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import java.util.Date
 
 interface HistoryRepository {

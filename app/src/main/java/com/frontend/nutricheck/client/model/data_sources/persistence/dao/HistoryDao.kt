@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 
 import androidx.room.Query
-import com.frontend.nutricheck.client.model.persistence.data_layer.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 
 interface HistoryDao : BaseDao<HistoryDay> {
 

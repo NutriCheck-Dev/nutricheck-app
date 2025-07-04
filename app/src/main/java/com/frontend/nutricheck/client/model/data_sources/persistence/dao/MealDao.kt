@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 
 import androidx.room.Query
-import com.frontend.nutricheck.client.model.persistence.data_layer.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 
 interface MealDao : BaseDao<Meal> {
 

@@ -2,8 +2,8 @@ package com.frontend.nutricheck.client.model.repositories.user
 
 import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
-import com.frontend.nutricheck.client.model.persistence.data_layer.Weight
-import com.frontend.nutricheck.client.model.persistence.DatabaseProvider
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.persistence.DatabaseProvider
 
 class UserDataRepositoryImpl(context: Context): UserDataRepository {
     private val userDataDao = DatabaseProvider.getDatabase(context).userDataDao()

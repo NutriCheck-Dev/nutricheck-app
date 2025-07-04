@@ -6,7 +6,7 @@ import java.util.Date
 @Entity(tableName = "user_data")
 data class UserData(
     val username: String? = "",
-    val birthdate: Date,
+    val birthdate: Date = Date(),
     val gender: Gender? = Gender.DIVERS,
     val height: Double? = 0.0,
     val targetCalories: Double? = 0.0,

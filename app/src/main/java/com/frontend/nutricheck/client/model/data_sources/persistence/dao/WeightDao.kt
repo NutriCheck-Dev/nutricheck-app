@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 
 import androidx.room.Query
-import com.frontend.nutricheck.client.model.persistence.data_layer.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
 
 interface WeightDao : BaseDao<Weight> {
 
