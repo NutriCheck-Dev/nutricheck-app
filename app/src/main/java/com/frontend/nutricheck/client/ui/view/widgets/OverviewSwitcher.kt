@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun OverviewSwitcher(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier ,
     options: List<String> = emptyList(),
     selectedOption: String = "",
     onSelect: (String) -> Unit = {}
