@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 fun DishItemList(
     modifier: Modifier = Modifier,
     title: String = "Vorschläge",
-    list: List<@Composable () -> Unit> = emptyList()
+    list: List<@Composable () -> Unit> = emptyList(),
 ) {
     Column(
         modifier = modifier
@@ -34,11 +34,11 @@ fun DishItemList(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(
-            text = title,
-            color = Color.White,
-            style = MaterialTheme.typography.titleMedium
-        )
+        //Text(
+          //  text = title,
+          //  color = Color.White,
+          //  style = MaterialTheme.typography.titleMedium
+        //)
 
         Spacer(Modifier.height(2.dp))
 
