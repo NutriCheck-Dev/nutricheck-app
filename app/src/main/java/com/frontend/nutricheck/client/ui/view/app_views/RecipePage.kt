@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -53,11 +54,15 @@ fun RecipePage(
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        FoodComponentSearchBar(
+
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            FoodComponentSearchBar()
+        }
 
         CustomTabRow(
             modifier = Modifier.fillMaxWidth().padding(8.dp),
