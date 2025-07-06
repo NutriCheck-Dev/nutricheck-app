@@ -10,6 +10,6 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 fun HistoryPage(
     modifier: Modifier = Modifier,
     actions: NavigationActions,
-    viewModel: HistoryViewModel = hiltViewModel(),
+    //viewModel: HistoryViewModel = hiltViewModel(),
     onSwitchClick: (String) -> Unit = {}
 ) {}

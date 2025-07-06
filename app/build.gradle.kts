@@ -49,7 +49,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
     implementation (libs.retrofit)
@@ -67,5 +66,8 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
+    implementation(platform("androidx.compose:compose-bom:2025.03.00"))
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3-window-size-class")
 
 }

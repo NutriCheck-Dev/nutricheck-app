@@ -1,24 +1,25 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverviewSwitcher(
     modifier: Modifier = Modifier ,
@@ -26,50 +27,44 @@ fun OverviewSwitcher(
     selectedOption: String = "",
     onSelect: (String) -> Unit = {}
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        options.forEach { option ->
-            Column (
+    val selectedIndex = options.indexOf(selectedOption).coerceAtLeast(0)
+
+    TabRow (
+        modifier = modifier.fillMaxWidth(),
+        selectedTabIndex = selectedIndex,
+        containerColor = Color.Transparent,
+        indicator = { tabPositions ->
+            TabRowDefaults.SecondaryIndicator(
                 modifier = Modifier
-                    .weight(1f)
-                    .clickable { onSelect(option) }
-                    .padding(vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = option,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = if (option == selectedOption) FontWeight.Bold
-                    else FontWeight.Normal,
-                    color = if (option == selectedOption) MaterialTheme.colorScheme.onSurface
-                    else MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(Modifier.height(4.dp))
-
-                Box(
-                    Modifier
-                        .height(2.dp)
-                        .fillMaxWidth()
-                        .background(
-                            if (option == selectedOption)
-                            MaterialTheme.colorScheme.primary
-                            else
-                            Color.Transparent
-                        )
-                )
-            }
+                    .tabIndicatorOffset(tabPositions[selectedIndex])
+                    .height(2.dp),
+                color = Color.White
+            )
+        },
+        divider = {}
+    ) {
+        options.forEachIndexed { index, title ->
+            Tab(
+                selected = index == selectedIndex,
+                onClick = { onSelect(title) },
+                text = {
+                    Text(
+                        title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = if (index == selectedIndex) FontWeight.Bold
+                        else FontWeight.Normal,
+                        color = Color.White
+                    )
+                }
+            )
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun OverviewSwitcherPreview() {
-    MaterialTheme {
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         OverviewSwitcher(
             options = listOf("Option 1", "Option 2"),
             selectedOption = "Option 2",
