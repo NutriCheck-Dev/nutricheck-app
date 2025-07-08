@@ -1,8 +1,7 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,21 +14,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 @Composable
 fun AddOptionButton(
@@ -38,21 +37,22 @@ fun AddOptionButton(
     label: String,
     onClick: () -> Unit
 ) {
-    Card(
-        modifier = modifier
-            .size(width = 132.dp, height = 79.dp)
-            .border(1.dp, Color.White, shape = RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
+    val colors = MaterialTheme.colorScheme
+    val styles = MaterialTheme.typography
+
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.size(132.dp, 79.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF121212)
+        border = BorderStroke(1.dp, colors.outline),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = colors.surfaceVariant,
+            contentColor = colors.onSurfaceVariant
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
+            modifier = Modifier.fillMaxSize().padding(8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -60,23 +60,24 @@ fun AddOptionButton(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(Color.White),
+                    .background(colors.primary),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = label,
-                    modifier = Modifier.size(32.dp),
+                    tint = colors.onPrimary,
+                    modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelSmall,
+                style = styles.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
-                color = Color.White
+                color = colors.onSurfaceVariant
             )
         }
     }
@@ -85,9 +86,11 @@ fun AddOptionButton(
 @Preview
 @Composable
 fun AddOptionButtonPreview() {
-    AddOptionButton(
-        icon = Icons.Default.Search,
-        label = "Mahlzeit hinzufügen",
-        onClick = {}
-    )
+    AppTheme(darkTheme = true) {
+        AddOptionButton(
+            icon = Icons.Default.Search,
+            label = "Mahlzeit hinzufügen",
+            onClick = {}
+        )
+    }
 }

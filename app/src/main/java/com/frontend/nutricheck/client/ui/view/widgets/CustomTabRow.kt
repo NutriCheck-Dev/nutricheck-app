@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -19,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 @Composable
 fun CustomTabRow(
@@ -27,6 +30,9 @@ fun CustomTabRow(
     selectedOption: Int = 0,
     onSelect: (String) -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
+    val styles = MaterialTheme.typography
+
     Row(
         modifier = modifier
             .height(IntrinsicSize.Min)
@@ -34,26 +40,31 @@ fun CustomTabRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         options.forEachIndexed { index, label ->
-            val color by animateColorAsState(
-                if (index == selectedOption) Color.White
-                else Color(0xFF707179),
-                label = "segmentColor$index"
+            val textColor by animateColorAsState(
+                targetValue = if (index == selectedOption) colors.onPrimaryContainer
+                else colors.onSurfaceVariant,
+            )
+
+            val backgroundColor by animateColorAsState(
+                targetValue = if (index == selectedOption) colors.primaryContainer
+                else Color.Transparent,
             )
 
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .background(backgroundColor, RoundedCornerShape(4.dp))
                     .clickable { onSelect(label) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    style = styles.bodyMedium.copy(
                         fontWeight = if (index == selectedOption) FontWeight.Bold
                         else FontWeight.Normal
                     ),
-                    color = color
+                    color = textColor
                 )
             }
 
@@ -62,7 +73,7 @@ fun CustomTabRow(
                     modifier = Modifier
                         .fillMaxHeight()
                         .padding(horizontal = 4.dp),
-                    color = Color(0xFF707179),
+                    color = colors.outline,
                     thickness = 1.dp
                 )
             }
@@ -73,11 +84,15 @@ fun CustomTabRow(
 @Preview
 @Composable
 fun CustomTabRowPreview() {
-    Box(modifier = Modifier.padding(16.dp)) {
-        CustomTabRow(
-            options = listOf("Option 1", "Option 2"),
-            selectedOption = 1,
-            onSelect = {}
-        )
+    AppTheme(
+        darkTheme = true
+    ) {
+        Box(modifier = Modifier.padding(16.dp)) {
+            CustomTabRow(
+                options = listOf("Option 1", "Option 2"),
+                selectedOption = 1,
+                onSelect = {}
+            )
+        }
     }
 }
