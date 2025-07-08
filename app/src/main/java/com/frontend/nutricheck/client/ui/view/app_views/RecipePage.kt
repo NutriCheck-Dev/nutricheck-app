@@ -1,10 +1,13 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -26,6 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
+import com.frontend.nutricheck.client.ui.view.widgets.CustomEditButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
@@ -49,7 +54,8 @@ fun RecipePage(
     Column (
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(Color.Black),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
 
         Box(
@@ -101,112 +107,42 @@ fun RecipePagePreview() {
     RecipePage(
         localRecipes = {
             DishItemList(
-            title = "Meine Rezepte",
+            //title = "Meine Rezepte",
             list = listOf(
                 {
                     DishItemButton(
                         title = "Gericht 1",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 2",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 3",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 4",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 5",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 }
             )
         ) },
@@ -218,105 +154,35 @@ fun RecipePagePreview() {
                         title = "Gericht 1",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 2",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 3",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 4",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 },
                 {
                     DishItemButton(
                         title = "Gericht 5",
                         subtitle = "200 kcal, 100g",
                         onClick = {},
-                        trailingContent = {
-                            IconButton(
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Hinzufügen",
-                                    tint = Color.Black
-                                )
-                            }
-                        })
+                        trailingContent = { CustomEditButton() })
                 }
             )
         ) },

@@ -1,21 +1,13 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +26,7 @@ fun DishItemList(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         when(title.isNotBlank()) {
             true -> {
@@ -49,7 +41,10 @@ fun DishItemList(
             false -> {}
         }
 
-        Column(Modifier.verticalScroll(rememberScrollState())) {
+        Column(
+            Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
             list.forEach { item ->
                 item()
             }
@@ -61,111 +56,42 @@ fun DishItemList(
 @Composable
 fun DishItemListPreview() {
     DishItemList(
+        title = "Gerichte",
         list = listOf(
             {
                 DishItemButton(
                     title = "Gericht 1",
                     subtitle = "200 kcal, 100g",
                     onClick = {},
-                    trailingContent = {
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Hinzufügen",
-                                tint = Color.Black
-                            )
-                        }
-                    })
+                    trailingContent = { CustomAddButton() })
             },
             {
                 DishItemButton(
                     title = "Gericht 2",
                     subtitle = "200 kcal, 100g",
                     onClick = {},
-                    trailingContent = {
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Hinzufügen",
-                                tint = Color.Black
-                            )
-                        }
-                    })
+                    trailingContent = { CustomAddButton() })
             },
             {
                 DishItemButton(
                     title = "Gericht 3",
                     subtitle = "200 kcal, 100g",
                     onClick = {},
-                    trailingContent = {
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Hinzufügen",
-                                tint = Color.Black
-                            )
-                        }
-                    })
+                    trailingContent = { CustomAddButton() })
             },
             {
                 DishItemButton(
                     title = "Gericht 4",
                     subtitle = "200 kcal, 100g",
                     onClick = {},
-                    trailingContent = {
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Hinzufügen",
-                                tint = Color.Black
-                            )
-                        }
-                    })
+                    trailingContent = { CustomAddButton() })
             },
             {
                 DishItemButton(
                     title = "Gericht 5",
                     subtitle = "200 kcal, 100g",
                     onClick = {},
-                    trailingContent = {
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(Color(0xFFE0E0E0), shape = CircleShape)
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Hinzufügen",
-                                tint = Color.Black
-                            )
-                        }
-                    })
+                    trailingContent = { CustomAddButton() })
             }
         )
     )

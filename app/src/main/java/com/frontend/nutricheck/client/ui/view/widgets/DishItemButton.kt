@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,16 +47,13 @@ fun DishItemButton(
         onClick = onClick
     ) {
 
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)  // Gap 5
+                .padding(8.dp)
         ) {
-
             Row(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.align(Alignment.CenterStart),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
@@ -81,7 +79,11 @@ fun DishItemButton(
                 )
             }
 
-            trailingContent?.invoke()
+            trailingContent?.let {
+                Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+                    it()
+                }
+            }
         }
     }
 }

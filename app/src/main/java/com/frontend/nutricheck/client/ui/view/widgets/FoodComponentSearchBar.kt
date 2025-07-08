@@ -82,11 +82,11 @@ fun FoodComponentSearchBar(
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     placeholder = placeholder,
-                    leadingIcon = leadingIcon
+                    leadingIcon = leadingIcon,
                     )
                 },
                 expanded = expanded,
-                onExpandedChange = { expanded = it }
+                onExpandedChange = { expanded = it },
             ) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     searchResults.forEach { result ->

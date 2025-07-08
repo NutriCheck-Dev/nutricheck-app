@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -13,9 +16,14 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -29,16 +37,37 @@ fun OverviewSwitcher(
 ) {
     val selectedIndex = options.indexOf(selectedOption).coerceAtLeast(0)
 
+    val textMeasurer = rememberTextMeasurer()
+
+    val textLayoutResult = remember(selectedOption) {
+        textMeasurer.measure(
+            text = AnnotatedString(options.getOrNull(selectedIndex) ?: ""),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+
+    val indicatorWidth = with(LocalDensity.current) {
+        textLayoutResult.size.width.toDp()
+    }
+
     TabRow (
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(64.dp),
         selectedTabIndex = selectedIndex,
         containerColor = Color.Transparent,
         indicator = { tabPositions ->
-            TabRowDefaults.SecondaryIndicator(
-                modifier = Modifier
-                    .tabIndicatorOffset(tabPositions[selectedIndex])
-                    .height(2.dp),
-                color = Color.White
+            val current = tabPositions[selectedIndex]
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.BottomStart)
+                    .offset(x = current.left)
+                    .width(indicatorWidth)
+                    .height(2.dp)
+                    .background(Color.White)
             )
         },
         divider = {}

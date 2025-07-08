@@ -66,8 +66,9 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
-    implementation(platform("androidx.compose:compose-bom:2025.03.00"))
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material3:material3-window-size-class")
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.material3)
+    implementation(libs.androidx.material3.window.size.class1)
+    implementation("androidx.compose.material:material-icons-extended:<1.5.0>")
 
 }
