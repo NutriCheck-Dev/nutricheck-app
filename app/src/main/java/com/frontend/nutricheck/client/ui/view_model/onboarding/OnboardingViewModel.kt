@@ -50,23 +50,23 @@ class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
         // Logic to enter the user's gender
     }
 
-    override fun enterHeight(height: Double) {
+    override fun enterHeight(height: String) {
         // Logic to enter the user's height
     }
 
-    override fun enterWeight(weight: Double) {
+    override fun enterWeight(weight: String) {
         // Logic to enter the user's weight
     }
 
-    override fun enterSportFrequency(activityLevel: ActivityLevel) {
+    override fun enterSportFrequency(activityLevel: String) {
         // Logic to enter the user's sport frequency
     }
 
-    override fun enterWeightGoal(weightGoal: WeightGoal) {
+    override fun enterWeightGoal(weightGoal: String) {
         // Logic to enter the user's weight goal
     }
 
-    override fun enterTargetWeight(targetWeight: Double) {
+    override fun enterTargetWeight(targetWeight: String) {
         // Logic to enter the user's target weight
     }
 }

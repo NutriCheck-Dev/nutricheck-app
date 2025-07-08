@@ -10,11 +10,11 @@ abstract class BaseOnboardingViewModel : BaseViewModel () {
     abstract fun enterName(name: String)
     abstract fun enterBirthdate(birthdate: String)
     abstract fun enterGender(gender: String)
-    abstract fun enterHeight(height: Double)
-    abstract fun enterWeight(weight: Double)
-    abstract fun enterSportFrequency(activityLevel: ActivityLevel)
-    abstract fun enterWeightGoal(weightGoal: WeightGoal)
-    abstract fun enterTargetWeight(targetWeight: Double)
+    abstract fun enterHeight(height: String)
+    abstract fun enterWeight(weight: String)
+    abstract fun enterSportFrequency(activityLevel: String)
+    abstract fun enterWeightGoal(weightGoal: String)
+    abstract fun enterTargetWeight(targetWeight: String)
     abstract fun completeOnboarding()
 
 

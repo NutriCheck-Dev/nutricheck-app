@@ -34,14 +34,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
 
 
 @Preview
 @Composable
-fun OnboardingWeight(
+fun OnboardingTargetWeight(
     onboardingViewModel : OnboardingViewModel = viewModel(),
 
     ){
@@ -84,7 +83,7 @@ fun OnboardingWeight(
             }
             Text(
                 modifier = Modifier.padding(top = 150.dp).padding(bottom = 16.dp),
-                text = stringResource(id = R.string.onboarding_question_weight),
+                text = stringResource(id = R.string.onboarding_question_target_weight),
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     fontSize = 36.sp,
@@ -100,7 +99,7 @@ fun OnboardingWeight(
                 value = textState,
                 onValueChange = { textState = it },
                 label = {
-                    Text(stringResource(id = R.string.onboarding_label_weight))
+                    Text(stringResource(id = R.string.onboarding_label_target_weight))
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -116,7 +115,7 @@ fun OnboardingWeight(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterWeight(textState)
+                onboardingViewModel.enterTargetWeight(textState)
             })
         {
             Text(
