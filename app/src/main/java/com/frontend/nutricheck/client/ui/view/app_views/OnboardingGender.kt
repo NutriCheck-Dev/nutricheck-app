@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
 
@@ -43,11 +44,8 @@ import com.nutricheck.frontend.R
 fun OnboardingGender(
     onboardingViewModel: OnboardingViewModel = viewModel(),
 ) {
-    var selectedOption by remember { mutableStateOf<String?>(null) }
+    var selectedGender by remember { mutableStateOf<Gender?>(null) }
 
-    val maleText = stringResource(id = R.string.onboarding_label_gender_male)
-    val femaleText = stringResource(id = R.string.onboarding_label_gender_female)
-    val diverseText = stringResource(id = R.string.onboarding_label_gender_diverse)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -102,21 +100,19 @@ fun OnboardingGender(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
-            SelectOption(
-                text = maleText,
-                onClick = { selectedOption = maleText },
-                selected = selectedOption == maleText
-            )
-            SelectOption(
-                text = femaleText,
-                onClick = { selectedOption = femaleText },
-                selected = selectedOption == femaleText
-            )
-            SelectOption(
-                text = diverseText,
-                onClick = { selectedOption = diverseText },
-                selected = selectedOption == diverseText
-            )
+            enumValues<Gender>().forEach { gender ->
+                val textResId = when (gender) {
+                    Gender.MALE -> R.string.onboarding_label_gender_male
+                    Gender.FEMALE -> R.string.onboarding_label_gender_female
+                    Gender.DIVERS -> R.string.onboarding_label_gender_diverse
+                }
+
+                SelectOption(
+                    text = stringResource(id = textResId),
+                    onClick = { selectedGender = gender },
+                    selected = selectedGender == gender
+                )
+            }
         }
         Button(
             modifier = Modifier
@@ -129,7 +125,7 @@ fun OnboardingGender(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterGender(selectedOption.toString())
+                onboardingViewModel.enterGender(selectedGender)
             })
         {
             Text(
