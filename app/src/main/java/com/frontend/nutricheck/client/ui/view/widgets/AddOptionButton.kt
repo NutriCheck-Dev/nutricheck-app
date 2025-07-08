@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 @Composable
@@ -42,18 +44,21 @@ fun AddOptionButton(
 
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.size(132.dp, 79.dp),
+        modifier = modifier.size(132.dp, 86.dp),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, colors.outline),
+        contentPadding = PaddingValues(
+            horizontal = 12.dp,
+            vertical = 12.dp
+        ),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = colors.surfaceVariant,
+            containerColor = colors.surface,
             contentColor = colors.onSurfaceVariant
         ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(8.dp),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
@@ -66,14 +71,12 @@ fun AddOptionButton(
                 Icon(
                     imageVector = icon,
                     contentDescription = label,
-                    tint = colors.onPrimary,
-                    modifier = Modifier.size(24.dp)
+                    tint = colors.onPrimary
                 )
             }
-            Spacer(Modifier.height(8.dp))
             Text(
                 text = label,
-                style = styles.labelSmall,
+                style = styles.labelSmall.copy(fontSize = 10.sp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,

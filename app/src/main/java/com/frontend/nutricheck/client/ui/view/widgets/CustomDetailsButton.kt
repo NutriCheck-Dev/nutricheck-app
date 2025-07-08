@@ -14,8 +14,7 @@ fun CustomEditButton() {
     ) {
         Icon(
             imageVector = Icons.Filled.MoreHoriz,
-            contentDescription = "Details",
-            tint = Color(0xFFF5F5F5)
+            contentDescription = "Details"
         )
     }
 }

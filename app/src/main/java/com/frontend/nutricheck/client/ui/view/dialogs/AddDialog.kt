@@ -10,14 +10,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.AddOptionButton
 
 @Composable
@@ -31,20 +32,20 @@ fun AddDialog(
     onScanFoodClick: () -> Unit = {},
     onDismissRequest: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth(),
-                //.padding(horizontal = 34.dp, vertical = 43.dp),
+            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
             tonalElevation = 8.dp,
-            color = Color(0xFF121212)
+            color = colors.surfaceVariant,
+            contentColor = colors.onSurfaceVariant
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 43.dp),
-                verticalArrangement = Arrangement.spacedBy(43.dp),
+                verticalArrangement = Arrangement.spacedBy(33.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -74,10 +75,12 @@ fun AddDialog(
 @Preview
 @Composable
 fun AddDialogPreview() {
-    AddDialog(
-        onAddMealClick = {},
-        onAddRecipeClick = {},
-        onScanFoodClick = {},
-        onDismissRequest = {}
-    )
+    AppTheme(darkTheme = true) {
+        AddDialog(
+            onAddMealClick = {},
+            onAddRecipeClick = {},
+            onScanFoodClick = {},
+            onDismissRequest = {}
+        )
+    }
 }

@@ -39,6 +39,7 @@ fun DishItemButton(
     trailingContent: @Composable (() -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
+    val styles = MaterialTheme.typography
     Card(
         modifier = modifier
             .height(52.dp)
@@ -61,7 +62,7 @@ fun DishItemButton(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = styles.bodyLarge
                 )
 
                 VerticalDivider(
@@ -72,7 +73,7 @@ fun DishItemButton(
 
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -92,21 +93,7 @@ fun DishItemButton(
 fun DishItemButtonPreview() {
     AppTheme(darkTheme = true) {
     DishItemButton(
-        trailingContent = {
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                    .padding(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Hinzufügen",
-                    tint = Color.Black
-                )
-            }
-        },
+        trailingContent = { CustomAddButton() },
         onClick = {}
     )
         }
