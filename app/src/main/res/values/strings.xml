@@ -34,10 +34,13 @@
     <string name="profile_menu_age">Alter</string>
     <string name="profile_menu_height">Größe</string>
     <string name="profile_menu_weight">Gewicht</string>
-    <string name="age_years">Jahre</string>
-    <string name="height_cm">cm</string>
-    <string name="weight_kg">kg</string>
+    <string name="age_years">%1$s Jahre</string>
+    <string name="height_cm">%1$s cm</string>
+    <string name="weight_kg">%1$s kg</string>
     <string name="profile_menu_item_personal_data">Persönliche Daten &amp; Ziel</string>
+    <string name="profile_menu_item_weight_history">Gewichtsverlauf</string>
+    <string name="profile_menu_item_darkmode">Darkmode</string>
+    <string name="profile_menu_item_language">Sprache</string>
 
 
 </resources>
