@@ -21,6 +21,7 @@ fun DishItemList(
     modifier: Modifier = Modifier,
     title: String = "",
     list: List<@Composable () -> Unit> = emptyList(),
+    onClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
