@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.ui.theme
+package com.frontend.nutricheck.client.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

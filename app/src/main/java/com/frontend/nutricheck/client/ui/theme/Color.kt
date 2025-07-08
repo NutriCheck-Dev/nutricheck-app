@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.ui.theme
+package com.frontend.nutricheck.client.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
