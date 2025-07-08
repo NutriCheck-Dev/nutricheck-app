@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +27,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DishItemList(
     modifier: Modifier = Modifier,
-    title: String = "Vorschläge",
+    title: String = "",
     list: List<@Composable () -> Unit> = emptyList(),
 ) {
     Column(
@@ -32,16 +36,23 @@ fun DishItemList(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        //Text(
-          //  text = title,
-          //  color = Color.White,
-          //  style = MaterialTheme.typography.titleMedium
-        //)
+        when(title.isNotBlank()) {
+            true -> {
+                Text(
+                    text = title,
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium
+                )
 
-        Spacer(Modifier.height(2.dp))
+                Spacer(Modifier.height(2.dp))
+            }
+            false -> {}
+        }
 
-        list.forEach { item ->
-            item()
+        Column(Modifier.verticalScroll(rememberScrollState())) {
+            list.forEach { item ->
+                item()
+            }
         }
     }
 }
@@ -50,7 +61,6 @@ fun DishItemList(
 @Composable
 fun DishItemListPreview() {
     DishItemList(
-        title = "Vorschläge",
         list = listOf(
             {
                 DishItemButton(

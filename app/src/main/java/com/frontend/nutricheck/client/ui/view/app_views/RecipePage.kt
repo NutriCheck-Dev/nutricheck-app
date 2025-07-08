@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -69,18 +66,16 @@ fun RecipePage(
             options = listOf("Meine Rezepte", "Online Rezepte"),
             selectedOption = selectedTab,
         )
+        val data = if (selectedTab == 0) localRecipes else remoteRecipes
 
         Box(modifier = Modifier
             .weight(1f)
             .fillMaxWidth()
             .padding(8.dp)
         ) {
-            val data = if (selectedTab == 0) localRecipes else remoteRecipes
-            LazyColumn {
-                item {
-                    data()
-                }
-            }
+
+            data()
+
             ExtendedFloatingActionButton(
                 modifier = Modifier
                     .padding(12.dp)
