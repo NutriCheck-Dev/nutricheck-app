@@ -18,11 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.view.widgets.AddOptionButton
-import com.frontend.nutricheck.client.ui.view_model.add_components.AddDialogViewModel
-import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealViewModel
-import com.frontend.nutricheck.client.ui.view_model.add_components.AddMealViewModel
 
 @Composable
 fun AddDialog(

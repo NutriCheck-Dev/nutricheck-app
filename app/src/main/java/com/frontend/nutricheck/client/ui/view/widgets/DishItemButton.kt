@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 //This file represents a DishItemButton composable function that displays a button for a dish item.
 @Composable
@@ -42,11 +43,9 @@ fun DishItemButton(
             .height(52.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        color = Color(0xFF1F1F1F),
         tonalElevation = 0.dp,
         onClick = onClick
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -59,21 +58,18 @@ fun DishItemButton(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White
+                    style = MaterialTheme.typography.bodyLarge
                 )
 
                 VerticalDivider(
                     modifier = Modifier
                         .height(24.dp)
-                        .width(1.dp),
-                    color = Color(0xFF6E6E6E)
+                        .width(1.dp)
                 )
 
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color(0xFFBDBDBD),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -91,6 +87,7 @@ fun DishItemButton(
 @Preview
 @Composable
 fun DishItemButtonPreview() {
+    AppTheme(darkTheme = true) {
     DishItemButton(
         trailingContent = {
             IconButton(
@@ -109,4 +106,5 @@ fun DishItemButtonPreview() {
         },
         onClick = {}
     )
+        }
 }

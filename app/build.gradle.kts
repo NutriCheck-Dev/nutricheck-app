@@ -31,6 +31,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -70,5 +71,8 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.material3.window.size.class1)
     implementation("androidx.compose.material:material-icons-extended:<1.5.0>")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.8.3")
+    implementation("com.google.android.gms:play-services-base:18.7.1")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
 }

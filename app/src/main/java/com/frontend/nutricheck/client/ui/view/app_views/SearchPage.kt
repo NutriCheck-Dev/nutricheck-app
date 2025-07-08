@@ -7,13 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 
 @Composable
 fun SearchPage(

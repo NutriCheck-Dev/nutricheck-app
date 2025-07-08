@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,16 +61,7 @@ fun FoodComponentSearchBar(
                 .fillMaxWidth(0.8f)
                 .defaultMinSize(minHeight = 48.dp)
                 .heightIn(max = 56.dp)
-                .semantics { traversalIndex = 0f }
-                .border(
-                    width = 1.dp,
-                    color = Color.White,
-                    shape = RoundedCornerShape(28.dp)
-                ),
-            colors = SearchBarDefaults.colors(
-                containerColor = Color.Transparent,
-                dividerColor = Color.Transparent
-            ),
+                .semantics { traversalIndex = 0f },
             shape = RoundedCornerShape(28.dp),
             inputField = {
                 SearchBarDefaults.InputField(
@@ -108,13 +100,15 @@ fun FoodComponentSearchBar(
 @Preview
 @Composable
 fun FoodComponentSearchBarPreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
-        FoodComponentSearchBar(
-            searchResults = listOf("Apple", "Banana", "Carrot")
-        )
+    AppTheme(darkTheme = true) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            FoodComponentSearchBar(
+                searchResults = listOf("Apple", "Banana", "Carrot")
+            )
+        }
     }
 }
