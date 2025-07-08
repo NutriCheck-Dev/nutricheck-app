@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -18,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -27,6 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.ui.theme.AppTheme
+import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
+import com.frontend.nutricheck.client.ui.view.widgets.DishItemButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 
@@ -43,32 +48,43 @@ fun RecipeOverview(
     onEditClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Color.Black,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+            Surface(
+                tonalElevation = 4.dp,
+                shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
+            ) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    navigationIcon = { NavigateBackButton() },
+                    actions = {
+                        IconButton(onClick = { onEditClick(title) }) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Edit Recipe",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = colors.surfaceContainerHigh,
+                        titleContentColor = colors.onSurfaceVariant,
+                        navigationIconContentColor = colors.onSurfaceVariant
                     )
-                },
-                navigationIcon = { NavigateBackButton() },
-                actions = {
-                    IconButton(onClick = { onEditClick(title) }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit Recipe", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Black
                 )
-            )
+            }
         }
     ) { innerPadding ->
         Column(
@@ -79,6 +95,8 @@ fun RecipeOverview(
                 .background(Color.Black)
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
+            Spacer(Modifier.height(31.dp))
+
             DishItemList(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,5 +121,45 @@ fun RecipeOverview(
 @Preview
 @Composable
 fun RecipeOverviewPreview() {
-    RecipeOverview()
+    AppTheme(darkTheme = true) {
+        RecipeOverview(
+            ingredients = listOf(
+                {
+                    DishItemButton(
+                        title = "Gericht 1",
+                        subtitle = "200 kcal, 100g",
+                        onClick = {},
+                        trailingContent = { CustomAddButton() })
+                },
+                {
+                    DishItemButton(
+                        title = "Gericht 2",
+                        subtitle = "200 kcal, 100g",
+                        onClick = {},
+                        trailingContent = { CustomAddButton() })
+                },
+                {
+                    DishItemButton(
+                        title = "Gericht 3",
+                        subtitle = "200 kcal, 100g",
+                        onClick = {},
+                        trailingContent = { CustomAddButton() })
+                },
+                {
+                    DishItemButton(
+                        title = "Gericht 4",
+                        subtitle = "200 kcal, 100g",
+                        onClick = {},
+                        trailingContent = { CustomAddButton() })
+                },
+                {
+                    DishItemButton(
+                        title = "Gericht 5",
+                        subtitle = "200 kcal, 100g",
+                        onClick = {},
+                        trailingContent = { CustomAddButton() })
+                }
+            )
+        )
+    }
 }

@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -16,11 +16,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.frontend.nutricheck.client.ui.theme.AppTheme
+import com.frontend.nutricheck.client.ui.view.widgets.CustomEditButton
+import com.frontend.nutricheck.client.ui.view.widgets.DishItemButton
+import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
@@ -38,15 +41,15 @@ fun DiaryPage(
     historyViewModel: HistoryViewModel = hiltViewModel(),
     recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
 ) {
+    val colors = MaterialTheme.colorScheme
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.RECIPES) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Color.Black,
-        topBar = { Surface(
-            color = Color(0xFF121212),
-            tonalElevation = 4.dp,
-            shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
+        topBar = { 
+            Surface(
+                tonalElevation = 4.dp,
+                shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
         ) {
             OverviewSwitcher(
                 options= DiaryTab.entries.map { it.title },
@@ -62,12 +65,97 @@ fun DiaryPage(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(Color.Black)
         ) {
             Spacer(Modifier.height(31.dp))
             when (selectedTab) {
                 DiaryTab.HISTORY -> HistoryPage(actions = actions)
-                DiaryTab.RECIPES -> RecipePage(actions = actions)
+                DiaryTab.RECIPES -> RecipePage(
+                    localRecipes = {
+                        DishItemList(
+                            //title = "Meine Rezepte",
+                            list = listOf(
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 1",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 2",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 3",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 4",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 5",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                }
+                            )
+                        )
+                    },
+                    remoteRecipes = {
+                        DishItemList(
+                            title = "Online Rezepte",
+                            list = listOf(
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 1",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 2",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 3",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 4",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                },
+                                {
+                                    DishItemButton(
+                                        title = "Gericht 5",
+                                        subtitle = "200 kcal, 100g",
+                                        onClick = {},
+                                        trailingContent = { CustomEditButton() })
+                                }
+                            )
+                        )
+                    },
+                    actions = actions,
+                )
             }
         }
     }
@@ -79,5 +167,7 @@ fun DiaryPagePreview() {
     val navController = rememberNavController()
     val previewActions = NavigationActions(navController)
 
-    DiaryPage(actions = previewActions)
+    AppTheme(darkTheme = true) {
+        DiaryPage(actions = previewActions)
+    }
 }

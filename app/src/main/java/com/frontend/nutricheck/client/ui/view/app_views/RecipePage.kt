@@ -103,7 +103,7 @@ fun RecipePagePreview() {
     val navController = rememberNavController()
     val previewActions = NavigationActions(navController)
     AppTheme(
-        darkTheme = false
+        darkTheme = true
     ) {
         RecipePage(
             localRecipes = {

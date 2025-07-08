@@ -20,12 +20,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 //This file represents the Header for the SearchPage
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,36 +35,38 @@ fun MealSelector(
     mealOptions: List<String> = listOf("Frühstück", "Mittagessen", "Abendessen", "Snack"),
     onMealSelected: (String) -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     var expanded by remember { mutableStateOf(false) }
 
     CenterAlignedTopAppBar(
         title = {
             Button(
                 onClick = { expanded = true },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = colors.onSurfaceVariant
+                ),
                 contentPadding = PaddingValues(vertical = 12.dp),
                 elevation = null
             ) {
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
                 Spacer(modifier = Modifier.width(7.dp))
 
                 Icon(
                     imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Select Meal",
-                    tint = Color.White
+                    contentDescription = "Select Meal"
                 )
             }
         },
         navigationIcon = { NavigateBackButton() },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.Black
+            containerColor = colors.surfaceContainerHigh,
+            titleContentColor = colors.onSurfaceVariant,
+            navigationIconContentColor = colors.onSurfaceVariant
         )
     )
 
@@ -88,5 +89,7 @@ fun MealSelector(
 @Preview
 @Composable
 fun MealSelectorPreview() {
-    MealSelector()
+    AppTheme(darkTheme = true) {
+        MealSelector()
+    }
 }
