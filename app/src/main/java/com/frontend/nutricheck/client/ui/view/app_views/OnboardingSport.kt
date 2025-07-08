@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.ui.view.app_views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -106,86 +107,27 @@ fun OnboardingSport(
                 )
             }
 
-            Button(
-                modifier = Modifier
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == neverActivityText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
-                onClick = { selectedOption = neverActivityText }
-            ) {
-                Text(
-                    neverActivityText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == lowActivityText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
-                onClick = { selectedOption = lowActivityText },
-            ) {
-                Text(
-                    lowActivityText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == mediumActivityText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
-                onClick = { selectedOption = mediumActivityText },
-            ) {
-                Text(
-                    mediumActivityText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == highActivityText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
+            SelectOption(
+                highActivityText,
                 onClick = { selectedOption = highActivityText },
-            ) {
-                Text(
-                    highActivityText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-
-
+                selected = selectedOption == highActivityText
+            )
+            SelectOption(
+                mediumActivityText,
+                onClick = { selectedOption = mediumActivityText },
+                selected = selectedOption == mediumActivityText
+            )
+            SelectOption(
+                lowActivityText,
+                onClick = { selectedOption = lowActivityText },
+                selected = selectedOption == lowActivityText
+            )
+            SelectOption(
+                neverActivityText,
+                onClick = { selectedOption = neverActivityText },
+                selected = selectedOption == neverActivityText
+            )
         }
-
-
         Button(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -212,3 +154,4 @@ fun OnboardingSport(
         }
     }
 }
+

@@ -103,65 +103,22 @@ fun OnboardingGoal(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
-
-            Button(
-                modifier = Modifier
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == gainWeightText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
-                onClick = { selectedOption = gainWeightText }
-            ) {
-                Text(
-                    gainWeightText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == loseWeightText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
+            SelectOption(
+                gainWeightText,
+                onClick = { selectedOption = gainWeightText },
+                selected = selectedOption == gainWeightText
+            )
+            SelectOption(
+                loseWeightText,
                 onClick = { selectedOption = loseWeightText },
-            ) {
-                Text(
-                    loseWeightText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == maintainWeightText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
+                selected = selectedOption == loseWeightText
+            )
+            SelectOption(
+                maintainWeightText,
                 onClick = { selectedOption = maintainWeightText },
-            ) {
-                Text(
-                    maintainWeightText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
+                selected = selectedOption == maintainWeightText
+            )
         }
-
 
         Button(
             modifier = Modifier

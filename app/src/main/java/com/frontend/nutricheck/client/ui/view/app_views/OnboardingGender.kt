@@ -1,7 +1,9 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import android.R.attr.shape
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -100,66 +102,22 @@ fun OnboardingGender(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
-
-            Button(
-                modifier = Modifier
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == maleText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
-                onClick = { selectedOption = maleText }
-            ) {
-                Text(
-                    maleText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == femaleText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
+            SelectOption(
+                text = maleText,
+                onClick = { selectedOption = maleText },
+                selected = selectedOption == maleText
+            )
+            SelectOption(
+                text = femaleText,
                 onClick = { selectedOption = femaleText },
-            ) {
-                Text(
-                    femaleText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(64.dp)
-                    .width(343.dp),
-                shape = RoundedCornerShape(size = 16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedOption == diverseText)
-                            Color(0xFF4580FF) else Color(0xFF121212),
-                ),
-
+                selected = selectedOption == femaleText
+            )
+            SelectOption(
+                text = diverseText,
                 onClick = { selectedOption = diverseText },
-            ) {
-                Text(
-                    diverseText,
-                    color = Color.White, fontSize = 18.sp
-                )
-            }
+                selected = selectedOption == diverseText
+            )
         }
-
-
         Button(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -186,3 +144,9 @@ fun OnboardingGender(
         }
     }
 }
+
+
+
+
+
+
