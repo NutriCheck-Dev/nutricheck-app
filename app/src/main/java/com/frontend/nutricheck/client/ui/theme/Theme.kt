@@ -11,6 +11,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+@Immutable
+data class ExtendedColorScheme(
+    val chartBlue: ColorFamily,
+    val confirmation: ColorFamily,
+)
+
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
@@ -237,6 +243,96 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainer = surfaceContainerDarkHighContrast,
     surfaceContainerHigh = surfaceContainerHighDarkHighContrast,
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
+)
+
+val extendedLight = ExtendedColorScheme(
+  chartBlue = ColorFamily(
+      chartBlueLight,
+      onChartBlueLight,
+      chartBlueContainerLight,
+      onChartBlueContainerLight,
+  ),
+  confirmation = ColorFamily(
+      confirmationLight,
+      onConfirmationLight,
+      confirmationContainerLight,
+      onConfirmationContainerLight,
+  ),
+)
+
+val extendedDark = ExtendedColorScheme(
+  chartBlue = ColorFamily(
+      chartBlueDark,
+      onChartBlueDark,
+      chartBlueContainerDark,
+      onChartBlueContainerDark,
+  ),
+  confirmation = ColorFamily(
+      confirmationDark,
+      onConfirmationDark,
+      confirmationContainerDark,
+      onConfirmationContainerDark,
+  ),
+)
+
+val extendedLightMediumContrast = ExtendedColorScheme(
+  chartBlue = ColorFamily(
+      chartBlueLightMediumContrast,
+      onChartBlueLightMediumContrast,
+      chartBlueContainerLightMediumContrast,
+      onChartBlueContainerLightMediumContrast,
+  ),
+  confirmation = ColorFamily(
+      confirmationLightMediumContrast,
+      onConfirmationLightMediumContrast,
+      confirmationContainerLightMediumContrast,
+      onConfirmationContainerLightMediumContrast,
+  ),
+)
+
+val extendedLightHighContrast = ExtendedColorScheme(
+  chartBlue = ColorFamily(
+      chartBlueLightHighContrast,
+      onChartBlueLightHighContrast,
+      chartBlueContainerLightHighContrast,
+      onChartBlueContainerLightHighContrast,
+  ),
+  confirmation = ColorFamily(
+      confirmationLightHighContrast,
+      onConfirmationLightHighContrast,
+      confirmationContainerLightHighContrast,
+      onConfirmationContainerLightHighContrast,
+  ),
+)
+
+val extendedDarkMediumContrast = ExtendedColorScheme(
+  chartBlue = ColorFamily(
+      chartBlueDarkMediumContrast,
+      onChartBlueDarkMediumContrast,
+      chartBlueContainerDarkMediumContrast,
+      onChartBlueContainerDarkMediumContrast,
+  ),
+  confirmation = ColorFamily(
+      confirmationDarkMediumContrast,
+      onConfirmationDarkMediumContrast,
+      confirmationContainerDarkMediumContrast,
+      onConfirmationContainerDarkMediumContrast,
+  ),
+)
+
+val extendedDarkHighContrast = ExtendedColorScheme(
+  chartBlue = ColorFamily(
+      chartBlueDarkHighContrast,
+      onChartBlueDarkHighContrast,
+      chartBlueContainerDarkHighContrast,
+      onChartBlueContainerDarkHighContrast,
+  ),
+  confirmation = ColorFamily(
+      confirmationDarkHighContrast,
+      onConfirmationDarkHighContrast,
+      confirmationContainerDarkHighContrast,
+      onConfirmationContainerDarkHighContrast,
+  ),
 )
 
 @Immutable
