@@ -97,7 +97,7 @@ fun RecipeOverview(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                //.verticalScroll(rememberScrollState())
                 .background(colors.background)
                 .padding(16.dp)
 
