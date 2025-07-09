@@ -2,12 +2,15 @@ package com.frontend.nutricheck.client.ui.view.app_views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -49,6 +52,7 @@ fun RecipeOverview(
     onBackClick: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
+    val styles = MaterialTheme.typography
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -61,7 +65,7 @@ fun RecipeOverview(
                     title = {
                         Text(
                             text = title,
-                            style = MaterialTheme.typography.titleLarge,
+                            style = styles.titleLarge,
                             fontWeight = FontWeight.SemiBold,
                             color = colors.onSurfaceVariant,
                             maxLines = 1,
@@ -87,33 +91,36 @@ fun RecipeOverview(
             }
         }
     ) { innerPadding ->
+
         Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
                 .fillMaxSize()
-                .background(Color.Black)
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .verticalScroll(rememberScrollState())
+                .background(colors.background)
+                .padding(16.dp)
+
         ) {
-            Spacer(Modifier.height(31.dp))
+            //item { Spacer(Modifier.height(31.dp)) }
 
             DishItemList(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, Color.White),
+                    .border(1.dp, colors.outline),
                 title = "Zutaten",
                 list = ingredients
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
 
-            if (description.isNotBlank()) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = description,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+            //Spacer(modifier = Modifier.height(24.dp))
+        }
+        if (description.isNotBlank()) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = description,
+                style = styles.bodyMedium
+            )
         }
     }
 }
@@ -159,7 +166,9 @@ fun RecipeOverviewPreview() {
                         onClick = {},
                         trailingContent = { CustomAddButton() })
                 }
-            )
+            ),
+            description = "Eine leckere Rezeptbeschreibung"
         )
     }
 }
+
