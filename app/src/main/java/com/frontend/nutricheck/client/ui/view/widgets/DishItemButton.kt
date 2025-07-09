@@ -18,15 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 //This file represents a DishItemButton composable function that displays a button for a dish item.
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
-    title: String = "Gericht",
-    subtitle: String = "0 kcal, Portionsgröße",
     trailingContent: @Composable (() -> Unit)? = null,
+    foodComponent: FoodComponent,
     onClick: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
@@ -51,7 +52,7 @@ fun DishItemButton(
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
-                    text = title,
+                    text = foodComponent.name,
                     style = styles.bodyLarge
                 )
 
@@ -61,7 +62,7 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = subtitle,
+                    text = "${foodComponent.calories} kcal, Portionsgröße ${foodComponent.servings}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -79,6 +80,7 @@ fun DishItemButton(
 fun DishItemButtonPreview() {
     AppTheme(darkTheme = true) {
     DishItemButton(
+        foodComponent = Recipe(),
         trailingContent = { CustomAddButton() },
         onClick = {}
     )

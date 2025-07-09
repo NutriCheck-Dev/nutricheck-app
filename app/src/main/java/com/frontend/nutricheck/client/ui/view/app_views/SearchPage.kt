@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -14,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
@@ -28,9 +32,11 @@ fun SearchPage(
     onOptionSelected: (String) -> Unit,
     onDishClick: () -> Unit = {},
     onAddClick: () -> Unit = {},
+    foodList: List<FoodComponent> = emptyList(),
     onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
+    val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -45,32 +51,17 @@ fun SearchPage(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Spacer(Modifier.height(31.dp))
 
             FoodComponentSearchBar()
 
-            DishItemList()
+            DishItemList(list = foodList)
         }
     }
-    /**Surface(
-        modifier = modifier.fillMaxSize(),
-        color = colors.background,
-        contentColor = colors.onBackground
-    ) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            MealSelector()
-
-            FoodComponentSearchBar()
-
-            DishItemList()
-        }
-    }**/
 }
 
 @Preview

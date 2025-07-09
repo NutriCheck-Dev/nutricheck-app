@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -23,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomEditButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
@@ -44,6 +48,7 @@ fun RecipePage(
     onAddRecipeClick: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
+    var scrollState = rememberScrollState()
 
     Surface(
         modifier = modifier.fillMaxSize()
@@ -74,6 +79,7 @@ fun RecipePage(
                     .weight(1f)
                     .fillMaxWidth()
                     .padding(8.dp)
+                    .verticalScroll(scrollState)
             ) {
 
                 data()
@@ -108,85 +114,23 @@ fun RecipePagePreview() {
         RecipePage(
             localRecipes = {
                 DishItemList(
-                    //title = "Meine Rezepte",
                     list = listOf(
-                        {
-                            DishItemButton(
-                                title = "Gericht 1",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 2",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 3",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 4",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 5",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        }
+                        Recipe(),
+                        Recipe(),
+                        Recipe(),
+                        Recipe(),
+                        Recipe(),
                     )
                 )
             },
             remoteRecipes = {
                 DishItemList(
-                    title = "Online Rezepte",
                     list = listOf(
-                        {
-                            DishItemButton(
-                                title = "Gericht 1",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 2",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 3",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 4",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        },
-                        {
-                            DishItemButton(
-                                title = "Gericht 5",
-                                subtitle = "200 kcal, 100g",
-                                onClick = {},
-                                trailingContent = { CustomEditButton() })
-                        }
+                        Recipe(),
+                        Recipe(),
+                        Recipe(),
+                        Recipe(),
+                        Recipe(),
                     )
                 )
             },
