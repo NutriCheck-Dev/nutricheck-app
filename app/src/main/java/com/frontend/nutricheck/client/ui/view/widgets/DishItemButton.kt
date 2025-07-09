@@ -15,6 +15,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,7 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
-    trailingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (() -> Unit)? = { CustomEditButton() },
     foodComponent: FoodComponent,
     onClick: () -> Unit = {}
 ) {
@@ -35,7 +36,7 @@ fun DishItemButton(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 64.dp),
+            .shadow(6.dp, RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         onClick = onClick
@@ -43,6 +44,7 @@ fun DishItemButton(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(min = 64.dp)
                 .padding(horizontal = 4.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -81,7 +83,7 @@ fun DishItemButtonPreview() {
     AppTheme(darkTheme = true) {
     DishItemButton(
         foodComponent = Recipe(),
-        trailingContent = { CustomAddButton() },
+        trailingContent = { CustomEditButton() },
         onClick = {}
     )
         }

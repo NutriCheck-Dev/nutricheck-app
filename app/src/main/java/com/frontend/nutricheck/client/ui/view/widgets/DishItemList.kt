@@ -15,6 +15,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 fun DishItemList(
     modifier: Modifier = Modifier,
     list: List<FoodComponent> = emptyList(),
+    trailingContent: @Composable (() -> Unit)? = null ,
     onClick: () -> Unit = {}
 ) {
     Column(
@@ -24,7 +25,7 @@ fun DishItemList(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         list.forEach { item ->
-            DishItemButton(foodComponent = item, trailingContent = { CustomAddButton() })
+            DishItemButton(foodComponent = item, trailingContent = trailingContent)
         }
     }
 }

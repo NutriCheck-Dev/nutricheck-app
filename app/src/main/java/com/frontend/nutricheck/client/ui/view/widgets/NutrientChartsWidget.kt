@@ -1,14 +1,23 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
@@ -33,28 +42,62 @@ fun NutrientChartsWidget(
 ) {
     val nutrients = listOf(
         NutrientEntry("Calories", "kcal", recipe.calories, totalCalories),
-        NutrientEntry("Carbs", "g", recipe.carbohydrates, totalCarbs),
         NutrientEntry("Protein", "g", recipe.protein, totalProtein),
+        NutrientEntry("Carbs", "g", recipe.carbohydrates, totalCarbs),
         NutrientEntry("Fat", "g", recipe.fat, totalFat)
     )
+    
+    val pages: List<List<NutrientEntry>> = nutrients.chunked(2)
+    val pagerState = rememberPagerState(pageCount = { pages.size })
+    val colors = MaterialTheme.colorScheme
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        nutrients.chunked(2).forEach { rowItems ->
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(240.dp)
+        ) {
+            pageIndex ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                rowItems.forEach { entry ->
+                pages[pageIndex].forEach { entry ->
                     NutrientChart(
                         nutrient = entry.label,
                         subtitle = entry.unit,
                         actualValue = entry.actualValue.toInt(),
-                        totalValue = entry.dailyValue.toInt()
+                        totalValue = entry.dailyValue.toInt(),
+                        modifier = Modifier.weight(1f)
                     )
                 }
+                if (pages[pageIndex].size == 1) {
+                    Spacer(Modifier.weight(1f))
+                }
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val selected = colors.primary
+            val unselected = colors.onSurface.copy(alpha = 0.3f) //colors.onSurfaceVariant
+            repeat(pagerState.pageCount) { dotIndex ->
+                val color = if (pagerState.currentPage == dotIndex) selected else unselected
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                )
             }
         }
     }

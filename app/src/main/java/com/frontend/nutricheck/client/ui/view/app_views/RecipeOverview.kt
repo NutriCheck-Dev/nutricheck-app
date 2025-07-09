@@ -1,25 +1,22 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,7 +38,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
-import com.frontend.nutricheck.client.ui.view.widgets.NutrientChart
 import com.frontend.nutricheck.client.ui.view.widgets.NutrientChartsWidget
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +55,6 @@ fun RecipeOverview(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = modifier
@@ -105,31 +100,57 @@ fun RecipeOverview(
             contentPadding = innerPadding,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            item { Spacer(modifier = Modifier.height(24.dp)) }
 
             item {
                 NutrientChartsWidget(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(max = 300.dp)
+                        .padding(horizontal = 16.dp)
                 )
             }
 
             item {
+                Text(
+                    text = "Zutaten",
+                    style = styles.titleMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    //color = colors.onSurfaceVariant
+                )
+                Spacer(Modifier.height(10.dp))
+
                 DishItemList(
-                    list = ingredients
+                    list = ingredients,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                 )
             }
-
-            item { Spacer(modifier = Modifier.height(24.dp)) }
 
             if (description.isNotBlank()) {
                 item {
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = description,
-                        style = styles.bodyMedium
+                        text = "Beschreibung",
+                        style = styles.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        //color = colors.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(1.dp, colors.outline)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = description,
+                                style = styles.bodyMedium
+                                //color = colors.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -146,7 +167,8 @@ fun RecipeOverviewPreview() {
                 Recipe(),
                 Recipe(),
                 Recipe(),
-                )
+                ),
+            description = "Dies ist eine Beispielbeschreibung für ein Rezept. Hier können Details zum Zubereitungsvorgang, den Zutaten und anderen wichtigen Informationen stehen.",
         )
     }
 }
