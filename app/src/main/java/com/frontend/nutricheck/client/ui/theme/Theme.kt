@@ -7,7 +7,9 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
@@ -16,6 +18,14 @@ data class ExtendedColorScheme(
     val chartBlue: ColorFamily,
     val confirmation: ColorFamily,
 )
+
+val LocalExtendedColors = staticCompositionLocalOf<ExtendedColorScheme> {
+    error("No ExtendedColorScheme provided")
+}
+
+//Convenience Extension to access the extended colors
+val MaterialTheme.extended: ExtendedColorScheme
+    @Composable inline get() = LocalExtendedColors.current
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -364,10 +374,18 @@ fun AppTheme(
       else -> lightScheme
   }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+    val extendedScheme = when {
+        darkTheme -> extendedDark
+        else -> extendedLight
+    }
+    CompositionLocalProvider(
+        LocalExtendedColors provides extendedScheme
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography,
+            content = content
+        )
+    }
 }
 

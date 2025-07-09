@@ -48,7 +48,7 @@ fun RecipePage(
     onAddRecipeClick: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
-    var scrollState = rememberScrollState()
+    val scrollState = rememberScrollState()
 
     Surface(
         modifier = modifier.fillMaxSize()

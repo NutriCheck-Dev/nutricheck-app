@@ -112,7 +112,7 @@ fun CaloriesToday(
 @Composable
 fun CaloriesTodayPreview() {
     CaloriesToday(
-        dailyCalorieViewModel = DailyCalorieViewModel(),
+        //dailyCalorieViewModel = DailyCalorieViewModel(),
         calories = 2000,
         subtitle = "kcal",
         calorieValue = 1200,

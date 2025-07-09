@@ -102,7 +102,7 @@ fun MealBlock(
             color = Color(0xFFFFFFFF),
             thickness = 1.dp
         )
-        DishItemMealButton()
+        //DishItemMealButton()
         HorizontalDivider(
             color = Color(0xFFFFFFFF),
             thickness = 1.dp
