@@ -36,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
 
@@ -130,7 +131,8 @@ fun OnboardingSport(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterSportFrequency(selectedActivity)
+                onboardingViewModel.onEvent(OnboardingEvent
+                    .EnterSportFrequency(selectedActivity))
             })
         {
             Text(

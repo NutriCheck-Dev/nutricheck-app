@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
 
@@ -45,12 +46,6 @@ fun OnboardingGoal(
 ) {
     var selectedGoal by remember { mutableStateOf<WeightGoal?>(null) }
 
-    val gainWeightText =
-        stringResource(id = R.string.onboarding_label_goal_gain_weight)
-    val loseWeightText =
-        stringResource(id = R.string.onboarding_label_goal_lose_weight)
-    val maintainWeightText =
-        stringResource(id = R.string.onboarding_label_goal_maintain_weight)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -131,7 +126,7 @@ fun OnboardingGoal(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterWeightGoal(selectedGoal)
+                onboardingViewModel.onEvent(OnboardingEvent.EnterWeightGoal(selectedGoal))
             })
         {
             Text(

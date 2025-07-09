@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
 
@@ -115,7 +116,7 @@ fun OnboardingHeight(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterHeight(textState)
+                onboardingViewModel.onEvent(OnboardingEvent.EnterHeight(textState))
             })
         {
             Text(
