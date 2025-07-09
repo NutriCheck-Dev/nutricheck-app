@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 data class CalorieHistoryState(
-    val timePeriods: List<String> = emptyList(),
+    val timePeriodMap: List<String> = emptyList(),
     val selectedTimePeriod: String = "",
     val caloriesHistory: List<Pair<String, Int>> = emptyList()
 )
@@ -27,6 +27,8 @@ class CalorieHistoryViewModel @Inject constructor() : BaseCalorieHistoryViewMode
 
     val _events = MutableSharedFlow<CalorieHistoryEvent>()
     val events: SharedFlow<CalorieHistoryEvent> = _events.asSharedFlow()
+
+
 
     fun onEvent(event: CalorieHistoryEvent) {}
 

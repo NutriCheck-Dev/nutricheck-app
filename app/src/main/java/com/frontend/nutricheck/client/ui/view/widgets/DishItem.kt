@@ -86,25 +86,64 @@ fun DishItemButton(
     }
 }
 
+@Composable
+fun DishItemMealButton(
+    modifier: Modifier = Modifier,
+    title: String = "Gericht",
+    subtitle: String = "0 kcal, Portionsgröße",
+    onClick: () -> Unit = {}
+) {
+    Surface(
+        modifier = modifier
+            .height(40.dp)
+            .fillMaxWidth(),
+        color = Color(0xFF121212),
+        tonalElevation = 0.dp,
+        onClick = onClick
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)  // Gap 5
+        ) {
+
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White
+                )
+
+                VerticalDivider(
+                    modifier = Modifier
+                        .height(30.dp)
+                        .width(1.dp),
+                    color = Color(0xFF6E6E6E)
+                )
+
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(0xFFBDBDBD),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+
+        }
+    }
+}
+
 @Preview
 @Composable
 fun DishItemButtonPreview() {
-    DishItemButton(
-        trailingContent = {
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(Color(0xFFE0E0E0), shape = CircleShape)
-                    .padding(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Hinzufügen",
-                    tint = Color.Black
-                )
-            }
-        },
-        onClick = {}
-    )
+    DishItemMealButton()
 }
