@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">NutriCheck</string>
+    <string name="onboarding_title">Willkommen bei NutriCheck!</string>
+    <string name="onboarding_description">Dein smarter Kalorien- und Gewichtsbegleiter</string>
+    <string name="onboarding_button_start">Loslegen</string>
+    <string name="onboarding_button_next">Weiter</string>
+    <string name="onboarding_question_name">Wie heißt du?</string>
+    <string name="onboarding_question_birthdate">Wann bist du geboren?</string>
+    <string name="onboarding_question_height">Wie groß bist du?</string>
+    <string name="onboarding_question_weight">Wie viel wiegst du?</string>
+    <string name="onboarding_question_target_weight">Welches Zielgewicht hast du?</string>
+    <string name="onboarding_question_gender">Als was identifizierst du dich?</string>
+    <string name="onboarding_question_activity_level">Wie oft treibst du Sport?</string>
+    <string name="onboarding_question_goal">Welches Ziel verfolgst du aktuell?</string>
+
+    <string name="onboarding_label_name">Name</string>
+    <string name="onboarding_label_birthdate">Geburtsdatum</string>
+    <string name="onboarding_label_height">Größe (cm)</string>
+    <string name="onboarding_label_weight">Gewicht (kg)</string>
+    <string name="onboarding_label_target_weight">Zielgewicht (kg)</string>
+    <string name="onboarding_label_gender_male">Männlich</string>
+    <string name="onboarding_label_gender_female">Weiblich</string>
+    <string name="onboarding_label_gender_diverse">Divers</string>
+    <string name="onboarding_label_activity_level_never">Nie</string>
+    <string name="onboarding_label_activity_level_low">1–2/Woche</string>
+    <string name="onboarding_label_activity_level_medium">3–4/Woche</string>
+    <string name="onboarding_label_activity_level_high">5+/Woche</string>
+    <string name="onboarding_label_goal_lose_weight">Abnehmen</string>
+    <string name="onboarding_label_goal_gain_weight">Zunehmen</string>
+    <string name="onboarding_label_goal_maintain_weight">Gewicht halten</string>
+
 </resources>

@@ -1,7 +1,10 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -24,28 +26,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
-
+import java.util.Calendar
 
 @Preview
 @Composable
-fun OnboardingWeight(
+fun OnboardingBirthdate(
     onboardingViewModel : OnboardingViewModel = viewModel(),
+    ) {
+    var selectedDate by remember { mutableStateOf("") }
+    var showDatePicker by remember { mutableStateOf(false) }
 
-    ){
-    var textState by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -84,7 +92,7 @@ fun OnboardingWeight(
             }
             Text(
                 modifier = Modifier.padding(top = 150.dp).padding(bottom = 16.dp),
-                text = stringResource(id = R.string.onboarding_question_weight),
+                text = stringResource(id = R.string.onboarding_question_birthdate),
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     fontSize = 36.sp,
@@ -93,17 +101,32 @@ fun OnboardingWeight(
                     color = Color(0xFFFFFFFF),
                 )
             )
+
             OutlinedTextField(
+                value = selectedDate,
+                onValueChange = { },
                 modifier = Modifier
                     .width(300.dp)
-                    .height(56.dp),
-                value = textState,
-                onValueChange = { textState = it },
+                    .clickable { showDatePicker = true },
                 label = {
-                    Text(stringResource(id = R.string.onboarding_label_weight))
+                    Text(stringResource(id = R.string.onboarding_label_birthdate))
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                readOnly = true
             )
+
+        }
+        if (showDatePicker) {
+            val datePickerDialog = DatePickerDialog(
+            context,
+            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
+                selectedDate = "$selectedDay.${selectedMonth + 1}.$selectedYear"
+                showDatePicker = false
+            }, year, month, day
+            )
+            datePickerDialog.setOnDismissListener {
+                showDatePicker = false
+            }
+        datePickerDialog.show()
         }
         Button(
             modifier = Modifier
@@ -116,7 +139,7 @@ fun OnboardingWeight(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterWeight(textState)
+                onboardingViewModel.enterBirthdate(selectedDate)
             })
         {
             Text(
