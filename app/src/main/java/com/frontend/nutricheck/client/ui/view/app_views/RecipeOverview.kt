@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.ui.view.app_views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -92,34 +93,27 @@ fun RecipeOverview(
             }
         }
     ) { innerPadding ->
-
-        Box(
+        Column(
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .padding(innerPadding)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Column {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .border(1.dp, colors.outline)
-                ) {
-                    Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-                    DishItemList(
-                        list = ingredients
-                    )
+            DishItemList(
+                list = ingredients
+            )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-                    if (description.isNotBlank()) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = description,
-                            style = styles.bodyMedium
-                        )
-                    }
-                }
+            if (description.isNotBlank()) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = description,
+                    style = styles.bodyMedium
+                )
             }
         }
     }
