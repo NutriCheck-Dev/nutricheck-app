@@ -12,16 +12,40 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.theme.extended
+
+private data class ScaleDensity(
+    override val density: Float,
+    override val fontScale: Float
+) : Density
+
+@Composable
+fun ScalableContent(
+    scale: Float,
+    content: @Composable () -> Unit
+) {
+    val currentDens = LocalDensity.current
+    val scaled = ScaleDensity(
+        density = currentDens.density * scale,
+        fontScale = currentDens.fontScale * scale
+    )
+    CompositionLocalProvider(LocalDensity provides scaled) {
+        content()
+    }
+}
+
 
 @Composable
 fun NutrientChart(
@@ -45,7 +69,7 @@ fun NutrientChart(
     ) {
         Column(modifier = Modifier
             .width(160.dp)
-            .padding(vertical = 12.dp),
+            .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

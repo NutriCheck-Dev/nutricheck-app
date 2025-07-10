@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -53,13 +53,14 @@ fun NutrientChartsWidget(
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp)
+                .wrapContentHeight()
         ) {
             pageIndex ->
             Row(
@@ -69,11 +70,13 @@ fun NutrientChartsWidget(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 pages[pageIndex].forEach { entry ->
-                    NutrientChart(
+                    AutoSizedNutrientChart(
                         nutrient = entry.label,
                         subtitle = entry.unit,
                         actualValue = entry.actualValue.toInt(),
                         totalValue = entry.dailyValue.toInt(),
+                        baseHeight = 180.dp,
+                        baseWidth = 160.dp,
                         modifier = Modifier.weight(1f)
                     )
                 }
