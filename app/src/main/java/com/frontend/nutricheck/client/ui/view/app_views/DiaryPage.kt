@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -20,16 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
-import com.frontend.nutricheck.client.ui.view.widgets.CustomEditButton
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
-import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 enum class DiaryTab(val title: String) {
@@ -44,7 +38,7 @@ fun DiaryPage(
     //historyViewModel: HistoryViewModel = hiltViewModel(),
     //recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
 ) {
-    val colors = MaterialTheme.colorScheme
+    MaterialTheme.colorScheme
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.RECIPES) }
 
     Scaffold(

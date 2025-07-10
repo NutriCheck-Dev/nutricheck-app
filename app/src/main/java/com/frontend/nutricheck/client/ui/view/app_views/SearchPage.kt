@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -35,7 +34,7 @@ fun SearchPage(
     foodList: List<FoodComponent> = emptyList(),
     onBack: () -> Unit = {}
 ) {
-    val colors = MaterialTheme.colorScheme
+    MaterialTheme.colorScheme
     val scrollState = rememberScrollState()
 
     Scaffold(
