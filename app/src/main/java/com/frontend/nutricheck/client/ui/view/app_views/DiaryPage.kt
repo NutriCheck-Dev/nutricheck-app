@@ -1,11 +1,8 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import HistoryPage
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -61,9 +58,9 @@ fun DiaryPage(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
+                .padding(top = 14.dp)
                 .fillMaxSize()
         ) {
-            Spacer(Modifier.height(31.dp))
             when (selectedTab) {
                 DiaryTab.HISTORY -> HistoryPage(actions = actions)
                 DiaryTab.RECIPES -> RecipePage(

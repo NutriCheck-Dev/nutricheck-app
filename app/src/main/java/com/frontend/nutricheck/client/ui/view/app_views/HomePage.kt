@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import HistoryPage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

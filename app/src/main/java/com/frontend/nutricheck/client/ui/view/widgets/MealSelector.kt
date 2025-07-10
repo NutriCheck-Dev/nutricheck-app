@@ -33,7 +33,8 @@ fun MealSelector(
     modifier: Modifier = Modifier,
     title: String = "Mahlzeit auswählen",
     mealOptions: List<String> = listOf("Frühstück", "Mittagessen", "Abendessen", "Snack"),
-    onMealSelected: (String) -> Unit = {}
+    onMealSelected: (String) -> Unit = {},
+    onBack : () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     var expanded by remember { mutableStateOf(false) }
@@ -62,7 +63,7 @@ fun MealSelector(
                 )
             }
         },
-        navigationIcon = { NavigateBackButton() },
+        navigationIcon = { NavigateBackButton(onBack = onBack) },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = colors.surfaceContainerHigh,
             titleContentColor = colors.onSurfaceVariant,

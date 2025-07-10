@@ -6,6 +6,10 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,11 +19,13 @@ import androidx.compose.ui.unit.dp
 fun TabRowComponent(
     modifier: Modifier = Modifier,
     tabs: List<String> = emptyList(),
-    selectedTabIndex: Int,
+    selectedTabIndex: Int = 0,
     onTabSelected: (Int) -> Unit,
     selectedColor: Color = Color.White,
     unselectedColor: Color = Color(0xFF707179)
 ) {
+    var selectedTabIndex by remember { mutableIntStateOf(selectedTabIndex) }
+
     TabRow(
         modifier = modifier,
         selectedTabIndex = selectedTabIndex,

@@ -56,7 +56,7 @@ fun FoodComponentSearchBar(
     ) {
         SearchBar(
             modifier = Modifier
-                .align(Alignment.TopCenter)
+                .align(Alignment.Center)
                 .fillMaxWidth(0.8f)
                 .defaultMinSize(minHeight = 48.dp)
                 .heightIn(max = 56.dp)

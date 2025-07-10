@@ -55,14 +55,9 @@ fun RecipePage(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .align(Alignment.CenterHorizontally),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                FoodComponentSearchBar()
-            }
+
+            FoodComponentSearchBar()
+
 
             CustomTabRow(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
