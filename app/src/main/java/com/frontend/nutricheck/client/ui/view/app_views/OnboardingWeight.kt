@@ -116,6 +116,7 @@ fun OnboardingWeight(
             ),
             onClick = {
                 onboardingViewModel.enterWeight(textState)
+                onboardingViewModel.onEvent(OnboardingEvent.EnterWeight(textState))
             })
         {
             Text(

@@ -40,16 +40,8 @@ import com.nutricheck.frontend.R
 fun OnboardingSport(
     onboardingViewModel: OnboardingViewModel = viewModel(),
 ) {
-    var selectedOption by remember { mutableStateOf<String?>(null) }
+    var selectedActivity by remember { mutableStateOf<ActivityLevel?>(null) }
 
-    val neverActivityText =
-        stringResource(id = R.string.onboarding_label_activity_level_never)
-    val lowActivityText =
-        stringResource(id = R.string.onboarding_label_activity_level_low)
-    val mediumActivityText =
-        stringResource(id = R.string.onboarding_label_activity_level_medium)
-    val highActivityText =
-        stringResource(id = R.string.onboarding_label_activity_level_high)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -104,27 +96,24 @@ fun OnboardingSport(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
+            enumValues<ActivityLevel>().forEach { level ->
+                val textResId = when (level) {
+                    ActivityLevel.NEVER ->
+                        R.string.onboarding_label_activity_level_never
+                    ActivityLevel.OCCASIONALLY ->
+                        R.string.onboarding_label_activity_level_occasionally
+                    ActivityLevel.REGULARLY ->
+                        R.string.onboarding_label_activity_level_regularly
+                    ActivityLevel.FREQUENTLY ->
+                        R.string.onboarding_label_activity_level_frequently
+                }
 
-            SelectOption(
-                highActivityText,
-                onClick = { selectedOption = highActivityText },
-                selected = selectedOption == highActivityText
-            )
-            SelectOption(
-                mediumActivityText,
-                onClick = { selectedOption = mediumActivityText },
-                selected = selectedOption == mediumActivityText
-            )
-            SelectOption(
-                lowActivityText,
-                onClick = { selectedOption = lowActivityText },
-                selected = selectedOption == lowActivityText
-            )
-            SelectOption(
-                neverActivityText,
-                onClick = { selectedOption = neverActivityText },
-                selected = selectedOption == neverActivityText
-            )
+                SelectOption(
+                    text = stringResource(id = textResId),
+                    onClick = { selectedActivity = level },
+                    selected = selectedActivity == level
+                )
+            }
         }
         Button(
             modifier = Modifier
@@ -137,7 +126,8 @@ fun OnboardingSport(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterSportFrequency(selectedOption.toString())
+                onboardingViewModel.onEvent(OnboardingEvent
+                    .EnterSportFrequency(selectedActivity))
             })
         {
             Text(

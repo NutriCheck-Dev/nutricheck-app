@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
 import java.util.Calendar
@@ -139,8 +140,7 @@ fun OnboardingBirthdate(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterBirthdate(selectedDate)
-            })
+                onboardingViewModel.onEvent(OnboardingEvent.EnterBirthdate(selectedDate))})
         {
             Text(
                 text = stringResource(id = R.string.onboarding_button_next),

@@ -40,14 +40,8 @@ import com.nutricheck.frontend.R
 fun OnboardingGoal(
     onboardingViewModel: OnboardingViewModel = viewModel(),
 ) {
-    var selectedOption by remember { mutableStateOf<String?>(null) }
+    var selectedGoal by remember { mutableStateOf<WeightGoal?>(null) }
 
-    val gainWeightText =
-        stringResource(id = R.string.onboarding_label_goal_gain_weight)
-    val loseWeightText =
-        stringResource(id = R.string.onboarding_label_goal_lose_weight)
-    val maintainWeightText =
-        stringResource(id = R.string.onboarding_label_goal_maintain_weight)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -102,21 +96,19 @@ fun OnboardingGoal(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
-            SelectOption(
-                gainWeightText,
-                onClick = { selectedOption = gainWeightText },
-                selected = selectedOption == gainWeightText
-            )
-            SelectOption(
-                loseWeightText,
-                onClick = { selectedOption = loseWeightText },
-                selected = selectedOption == loseWeightText
-            )
-            SelectOption(
-                maintainWeightText,
-                onClick = { selectedOption = maintainWeightText },
-                selected = selectedOption == maintainWeightText
-            )
+            enumValues<WeightGoal>().forEach { goal ->
+                val textResId = when (goal) {
+                    WeightGoal.GAIN_WEIGHT -> R.string.onboarding_label_goal_gain_weight
+                    WeightGoal.LOSE_WEIGHT -> R.string.onboarding_label_goal_lose_weight
+                    WeightGoal.MAINTAIN_WEIGHT -> R.string.onboarding_label_goal_maintain_weight
+                }
+
+                SelectOption(
+                    text = stringResource(id = textResId),
+                    onClick = { selectedGoal = goal },
+                    selected = selectedGoal == goal
+                )
+            }
         }
 
         Button(
@@ -130,7 +122,7 @@ fun OnboardingGoal(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterWeightGoal(selectedOption.toString())
+                onboardingViewModel.onEvent(OnboardingEvent.EnterWeightGoal(selectedGoal))
             })
         {
             Text(

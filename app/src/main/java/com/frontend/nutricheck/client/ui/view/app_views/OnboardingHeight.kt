@@ -114,7 +114,7 @@ fun OnboardingHeight(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.enterHeight(textState)
+                onboardingViewModel.onEvent(OnboardingEvent.EnterHeight(textState))
             })
         {
             Text(
