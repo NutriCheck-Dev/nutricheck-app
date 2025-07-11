@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 
 @Composable
 fun MealHeader(
@@ -70,6 +77,7 @@ fun MealFooter(
             color = Color(0xFF4580FF),
             lineHeight = 16.sp,
             fontSize = 12.sp,
+            modifier = Modifier.clickable(onClick = onMoreClick),
             )
     }
 }
@@ -79,7 +87,8 @@ fun MealFooter(
 fun MealBlock(
     modifier: Modifier = Modifier,
     mealName: String,
-    calories: Double,
+    totalCalories: Double,
+    meals: List<MealItem>,
     addOnClick: () -> Unit = {},
     optionsOnClick: () -> Unit = {}
 ) {
@@ -89,16 +98,34 @@ fun MealBlock(
             .clip(RoundedCornerShape(8.dp))
             .background(Color(0xFF121212))
     ) {
-        MealHeader(mealName, calorieCount = calories, modifier = Modifier.padding(horizontal = 16.dp))
+        MealHeader(mealName, calorieCount = totalCalories, modifier = Modifier.padding(horizontal = 16.dp))
         HorizontalDivider(
             color = Color(0xFFFFFFFF),
             thickness = 1.dp
         )
-        //DishItemMealButton()
-        HorizontalDivider(
-            color = Color(0xFFFFFFFF),
-            thickness = 1.dp
-        )
+        meals.forEach { mealItem ->
+            val (name, calories, quantity) = when (mealItem) {
+                is MealFoodItem -> {
+                    val name = mealItem.foodProductId // Falls du FoodProduct laden willst, hier ersetzen
+                    val kcal = 0.0
+                    Triple(name, kcal, mealItem.quantity)
+                }
+                is MealRecipeItem -> {
+                    val name = mealItem.recipe?.name ?: "Unbekannt"
+                    val kcal = mealItem.recipe?.calories ?: 0.0
+                    Triple(name, kcal, mealItem.quantity)
+                }
+                else -> Triple("Unbekannt", 0.0, 0.0)
+            }
+
+            DishItemMealButton(
+                title = name,
+                calories = calories,
+                quantity = quantity
+            )
+
+            HorizontalDivider(color = Color(0xFFFFFFFF), thickness = 1.dp)
+        }
         MealFooter()
     }
 }
@@ -106,20 +133,21 @@ fun MealBlock(
 @Preview
 @Composable
 fun MealFooterPreview() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF121212))
-    ) {
-        MealHeader("XD", calorieCount = 200.0)
-
-        //Gericht & Divider zusammen, sodass es keinen doppelten Divider gibt
-        HorizontalDivider(
-            color = Color(0xFFFFFFFF),
-            thickness = 1.dp
-        )
-        MealFooter()
-    }
+    MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", 300.0, meals= listOf(MealRecipeItem(
+        mealId = "1",
+        quantity = 1.0,
+        recipeId = "recipe1",
+        recipe = Recipe(
+            id = "recipe1",
+            name = "Oatmeal",
+            instructions = "Healthy oatmeal with fruits",
+            ingredients = setOf(Ingredient(
+                recipeId = "ingredient1",
+                id = "Oats",
+                quantity = 100.0,
+                foodProduct = FoodProduct()
+            )),
+            calories = 300.0,
+        ))))
 
 }

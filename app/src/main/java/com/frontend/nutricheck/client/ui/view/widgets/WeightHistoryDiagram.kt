@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
-import androidx.compose.ui.layout.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,13 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,10 +60,13 @@ fun WeightHistoryDiagram(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
-
+            var selected by remember { mutableStateOf(1) }
             ChartRangeSwitcher(
-                selectedPeriod = selectedRange,
-                onPeriodSelected = onPeriodSelected
+                options = listOf("7T", "30T", "90T"),
+                selectedOption = selected,
+                onSelect = { clicked ->
+                    selected = listOf("7T", "30T", "90T").indexOf(clicked)
+                }
             )
         }
 
@@ -112,7 +117,7 @@ fun WeightLineChart(data: List<Float>, selectedRange: String, modifier: Modifier
         Canvas(
             modifier = modifier
                 .fillMaxWidth()
-                .height(66.dp)
+                .height(70.dp)
                 .padding(horizontal = 30.dp) // <- exakt das hier
 
         ) {
@@ -184,5 +189,5 @@ fun WeightLineChart(data: List<Float>, selectedRange: String, modifier: Modifier
 @Preview(showBackground = true)
 @Composable
 fun LineChartPreview() {
-    CalorieHistoryDiagram()
+    WeightHistoryDiagram()
 }
