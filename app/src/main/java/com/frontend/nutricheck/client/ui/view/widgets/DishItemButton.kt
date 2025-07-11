@@ -32,7 +32,7 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
-    trailingContent: @Composable (() -> Unit)? = { CustomEditButton() },
+    trailingContent: @Composable (() -> Unit)? = { CustomDetailsButton() },
     foodComponent: FoodComponent,
     onClick: () -> Unit = {}
 ) {
@@ -141,7 +141,7 @@ fun DishItemButtonPreview() {
     AppTheme(darkTheme = true) {
     DishItemButton(
         foodComponent = Recipe(),
-        trailingContent = { CustomEditButton() },
+        trailingContent = { CustomDetailsButton() },
         onClick = {}
     )
         }

@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
-import com.frontend.nutricheck.client.ui.view.widgets.CustomEditButton
+import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
@@ -93,7 +93,7 @@ fun CreateRecipePage(
                 DishItemList(
                     list = ingredients,
                     isEditing = true,
-                    trailingContent = { CustomEditButton() }
+                    trailingContent = { CustomDetailsButton() }
                 )
             }
 
