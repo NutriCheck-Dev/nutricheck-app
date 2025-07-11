@@ -1,8 +1,10 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,12 +15,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -31,12 +39,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.nutricheck.frontend.R
+import java.util.Calendar
 
 @Preview
 @Composable
-fun OnboardingWelcome(
-    onboardingViewModel: OnboardingViewModel = viewModel(),
-) {
+fun OnboardingBirthdate(
+    onboardingViewModel : OnboardingViewModel = viewModel(),
+    ) {
+    var selectedDate by remember { mutableStateOf("") }
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -73,43 +91,43 @@ fun OnboardingWelcome(
                     )
                 )
             }
-            Column(
-                modifier = Modifier.padding(top = 100.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.onboarding_title),
-                    style = TextStyle(
-                        fontSize = 45.sp,
-                        lineHeight = 52.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFFFFFFFF),
-                        textAlign = TextAlign.Center,
-                    ),
-                    modifier = Modifier.padding(bottom = 16.dp)
+            Text(
+                modifier = Modifier.padding(top = 150.dp).padding(bottom = 16.dp),
+                text = stringResource(id = R.string.onboarding_question_birthdate),
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontSize = 36.sp,
+                    lineHeight = 44.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFFFFFFFF),
                 )
-                Text(
-                    text = stringResource(id = R.string.onboarding_description),
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0x99FFFFFF),
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 0.25.sp,
-                    )
-                )
-                Image(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .width(150.dp)
-                        .height(150.dp),
-                    painter = painterResource(id = R.drawable.onboarding_graph),
-                    contentDescription = "Onboarding Graph",
+            )
 
-                    )
+            OutlinedTextField(
+                value = selectedDate,
+                onValueChange = { },
+                modifier = Modifier
+                    .width(300.dp)
+                    .clickable { showDatePicker = true },
+                label = {
+                    Text(stringResource(id = R.string.onboarding_label_birthdate))
+                },
+                readOnly = true
+            )
+
+        }
+        if (showDatePicker) {
+            val datePickerDialog = DatePickerDialog(
+            context,
+            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
+                selectedDate = "$selectedDay.${selectedMonth + 1}.$selectedYear"
+                showDatePicker = false
+            }, year, month, day
+            )
+            datePickerDialog.setOnDismissListener {
+                showDatePicker = false
             }
+        datePickerDialog.show()
         }
         Button(
             modifier = Modifier
@@ -122,11 +140,10 @@ fun OnboardingWelcome(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.StartOnboarding(1))
-            })
+                onboardingViewModel.onEvent(OnboardingEvent.EnterBirthdate(selectedDate))})
         {
             Text(
-                text = stringResource(id = R.string.onboarding_button_start),
+                text = stringResource(id = R.string.onboarding_button_next),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight(500),
