@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import HistoryPage
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth

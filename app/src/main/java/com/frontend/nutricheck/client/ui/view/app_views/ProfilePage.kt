@@ -51,11 +51,11 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 @Composable
 fun ProfilePage(
     actions: NavigationActions,
-    username : String,
-    userAge : Int,
-    userHeight : Int,
-    userWeight : Double,
-    darkmode : Boolean
+    username : String = "Moritz",
+    userAge : Int = 25,
+    userHeight : Int = 180,
+    userWeight : Double = 75.0,
+    darkmode : Boolean = true
 ) {
     val greetingText = stringResource(id = R.string.profile_name, username)
     val userHeightText = stringResource(id = R.string.height_cm, userHeight)

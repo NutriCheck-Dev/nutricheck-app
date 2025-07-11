@@ -122,7 +122,7 @@ fun OnboardingWelcome(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.StartOnboarding(1))
+                onboardingViewModel.onEvent(OnboardingEvent.StartOnboarding)
             })
         {
             Text(
