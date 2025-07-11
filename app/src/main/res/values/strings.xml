@@ -22,21 +22,25 @@
     <string name="onboarding_label_gender_female">Weiblich</string>
     <string name="onboarding_label_gender_diverse">Divers</string>
     <string name="onboarding_label_activity_level_never">Nie</string>
-    <string name="onboarding_label_activity_level_occasionally">1–2/Woche</string>
-    <string name="onboarding_label_activity_level_regularly">3–4/Woche</string>
-    <string name="onboarding_label_activity_level_frequently">5+/Woche</string>
+    <string name="onboarding_label_activity_level_low">1–2/Woche</string>
+    <string name="onboarding_label_activity_level_medium">3–4/Woche</string>
+    <string name="onboarding_label_activity_level_high">5+/Woche</string>
     <string name="onboarding_label_goal_lose_weight">Abnehmen</string>
     <string name="onboarding_label_goal_gain_weight">Zunehmen</string>
     <string name="onboarding_label_goal_maintain_weight">Gewicht halten</string>
 
-    <string name="onboarding_error_name_required">Das Namensfeld darf nicht leer sein.</string>
-    <string name="onboarding_error_birthdate_required">Das Geburtsdatum darf nicht leer sein.</string>
-    <string name="onboarding_error_height_required">Die Größe darf nicht leer sein.</string>
-    <string name="onboarding_error_weight_required">Das Gewicht darf nicht leer sein.</string>
-    <string name="onboarding_error_target_weight_required">Das Zielgewicht darf nicht leer sein.</string>
-    <string name="onboarding_error_gender_required">Bitte wähle ein Geschlecht aus.</string>
-    <string name="onboarding_error_activity_level_required">Bitte wähle dein Aktivitätslevel aus.</string>
-    <string name="onboarding_error_goal_required">Bitte wähle ein Ziel aus.</string>
+
+    <string name="profile_name">Hi, %1$s</string>
+    <string name="profile_menu_age">Alter</string>
+    <string name="profile_menu_height">Größe</string>
+    <string name="profile_menu_weight">Gewicht</string>
+    <string name="age_years">%1$s Jahre</string>
+    <string name="height_cm">%1$s cm</string>
+    <string name="weight_kg">%1$s kg</string>
+    <string name="profile_menu_item_personal_data">Persönliche Daten &amp; Ziel</string>
+    <string name="profile_menu_item_weight_history">Gewichtsverlauf</string>
+    <string name="profile_menu_item_darkmode">Darkmode</string>
+    <string name="profile_menu_item_language">Sprache</string>
 
 
 </resources>

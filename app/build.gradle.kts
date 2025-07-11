@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
     implementation (libs.retrofit)
@@ -79,5 +80,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.8.3")
     implementation("com.google.android.gms:play-services-base:18.7.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation("androidx.compose.material:material-icons-extended-android:1.6.7")
 
 }

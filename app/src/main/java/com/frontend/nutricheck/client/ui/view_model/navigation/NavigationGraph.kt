@@ -24,7 +24,8 @@ fun NavigationGraph(
     ) {
         composable(Screen.HomePage.route) { HomePage(actions = actions) }
         composable(Screen.DiaryPage.route) { DiaryPage(actions = actions) }
-        composable(Screen.ProfilePage.route) { ProfilePage(actions = actions) }
+        composable(Screen.ProfilePage.route) { ProfilePage(
+            actions = actions) }
         composable(Screen.Onboarding.route) {  }
         composable(Screen.RecipePage.route) {  }
         composable(Screen.HistoryPage.route) {  }
