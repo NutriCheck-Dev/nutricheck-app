@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import HistoryPage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +43,7 @@ fun HomePage(
             .background(Color.Black)
             .padding(horizontal = 7.dp)
     ) {
+        Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp) // Abstand zwischen den Boxen
@@ -58,9 +58,9 @@ fun HomePage(
                 calorieGoal = 2000             // Beispielwert für Füllstand
             )
             NutrientBreakdown(nutrients = mapOf(
-                "Eiweiß" to 28,
-                "Kohlenhydrate" to 220,
-                "Fett" to 58
+                "Eiweiß" to (20 to 146),
+                "Kohlenhydrate" to (220 to 300),
+                "Fett" to (58 to 90)
             ),
                 modifier = Modifier
                     .fillMaxSize().weight(1f)
@@ -70,6 +70,7 @@ fun HomePage(
         CalorieHistoryDiagram()
         Spacer(modifier = Modifier.height(14.dp))
         WeightHistoryDiagram()
+
     }
 }
 

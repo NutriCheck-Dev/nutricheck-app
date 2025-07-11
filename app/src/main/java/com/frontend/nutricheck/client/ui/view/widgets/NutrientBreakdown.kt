@@ -25,14 +25,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.em
 
-
 @Composable
 fun NutrientBreakdown(
     modifier: Modifier = Modifier,
-    nutrients: Map<String, Int>
+    nutrients: Map<String, Pair<Int, Int>> // key = label, value = Pair(value, goal)
 ) {
     Surface(
-
         color = Color(0xff121212),
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -58,9 +56,14 @@ fun NutrientBreakdown(
                     .offset(20.dp, 49.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                MacroProgress(label = "Eiweiß", value = "76g", progress = 83f / 146f)
-                MacroProgress(label = "Kohlenhydrate", value = "220g", progress = 108f / 146f)
-                MacroProgress(label = "Fett", value = "58g", progress = 54f / 146f)
+                nutrients.forEach { (label, valueGoal) ->
+                    val (value, goal) = valueGoal
+                    MacroProgress(
+                        label = label,
+                        value = "${value}g",
+                        progress = value.toFloat() / goal.toFloat()
+                    )
+                }
             }
         }
     }
@@ -118,12 +121,10 @@ fun MacroProgress(
 fun NutrientBreakdownPreview() {
     NutrientBreakdown(
         nutrients = mapOf(
-            "Eiweiß" to 76,
-            "Kohlenhydrate" to 220,
-            "Fett" to 58
+            "Eiweiß" to (20 to 146),
+            "Kohlenhydrate" to (220 to 300),
+            "Fett" to (58 to 90)
         ),
-        modifier = Modifier
-
-            .padding(16.dp)
+        modifier = Modifier.padding(16.dp)
     )
 }
