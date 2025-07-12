@@ -6,8 +6,7 @@ import java.util.Date
 
 @Entity(tableName = "histories")
 data class HistoryDay(
-    @PrimaryKey val id: String = "",
-    val date: Date = Date(),
+    @PrimaryKey val date: Date = Date(),
     val calories: Double = 0.0,
     val carbohydrates: Double = 0.0,
     val protein: Double = 0.0,

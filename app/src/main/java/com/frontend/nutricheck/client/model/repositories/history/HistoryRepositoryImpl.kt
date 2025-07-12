@@ -4,6 +4,7 @@ import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.persistence.DatabaseProvider
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
 class HistoryRepositoryImpl(context: Context) : HistoryRepository {
@@ -40,7 +41,7 @@ class HistoryRepositoryImpl(context: Context) : HistoryRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getHistoryById(id: String): HistoryDay? = historyDao.getById(id)
+    override suspend fun getHistoryByDate(date: Date): Flow<HistoryDay> = historyDao.getByDate(date)
     override suspend fun addMeal(meal: Meal) {
         TODO("Not yet implemented")
     }

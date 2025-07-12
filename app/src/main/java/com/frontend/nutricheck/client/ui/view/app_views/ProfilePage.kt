@@ -43,8 +43,6 @@ import com.nutricheck.frontend.R
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 

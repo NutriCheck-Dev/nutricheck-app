@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "recipes")
 data class Recipe(
-    @PrimaryKey override val id: String = "",
+    @PrimaryKey(autoGenerate = true) override val id: String = "",
     override val name: String = "Gericht",
     override val calories: Double = 0.0,
     override val carbohydrates: Double = 0.0,

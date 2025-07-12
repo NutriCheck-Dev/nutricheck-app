@@ -1,11 +1,12 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.Date
 
 @Entity(tableName = "user_data")
 data class UserData(
-    val username: String? = "",
+    @PrimaryKey val username: String? = "",
     val birthdate: Date = Date(),
     val gender: Gender? = Gender.DIVERS,
     val height: Double? = 0.0,

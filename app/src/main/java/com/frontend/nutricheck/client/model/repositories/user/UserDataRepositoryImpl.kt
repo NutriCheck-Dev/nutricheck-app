@@ -4,6 +4,7 @@ import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.data_sources.persistence.DatabaseProvider
+import kotlinx.coroutines.flow.Flow
 
 class UserDataRepositoryImpl(context: Context): UserDataRepository {
     private val userDataDao = DatabaseProvider.getDatabase(context).userDataDao()
@@ -17,7 +18,7 @@ class UserDataRepositoryImpl(context: Context): UserDataRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getAllWeights(): List<Weight> = weightDao.getAllWeights()
+    override suspend fun getAllWeights(): Flow<List<Weight>> = weightDao.getAllWeights()
     override suspend fun addWeight(weight: Weight) {
         TODO("Not yet implemented")
     }
