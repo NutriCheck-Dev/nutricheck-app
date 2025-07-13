@@ -15,18 +15,22 @@ data class Recipe(
     val ingredients: Set<Ingredient> = emptySet(),
     val instructions: String? = null,
     val visibility: RecipeVisibility = RecipeVisibility.OWNER,
+    val report: RecipeReport = RecipeReport()
 ) : FoodComponent
 {
     fun changeName(newName: String): Recipe {
         return this.copy(name = newName)
     }
+
     fun changeServings(newServings: Int): Recipe {
         return this.copy(servings = newServings)
     }
+
     fun addIngredient(ingredient: Ingredient): Recipe {
         val updatedRecipe = this.copy(ingredients = this.ingredients + ingredient)
         return updatedRecipe.calculateNutritionalValues()
     }
+
     fun removeIngredient(ingredient: Ingredient): Recipe {
         val updatedRecipe = this.copy(ingredients = this.ingredients - ingredient)
         return updatedRecipe.calculateNutritionalValues()
@@ -34,6 +38,10 @@ data class Recipe(
 
     fun changeInstructions(newInstructions: String?): Recipe {
         return this.copy(instructions = newInstructions)
+    }
+
+    fun addReport(newReport: RecipeReport): Recipe {
+        return this.copy(report = newReport)
     }
     fun calculateNutritionalValues(): Recipe {
         val totalCalories = ingredients.sumOf { it.foodProduct.calories }
