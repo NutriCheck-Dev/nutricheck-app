@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
-import com.nutricheck.frontend.R
+import com.frontend.nutricheck.client.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

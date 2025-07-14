@@ -52,5 +52,10 @@
     <string name="profile_menu_item_darkmode">Darkmode</string>
     <string name="profile_menu_item_language">Sprache</string>
 
+    <string name="navigation_bar_label_home">Start</string>
+    <string name="navigation_bar_label_profile">Profil</string>
+    <string name="navigation_bar_label_add">Hinzufügen</string>
+    <string name="navigation_bar_label_diary">Tagebuch</string>
+
 
 </resources>

@@ -35,7 +35,6 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 @Composable
 fun RecipePage(
     modifier: Modifier = Modifier,
-    actions: NavigationActions,
     //viewModel: RecipePageViewModel = hiltViewModel(),
     title: String = "Rezepte",
     localRecipes: @Composable () -> Unit = {},
@@ -126,7 +125,6 @@ fun RecipePagePreview() {
                     )
                 )
             },
-            actions = previewActions,
         )
     }
 }
