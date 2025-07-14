@@ -35,7 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
-import com.nutricheck.frontend.R
+import com.frontend.nutricheck.client.R
 
 @Preview
 @Composable

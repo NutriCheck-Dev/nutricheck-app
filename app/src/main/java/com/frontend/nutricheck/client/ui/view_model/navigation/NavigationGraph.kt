@@ -1,8 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,20 +10,17 @@ import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 
 @Composable
 fun NavigationGraph(
-    modifier: Modifier = Modifier,
     navController: NavHostController
 ) {
-    val actions = remember(navController) { NavigationActions(navController)}
 
     NavHost(
         navController = navController,
         startDestination = Screen.HomePage.route,
-        modifier = modifier
     ) {
-        composable(Screen.HomePage.route) { HomePage(actions = actions) }
-        composable(Screen.DiaryPage.route) { DiaryPage(actions = actions) }
-        composable(Screen.ProfilePage.route) { ProfilePage(
-            actions = actions) }
+        composable(Screen.HomePage.route) { HomePage() }
+        composable(Screen.DiaryPage.route) { DiaryPage() }
+        composable(Screen.ProfilePage.route) { ProfilePage() }
+
         composable(Screen.Onboarding.route) {  }
         composable(Screen.RecipePage.route) {  }
         composable(Screen.HistoryPage.route) {  }

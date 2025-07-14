@@ -1,63 +1,58 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
-
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
+import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 
 @Composable
 fun BottomNavigationBar(
-    actions: NavigationActions,
-    selected: String,
+    navController:  NavHostController,
+    currentDestination: String,
     onAddClicked: () -> Unit = {}
 ) {
     NavigationBar {
-        var selectedTab by rememberSaveable { mutableStateOf(selected) }
 
         NavigationBarItem(
-            selected = selectedTab == "home",
-            onClick = {
-                actions.toHome()
-                selectedTab = "home"
-                      },
-            icon = { /* Icon for Home */ },
-            label = { /* Label for Home */ }
+            selected = currentDestination == Screen.HomePage.route,
+            onClick = { navController.navigate(Screen.HomePage.route) { launchSingleTop = true } },
+            icon = { Icon(Icons.Default.Home,
+                contentDescription = stringResource(id = R.string.navigation_bar_label_home)) },
+            label = { Text(stringResource(id = R.string.navigation_bar_label_home)) }
         )
 
         NavigationBarItem(
-            selected = selectedTab == "diary",
-            onClick = {
-                actions.toDiary()
-                selectedTab = "diary"
-                      },
-            icon = { /* Icon for Diary */ },
-            label = { /* Label for Diary */ }
+            selected = currentDestination == Screen.DiaryPage.route,
+            onClick = { navController.navigate(Screen.DiaryPage.route) { launchSingleTop = true } },
+            icon = { Icon(Icons.Default.DateRange,
+                   contentDescription = stringResource(id = R.string.navigation_bar_label_diary)) },
+            label = { Text(stringResource (id = R.string.navigation_bar_label_diary)) }
         )
 
         NavigationBarItem(
-            selected = selectedTab == "profile",
-            onClick = {
-                actions.toProfile()
-                selectedTab = "profile"
-                      },
-            icon = { /* Icon for Profile */ },
-            label = { /* Label for Profile */ }
+            selected = currentDestination == Screen.ProfilePage.route,
+            onClick = { navController.navigate(Screen.ProfilePage.route) { launchSingleTop = true } },
+            icon = { Icon((Icons.Default.AccountCircle),
+                contentDescription = stringResource(id = R.string.navigation_bar_label_profile)) },
+            label = { Text(stringResource(id = R.string.navigation_bar_label_profile)) }
         )
 
-        NavigationBarItem(
-            selected = false,
-            onClick = { onAddClicked() },
-            icon = { Icon(Icons.Default.Add, contentDescription = "Hinzufügen") },
-            label = { Text("Hinzufügen") }
-        )
+//        NavigationBarItem(
+//            selected = currentDestination == "add",
+//            onClick = { onAddClicked() },
+//            icon = { Icon(Icons.Default.AddCircle,
+//                contentDescription = stringResource(id = R.string.navigation_bar_label_add)) },
+//            label = { Text(stringResource(id = R.string.navigation_bar_label_add)) }
+//        )
     }
 }

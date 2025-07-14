@@ -13,8 +13,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
+import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.NutrientChartsWidget
@@ -48,13 +53,14 @@ fun RecipeOverview(
     ingredients: List<FoodComponent> = emptyList(),
     description: String = "",
     onFoodClick: (String) -> Unit = {},
-    onEditClick: (String) -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onDoneClick: (String) -> Unit = {},
     onSave: (String, String) -> Unit = { _, _ -> },
     onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    var isEditing by remember { mutableStateOf(false) }
+    var isEditing by remember { mutableStateOf(true) }
     var titleText by remember { mutableStateOf(title) }
     var descriptionText by remember { mutableStateOf(description) }
 
@@ -75,7 +81,7 @@ fun RecipeOverview(
                                 imeAction = ImeAction.Done
                             ),
                             keyboardActions = KeyboardActions(
-                                onDone = { onEditClick(titleText) }
+                                onDone = { onDoneClick(titleText) }
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -89,6 +95,19 @@ fun RecipeOverview(
                         )
                     }
                 },
+                actions = {
+                    if (!isEditing) {
+                        IconButton(onClick = onEditClick) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit Recipe",
+                                tint = colors.onSurface
+                            )
+                        }
+                    } else {
+                        CustomDetailsButton()
+                    }
+                }
             )
         }
     ) { innerPadding ->

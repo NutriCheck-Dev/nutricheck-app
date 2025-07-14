@@ -5,7 +5,7 @@ import androidx.compose.ui.text.font.FontFamily
 
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.googlefonts.Font
-import com.nutricheck.frontend.R
+import com.frontend.nutricheck.client.R
 
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",

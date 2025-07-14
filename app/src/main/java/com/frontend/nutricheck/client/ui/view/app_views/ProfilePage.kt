@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -39,16 +38,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nutricheck.frontend.R
+import com.frontend.nutricheck.client.R
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
-import androidx.navigation.NavHostController
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 @Composable
 fun ProfilePage(
-    actions: NavigationActions,
     username : String = "Moritz",
     userAge : Int = 25,
     userHeight : Int = 180,
@@ -150,33 +147,41 @@ fun ProfilePage(
                 Column {
                     MenuItem(
                         icon = Icons.Default.AccountCircle,
+                        contentDescription =
+                            stringResource(id = R.string.profile_menu_item_personal_data),
                         stringResource(id = R.string.profile_menu_item_personal_data),
                         onClick = { /* Handle click */ })
-                    Divider(color = Color.Gray,
+                    HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
                         thickness = 2.dp)
                     MenuItem(
                         icon = Icons.Default.BarChart,
+                        contentDescription =
+                            stringResource(id = R.string.profile_menu_item_weight_history),
                         stringResource(id = R.string.profile_menu_item_weight_history),
                         onClick = { /* Handle click */ })
-                    Divider(color = Color.Gray,
+                    HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
                         thickness = 2.dp
                     )
                     MenuItemWithSwitch(
                         icon = Icons.Filled.DarkMode,
+                        contentDescription =
+                            stringResource(id = R.string.profile_menu_item_darkmode),
                         text = stringResource(id = R.string.profile_menu_item_darkmode),
                         isChecked = darkmode,
                         onCheckedChange = { darkmode = it },
                     )
-                    Divider(color = Color.Gray,
+                    HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
                         thickness = 2.dp)
                     MenuItem(
                         icon = Icons.Filled.Language,
+                        contentDescription =
+                            stringResource(id = R.string.profile_menu_item_language),
                         stringResource(id = R.string.profile_menu_item_language),
                         onClick = { /* Handle click */ })
                 }
@@ -185,7 +190,7 @@ fun ProfilePage(
     }
 }
 @Composable
-fun MenuItem(icon: ImageVector, text: String, onClick: () -> Unit) {
+fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clickable(onClick = onClick)
@@ -196,7 +201,7 @@ fun MenuItem(icon: ImageVector, text: String, onClick: () -> Unit) {
 
         Icon(
             icon,
-            contentDescription = null,
+            contentDescription,
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = text,
@@ -215,6 +220,7 @@ fun MenuItem(icon: ImageVector, text: String, onClick: () -> Unit) {
 @Composable
 fun MenuItemWithSwitch(
     icon: ImageVector,
+    contentDescription: String,
     text: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -224,12 +230,12 @@ fun MenuItemWithSwitch(
             .clickable { onCheckedChange(!isChecked) }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 8.dp, bottom = 8.dp),
+            .padding(top = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             icon,
-            contentDescription = null
+            contentDescription,
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = text, color = Color.White, fontSize = 16.sp)
@@ -250,9 +256,7 @@ fun MenuItemWithSwitch(
 @Preview
 @Composable
 fun ProfilePagePreview() {
-    val navController = NavHostController(context = androidx.compose.ui.platform.LocalContext.current)
     ProfilePage(
-        actions = NavigationActions(navController),
         username = "Moritz",
         userAge = 25,
         userHeight = 180,

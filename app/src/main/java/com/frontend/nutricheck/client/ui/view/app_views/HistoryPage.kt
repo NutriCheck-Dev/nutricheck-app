@@ -22,7 +22,6 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 @Composable
 fun HistoryPage(
     modifier: Modifier = Modifier,
-    actions: NavigationActions,
     viewModel: HistoryViewModel = hiltViewModel(),
     onSwitchClick: (String) -> Unit = {}
 ) {
@@ -63,5 +62,5 @@ fun HistoryPage(
 @Composable
 fun HistoryPagePreview() {
     val navController = rememberNavController()
-    HistoryPage(actions = NavigationActions(navController)) // Dummy NavigationActions
+    HistoryPage() // Dummy NavigationActions
 }

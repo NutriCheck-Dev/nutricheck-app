@@ -3,14 +3,16 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-kapt")
+    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "com.nutricheck.frontend"
+    namespace = "com.frontend.nutricheck.client"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.nutricheck.frontend"
+        applicationId = "com.frontend.nutricheck.client"
         minSdk = 29
         targetSdk = 35
         versionCode = 1
@@ -42,6 +44,9 @@ android {
         compose = true
     }
 }
+configurations.all {
+    exclude(group = "com.intellij", module = "annotations")
+}
 
 dependencies {
 
@@ -61,7 +66,8 @@ dependencies {
     implementation(libs.jakarta.inject.api)
     implementation("com.patrykandpatrick.vico:compose:1.13.0")
     implementation("com.patrykandpatrick.vico:core:1.13.0")
-    implementation(libs.androidx.room.compiler)
+    kapt(libs.androidx.room.compiler)
+    kapt(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,6 +87,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-base:18.7.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("androidx.compose.material:material-icons-extended-android:1.6.7")
+    implementation("androidx.navigation:navigation-compose:2.4.0-alpha10")
+    implementation(libs.hilt.android)
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
 
 }

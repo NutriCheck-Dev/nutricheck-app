@@ -29,7 +29,6 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,
-    actions: NavigationActions,
     calorieHistoryViewModel: HistoryViewModel = hiltViewModel(),
     dailyCalorieViewModel: DailyCalorieViewModel = hiltViewModel(),
     weightHistoryViewModel: HistoryViewModel = hiltViewModel(),
@@ -78,5 +77,5 @@ fun HomePage(
 @Composable
 fun HomePageXDefaultPreview() {
     val navController = rememberNavController()
-    HomePage(actions = NavigationActions(navController))
+    HomePage()
 }

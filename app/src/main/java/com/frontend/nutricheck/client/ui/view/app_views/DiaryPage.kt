@@ -32,7 +32,6 @@ enum class DiaryTab(val title: String) {
 @Composable
 fun DiaryPage(
     modifier: Modifier = Modifier,
-    actions: NavigationActions,
     //historyViewModel: HistoryViewModel = hiltViewModel(),
     //recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
 ) {
@@ -63,7 +62,7 @@ fun DiaryPage(
                 .fillMaxSize()
         ) {
             when (selectedTab) {
-                DiaryTab.HISTORY -> HistoryPage(actions = actions)
+                DiaryTab.HISTORY -> HistoryPage()
                 DiaryTab.RECIPES -> RecipePage(
                     localRecipes = {
                         DishItemList(
@@ -85,7 +84,6 @@ fun DiaryPage(
                             )
                         )
                     },
-                    actions = actions,
                 )
             }
         }
@@ -95,10 +93,7 @@ fun DiaryPage(
 @Preview
 @Composable
 fun DiaryPagePreview() {
-    val navController = rememberNavController()
-    val previewActions = NavigationActions(navController)
-
     AppTheme(darkTheme = true) {
-        DiaryPage(actions = previewActions)
+        DiaryPage()
     }
 }
