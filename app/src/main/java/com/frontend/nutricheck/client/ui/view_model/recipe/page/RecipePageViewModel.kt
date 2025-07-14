@@ -31,12 +31,11 @@ sealed interface RecipePageEvent {
 
 @HiltViewModel
 class RecipePageViewModel @Inject constructor(
-    initialState: RecipePageState = RecipePageState(),
     private val recipeRepository: RecipeRepository
 ) : BaseRecipePageViewModel() {
 
 
-    private val _recipePageState = MutableStateFlow(initialState)
+    private val _recipePageState = MutableStateFlow(RecipePageState())
     init {
         viewModelScope.launch {
             combine(

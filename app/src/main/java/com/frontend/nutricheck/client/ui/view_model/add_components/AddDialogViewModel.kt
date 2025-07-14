@@ -23,7 +23,6 @@ sealed interface AddDialogEvent {
 
 @HiltViewModel
 class AddDialogViewModel @Inject constructor(
-    initialState: AddDialogState = AddDialogState(),
     private val recipeRepository: RecipeRepository
 ) : BaseAddDialogViewModel() {
     private val _addDialogState = MutableStateFlow(AddDialogState())

@@ -5,8 +5,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDataDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class UserDataRepositoryImpl(
+class UserDataRepositoryImpl @Inject constructor(
     private val weightDao: WeightDao,
     private val userDataDao: UserDataDao
 ): UserDataRepository {

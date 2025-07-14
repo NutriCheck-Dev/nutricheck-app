@@ -21,9 +21,7 @@ sealed interface WeightHistoryEvent {
 }
 
 @HiltViewModel
-class WeightHistoryRepository @Inject constructor(
-    initialState: WeightHistoryState = WeightHistoryState(),
-) : BaseWeightHistoryRepository() {
+class WeightHistoryRepository @Inject constructor() : BaseWeightHistoryRepository() {
     private val _weightHistoryState = MutableStateFlow(WeightHistoryState())
     val weightHistoryState = _weightHistoryState.asStateFlow()
 

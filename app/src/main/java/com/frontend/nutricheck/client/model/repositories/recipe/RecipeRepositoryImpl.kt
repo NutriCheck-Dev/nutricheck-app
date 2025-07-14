@@ -3,8 +3,11 @@ package com.frontend.nutricheck.client.model.repositories.recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class RecipeRepositoryImpl(private val recipeDao: RecipeDao) : RecipeRepository {
+class RecipeRepositoryImpl @Inject constructor(
+    private val recipeDao: RecipeDao
+) : RecipeRepository {
 
     override suspend fun insertRecipe(recipe: Recipe) = recipeDao.insert(recipe)
 

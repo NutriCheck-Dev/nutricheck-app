@@ -10,9 +10,7 @@ data class DailyCalorieState(
 )
 
 @HiltViewModel
-class DailyCalorieViewModel @Inject constructor(
-    initialState: DailyCalorieState = DailyCalorieState()
-) : BaseDailyCalorieViewModel() {
+class DailyCalorieViewModel @Inject constructor() : BaseDailyCalorieViewModel() {
 
     val _dalyCalorieState = MutableStateFlow(DailyCalorieState())
     val dailyCalorieState = _dalyCalorieState.asStateFlow()

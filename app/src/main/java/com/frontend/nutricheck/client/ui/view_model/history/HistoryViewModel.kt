@@ -30,9 +30,7 @@ sealed interface HistoryEvent {
 }
 
 @HiltViewModel
-class HistoryViewModel @Inject constructor(
-    initialState: HistoryState = HistoryState()
-) : BaseHistoryViewModel() {
+class HistoryViewModel @Inject constructor() : BaseHistoryViewModel() {
     private val _historyState = MutableStateFlow(HistoryState())
     val createRecipeState = _historyState.asStateFlow()
 

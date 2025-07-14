@@ -23,9 +23,7 @@ sealed interface AddAiMealEvent {
 }
 
 @HiltViewModel
-class AddAiMealViewModel @Inject constructor(
-    private val initialState: AddAiMealState = AddAiMealState()
-) : BaseAddAiMealViewModel() {
+class AddAiMealViewModel @Inject constructor() : BaseAddAiMealViewModel() {
 
     private val _addAiMealState = MutableStateFlow(AddAiMealState())
     val addAiMealState = _addAiMealState.asStateFlow()

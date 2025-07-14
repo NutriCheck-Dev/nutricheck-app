@@ -28,9 +28,7 @@ sealed interface EditRecipeEvent {
 }
 
 @HiltViewModel
-class EditRecipeViewModel @Inject constructor(
-    initialState: EditRecipeState = EditRecipeState(),
-) : BaseEditRecipeViewModel<Recipe>(
+class EditRecipeViewModel @Inject constructor() : BaseEditRecipeViewModel<Recipe>(
     initialDraft = Recipe()
 ) {
 

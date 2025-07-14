@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
@@ -7,6 +8,7 @@ import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface RecipeDao : BaseDao<Recipe> {
     @Insert
     override suspend fun insert(obj: Recipe)

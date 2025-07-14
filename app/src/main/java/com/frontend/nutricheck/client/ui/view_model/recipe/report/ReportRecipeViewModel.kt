@@ -20,9 +20,7 @@ sealed interface ReportRecipeEvent {
 }
 
 @HiltViewModel
-class ReportRecipeViewModel @Inject constructor(
-    initialState: ReportRecipeState = ReportRecipeState()
-) : BaseReportRecipeViewModel() {
+class ReportRecipeViewModel @Inject constructor() : BaseReportRecipeViewModel() {
 
     private val _events = MutableSharedFlow<ReportRecipeEvent>()
     val events: SharedFlow<ReportRecipeEvent> = _events.asSharedFlow()

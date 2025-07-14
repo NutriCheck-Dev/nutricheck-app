@@ -2,8 +2,11 @@ package com.frontend.nutricheck.client.model.repositories.foodproducts
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import javax.inject.Inject
 
-class FoodProductRepositoryImpl(val foodDao: FoodDao) : FoodProductRepository {
+class FoodProductRepositoryImpl @Inject constructor(
+    val foodDao: FoodDao
+) : FoodProductRepository {
     override suspend fun getFoodProductsByQuery(query: String): List<FoodProduct> {
         // TODO: Implementiere die Logik, um FoodProducts anhand des query-Strings zu suchen
         return emptyList()

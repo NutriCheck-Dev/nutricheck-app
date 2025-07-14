@@ -28,7 +28,6 @@ sealed interface AddMealEvent {
 
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
-    initialState: AddMealState = AddMealState(),
     private val recipeRepository: RecipeRepository
 ) : BaseAddMealViewModel() {
     private val _addMealState = MutableStateFlow(AddMealState())

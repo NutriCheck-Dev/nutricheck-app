@@ -25,7 +25,6 @@ sealed interface ProfileOverviewEvent {
 
 @HiltViewModel
 class ProfileOverviewViewModel @Inject constructor(
-    initialState: ProfileOverviewState = ProfileOverviewState(),
     val userRepository: UserDataRepository
 ) : BaseProfileOverviewViewModel<UserData>(
     UserData()

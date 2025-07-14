@@ -6,7 +6,7 @@ import java.util.Date
 
 @Entity(tableName = "user_data")
 data class UserData(
-    @PrimaryKey val username: String? = "",
+    @PrimaryKey val username: String = "",
     val birthdate: Date = Date(),
     val gender: Gender? = Gender.DIVERS,
     val height: Double? = 0.0,
@@ -14,8 +14,8 @@ data class UserData(
     val weightGoal: WeightGoal = WeightGoal.MAINTAIN_WEIGHT,
     val targetWeight: Double? = 0.0,
     val activityLevel: ActivityLevel = ActivityLevel.NEVER,
-    val language: String? = "de",
-    val theme: String? = "light"
+    val language: String = "de",
+    val theme: String = "light"
 ) {
     fun changeUsername(newUsername: String): UserData {
         return this.copy(username = newUsername)

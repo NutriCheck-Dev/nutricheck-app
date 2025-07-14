@@ -21,10 +21,7 @@ sealed interface EditPersonalDataEvent {
 
 @HiltViewModel
 class EditPersonalDataViewModel @Inject constructor(
-    private val initialState: UserDataState = UserDataState()
-) : BaseEditPersonalDataViewModel<UserData>(
-    UserData()
-) {
+) : BaseEditPersonalDataViewModel<UserData>(UserData()) {
 
     private val _userDataState = MutableStateFlow(UserDataState())
     val createRecipeState = _userDataState.asStateFlow()

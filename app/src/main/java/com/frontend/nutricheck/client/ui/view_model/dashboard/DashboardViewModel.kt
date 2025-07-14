@@ -23,9 +23,7 @@ sealed interface DashboardEvent {
 }
 
 @HiltViewModel
- class DashboardViewModel @Inject constructor(
-    initialState: DashBoardState = DashBoardState()
- ) : BaseDashboardViewModel() {
+ class DashboardViewModel @Inject constructor() : BaseDashboardViewModel() {
 
     private val _dashboardState = MutableStateFlow(DashBoardState())
     val createRecipeState = _dashboardState.asStateFlow()

@@ -5,8 +5,11 @@ import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
+import javax.inject.Inject
 
-class HistoryRepositoryImpl(private val historyDao: HistoryDao) : HistoryRepository {
+class HistoryRepositoryImpl @Inject constructor(
+    private val historyDao: HistoryDao
+) : HistoryRepository {
 
     override suspend fun getCalorieHistory(): List<HistoryDay> {
         TODO("Not yet implemented")

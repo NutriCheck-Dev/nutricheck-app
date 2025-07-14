@@ -30,6 +30,8 @@ class RecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseRecipeOverviewViewModel() {
+    private val _recipeOverviewState = MutableStateFlow(RecipeOverviewState())
+    val recipeOverviewState: StateFlow<RecipeOverviewState> = _recipeOverviewState.asStateFlow()
 
     private val recipeId: String = checkNotNull(savedStateHandle["recipeId"]) {
         "Missing recipeId in savedStateHandle"
@@ -44,9 +46,6 @@ class RecipeOverviewViewModel @Inject constructor(
 
         }
     }
-
-    private val _recipeOverviewState = MutableStateFlow(RecipeOverviewState())
-    val recipeOverviewState: StateFlow<RecipeOverviewState> = _recipeOverviewState.asStateFlow()
 
     val _events = MutableSharedFlow<RecipeOverviewEvent>()
     val events: SharedFlow<RecipeOverviewEvent> = _events.asSharedFlow()
