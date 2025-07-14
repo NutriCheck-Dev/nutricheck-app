@@ -81,5 +81,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-base:18.7.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("androidx.compose.material:material-icons-extended-android:1.6.7")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
 
 }

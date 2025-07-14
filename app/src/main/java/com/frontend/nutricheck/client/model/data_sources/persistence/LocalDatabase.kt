@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.model.data_sources.persistence
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
@@ -24,10 +25,8 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
     version = 1,
     exportSchema = false
 )
-
-
+@TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
-
     //DAOs registrieren
     abstract fun foodDao(): FoodDao
     abstract fun recipeDao(): RecipeDao
