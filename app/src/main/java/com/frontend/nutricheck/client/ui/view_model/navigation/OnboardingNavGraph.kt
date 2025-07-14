@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -7,6 +7,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingBirthdate
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingGender
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingGoal
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingHeight
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingName
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingSport
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingTargetWeight
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingWeight
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingWelcome
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 
@@ -24,37 +33,42 @@ sealed class OnboardingScreen(val route: String) {
 }
 
 @Composable
-fun Onboarding(
-    navController: NavHostController = rememberNavController(),
+fun OnboardingNavGraph(
+    mainNavController : NavHostController,
     onboardingViewModel: OnboardingViewModel = hiltViewModel()
 ) {
+    val onboardingNavController = rememberNavController()
+
     LaunchedEffect(key1 = Unit) {
         onboardingViewModel.events.collect { event ->
             when (event) {
                 is OnboardingEvent.NavigateToName ->
-                    navController.navigate(OnboardingScreen.Name.route)
+                    onboardingNavController.navigate(OnboardingScreen.Name.route)
                 is OnboardingEvent.NavigateToBirthdate ->
-                    navController.navigate(OnboardingScreen.Birthdate.route)
+                    onboardingNavController.navigate(OnboardingScreen.Birthdate.route)
                 is OnboardingEvent.NavigateToGender ->
-                    navController.navigate(OnboardingScreen.Gender.route)
+                    onboardingNavController.navigate(OnboardingScreen.Gender.route)
                 is OnboardingEvent.NavigateToHeight ->
-                    navController.navigate(OnboardingScreen.Height.route)
+                    onboardingNavController.navigate(OnboardingScreen.Height.route)
                 is OnboardingEvent.NavigateToWeight ->
-                    navController.navigate(OnboardingScreen.Weight.route)
+                    onboardingNavController.navigate(OnboardingScreen.Weight.route)
                 is OnboardingEvent.NavigateToSportFrequency ->
-                    navController.navigate(OnboardingScreen.SportFrequency.route)
+                    onboardingNavController.navigate(OnboardingScreen.SportFrequency.route)
                 is OnboardingEvent.NavigateToWeightGoal ->
-                    navController.navigate(OnboardingScreen.WeightGoal.route)
+                    onboardingNavController.navigate(OnboardingScreen.WeightGoal.route)
                 is OnboardingEvent.NavigateToTargetWeight ->
-                    navController.navigate(OnboardingScreen.TargetWeight.route)
-                else -> { /* Andere Events ignorieren */ }
+                    onboardingNavController.navigate(OnboardingScreen.TargetWeight.route)
+                is OnboardingEvent.NavigateToDashboard -> {
+                    mainNavController.navigate(Screen.HomePage.route) {
+                        popUpTo(Screen.Onboarding.route) { inclusive = true }
+                    }
+                }
+                else -> { /* No action needed for other events */}
             }
-            TODO("add Dashboard navigation")
         }
     }
-
     NavHost(
-        navController = navController,
+        navController = onboardingNavController,
         startDestination = OnboardingScreen.Welcome.route
     ) {
         composable(OnboardingScreen.Welcome.route) { OnboardingWelcome(onboardingViewModel) }
@@ -66,6 +80,7 @@ fun Onboarding(
         composable(OnboardingScreen.SportFrequency.route) { OnboardingSport(onboardingViewModel) }
         composable(OnboardingScreen.WeightGoal.route) { OnboardingGoal(onboardingViewModel) }
         composable(OnboardingScreen.TargetWeight.route) {
-            OnboardingTargetWeight(onboardingViewModel) }
+            OnboardingTargetWeight(onboardingViewModel)
+        }
     }
 }

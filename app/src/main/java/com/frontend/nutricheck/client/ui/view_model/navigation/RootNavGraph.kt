@@ -9,14 +9,12 @@ import com.frontend.nutricheck.client.ui.view.app_views.HomePage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 
 @Composable
-fun NavigationGraph(
-    navController: NavHostController
-) {
-
+fun RootNavGraph(mainNavController: NavHostController, startDestination: String) {
     NavHost(
-        navController = navController,
-        startDestination = Screen.HomePage.route,
+        navController = mainNavController,
+        startDestination = startDestination,
     ) {
+        composable(Screen.Onboarding.route) { OnboardingNavGraph(mainNavController) }
         composable(Screen.HomePage.route) { HomePage() }
         composable(Screen.DiaryPage.route) { DiaryPage() }
         composable(Screen.ProfilePage.route) { ProfilePage() }

@@ -15,7 +15,4 @@ abstract class BaseOnboardingViewModel : BaseViewModel () {
     abstract fun enterSportFrequency(activityLevel: ActivityLevel?)
     abstract fun enterWeightGoal(weightGoal: WeightGoal?)
     abstract fun enterTargetWeight(targetWeight: String)
-    abstract fun completeOnboarding()
-
-
 }

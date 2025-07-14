@@ -42,7 +42,9 @@ sealed interface OnboardingEvent {
 }
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
+class OnboardingViewModel @Inject constructor(
+    private val onboardingRepository: OnboardingRepository
+) : BaseOnboardingViewModel() {
 
     private val _events = MutableSharedFlow<OnboardingEvent>()
     val events: SharedFlow<OnboardingEvent> = _events.asSharedFlow()
@@ -58,8 +60,6 @@ class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
     var activityLevel: ActivityLevel? = null
     var weightGoal: WeightGoal? = null
     var targetWeight: Double = 0.0
-
-
 
     fun onEvent(event: OnboardingEvent) {
         when (event) {
@@ -81,11 +81,6 @@ class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
         viewModelScope.launch {
             _events.emit(OnboardingEvent.NavigateToName)
         }
-    }
-
-    override fun completeOnboarding() {
-        TODO("send collected data to the model")
-        TODO("navigate to dashboard")
     }
 
     override fun enterName(name: String) {
@@ -175,7 +170,7 @@ class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
             return
         }
         this.targetWeight = targetWeightAsDouble
-        TODO("complete onboarding and navigate to dashboard")
+        completeOnboarding()
     }
 
     private fun validateBirthdate(birthdate: String): Boolean {
@@ -195,4 +190,11 @@ class OnboardingViewModel @Inject constructor() : BaseOnboardingViewModel() {
         }
     }
 
+    private fun completeOnboarding() {
+        TODO("send collected data to the model")
+        onboardingRepository.setOnboardingCompleted()
+        viewModelScope.launch {
+            _events.emit(OnboardingEvent.NavigateToDashboard)
+        }
+    }
 }
