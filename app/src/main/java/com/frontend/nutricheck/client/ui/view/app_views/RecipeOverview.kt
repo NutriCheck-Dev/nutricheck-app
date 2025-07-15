@@ -14,7 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
+import com.frontend.nutricheck.client.ui.view.dialogs.ActionConfirmationDialog
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
@@ -49,9 +51,8 @@ fun RecipeOverview(
     modifier: Modifier = Modifier,
     //actions: NavigationActions,
     //recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
-    title: String = "Rezept",
+    recipe: Recipe = Recipe(),
     ingredients: List<FoodComponent> = emptyList(),
-    description: String = "",
     onFoodClick: (String) -> Unit = {},
     onEditClick: () -> Unit = {},
     onDoneClick: (String) -> Unit = {},
@@ -60,9 +61,12 @@ fun RecipeOverview(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    var isEditing by remember { mutableStateOf(true) }
+    val title = recipe.name
+    var expanded by remember { mutableStateOf(false) }
+    var isEditing by remember { mutableStateOf(false) }
     var titleText by remember { mutableStateOf(title) }
-    var descriptionText by remember { mutableStateOf(description) }
+    var descriptionText by remember { mutableStateOf(recipe.description) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier
@@ -96,16 +100,20 @@ fun RecipeOverview(
                     }
                 },
                 actions = {
-                    if (!isEditing) {
-                        IconButton(onClick = onEditClick) {
+                    if (isEditing) {
+                        IconButton(onClick = { showConfirmationDialog = true }) {
                             Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Edit Recipe",
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Save Edits",
                                 tint = colors.onSurface
                             )
                         }
                     } else {
-                        CustomDetailsButton()
+                        CustomDetailsButton(
+                            expanded = expanded,
+                            isOnDishItemButton = false,
+                            onExpandedChange = { expanded = it }
+                        )
                     }
                 }
             )
@@ -163,13 +171,24 @@ fun RecipeOverview(
                     } else if (descriptionText.isNotBlank()) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = description,
+                                text = descriptionText,
                                 style = styles.bodyMedium
                             )
                         }
                     }
                 }
             }
+        }
+        if (showConfirmationDialog) {
+            ActionConfirmationDialog(
+                title = "Aktion Bestätigen",
+                description = "Sind Sie sicher, dass Sie diese Aktion ausführen möchten?",
+                confirmText = "Ja",
+                cancelText = "Nein",
+                icon = Icons.Default.Build,
+                onConfirm = { showConfirmationDialog = false },
+                onCancel = { showConfirmationDialog = false }
+            )
         }
     }
 }
@@ -185,7 +204,6 @@ fun RecipeOverviewPreview() {
                 Recipe(),
                 Recipe(),
                 ),
-            description = "Dies ist eine Beispielbeschreibung für ein Rezept. Hier können Details zum Zubereitungsvorgang, den Zutaten und anderen wichtigen Informationen stehen.",
         )
     }
 }

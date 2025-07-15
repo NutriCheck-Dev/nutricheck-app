@@ -15,7 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieSummary
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
-import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
 
 
 @Composable

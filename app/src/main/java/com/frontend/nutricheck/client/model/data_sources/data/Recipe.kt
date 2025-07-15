@@ -13,7 +13,7 @@ data class Recipe(
     override val fat: Double = 0.0,
     override val servings: Int = 1,
     val ingredients: Set<Ingredient> = emptySet(),
-    val instructions: String = "",
+    val description: String = "Dies ist eine Beispielbeschreibung für ein Rezept. Hier können Details zum Zubereitungsvorgang, den Zutaten und anderen wichtigen Informationen stehen.",
     val visibility: RecipeVisibility = RecipeVisibility.OWNER,
     val report: RecipeReport = RecipeReport()
 ) : FoodComponent
@@ -36,8 +36,8 @@ data class Recipe(
         return updatedRecipe.calculateNutritionalValues()
     }
 
-    fun changeInstructions(newInstructions: String): Recipe {
-        return this.copy(instructions = newInstructions)
+    fun changeDescription(newDescription: String): Recipe {
+        return this.copy(description = newDescription)
     }
 
     fun addReport(newReport: RecipeReport): Recipe {

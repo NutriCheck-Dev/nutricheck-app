@@ -140,7 +140,7 @@ fun MealFooterPreview() {
         recipe = Recipe(
             id = "recipe1",
             name = "Oatmeal",
-            instructions = "Healthy oatmeal with fruits",
+            description = "Healthy oatmeal with fruits",
             ingredients = setOf(Ingredient(
                 recipeId = "ingredient1",
                 id = "Oats",

@@ -24,20 +24,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
+import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 @Composable
 fun RecipePage(
     modifier: Modifier = Modifier,
     //viewModel: RecipePageViewModel = hiltViewModel(),
-    localRecipes: @Composable () -> Unit = {},
-    remoteRecipes: @Composable () -> Unit = {},
+    localRecipes: List<FoodComponent> = emptyList(),
+    remoteRecipes: List<FoodComponent> = emptyList(),
     onRecipeSelected: (String) -> Unit = {},
     onDetailsCick: (String) -> Unit = {},
     onAddRecipeClick: () -> Unit = {}
@@ -58,11 +58,13 @@ fun RecipePage(
 
 
             CustomTabRow(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 options = listOf("Meine Rezepte", "Online Rezepte"),
                 selectedOption = selectedTab,
             )
-            val data = if (selectedTab == 0) localRecipes else remoteRecipes
+            val recipeList = if (selectedTab == 0) localRecipes else remoteRecipes
 
             Box(
                 modifier = Modifier
@@ -72,7 +74,14 @@ fun RecipePage(
                     .verticalScroll(scrollState)
             ) {
 
-                data()
+                DishItemList(
+                    list = recipeList,
+                    trailingContent = { CustomDetailsButton(
+                        isOnDishItemButton = true,
+                        isOnOwnedRecipe = selectedTab == 0,
+                        isOnPublicRecipe = selectedTab == 1
+                    ) }
+                )
 
                 ExtendedFloatingActionButton(
                     modifier = Modifier
@@ -96,34 +105,23 @@ fun RecipePage(
 @Preview
 @Composable
 fun RecipePagePreview() {
-    val navController = rememberNavController()
-    val previewActions = NavigationActions(navController)
     AppTheme(
         darkTheme = true
     ) {
         RecipePage(
-            localRecipes = {
-                DishItemList(
-                    list = listOf(
-                        Recipe(),
-                        Recipe(),
-                        Recipe(),
-                        Recipe(),
-                        Recipe(),
-                    )
+            localRecipes = listOf(
+                Recipe(),
+                Recipe(),
+                Recipe(),
+                Recipe(),
+                Recipe()),
+            remoteRecipes = listOf(
+                Recipe(),
+                Recipe(),
+                Recipe(),
+                Recipe(),
+                Recipe(),
                 )
-            },
-            remoteRecipes = {
-                DishItemList(
-                    list = listOf(
-                        Recipe(),
-                        Recipe(),
-                        Recipe(),
-                        Recipe(),
-                        Recipe(),
-                    )
-                )
-            },
         )
     }
 }

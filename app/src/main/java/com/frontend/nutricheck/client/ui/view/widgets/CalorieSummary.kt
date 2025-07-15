@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
 
 // This file defines a composable function for displaying a calorie summary widget.
 @Composable

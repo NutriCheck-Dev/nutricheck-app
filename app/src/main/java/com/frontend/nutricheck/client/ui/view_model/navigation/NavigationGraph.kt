@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.frontend.nutricheck.client.ui.view.app_views.DiaryPage
 import com.frontend.nutricheck.client.ui.view.app_views.HomePage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
+import com.frontend.nutricheck.client.ui.view.app_views.RecipeOverview
 
 @Composable
 fun NavigationGraph(
@@ -25,7 +26,7 @@ fun NavigationGraph(
         composable(Screen.RecipePage.route) {  }
         composable(Screen.HistoryPage.route) {  }
         composable(Screen.PersonalDataPage.route) {  }
-        composable(Screen.RecipeOverview.route) {  }
+        composable(Screen.RecipeOverview.route) { RecipeOverview() }
         composable(Screen.SearchPage.route) {  }
         composable(Screen.DishItemOverview.route) {  }
         composable(Screen.WeightHistoryPage.route) {  }
