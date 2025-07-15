@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +27,8 @@ fun CustomDetailsButton(
     expanded: Boolean = false,
     onExpandedChange: (Boolean) -> Unit = { }
 ) {
-
+    val colors = MaterialTheme.colorScheme
+    val styles = MaterialTheme.typography
     val optionsList = if (isOnOwnedRecipe) {
         DropdownMenuOptions.entries
             .minus(DropdownMenuOptions.SAVE)
@@ -47,7 +50,6 @@ fun CustomDetailsButton(
                 DropdownMenuOptions.REPORT))
             .sortedBy { it.name }
     } else {emptyList()}
-
 
     Box{
         IconButton(
@@ -72,12 +74,25 @@ fun CustomDetailsButton(
         ) {
             optionsList.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(text = option.name) },
+                    text = {
+                        Text(
+                            text = option.toString(),
+                            style = styles.titleSmall,
+                            color = colors.onSurface
+                        )},
+                    leadingIcon = {
+                        Icon(
+                            imageVector = option.getIcon(),
+                            contentDescription = option.toString()
+                        )},
                     onClick = {
                         onExpandedChange(false)
                         onItemSelected(option)
                     }
                 )
+                if (optionsList.last() != option) {
+                    HorizontalDivider()
+                }
             }
         }
     }

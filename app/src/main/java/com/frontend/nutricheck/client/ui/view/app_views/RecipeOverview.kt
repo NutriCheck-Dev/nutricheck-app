@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.dialogs.ActionConfirmationDialog
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
@@ -112,6 +113,8 @@ fun RecipeOverview(
                         CustomDetailsButton(
                             expanded = expanded,
                             isOnDishItemButton = false,
+                            isOnOwnedRecipe = recipe.visibility == RecipeVisibility.OWNER ,
+                            isOnPublicRecipe = recipe.visibility == RecipeVisibility.PUBLIC,
                             onExpandedChange = { expanded = it }
                         )
                     }
@@ -198,11 +201,12 @@ fun RecipeOverview(
 fun RecipeOverviewPreview() {
     AppTheme(darkTheme = true) {
         RecipeOverview(
-            ingredients = listOf(
-                Recipe(),
-                Recipe(),
-                Recipe(),
-                Recipe(),
+            ingredients =
+                listOf(
+                    Recipe(),
+                    Recipe(),
+                    Recipe(),
+                    Recipe()
                 ),
         )
     }
