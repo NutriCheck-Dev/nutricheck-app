@@ -20,9 +20,7 @@ sealed interface EditPersonalDataEvent {
 }
 
 @HiltViewModel
-class EditPersonalDataViewModel @Inject constructor(
-    private val initialState: UserDataState = UserDataState()
-) : BaseEditPersonalDataViewModel<UserData>(
+class EditPersonalDataViewModel @Inject constructor() : BaseEditPersonalDataViewModel<UserData>(
     UserData()
 ) {
 

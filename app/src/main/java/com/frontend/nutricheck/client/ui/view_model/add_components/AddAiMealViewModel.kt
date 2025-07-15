@@ -23,14 +23,12 @@ sealed interface AddAiMealEvent {
 }
 
 @HiltViewModel
-class AddAiMealViewModel @Inject constructor(
-    private val initialState: AddAiMealState = AddAiMealState()
-) : BaseAddAiMealViewModel() {
+class AddAiMealViewModel @Inject constructor() : BaseAddAiMealViewModel() {
 
     private val _addAiMealState = MutableStateFlow(AddAiMealState())
     val addAiMealState = _addAiMealState.asStateFlow()
 
-    val _events = MutableSharedFlow<AddAiMealEvent>()
+    private val _events = MutableSharedFlow<AddAiMealEvent>()
     val events: SharedFlow<AddAiMealEvent> = _events.asSharedFlow()
 
     fun onEvent(event: AddAiMealEvent) {}

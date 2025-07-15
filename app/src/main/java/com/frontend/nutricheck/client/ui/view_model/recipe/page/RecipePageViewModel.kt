@@ -2,7 +2,6 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.page
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,10 +26,7 @@ sealed interface RecipePageEvent {
 }
 
 @HiltViewModel
-class RecipePageViewModel @Inject constructor(
-    initialState: RecipePageState = RecipePageState(),
-    val recipeRepository: RecipeRepository
-) : BaseRecipePageViewModel() {
+class RecipePageViewModel @Inject constructor() : BaseRecipePageViewModel() {
 
     private val _recipePageState = MutableStateFlow(RecipePageState())
     val createRecipeState = _recipePageState.asStateFlow()

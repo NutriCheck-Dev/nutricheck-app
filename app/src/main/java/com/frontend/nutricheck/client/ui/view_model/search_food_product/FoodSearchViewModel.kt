@@ -23,9 +23,7 @@ sealed interface  SearchEvent {
 }
 
 @HiltViewModel
-class FoodSearchViewModel @Inject constructor(
-    initialState: SearchState = SearchState()
-) : BaseFoodSearchOverviewViewModel() {
+class FoodSearchViewModel @Inject constructor() : BaseFoodSearchOverviewViewModel() {
 
     private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = _state.asStateFlow()

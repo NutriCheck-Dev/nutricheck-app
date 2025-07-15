@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.BarChart
@@ -23,10 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -35,7 +33,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
@@ -46,30 +43,38 @@ import androidx.compose.material3.SwitchDefaults
 
 @Composable
 fun ProfilePage(
-    username : String = "Moritz",
-    userAge : Int = 25,
-    userHeight : Int = 180,
-    userWeight : Double = 75.0,
-    darkmode : Boolean = true
 ) {
+    TODO("get Data from Model")
+    var username : String = "Moritz"
+    var userAge : Int = 25
+    var userHeight : Int = 180
+    var userWeight : Double = 75.0
+    var darkmode : Boolean = true
+
     val greetingText = stringResource(id = R.string.profile_name, username)
     val userHeightText = stringResource(id = R.string.height_cm, userHeight)
     val userWeightText = stringResource(id = R.string.weight_kg, userWeight)
     val userAgeText = stringResource(id = R.string.age_years, userAge)
-    var darkmode by remember { mutableStateOf(darkmode) }
+    val scrollState = rememberScrollState()
+
+    val sixteenDp = 16.dp
+    val eightDp = 8.dp
+    val thirtyTwoDp = 32.dp
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .verticalScroll(scrollState)
+            .padding(sixteenDp)
             .background(color = Color(0xFF000000))
     ) {
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(eightDp),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(thirtyTwoDp))
             Row(
                 Modifier
                     .shadow(elevation = 6.dp,
@@ -77,7 +82,7 @@ fun ProfilePage(
                         ambientColor = Color(0x1FBBBBBB))
                     .height(104.dp)
                     .fillMaxWidth()
-                    .background(color = Color(0xFF121212), shape = RoundedCornerShape(size = 16.dp))
+                    .background(color = Color(0xFF121212), shape = RoundedCornerShape(sixteenDp))
                     .padding(start = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
@@ -93,11 +98,11 @@ fun ProfilePage(
                     maxLines = 1
                 )
             }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(thirtyTwoDp))
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(sixteenDp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFF121212),
                     contentColor = Color.White)
@@ -252,16 +257,4 @@ fun MenuItemWithSwitch(
     }
 }
 
-
-@Preview
-@Composable
-fun ProfilePagePreview() {
-    ProfilePage(
-        username = "Moritz",
-        userAge = 25,
-        userHeight = 180,
-        userWeight = 75.0,
-        darkmode = true
-    )
-    }
 

@@ -28,9 +28,7 @@ sealed interface EditRecipeEvent {
 }
 
 @HiltViewModel
-class EditRecipeViewModel @Inject constructor(
-    initialState: EditRecipeState = EditRecipeState(),
-) : BaseEditRecipeViewModel(){
+class EditRecipeViewModel @Inject constructor() : BaseEditRecipeViewModel(){
 
     private val _editRecipeState = MutableStateFlow(EditRecipeState())
     val createRecipeState = _editRecipeState.asStateFlow()
