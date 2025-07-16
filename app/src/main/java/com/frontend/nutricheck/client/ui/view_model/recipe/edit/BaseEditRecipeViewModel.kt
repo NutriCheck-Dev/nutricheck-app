@@ -1,18 +1,13 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe.edit
 
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
-abstract class BaseEditRecipeViewModel<DRAFT>(
-    initialDraft: DRAFT
-) : BaseViewModel () {
-    private val _draft = MutableStateFlow(initialDraft)
-    val draft:  StateFlow<DRAFT> = _draft.asStateFlow()
-
-    abstract fun updateDraft(newDraft: DRAFT)
-    abstract fun resetDraft()
-    abstract fun addIngredient(ingredientId: String)
-    abstract fun removeIngredient(ingredientId: String)
+abstract class BaseEditRecipeViewModel() : BaseViewModel () {
+    abstract fun onTitleChanged(newTitle: String)
+    abstract fun onIngredientAdded(ingredient: Ingredient)
+    abstract fun onIngredientRemoved(ingredient: Ingredient)
+    abstract fun onDescriptionChanged(newDescription: String)
+    abstract fun onCancelEdit()
+    abstract fun onSaveRecipe()
 }

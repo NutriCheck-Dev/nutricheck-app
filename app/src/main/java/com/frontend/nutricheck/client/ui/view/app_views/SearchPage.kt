@@ -38,7 +38,7 @@ fun SearchPage(
     onOptionSelected: (String) -> Unit,
     onDishClick: () -> Unit = {},
     onAddClick: () -> Unit = {},
-    foodList: List<FoodComponent> = emptyList(),
+    foodList: Set<FoodComponent> = emptySet(),
     onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
@@ -81,7 +81,7 @@ fun SearchPage(
                 selectedOption = selectedTab
             )
 
-            DishItemList(list = foodList)
+            DishItemList(foodComponents = foodList)
         }
     }
 }

@@ -61,13 +61,13 @@ fun DiaryPage(
             when (selectedTab) {
                 DiaryTab.HISTORY -> HistoryPage()
                 DiaryTab.RECIPES -> RecipePage(
-                    localRecipes = listOf(
+                    localRecipes = setOf(
                         Recipe(),
                         Recipe(),
                         Recipe(),
                         Recipe()
                     ),
-                    remoteRecipes = listOf(
+                    remoteRecipes = setOf(
                         Recipe(),
                         Recipe(),
                         Recipe(),

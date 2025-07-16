@@ -145,7 +145,7 @@ fun MealFooterPreview() {
                 recipeId = "ingredient1",
                 id = "Oats",
                 quantity = 100.0,
-                foodProduct = FoodProduct()
+                foodComponent = FoodProduct()
             )),
             calories = 300.0,
         ))))

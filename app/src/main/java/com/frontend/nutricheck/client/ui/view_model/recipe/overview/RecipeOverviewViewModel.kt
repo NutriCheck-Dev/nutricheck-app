@@ -22,7 +22,7 @@ data class RecipeOverviewState(
 sealed interface RecipeOverviewEvent {
     data object ClickEditRecipe : RecipeOverviewEvent
     data class ClickDeleteRecipe(val recipe: Recipe) : RecipeOverviewEvent
-    data class ClickShareRecipe(val recipe: Recipe) : RecipeOverviewEvent
+    data class ClickUploadRecipe(val recipe: Recipe) : RecipeOverviewEvent
 }
 
 @HiltViewModel
@@ -61,17 +61,17 @@ class RecipeOverviewViewModel @Inject constructor(
                     _events.emit(RecipeOverviewEvent.ClickDeleteRecipe(event.recipe))
                 }
             }
-            is RecipeOverviewEvent.ClickShareRecipe -> {
+            is RecipeOverviewEvent.ClickUploadRecipe -> {
                 viewModelScope.launch {
                     onShareRecipe(event.recipe)
-                    _events.emit(RecipeOverviewEvent.ClickShareRecipe(event.recipe))
+                    _events.emit(RecipeOverviewEvent.ClickUploadRecipe(event.recipe))
                 }
             }
         }
     }
 
     override fun onEditClicked() {
-        _recipeOverviewState.update { it.copy(isEditing = true) }
+        _recipeOverviewState.update { it.copy(isEditing = !_recipeOverviewState.value.isEditing) }
     }
 
     override suspend fun onDeleteRecipe(recipe: Recipe) {

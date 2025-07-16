@@ -1,57 +1,31 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
 import com.frontend.nutricheck.client.ui.theme.AppTheme
-import com.frontend.nutricheck.client.ui.view.dialogs.ActionConfirmationDialog
-import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
-import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
-import com.frontend.nutricheck.client.ui.view.widgets.NutrientChartsWidget
-import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewBaseContent
+import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewEditContent
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverview(
     modifier: Modifier = Modifier,
     //actions: NavigationActions,
-    //recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
+    recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
+    editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
+    recipeId: String = "",
     recipe: Recipe = Recipe(),
     ingredients: List<FoodComponent> = emptyList(),
     onFoodClick: (String) -> Unit = {},
@@ -60,138 +34,39 @@ fun RecipeOverview(
     onSave: (String, String) -> Unit = { _, _ -> },
     onBack: () -> Unit = {}
 ) {
-    val colors = MaterialTheme.colorScheme
-    val styles = MaterialTheme.typography
-    val title = recipe.name
-    var expanded by remember { mutableStateOf(false) }
-    var isEditing by remember { mutableStateOf(false) }
-    var titleText by remember { mutableStateOf(title) }
-    var descriptionText by remember { mutableStateOf(recipe.description) }
-    var showConfirmationDialog by remember { mutableStateOf(false) }
+    val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
+    val draftState by editRecipeViewModel.draft.collectAsState()
+    val isEditing = recipeOverviewState.isEditing
 
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.background),
-        topBar = {
-            ViewsTopBar(
-                navigationIcon = { NavigateBackButton(onBack = onBack) },
-                title = {
-                    if (isEditing) {
-                        TextField(
-                            value = titleText,
-                            onValueChange = { titleText = it },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = { onDoneClick(titleText) }
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    } else {
-                        Text(
-                            text = title,
-                            style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = colors.onSurfaceVariant
-                        )
-                    }
-                },
-                actions = {
-                    if (isEditing) {
-                        IconButton(onClick = { showConfirmationDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = "Save Edits",
-                                tint = colors.onSurface
-                            )
-                        }
-                    } else {
-                        CustomDetailsButton(
-                            expanded = expanded,
-                            isOnDishItemButton = false,
-                            isOnOwnedRecipe = recipe.visibility == RecipeVisibility.OWNER ,
-                            isOnPublicRecipe = recipe.visibility == RecipeVisibility.PUBLIC,
-                            onExpandedChange = { expanded = it }
-                        )
-                    }
-                }
+    if (!isEditing) {
+        RecipeOverviewBaseContent(
+            recipe = recipeOverviewState.recipe,
+            onEdit = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe) },
+            onDelete = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDeleteRecipe(it)) },
+            onUpload = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickUploadRecipe(it)) },
+            onBack = onBack
+        )
+    } else {
+        draftState?.let { draft ->
+            RecipeOverviewEditContent(
+                draft = draft,
+                onEvent = editRecipeViewModel::onEvent,
+                onCancel = { editRecipeViewModel.onEvent(EditRecipeEvent.EditCanceled) },
+                onSave = { editRecipeViewModel.onEvent(EditRecipeEvent.RecipeSaved) },
+                onBack = onBack
             )
         }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentPadding = innerPadding,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
+    }
 
-            item {
-                NutrientChartsWidget(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-
-            item {
-                Text(
-                    text = "Zutaten",
-                    style = styles.titleMedium,
-                    color = colors.onSurfaceVariant
-                )
-                Spacer(Modifier.height(10.dp))
-
-                DishItemList(
-                    isEditing = isEditing,
-                    list = ingredients,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-            item {
-                Text(
-                    text = "Beschreibung",
-                    style = styles.titleMedium,
-                    )
-                Spacer(modifier = Modifier.height(10.dp))
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, colors.outline)
-                ) {
-                    if (isEditing) {
-                        TextField(
-                            value = descriptionText,
-                            onValueChange = { descriptionText = it },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    } else if (descriptionText.isNotBlank()) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = descriptionText,
-                                style = styles.bodyMedium
-                            )
-                        }
-                    }
+    LaunchedEffect(editRecipeViewModel.events) {
+        editRecipeViewModel.events.collect { event ->
+            when (event) {
+                is EditRecipeEvent.EditCanceled,
+                is EditRecipeEvent.RecipeSaved -> {
+                recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe)
                 }
+                else -> Unit
             }
-        }
-        if (showConfirmationDialog) {
-            ActionConfirmationDialog(
-                title = "Aktion Bestätigen",
-                description = "Sind Sie sicher, dass Sie diese Aktion ausführen möchten?",
-                confirmText = "Ja",
-                cancelText = "Nein",
-                icon = Icons.Default.Build,
-                onConfirm = { showConfirmationDialog = false },
-                onCancel = { showConfirmationDialog = false }
-            )
         }
     }
 }

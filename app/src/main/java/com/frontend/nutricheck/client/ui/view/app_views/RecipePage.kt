@@ -36,8 +36,8 @@ import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
 fun RecipePage(
     modifier: Modifier = Modifier,
     //viewModel: RecipePageViewModel = hiltViewModel(),
-    localRecipes: List<FoodComponent> = emptyList(),
-    remoteRecipes: List<FoodComponent> = emptyList(),
+    localRecipes: Set<FoodComponent> = emptySet(),
+    remoteRecipes: Set<FoodComponent> = emptySet(),
     onRecipeSelected: (String) -> Unit = {},
     onDetailsCick: (String) -> Unit = {},
     onAddRecipeClick: () -> Unit = {}
@@ -75,7 +75,7 @@ fun RecipePage(
             ) {
 
                 DishItemList(
-                    list = recipeList,
+                    foodComponents = recipeList,
                     trailingContent = { CustomDetailsButton(
                         isOnDishItemButton = true,
                         isOnOwnedRecipe = selectedTab == 0,
@@ -109,13 +109,13 @@ fun RecipePagePreview() {
         darkTheme = true
     ) {
         RecipePage(
-            localRecipes = listOf(
+            localRecipes = setOf(
                 Recipe(),
                 Recipe(),
                 Recipe(),
                 Recipe(),
                 Recipe()),
-            remoteRecipes = listOf(
+            remoteRecipes = setOf(
                 Recipe(),
                 Recipe(),
                 Recipe(),

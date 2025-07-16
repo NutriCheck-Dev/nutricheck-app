@@ -26,8 +26,8 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 @Composable
 fun DishItemList(
     modifier: Modifier = Modifier,
-    list: List<FoodComponent> = emptyList(),
-    trailingContent: @Composable (() -> Unit)? = null ,
+    foodComponents: Set<FoodComponent> = emptySet(),
+    trailingContent: @Composable (() -> Unit)? = null,
     isEditing: Boolean = false,
     onAddButtonClick: () -> Unit = {},
     onClick: () -> Unit = {}
@@ -39,7 +39,7 @@ fun DishItemList(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        list.forEach { item ->
+        foodComponents.forEach { item ->
             DishItemButton(foodComponent = item, trailingContent = trailingContent, onClick = onClick)
         }
 
@@ -73,7 +73,7 @@ fun DishItemListPreview() {
     AppTheme(darkTheme = true) {
         DishItemList(
             isEditing = true,
-            list = listOf(
+            foodComponents = setOf(
                 Recipe(),
                 Recipe(),
                 Recipe(),
