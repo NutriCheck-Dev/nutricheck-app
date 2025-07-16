@@ -86,11 +86,17 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     override fun onSaveRecipe() {
-        val createdRecipe = _createdRecipeDraft.value!!.toRecipe()
+        val createdRecipe = _createdRecipeDraft.value ?: return
+        createdRecipe.ingredients.let {
+            if (it.isEmpty()) {
+                _errorState.value = R.string.create_recipe_error_ingredients
+                return
+            }
+        }
+        _errorState.value = null
+        val recipe = createdRecipe.toRecipe()
         viewModelScope.launch {
-            recipeRepository.insertRecipe(createdRecipe)
+            recipeRepository.insertRecipe(recipe)
         }
     }
-
-
 }
