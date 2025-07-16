@@ -34,9 +34,9 @@ sealed class OnboardingScreen(val route: String) {
 
 @Composable
 fun OnboardingNavGraph(
-    mainNavController : NavHostController,
-    onboardingViewModel: OnboardingViewModel = hiltViewModel()
+    mainNavController : NavHostController
 ) {
+    val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val onboardingNavController = rememberNavController()
 
     LaunchedEffect(key1 = Unit) {

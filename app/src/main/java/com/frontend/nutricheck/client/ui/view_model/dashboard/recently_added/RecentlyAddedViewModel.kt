@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard.recently_added
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 
 @HiltViewModel

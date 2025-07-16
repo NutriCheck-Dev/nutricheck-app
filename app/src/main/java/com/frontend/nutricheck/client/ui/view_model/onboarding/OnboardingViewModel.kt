@@ -192,8 +192,8 @@ class OnboardingViewModel @Inject constructor(
 
     private fun completeOnboarding() {
         TODO("send collected data to the model")
-        onboardingRepository.setOnboardingCompleted()
         viewModelScope.launch {
+            onboardingRepository.setOnboardingCompleted()
             _events.emit(OnboardingEvent.NavigateToDashboard)
         }
     }

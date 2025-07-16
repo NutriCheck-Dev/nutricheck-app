@@ -63,7 +63,6 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation (libs.androidx.hilt.navigation.compose)
-    implementation(libs.jakarta.inject.api)
     implementation("com.patrykandpatrick.vico:compose:1.13.0")
     implementation("com.patrykandpatrick.vico:core:1.13.0")
     kapt(libs.androidx.room.compiler)

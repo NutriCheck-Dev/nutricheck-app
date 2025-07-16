@@ -1,13 +1,13 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.profile
 
+import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
-import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.profile.BaseProfileOverviewViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 data class ProfileOverviewState(
     val userData: UserData = UserData(),
@@ -24,13 +24,11 @@ sealed interface ProfileOverviewEvent {
 }
 
 @HiltViewModel
-class ProfileOverviewViewModel @Inject constructor(
-    val userRepository: UserDataRepository
-) : BaseProfileOverviewViewModel<UserData>(
+class ProfileOverviewViewModel @Inject constructor() : BaseProfileOverviewViewModel<UserData>(
     UserData()
 ) {
 
-    val _events = MutableSharedFlow<ProfileOverviewEvent>()
+    private val _events = MutableSharedFlow<ProfileOverviewEvent>()
     val events: SharedFlow<ProfileOverviewEvent> = _events.asSharedFlow()
 
 
@@ -41,7 +39,13 @@ class ProfileOverviewViewModel @Inject constructor(
     }
 
     override fun onWeightHistoryClick() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            _events.emit(
+                ProfileOverviewEvent
+                    .DisplayWeightHistory(weightHistory = listOf(70, 72, 68, 65))
+            )
+        }
+        TODO("Get weight history from data source")
     }
 
     override fun onSelectLanguageClick() {
