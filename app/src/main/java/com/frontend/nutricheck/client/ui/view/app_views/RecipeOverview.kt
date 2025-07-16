@@ -35,7 +35,7 @@ fun RecipeOverview(
     onBack: () -> Unit = {}
 ) {
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
-    val draftState by editRecipeViewModel.draft.collectAsState()
+    val draftState by editRecipeViewModel.editRecipeDraft.collectAsState()
     val isEditing = recipeOverviewState.isEditing
 
     if (!isEditing) {

@@ -20,7 +20,7 @@ data class RecipeDraft(
     val id: String,
     val title: String,
     val description: String,
-    val ingredients: Set<Ingredient>,
+    val ingredients: Set<Ingredient>
 ) {
     fun toRecipe(): Recipe = Recipe(
         id = id,
@@ -52,16 +52,16 @@ class EditRecipeViewModel @Inject constructor(
     private val _recipe = MutableStateFlow<Recipe?>(null)
     val recipe: StateFlow<Recipe?> = _recipe.asStateFlow()
 
-    private val _draft = MutableStateFlow<RecipeDraft?>(null)
-    val draft: StateFlow<RecipeDraft?> = _draft.asStateFlow()
+    private val _editRecipeDraft = MutableStateFlow<RecipeDraft?>(null)
+    val editRecipeDraft: StateFlow<RecipeDraft?> = _editRecipeDraft.asStateFlow()
 
     init {
         viewModelScope.launch {
             recipeRepository.getRecipeById(recipeId)
                 .collect { recipe ->
                     _recipe.value = recipe
-                    if (_draft.value == null) {
-                        _draft.value = RecipeDraft(
+                    if (_editRecipeDraft.value == null) {
+                        _editRecipeDraft.value = RecipeDraft(
                             id = recipe.id,
                             title = recipe.name,
                             description = recipe.description,
@@ -87,19 +87,19 @@ class EditRecipeViewModel @Inject constructor(
     }
 
     override fun onTitleChanged(newTitle: String) =
-        _draft.update { it?.copy(title = newTitle) }
+        _editRecipeDraft.update { it?.copy(title = newTitle) }
 
     override fun onIngredientAdded(ingredient: Ingredient) =
-        _draft.update { it?.copy(ingredients = it.ingredients + ingredient) }
+        _editRecipeDraft.update { it?.copy(ingredients = it.ingredients + ingredient) }
 
     override fun onIngredientRemoved(ingredient: Ingredient) =
-        _draft.update { it?.copy(ingredients = it.ingredients - ingredient) }
+        _editRecipeDraft.update { it?.copy(ingredients = it.ingredients - ingredient) }
 
     override fun onDescriptionChanged(newDescription: String) =
-        _draft.update { it?.copy(description = newDescription) }
+        _editRecipeDraft.update { it?.copy(description = newDescription) }
 
     override fun onCancelEdit() {
-        _draft.value = _recipe.value!!.let { recipe ->
+        _editRecipeDraft.value = _recipe.value!!.let { recipe ->
             RecipeDraft(
                 id = recipe.id,
                 title = recipe.name,
@@ -110,7 +110,7 @@ class EditRecipeViewModel @Inject constructor(
     }
 
     override fun onSaveRecipe() {
-        val updatedRecipe = _draft.value!!.toRecipe()
+        val updatedRecipe = _editRecipeDraft.value!!.toRecipe()
         viewModelScope.launch {
             recipeRepository.updateRecipe(updatedRecipe)
             _recipe.value = updatedRecipe
