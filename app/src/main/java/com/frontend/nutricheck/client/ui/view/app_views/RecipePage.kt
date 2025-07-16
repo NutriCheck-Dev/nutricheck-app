@@ -36,7 +36,6 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 fun RecipePage(
     modifier: Modifier = Modifier,
     //viewModel: RecipePageViewModel = hiltViewModel(),
-    title: String = "Rezepte",
     localRecipes: @Composable () -> Unit = {},
     remoteRecipes: @Composable () -> Unit = {},
     onRecipeSelected: (String) -> Unit = {},

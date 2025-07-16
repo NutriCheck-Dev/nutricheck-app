@@ -1,25 +1,26 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface RecipeDao : BaseDao<Recipe> {
+    @Insert
+    override suspend fun insert(obj: Recipe)
 
-    override suspend fun insert(obj: Recipe) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun update(obj: Recipe) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun delete(obj: Recipe) {
-        TODO("Not yet implemented")
-    }
+    @Update
+    override suspend fun update(obj: Recipe)
+    @Delete
+    override suspend fun delete(obj: Recipe)
 
     @Query("SELECT * FROM recipes WHERE id = :id")
-    suspend fun getById(id: String): Recipe?
+    fun getById(id: String): Flow<Recipe>
 
-    @Query("SELECT * FROM recipes")
-    suspend fun getAll(): List<Recipe>
+    @Query("SELECT * FROM recipes ORDER BY name ASC")
+    fun getAll(): Flow<List<Recipe>>
 }

@@ -24,7 +24,6 @@ import com.frontend.nutricheck.client.ui.view.widgets.NutrientBreakdown
 import com.frontend.nutricheck.client.ui.view.widgets.WeightHistoryDiagram
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieViewModel
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 @Composable
 fun HomePage(

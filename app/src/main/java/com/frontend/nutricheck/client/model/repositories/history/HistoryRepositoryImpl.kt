@@ -1,13 +1,16 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
-import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
-import com.frontend.nutricheck.client.model.data_sources.persistence.DatabaseProvider
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
+import javax.inject.Inject
 
-class HistoryRepositoryImpl(context: Context) : HistoryRepository {
-    private val historyDao = DatabaseProvider.getDatabase(context).historyDao()
+class HistoryRepositoryImpl @Inject constructor(
+    private val historyDao: HistoryDao
+) : HistoryRepository {
+
     override suspend fun getCalorieHistory(): List<HistoryDay> {
         TODO("Not yet implemented")
     }
@@ -39,8 +42,8 @@ class HistoryRepositoryImpl(context: Context) : HistoryRepository {
     override suspend fun removeFoodFromMeal(name: String, foodId: String) {
         TODO("Not yet implemented")
     }
+    override suspend fun getHistoryByDate(date: Date): Flow<HistoryDay> = historyDao.getByDate(date)
 
-    override suspend fun getHistoryById(id: String): HistoryDay? = historyDao.getById(id)
     override suspend fun addMeal(meal: Meal) {
         TODO("Not yet implemented")
     }

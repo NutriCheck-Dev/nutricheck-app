@@ -1,31 +1,27 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
-import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.data_sources.persistence.DatabaseProvider
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class RecipeRepositoryImpl(private val context: Context) : RecipeRepository {
-    private val recipeDao = DatabaseProvider.getDatabase(context).recipeDao()
+class RecipeRepositoryImpl @Inject constructor(
+    private val recipeDao: RecipeDao
+) : RecipeRepository {
 
+    override suspend fun insertRecipe(recipe: Recipe) = recipeDao.insert(recipe)
+
+    override suspend fun deleteRecipe(recipe: Recipe) = recipeDao.delete(recipe)
     override suspend fun searchRecipe(recipeName: String): List<Recipe> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun saveRecipe(recipe: Recipe) {
+    override fun getMyRecipes(): Flow<List<Recipe>> = recipeDao.getAll()
+    override fun getOnlineRecipes(): Flow<List<Recipe>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteRecipe(recipeId: String) {
-        TODO("Not yet implemented")
-    }
+    override fun getRecipeById(recipeId: String) = recipeDao.getById(recipeId)
 
-    override suspend fun getAllRecipes(): List<Recipe> = recipeDao.getAll()
-
-    override suspend fun createRecipe(recipe: Recipe) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun changeRecipe(recipe: Recipe) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun updateRecipe(recipe: Recipe) = recipeDao.update(recipe)
 }

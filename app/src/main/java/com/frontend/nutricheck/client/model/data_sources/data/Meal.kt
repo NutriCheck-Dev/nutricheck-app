@@ -1,12 +1,8 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import kotlin.collections.plus
 
-@Entity(tableName = "meals")
 data class Meal (
-    @PrimaryKey val id: String = "",
     val historyDayId: String = "",
     val dayTime: DayTime = DayTime.BREAKFAST,
     val items: Set<MealItem> = emptySet()

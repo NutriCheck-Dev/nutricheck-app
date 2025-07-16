@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.profile.BaseProfileOverviewViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,7 +24,9 @@ sealed interface ProfileOverviewEvent {
 }
 
 @HiltViewModel
-class ProfileOverviewViewModel @Inject constructor() : BaseProfileOverviewViewModel<UserData>(
+class ProfileOverviewViewModel @Inject constructor(
+    val userRepository: UserDataRepository
+) : BaseProfileOverviewViewModel<UserData>(
     UserData()
 ) {
 

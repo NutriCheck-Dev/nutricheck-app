@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe.edit
 
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 data class EditRecipeState(
     val title: String = "",
-    val ingredients: List<FoodComponent> = emptyList(),
+    val ingredients: Set<Ingredient> = emptySet(),
     val description: String = "",
     val calories: Int = 0,
     val carbs: Int = 0,
@@ -28,7 +28,9 @@ sealed interface EditRecipeEvent {
 }
 
 @HiltViewModel
-class EditRecipeViewModel @Inject constructor() : BaseEditRecipeViewModel(){
+class EditRecipeViewModel @Inject constructor() : BaseEditRecipeViewModel<Recipe>(
+    initialDraft = Recipe()
+) {
 
     private val _editRecipeState = MutableStateFlow(EditRecipeState())
     val createRecipeState = _editRecipeState.asStateFlow()
@@ -38,11 +40,11 @@ class EditRecipeViewModel @Inject constructor() : BaseEditRecipeViewModel(){
 
     fun onEvent(event: EditRecipeEvent) {}
 
-    override fun validate(draft: Recipe): Boolean {
+    override fun updateDraft(newDraft: Recipe) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun persistDraft(draft: Recipe): Result<Unit> {
+    override fun resetDraft() {
         TODO("Not yet implemented")
     }
 
