@@ -5,6 +5,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view.app_views.OnboardingGender
+import com.frontend.nutricheck.client.ui.view_model.add_components.AddDialogEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -82,9 +84,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun startOnboarding() {
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToName)
-        }
+        emitEvent(OnboardingEvent.NavigateToName)
     }
 
     override fun enterName(name: String) {
@@ -96,9 +96,7 @@ class OnboardingViewModel @Inject constructor(
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(username = name) }
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToBirthdate)
-        }
+        emitEvent(OnboardingEvent.NavigateToBirthdate)
     }
 
     override fun enterBirthdate(birthdate: Date?) {
@@ -110,9 +108,7 @@ class OnboardingViewModel @Inject constructor(
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(birthdate = birthdate) }
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToGender)
-        }
+        emitEvent(OnboardingEvent.NavigateToGender)
     }
 
     override fun enterGender(gender: Gender?) {
@@ -124,9 +120,7 @@ class OnboardingViewModel @Inject constructor(
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(gender = gender) }
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToHeight)
-        }
+        emitEvent(OnboardingEvent.NavigateToHeight)
     }
 
     override fun enterHeight(height: String) {
@@ -139,9 +133,7 @@ class OnboardingViewModel @Inject constructor(
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(height = heightAsDouble) }
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToWeight)
-        }
+        emitEvent(OnboardingEvent.NavigateToWeight)
     }
 
     override fun enterWeight(weight: String) {
@@ -154,9 +146,7 @@ class OnboardingViewModel @Inject constructor(
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(weight = weightAsDouble) }
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToSportFrequency)
-        }
+        emitEvent(OnboardingEvent.NavigateToSportFrequency)
     }
 
     override fun enterSportFrequency(activityLevel: ActivityLevel?) {
@@ -168,9 +158,7 @@ class OnboardingViewModel @Inject constructor(
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(activityLevel = activityLevel) }
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToWeightGoal)
-        }
+        emitEvent(OnboardingEvent.NavigateToWeightGoal)
     }
 
     override fun enterWeightGoal(weightGoal: WeightGoal?) {
@@ -182,9 +170,7 @@ class OnboardingViewModel @Inject constructor(
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(weightGoal = weightGoal) }
-        viewModelScope.launch {
-            _events.emit(OnboardingEvent.NavigateToTargetWeight)
-        }
+        emitEvent(OnboardingEvent.NavigateToTargetWeight)
     }
 
     override fun enterTargetWeight(targetWeight: String) {
@@ -214,9 +200,12 @@ class OnboardingViewModel @Inject constructor(
 
     private fun completeOnboarding() {
         TODO("send collected data to the model")
+
         viewModelScope.launch {
             onboardingRepository.setOnboardingCompleted()
-            _events.emit(OnboardingEvent.NavigateToDashboard)
         }
+        emitEvent(OnboardingEvent.NavigateToDashboard)
     }
+    private fun emitEvent(event: OnboardingEvent) = viewModelScope.launch { _events.emit(event) }
+
 }

@@ -13,7 +13,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.PersonalDataPage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 import com.frontend.nutricheck.client.ui.view.app_views.WeightHistoryPage
 import com.frontend.nutricheck.client.ui.view.dialogs.ChooseLanguageDialog
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
 
 sealed class ProfileScreens(val route: String) {

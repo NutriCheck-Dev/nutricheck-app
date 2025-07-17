@@ -43,14 +43,14 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import com.frontend.nutricheck.client.ui.view_model.navigation.ProfileScreens
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewState
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
 
 @Composable
 fun ProfilePage(
-    state : ProfileOverviewState,
-    onEvent : (ProfileOverviewEvent) -> Unit,
+    state : ProfileState,
+    onEvent : (ProfileEvent) -> Unit,
     profileNavController : NavController,
     profileOverviewViewModel : ProfileOverviewViewModel
 ) {
@@ -69,16 +69,16 @@ fun ProfilePage(
     LaunchedEffect(key1 = Unit) {
         profileOverviewViewModel.events.collect { event ->
             when (event) {
-                is ProfileOverviewEvent.DisplayWeightHistory -> {
+                is ProfileEvent.DisplayWeightHistory -> {
                     profileNavController.navigate(ProfileScreens.WeightHistoryPage.route)
                 }
-                is ProfileOverviewEvent.DisplayPersonalData -> {
+                is ProfileEvent.DisplayPersonalData -> {
                     profileNavController.navigate(ProfileScreens.PersonalDataPage.route)
                 }
-                is ProfileOverviewEvent.SelectLanguage -> {
+                is ProfileEvent.SelectLanguage -> {
                     profileNavController.navigate(ProfileScreens.SelectLanguageDialog.route)
                 }
-                is ProfileOverviewEvent.DisplayProfileOverview -> {
+                is ProfileEvent.DisplayProfileOverview -> {
                     profileNavController.navigate(ProfileScreens.ProfilePage.route)
                 }
                 else -> { /* No action needed for other events */}
@@ -180,7 +180,7 @@ fun ProfilePage(
                             stringResource(id = R.string.profile_menu_item_personal_data),
                         text = stringResource(id = R.string.profile_menu_item_personal_data),
                         onClick = {
-                            onEvent(ProfileOverviewEvent.DisplayPersonalData)
+                            onEvent(ProfileEvent.DisplayPersonalData)
                         })
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
@@ -192,7 +192,7 @@ fun ProfilePage(
                             stringResource(id = R.string.profile_menu_item_weight_history),
                         text = stringResource(id = R.string.profile_menu_item_weight_history),
                         onClick = {
-                            onEvent(ProfileOverviewEvent.DisplayWeightHistory)
+                            onEvent(ProfileEvent.DisplayWeightHistory)
                         })
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
@@ -217,7 +217,7 @@ fun ProfilePage(
                             stringResource(id = R.string.profile_menu_item_language),
                         text = stringResource(id = R.string.profile_menu_item_language),
                         onClick = {
-                            onEvent(ProfileOverviewEvent.SelectLanguage)
+                            onEvent(ProfileEvent.SelectLanguage)
                         })
                 }
             }

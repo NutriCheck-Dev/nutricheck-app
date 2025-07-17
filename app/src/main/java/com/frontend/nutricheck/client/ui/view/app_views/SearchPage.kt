@@ -12,14 +12,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
@@ -32,19 +35,13 @@ import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 @Composable
 fun SearchPage(
     modifier: Modifier = Modifier,
-    //actions: NavigationActions,
-    //searchViewModel: FoodSearchViewModel = hiltViewModel(),
-    meal: String = "Mahlzeit auswählen",
-    onOptionSelected: (String) -> Unit,
-    onDishClick: () -> Unit = {},
-    onAddClick: () -> Unit = {},
     foodList: List<FoodComponent> = emptyList(),
     onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     val scrollState = rememberScrollState()
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
     var isAddIngredient by remember { mutableStateOf(true) }
 
     Scaffold(
@@ -55,7 +52,7 @@ fun SearchPage(
                     navigationIcon = { NavigateBackButton(onBack = onBack) },
                     title = {
                         Text(
-                            text = "Zutaten Hinzufügen",
+                            text = stringResource(id = R.string.search_page_title),
                             style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -77,7 +74,9 @@ fun SearchPage(
 
             CustomTabRow(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
-                options = listOf("Alle", "Meine Rezepte"),
+                options = listOf(
+                    stringResource(id = R.string.search_page_label_all),
+                    stringResource(id = R.string.search_page_label_my_recipes)),
                 selectedOption = selectedTab
             )
 
@@ -91,9 +90,6 @@ fun SearchPage(
 fun SearchPagePreview() {
     AppTheme(darkTheme = true) {
         SearchPage(
-            onOptionSelected = {},
-            onDishClick = {},
-            onAddClick = {},
             onBack = {}
         )
     }

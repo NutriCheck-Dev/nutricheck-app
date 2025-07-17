@@ -63,4 +63,10 @@
     <string name="navigation_bar_label_diary">Tagebuch</string>
 
 
+    <string name="add_dialog_meal_title">Mahlzeit hinzufügen</string>
+    <string name="add_dialog_recipe_title">Rezept hinzufügen</string>
+    <string name="add_dialog_scan_title">Essen scannen</string>
+    <string name="search_page_title">Zutaten hinzufügen</string>
+    <string name="search_page_label_all">Alle</string>
+    <string name="search_page_label_my_recipes">Meine Rezepte</string>
 </resources>

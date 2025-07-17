@@ -10,10 +10,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-data class AddDialogState(
-    val isOpen: Boolean = false
-)
-
 sealed interface AddDialogEvent {
     data object AddMeal : AddDialogEvent
     data object ScanFood : AddDialogEvent
@@ -22,21 +18,23 @@ sealed interface AddDialogEvent {
 
 @HiltViewModel
 class AddDialogViewModel @Inject constructor() : BaseAddDialogViewModel() {
-    private val _addDialogState = MutableStateFlow(AddDialogState())
-    val createRecipeState = _addDialogState.asStateFlow()
 
     private val _events = MutableSharedFlow<AddDialogEvent>()
     val events: SharedFlow<AddDialogEvent> = _events.asSharedFlow()
 
-    fun onEvent(event: AddDialogEvent) {}
+    fun onEvent(event: AddDialogEvent) {
+        when (event) {
+            is AddDialogEvent.AddMeal -> onAddMealClick()
+            is AddDialogEvent.ScanFood -> onScanFoodClick()
+            is AddDialogEvent.AddRecipe -> onAddRecipeClick()
+        }
+    }
 
-    override fun onAddMealClick() { emitEvent(AddDialogEvent.AddMeal) }
+    private fun onAddMealClick() { emitEvent(AddDialogEvent.AddMeal) }
 
-    override fun onScanFoodClick() { emitEvent(AddDialogEvent.ScanFood) }
+    private fun onScanFoodClick() { emitEvent(AddDialogEvent.ScanFood) }
 
-    override fun onAddRecipeClick() { emitEvent(AddDialogEvent.AddRecipe) }
-
-    override fun onDismiss() { closeDialog() }
+    private fun onAddRecipeClick() { emitEvent(AddDialogEvent.AddRecipe) }
 
     private fun emitEvent(event: AddDialogEvent) = viewModelScope.launch { _events.emit(event) }
 }

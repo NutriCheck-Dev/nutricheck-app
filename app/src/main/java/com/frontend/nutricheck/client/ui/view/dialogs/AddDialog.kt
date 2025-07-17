@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.MaterialTheme
@@ -15,18 +16,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.AddOptionButton
+import com.frontend.nutricheck.client.R
 
 @Composable
 fun AddDialog(
-    modifier: Modifier = Modifier,
-    //addDialogViewModel: AddDialogViewModel = hiltViewModel(),
-    //addAiMealViewModel: AddAiMealViewModel = hiltViewModel(),
-    //addMealViewModel: AddMealViewModel = hiltViewModel(),
     onAddMealClick: () -> Unit = {},
     onAddRecipeClick: () -> Unit = {},
     onScanFoodClick: () -> Unit = {},
@@ -53,18 +52,19 @@ fun AddDialog(
                 ) {
                     AddOptionButton(
                         icon = Icons.Default.Search,
-                        label = "Mahlzeit hinzufügen",
-                        onClick = { onAddMealClick }
+                        label = stringResource(id = R.string.add_dialog_meal_title),
+                        onClick = {
+                            onAddMealClick }
                     )
                     AddOptionButton(
-                        icon = Icons.Default.Build,
-                        label = "Essen Scannen",
+                        icon = Icons.Default.CameraAlt,
+                        label = stringResource(id = R.string.add_dialog_scan_title),
                         onClick = { onScanFoodClick }
                     )
                 }
                 AddOptionButton(
                     icon = Icons.Default.Create,
-                    label = "Rezept hinzufügen",
+                    label = stringResource(id = R.string.add_dialog_recipe_title),
                     onClick = { onAddRecipeClick }
                 )
             }

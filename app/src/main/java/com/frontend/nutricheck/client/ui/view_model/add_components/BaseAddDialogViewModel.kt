@@ -14,8 +14,4 @@ abstract class BaseAddDialogViewModel : BaseViewModel() {
 
     fun closeDialog() { viewModelScope.launch { _close.emit(Unit) } }
 
-    abstract fun onAddMealClick()
-    abstract fun onScanFoodClick()
-    abstract fun onAddRecipeClick()
-    abstract fun onDismiss()
 }

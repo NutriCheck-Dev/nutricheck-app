@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewState
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import java.text.SimpleDateFormat
@@ -51,8 +51,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalDataPage(
-    state: ProfileOverviewState,
-    onEvent: (ProfileOverviewEvent) -> Unit,
+    state: ProfileState,
+    onEvent: (ProfileEvent) -> Unit,
 ) {
     var editableUserData by remember { mutableStateOf(state.userData) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -98,7 +98,7 @@ fun PersonalDataPage(
             Spacer(modifier = Modifier.height(8.dp))
             Button(
                 onClick = {
-                    onEvent(ProfileOverviewEvent.UpdateUserData(editableUserData))
+                    onEvent(ProfileEvent.UpdateUserData(editableUserData))
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -360,7 +360,7 @@ fun PersonalDataPreview() {
     )
 
     PersonalDataPage(
-        state = ProfileOverviewState(userData = previewUserData),
+        state = ProfileState(userData = previewUserData),
         onEvent = {}
     )
 }

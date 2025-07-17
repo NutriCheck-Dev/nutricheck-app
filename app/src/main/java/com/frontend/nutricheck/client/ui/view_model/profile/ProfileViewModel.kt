@@ -17,7 +17,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
-data class ProfileOverviewState(
+data class ProfileState(
     val userData: UserData = UserData(),
     val weightHistory: List<Int> = emptyList(),
     val selectedLanguage: String = "German",
@@ -25,35 +25,35 @@ data class ProfileOverviewState(
     val errorMessage: Int? = null
 )
 
-sealed interface ProfileOverviewEvent {
-    object DisplayProfileOverview : ProfileOverviewEvent
-    object DisplayPersonalData : ProfileOverviewEvent
-    object DisplayWeightHistory : ProfileOverviewEvent
-    object SelectLanguage : ProfileOverviewEvent
-    data class UpdateUserData(val userData: UserData) : ProfileOverviewEvent
-    data class SaveLanguage(val language: String) : ProfileOverviewEvent
-    data class ChangeTheme(val theme: String) : ProfileOverviewEvent
+sealed interface ProfileEvent {
+    object DisplayProfileOverview : ProfileEvent
+    object DisplayPersonalData : ProfileEvent
+    object DisplayWeightHistory : ProfileEvent
+    object SelectLanguage : ProfileEvent
+    data class UpdateUserData(val userData: UserData) : ProfileEvent
+    data class SaveLanguage(val language: String) : ProfileEvent
+    data class ChangeTheme(val theme: String) : ProfileEvent
 }
 
 @HiltViewModel
 class ProfileOverviewViewModel @Inject constructor() :
-    BaseProfileOverviewViewModel<ProfileOverviewState>(initialData = ProfileOverviewState()) {
+    BaseProfileViewModel<ProfileState>(initialData = ProfileState()) {
 
-    private val _events = MutableSharedFlow<ProfileOverviewEvent>()
-    val events: SharedFlow<ProfileOverviewEvent> = _events.asSharedFlow()
+    private val _events = MutableSharedFlow<ProfileEvent>()
+    val events: SharedFlow<ProfileEvent> = _events.asSharedFlow()
 
-    private val _data = MutableStateFlow(ProfileOverviewState())
-    override val data: StateFlow<ProfileOverviewState> = _data.asStateFlow()
+    private val _data = MutableStateFlow(ProfileState())
+    override val data: StateFlow<ProfileState> = _data.asStateFlow()
 
-    fun onEvent(event: ProfileOverviewEvent) {
+    fun onEvent(event: ProfileEvent) {
         when(event) {
-            is ProfileOverviewEvent.DisplayProfileOverview -> { displayProfileOverview() }
-            is ProfileOverviewEvent.DisplayPersonalData -> { displayPersonalData() }
-            is ProfileOverviewEvent.DisplayWeightHistory -> { displayWeightHistory() }
-            is ProfileOverviewEvent.SelectLanguage -> { editLanguage() }
-            is ProfileOverviewEvent.SaveLanguage -> { onSaveLanguageClick(event.language) }
-            is ProfileOverviewEvent.ChangeTheme -> { onChangeThemeClick(event.theme) }
-            is ProfileOverviewEvent.UpdateUserData -> { validate(event.userData) }
+            is ProfileEvent.DisplayProfileOverview -> { displayProfileOverview() }
+            is ProfileEvent.DisplayPersonalData -> { displayPersonalData() }
+            is ProfileEvent.DisplayWeightHistory -> { displayWeightHistory() }
+            is ProfileEvent.SelectLanguage -> { editLanguage() }
+            is ProfileEvent.SaveLanguage -> { onSaveLanguageClick(event.language) }
+            is ProfileEvent.ChangeTheme -> { onChangeThemeClick(event.theme) }
+            is ProfileEvent.UpdateUserData -> { validate(event.userData) }
         }
     }
 
@@ -63,15 +63,11 @@ class ProfileOverviewViewModel @Inject constructor() :
     }
 
     override fun onWeightHistoryClick() {
-        viewModelScope.launch {
-            _events.emit(ProfileOverviewEvent.DisplayWeightHistory)
-        }
+        emitEvent(ProfileEvent.DisplayWeightHistory)
         TODO("Get weight history from data source")
     }
     override fun editLanguage() {
-        viewModelScope.launch {
-            _events.emit(ProfileOverviewEvent.SelectLanguage)
-        }
+        emitEvent(ProfileEvent.SelectLanguage)
     }
 
     override fun onSaveLanguageClick(language: String) {
@@ -87,9 +83,7 @@ class ProfileOverviewViewModel @Inject constructor() :
         // Implementation for displaying personal data
     }
     private fun displayProfileOverview() {
-        viewModelScope.launch {
-            _events.emit(ProfileOverviewEvent.DisplayProfileOverview)
-        }
+        emitEvent(ProfileEvent.DisplayProfileOverview)
     }
     private fun validate(userData: UserData) {
         if (userData.username.isBlank()) {
@@ -115,9 +109,7 @@ class ProfileOverviewViewModel @Inject constructor() :
         }
         _data.value = _data.value.copy(errorMessage = null, userData = userData)
         persistData(userData)
-        viewModelScope.launch {
-            _events.emit(ProfileOverviewEvent.DisplayProfileOverview)
-        }
+        displayProfileOverview()
     }
     private fun persistData(userData: UserData) {
         TODO("Persist user data to the data source")
@@ -129,6 +121,7 @@ class ProfileOverviewViewModel @Inject constructor() :
         val today = LocalDate.now()
         val hundredYearsAgo = today.minusYears(100)
         return localBirthdate.isAfter(today) || localBirthdate.isBefore(hundredYearsAgo)
-
     }
+    private fun emitEvent(event: ProfileEvent) = viewModelScope.launch { _events.emit(event) }
+
 }

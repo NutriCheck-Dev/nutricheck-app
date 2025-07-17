@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
@@ -18,8 +19,7 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 fun BottomNavigationBar(
     navController:  NavHostController,
     currentDestination: String,
-    onAddClicked: () -> Unit = {}
-) {
+   ) {
     NavigationBar {
 
         NavigationBarItem(
@@ -46,12 +46,12 @@ fun BottomNavigationBar(
             label = { Text(stringResource(id = R.string.navigation_bar_label_profile)) }
         )
 
-//        NavigationBarItem(
-//            selected = currentDestination == "add",
-//            onClick = { onAddClicked() },
-//            icon = { Icon(Icons.Default.AddCircle,
-//                contentDescription = stringResource(id = R.string.navigation_bar_label_add)) },
-//            label = { Text(stringResource(id = R.string.navigation_bar_label_add)) }
-//        )
+        NavigationBarItem(
+            selected = currentDestination == "add",
+            onClick = { navController.navigate(Screen.Add.route) },
+            icon = { Icon(Icons.Default.AddCircle,
+                contentDescription = stringResource(id = R.string.navigation_bar_label_add)) },
+            label = { Text(stringResource(id = R.string.navigation_bar_label_add)) }
+        )
     }
 }

@@ -61,7 +61,6 @@ fun MainScreen(
                 BottomNavigationBar(
                     navController = mainNavController,
                     currentDestination = currentDestination,
-                    onAddClicked = { /* TODO */ }
                 )
             }
         ) { innerPadding ->

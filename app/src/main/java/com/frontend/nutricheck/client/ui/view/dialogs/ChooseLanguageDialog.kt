@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
 
 @Composable
@@ -60,7 +60,7 @@ fun ChooseLanguageDialog(
         confirmButton = {
             TextButton(onClick = {
                 profileOverviewViewModel
-                    .onEvent(ProfileOverviewEvent.SaveLanguage(selectedLanguage))
+                    .onEvent(ProfileEvent.SaveLanguage(selectedLanguage))
                 onDismissRequest()
             }) {
                 Text(stringResource(id = R.string.save))
