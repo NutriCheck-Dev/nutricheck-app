@@ -30,7 +30,6 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 @Composable
 fun RecipePage(
@@ -97,7 +96,6 @@ fun RecipePage(
 @Composable
 fun RecipePagePreview() {
     val navController = rememberNavController()
-    val previewActions = NavigationActions(navController)
     AppTheme(
         darkTheme = true
     ) {

@@ -41,7 +41,9 @@ import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun OnboardingBirthdate(
@@ -57,6 +59,9 @@ fun OnboardingBirthdate(
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
+    val displayDate = selectedDate?.let { dateFormat.format(it) } ?: ""
 
     Box(
         modifier = Modifier
@@ -107,7 +112,7 @@ fun OnboardingBirthdate(
             )
 
             OutlinedTextField(
-                value = selectedDate,
+                value = displayDate,
                 onValueChange = { },
                 modifier = Modifier
                     .width(300.dp)
@@ -125,7 +130,12 @@ fun OnboardingBirthdate(
             val datePickerDialog = DatePickerDialog(
             context,
             { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
-                selectedDate = "$selectedDay.${selectedMonth + 1}.$selectedYear"
+                val newCal = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, selectedYear)
+                    set(Calendar.MONTH, selectedMonth)
+                    set(Calendar.DAY_OF_MONTH, selectedDay)
+                }
+                selectedDate = newCal.time
                 showDatePicker = false
             }, year, month, day
             )
@@ -153,6 +163,7 @@ fun OnboardingBirthdate(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF4580FF)
             ),
+            enabled = selectedDate != null,
             onClick = {
                 onEvent(OnboardingEvent.EnterBirthdate(selectedDate))})
         {

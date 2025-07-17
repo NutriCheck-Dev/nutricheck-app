@@ -56,7 +56,7 @@ class EditRecipeViewModel @Inject constructor() : BaseEditRecipeViewModel<Recipe
         // Logic to remove an ingredient from the recipe draft
     }
 
-    override fun saveChanges() {
+    fun saveChanges() {
         // Logic to save changes made to the recipe draft
     }
 }

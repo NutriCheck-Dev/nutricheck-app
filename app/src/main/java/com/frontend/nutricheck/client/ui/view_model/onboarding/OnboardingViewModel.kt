@@ -15,12 +15,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeParseException
+import java.util.Date
 import javax.inject.Inject
 
 sealed interface OnboardingEvent {
     data class EnterName(val name: String) : OnboardingEvent
-    data class EnterBirthdate(val birthdate: String) : OnboardingEvent
+    data class EnterBirthdate(val birthdate: Date?) : OnboardingEvent
     data class EnterGender(val gender: Gender?) : OnboardingEvent
     data class EnterHeight(val height: String) : OnboardingEvent
     data class EnterWeight(val weight: String) : OnboardingEvent
@@ -44,7 +44,7 @@ sealed interface OnboardingEvent {
 data class OnboardingState(
     val errorState: Int? = null,
     val username: String = "",
-    val birthdate: String = "",
+    val birthdate: Date? = null,
     val gender: Gender? = null,
     val height: Double = 0.0,
     val weight: Double = 0.0,
@@ -101,7 +101,7 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    override fun enterBirthdate(birthdate: String) {
+    override fun enterBirthdate(birthdate: Date?) {
         if (!validateBirthdate(birthdate)) {
             _data.update {
                 it.copy(errorState = R.string.onboarding_error_birthdate_required)
@@ -200,22 +200,17 @@ class OnboardingViewModel @Inject constructor(
         completeOnboarding()
     }
 
-    private fun validateBirthdate(birthdate: String): Boolean {
-        if (birthdate.isBlank()) {
+    private fun validateBirthdate(birthdate: Date?): Boolean {
+        if (birthdate == null) {
             return false
         }
-        if (!birthdate.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) {
-            return false
-        }
-        return try {
-            val parsedBirthdate = LocalDate.parse(birthdate)
+        val localBirthdate = birthdate.toInstant()
+            .atZone(java.time.ZoneId.systemDefault())
+            .toLocalDate()
             val today = LocalDate.now()
             val hundredYearsAgo = today.minusYears(100)
-            !parsedBirthdate.isAfter(today) && !parsedBirthdate.isBefore(hundredYearsAgo)
-        } catch (e: DateTimeParseException) {
-            false
-        }
-    }
+        return !localBirthdate.isAfter(today) && !localBirthdate.isBefore(hundredYearsAgo)
+     }
 
     private fun completeOnboarding() {
         TODO("send collected data to the model")

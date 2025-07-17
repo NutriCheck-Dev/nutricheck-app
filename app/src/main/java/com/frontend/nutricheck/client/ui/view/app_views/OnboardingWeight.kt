@@ -46,7 +46,8 @@ fun OnboardingWeight(
     onEvent : (OnboardingEvent) -> Unit,
 
     ){
-    var textState by remember { mutableStateOf(state.weight) }
+    var textState by remember {
+        mutableStateOf(if (state.weight > 0.0) state.weight.toString() else "") }
     val error = state.errorState
     Box(
         modifier = Modifier

@@ -22,9 +22,6 @@
     <string name="onboarding_label_gender_female">Weiblich</string>
     <string name="onboarding_label_gender_diverse">Divers</string>
     <string name="onboarding_label_activity_level_never">Nie</string>
-    <string name="onboarding_label_activity_level_low">1–2/Woche</string>
-    <string name="onboarding_label_activity_level_medium">3–4/Woche</string>
-    <string name="onboarding_label_activity_level_high">5+/Woche</string>
     <string name="onboarding_label_goal_lose_weight">Abnehmen</string>
     <string name="onboarding_label_goal_gain_weight">Zunehmen</string>
     <string name="onboarding_label_goal_maintain_weight">Gewicht halten</string>
@@ -54,6 +51,11 @@
     <string name="select_language_title">Sprache auswählen</string>
     <string name="cancel">Abbrechen</string>
     <string name="save">Speichern</string>
+    <string name="profile_menu_item_gender">Geschlecht</string>
+    <string name="profile_menu_item_activity_level">Aktivitätslevel</string>
+    <string name="profile_menu_item_goal">Ziel</string>
+    <string name="profile_menu_item_name">Name</string>
+
 
     <string name="navigation_bar_label_home">Start</string>
     <string name="navigation_bar_label_profile">Profil</string>

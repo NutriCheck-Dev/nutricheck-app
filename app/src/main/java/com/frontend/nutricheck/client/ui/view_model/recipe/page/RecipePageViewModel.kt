@@ -61,6 +61,7 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.ClickSaveRecipe -> viewModelScope.launch { onSaveRecipeClick(event.recipe) }
             is RecipePageEvent.ClickDeleteRecipe -> viewModelScope.launch { onDeleteRecipeClick(event.recipe) }
             is RecipePageEvent.ShowSnackbar -> emitEvent(RecipePageEvent.ShowSnackbar(event.message))
+            else -> { /* Don´t handle other here */ }
         }
     }
 

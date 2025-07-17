@@ -10,13 +10,14 @@ abstract class BaseProfileOverviewViewModel<DATA>(
 ) : BaseViewModel() {
 
     private val _data = MutableStateFlow(initialData)
-    val data: StateFlow<DATA> = _data.asStateFlow()
+    open val data: StateFlow<DATA> = _data.asStateFlow()
 
     abstract fun onPersonalDataClick()
     abstract fun onWeightHistoryClick()
-    abstract fun onSelectLanguageClick()
-    abstract fun onSelectThemeClick()
+    abstract fun onSaveLanguageClick(language: String)
+    abstract fun onChangeThemeClick(theme : String)
     abstract fun displayWeightHistory()
     abstract fun displayPersonalData()
+    abstract fun editLanguage()
 
 }

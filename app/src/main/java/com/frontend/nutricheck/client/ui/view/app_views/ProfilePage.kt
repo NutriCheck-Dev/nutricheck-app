@@ -40,29 +40,51 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavController
+import com.frontend.nutricheck.client.ui.view_model.navigation.ProfileScreens
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewState
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
 
 @Composable
 fun ProfilePage(
-    profileOverviewViewModel: ProfileOverviewViewModel
+    state : ProfileOverviewState,
+    onEvent : (ProfileOverviewEvent) -> Unit,
+    profileNavController : NavController,
+    profileOverviewViewModel : ProfileOverviewViewModel
 ) {
-    TODO("get Data from Model")
-    var username : String = "Moritz"
-    var userAge : Int = 25
-    var userHeight : Int = 180
-    var userWeight : Double = 75.0
     var darkmode : Boolean = true
 
-    val greetingText = stringResource(id = R.string.profile_name, username)
-    val userHeightText = stringResource(id = R.string.height_cm, userHeight)
-    val userWeightText = stringResource(id = R.string.weight_kg, userWeight)
-    val userAgeText = stringResource(id = R.string.age_years, userAge)
+    val greetingText = stringResource(id = R.string.profile_name, state.userData.username)
+    val userHeightText = stringResource(id = R.string.height_cm, state.userData.height.toString())
+    val userWeightText = stringResource(id = R.string.weight_kg, state.userData.weight.toString())
+    val userAgeText = stringResource(id = R.string.age_years, state.userData.age)
     val scrollState = rememberScrollState()
 
     val sixteenDp = 16.dp
     val eightDp = 8.dp
     val thirtyTwoDp = 32.dp
 
+    LaunchedEffect(key1 = Unit) {
+        profileOverviewViewModel.events.collect { event ->
+            when (event) {
+                is ProfileOverviewEvent.DisplayWeightHistory -> {
+                    profileNavController.navigate(ProfileScreens.WeightHistoryPage.route)
+                }
+                is ProfileOverviewEvent.DisplayPersonalData -> {
+                    profileNavController.navigate(ProfileScreens.PersonalDataPage.route)
+                }
+                is ProfileOverviewEvent.SelectLanguage -> {
+                    profileNavController.navigate(ProfileScreens.SelectLanguageDialog.route)
+                }
+                is ProfileOverviewEvent.DisplayProfileOverview -> {
+                    profileNavController.navigate(ProfileScreens.ProfilePage.route)
+                }
+                else -> { /* No action needed for other events */}
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -156,8 +178,10 @@ fun ProfilePage(
                         icon = Icons.Default.AccountCircle,
                         contentDescription =
                             stringResource(id = R.string.profile_menu_item_personal_data),
-                        stringResource(id = R.string.profile_menu_item_personal_data),
-                        onClick = { /* Handle click */ })
+                        text = stringResource(id = R.string.profile_menu_item_personal_data),
+                        onClick = {
+                            onEvent(ProfileOverviewEvent.DisplayPersonalData)
+                        })
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
@@ -166,8 +190,10 @@ fun ProfilePage(
                         icon = Icons.Default.BarChart,
                         contentDescription =
                             stringResource(id = R.string.profile_menu_item_weight_history),
-                        stringResource(id = R.string.profile_menu_item_weight_history),
-                        onClick = { /* Handle click */ })
+                        text = stringResource(id = R.string.profile_menu_item_weight_history),
+                        onClick = {
+                            onEvent(ProfileOverviewEvent.DisplayWeightHistory)
+                        })
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
@@ -189,8 +215,10 @@ fun ProfilePage(
                         icon = Icons.Filled.Language,
                         contentDescription =
                             stringResource(id = R.string.profile_menu_item_language),
-                        stringResource(id = R.string.profile_menu_item_language),
-                        onClick = { /* Handle click */ })
+                        text = stringResource(id = R.string.profile_menu_item_language),
+                        onClick = {
+                            onEvent(ProfileOverviewEvent.SelectLanguage)
+                        })
                 }
             }
         }

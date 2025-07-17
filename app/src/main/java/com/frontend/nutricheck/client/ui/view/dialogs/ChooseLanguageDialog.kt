@@ -13,18 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
 
 @Composable
 fun ChooseLanguageDialog(
+    profileOverviewViewModel: ProfileOverviewViewModel,
     currentLanguage: String,
-    onDismissRequest: () -> Unit,
-    onLanguageSelected: (String) -> Unit
+    onDismissRequest: () -> Unit
 ) {
     val languages = listOf("Deutsch", "English")
-
+    var selectedLanguage = currentLanguage
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { Text(text = stringResource(id = R.string.select_language_title)) },
@@ -33,7 +34,7 @@ fun ChooseLanguageDialog(
                 languages.forEach { language ->
                     Button(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = if (language.equals(currentLanguage, ignoreCase = true)) {
+                        colors = if (language.equals(selectedLanguage, ignoreCase = true)) {
                             ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -44,7 +45,7 @@ fun ChooseLanguageDialog(
                                 contentColor = Color.Black
                             )
                         },
-                        onClick = { onLanguageSelected(language) }
+                        onClick = { selectedLanguage = language }
                     ) {
                         Text(text = language)
                     }
@@ -53,18 +54,17 @@ fun ChooseLanguageDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text("Abbrechen")
+                Text(stringResource(id = R.string.cancel))
             }
         },
-        confirmButton = { }
-    )
-}
-@Preview
-@Composable
-fun ChooseLanguageDialogPreview() {
-    ChooseLanguageDialog(
-        currentLanguage = "Deutsch",
-        onDismissRequest = {},
-        onLanguageSelected = {}
+        confirmButton = {
+            TextButton(onClick = {
+                profileOverviewViewModel
+                    .onEvent(ProfileOverviewEvent.SaveLanguage(selectedLanguage))
+                onDismissRequest()
+            }) {
+                Text(stringResource(id = R.string.save))
+            }
+        }
     )
 }

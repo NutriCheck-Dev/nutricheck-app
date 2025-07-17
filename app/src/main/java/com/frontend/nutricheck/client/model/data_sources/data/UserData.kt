@@ -8,7 +8,7 @@ import java.util.Date
 data class UserData(
     @PrimaryKey val username: String = "",
     val birthdate: Date = Date(),
-    val gender: Gender? = Gender.DIVERS,
+    val gender: Gender = Gender.DIVERS,
     val height: Double? = 0.0,
     val weight: Double? = 0.0,
     val age : Int = 0,
