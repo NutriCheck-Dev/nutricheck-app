@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,14 +37,15 @@ import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
-@Preview
 @Composable
 fun OnboardingGoal(
-    onboardingViewModel: OnboardingViewModel = hiltViewModel(),
+    state : OnboardingState,
+    onEvent : (OnboardingEvent) -> Unit,
 ) {
     var selectedGoal by remember { mutableStateOf<WeightGoal?>(null) }
-
+    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -111,6 +113,15 @@ fun OnboardingGoal(
                     selected = selectedGoal == goal
                 )
             }
+            error?.let { resId ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp),
+                    text = stringResource(id = resId),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         Button(
@@ -124,7 +135,7 @@ fun OnboardingGoal(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.EnterWeightGoal(selectedGoal))
+                onEvent(OnboardingEvent.EnterWeightGoal(selectedGoal))
             })
         {
             Text(

@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,22 +31,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
 
-@Preview
 @Composable
 fun OnboardingTargetWeight(
-    onboardingViewModel : OnboardingViewModel = viewModel(),
+    state : OnboardingState,
+    onEvent : (OnboardingEvent) -> Unit,
 
     ){
-    var textState by remember { mutableStateOf("") }
+    var textState: String by remember {
+        mutableStateOf (if (state.targetWeight > 0.0) state.targetWeight.toString() else (""))
+    }
+    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -98,12 +100,21 @@ fun OnboardingTargetWeight(
                     .width(300.dp)
                     .height(56.dp),
                 value = textState,
-                onValueChange = { textState = it },
-                label = {
-                    Text(stringResource(id = R.string.onboarding_label_target_weight))
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                onValueChange = { textState  =  it },
+                label = { Text(stringResource(id = R.string.onboarding_label_target_weight)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = error != null,
+                singleLine = true
             )
+            error?.let { resId ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp),
+                    text = stringResource(id = resId),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
         Button(
             modifier = Modifier
@@ -116,7 +127,7 @@ fun OnboardingTargetWeight(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.EnterTargetWeight(textState))
+                onEvent(OnboardingEvent.EnterTargetWeight(textState))
             })
         {
             Text(

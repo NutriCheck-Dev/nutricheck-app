@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,22 +29,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
-@Preview
 @Composable
 fun OnboardingSport(
-    onboardingViewModel: OnboardingViewModel = viewModel(),
+    state : OnboardingState,
+    onEvent : (OnboardingEvent) -> Unit
 ) {
-    var selectedActivity by remember { mutableStateOf<ActivityLevel?>(null) }
-
+    var selectedActivity by remember { mutableStateOf<ActivityLevel?>(state.activityLevel) }
+    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -116,6 +115,15 @@ fun OnboardingSport(
                     selected = selectedActivity == level
                 )
             }
+            error?.let { resId ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp),
+                    text = stringResource(id = resId),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
         Button(
             modifier = Modifier
@@ -128,9 +136,7 @@ fun OnboardingSport(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(
-                    OnboardingEvent
-                    .EnterSportFrequency(selectedActivity))
+                onEvent(OnboardingEvent.EnterSportFrequency(selectedActivity))
             })
         {
             Text(

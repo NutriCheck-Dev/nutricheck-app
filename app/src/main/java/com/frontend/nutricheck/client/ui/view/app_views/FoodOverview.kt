@@ -4,12 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.navigation.NavigationActions
 
 @Composable
 fun FoodOverview(
     modifier: Modifier = Modifier,
-    actions: NavigationActions,
     foodOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
     title: String = "Food Overview",
     onBackClick: () -> Unit = {}

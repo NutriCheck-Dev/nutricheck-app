@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,15 +37,16 @@ import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
 
-@Preview
 @Composable
 fun OnboardingGender(
-    onboardingViewModel: OnboardingViewModel = viewModel(),
+    state : OnboardingState,
+    onEvent : (OnboardingEvent) -> Unit,
 ) {
-    var selectedGender by remember { mutableStateOf<Gender?>(null) }
-
+    var selectedGender by remember { mutableStateOf<Gender?>(state.gender) }
+    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -112,6 +114,15 @@ fun OnboardingGender(
                     selected = selectedGender == gender
                 )
             }
+            error?.let { resId ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp),
+                    text = stringResource(id = resId),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
         Button(
             modifier = Modifier
@@ -124,7 +135,7 @@ fun OnboardingGender(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.EnterGender(selectedGender))
+                onEvent(OnboardingEvent.EnterGender(selectedGender))
             })
         {
             Text(

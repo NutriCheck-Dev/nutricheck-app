@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,15 +40,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 import java.util.Calendar
 
-@Preview
 @Composable
 fun OnboardingBirthdate(
-    onboardingViewModel : OnboardingViewModel = viewModel(),
+    state : OnboardingState,
+    onEvent : (OnboardingEvent) -> Unit,
     ) {
-    var selectedDate by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(state.birthdate) }
     var showDatePicker by remember { mutableStateOf(false) }
+    val error = state.errorState
 
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
@@ -112,7 +115,9 @@ fun OnboardingBirthdate(
                 label = {
                     Text(stringResource(id = R.string.onboarding_label_birthdate))
                 },
-                readOnly = true
+                readOnly = true,
+                isError = error != null,
+                singleLine = true
             )
 
         }
@@ -128,6 +133,15 @@ fun OnboardingBirthdate(
                 showDatePicker = false
             }
         datePickerDialog.show()
+            error?.let { resId ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp),
+                    text = stringResource(id = resId),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
         Button(
             modifier = Modifier
@@ -140,7 +154,7 @@ fun OnboardingBirthdate(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.EnterBirthdate(selectedDate))})
+                onEvent(OnboardingEvent.EnterBirthdate(selectedDate))})
         {
             Text(
                 text = stringResource(id = R.string.onboarding_button_next),

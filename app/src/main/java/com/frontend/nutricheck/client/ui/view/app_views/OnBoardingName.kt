@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,21 +29,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
-@Preview
 @Composable
 fun OnboardingName(
-    onboardingViewModel: OnboardingViewModel = viewModel(),
+    state : OnboardingState,
+    onEvent : (OnboardingEvent) -> Unit,
     ) {
-    var textState by remember { mutableStateOf("") }
-    val error by onboardingViewModel.errorState.collectAsState()
+    var textState by remember { mutableStateOf(state.username) }
+    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -97,19 +94,18 @@ fun OnboardingName(
                     .height(56.dp),
                 value = textState,
                 onValueChange = { textState = it },
-                label = {
-                    Text(stringResource(id = R.string.onboarding_label_name))
-                }
+                label = { Text(stringResource(id = R.string.onboarding_label_name)) },
+                isError = error != null,
+                singleLine = true
             )
-        }
-        error?.let { resId ->
-            Text(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(top = 16.dp),
-                text =  stringResource(id = resId),
-                color = MaterialTheme.colorScheme.error
-            )
+            error?.let { resId ->
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp),
+                    text = stringResource(id = resId),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
         Button(
             modifier = Modifier
@@ -122,7 +118,7 @@ fun OnboardingName(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.EnterName(textState))
+                onEvent(OnboardingEvent.EnterName(textState))
             })
         {
             Text(

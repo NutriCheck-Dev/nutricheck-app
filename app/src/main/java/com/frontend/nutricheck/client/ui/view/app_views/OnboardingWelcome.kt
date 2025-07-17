@@ -32,10 +32,9 @@ import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
 
-@Preview
 @Composable
 fun OnboardingWelcome(
-    onboardingViewModel: OnboardingViewModel = viewModel(),
+    onEvent : (OnboardingEvent) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -122,7 +121,7 @@ fun OnboardingWelcome(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onboardingViewModel.onEvent(OnboardingEvent.StartOnboarding)
+                onEvent(OnboardingEvent.StartOnboarding)
             })
         {
             Text(

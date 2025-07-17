@@ -10,6 +10,8 @@ data class UserData(
     val birthdate: Date = Date(),
     val gender: Gender? = Gender.DIVERS,
     val height: Double? = 0.0,
+    val weight: Double? = 0.0,
+    val age : Int = 0,
     val targetCalories: Double? = 0.0,
     val weightGoal: WeightGoal = WeightGoal.MAINTAIN_WEIGHT,
     val targetWeight: Double? = 0.0,

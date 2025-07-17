@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.frontend.nutricheck.client.ui.view.app_views.OnboardingBirthdate
 import com.frontend.nutricheck.client.ui.view.app_views.OnboardingGender
 import com.frontend.nutricheck.client.ui.view.app_views.OnboardingGoal
@@ -36,9 +38,10 @@ sealed class OnboardingScreen(val route: String) {
 fun OnboardingNavGraph(
     mainNavController : NavHostController
 ) {
+
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val onboardingNavController = rememberNavController()
-
+    val state by onboardingViewModel.data.collectAsState()
     LaunchedEffect(key1 = Unit) {
         onboardingViewModel.events.collect { event ->
             when (event) {
@@ -67,20 +70,37 @@ fun OnboardingNavGraph(
             }
         }
     }
+
     NavHost(
         navController = onboardingNavController,
         startDestination = OnboardingScreen.Welcome.route
     ) {
-        composable(OnboardingScreen.Welcome.route) { OnboardingWelcome(onboardingViewModel) }
-        composable(OnboardingScreen.Name.route) { OnboardingName(onboardingViewModel) }
-        composable(OnboardingScreen.Birthdate.route) { OnboardingBirthdate(onboardingViewModel) }
-        composable(OnboardingScreen.Gender.route) { OnboardingGender(onboardingViewModel) }
-        composable(OnboardingScreen.Height.route) { OnboardingHeight(onboardingViewModel) }
-        composable(OnboardingScreen.Weight.route) { OnboardingWeight(onboardingViewModel) }
-        composable(OnboardingScreen.SportFrequency.route) { OnboardingSport(onboardingViewModel) }
-        composable(OnboardingScreen.WeightGoal.route) { OnboardingGoal(onboardingViewModel) }
+        composable(OnboardingScreen.Welcome.route) {
+            OnboardingWelcome(onEvent = onboardingViewModel::onEvent)
+        }
+        composable(OnboardingScreen.Name.route) {
+            OnboardingName(state = state, onEvent = onboardingViewModel::onEvent)
+        }
+        composable(OnboardingScreen.Birthdate.route) {
+            OnboardingBirthdate(state = state, onEvent = onboardingViewModel::onEvent)
+        }
+        composable(OnboardingScreen.Gender.route) {
+            OnboardingGender(state = state, onEvent = onboardingViewModel::onEvent)
+        }
+        composable(OnboardingScreen.Height.route) {
+            OnboardingHeight(state = state, onEvent = onboardingViewModel::onEvent)
+        }
+        composable(OnboardingScreen.Weight.route) {
+            OnboardingWeight(state = state, onEvent = onboardingViewModel::onEvent)
+        }
+        composable(OnboardingScreen.SportFrequency.route) {
+            OnboardingSport(state = state, onEvent = onboardingViewModel::onEvent)
+        }
+        composable(OnboardingScreen.WeightGoal.route) {
+            OnboardingGoal(state = state, onEvent = onboardingViewModel::onEvent)
+        }
         composable(OnboardingScreen.TargetWeight.route) {
-            OnboardingTargetWeight(onboardingViewModel)
+            OnboardingTargetWeight(state = state, onEvent = onboardingViewModel::onEvent)
         }
     }
 }
