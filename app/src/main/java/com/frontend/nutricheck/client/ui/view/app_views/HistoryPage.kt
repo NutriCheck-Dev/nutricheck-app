@@ -1,3 +1,5 @@
+package com.frontend.nutricheck.client.ui.view.app_views
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

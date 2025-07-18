@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.history
 
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
 abstract class BaseHistoryViewModel : BaseViewModel() {
 
@@ -13,11 +12,8 @@ abstract class BaseHistoryViewModel : BaseViewModel() {
     abstract fun onDetailsClick()
     abstract fun onTotalCaloriesClick()
     abstract fun onSwitchClick()
-    fun onRecipeClick() = RecipePageViewModel.onRecipeClick()
 
 
 }
 
-private fun RecipePageViewModel.Companion.onRecipeClick(): Unit {
-//TODO
-}
+

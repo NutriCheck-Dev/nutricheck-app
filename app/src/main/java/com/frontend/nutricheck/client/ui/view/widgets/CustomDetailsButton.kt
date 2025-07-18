@@ -23,7 +23,7 @@ fun CustomDetailsButton(
     isOnPublicRecipe: Boolean = false,
     isOnFoodItem: Boolean = false,
     isOnIngredientButton: Boolean = false,
-    onItemSelected: (DropdownMenuOptions) -> Unit = {},
+    onOptionSelected: (DropdownMenuOptions) -> Unit = {},
     expanded: Boolean = false,
     onExpandedChange: (Boolean) -> Unit = { }
 ) {
@@ -87,7 +87,7 @@ fun CustomDetailsButton(
                         )},
                     onClick = {
                         onExpandedChange(false)
-                        onItemSelected(option)
+                        onOptionSelected(option)
                     }
                 )
                 if (optionsList.last() != option) {

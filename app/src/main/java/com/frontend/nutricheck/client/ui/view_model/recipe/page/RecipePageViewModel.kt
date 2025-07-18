@@ -26,7 +26,7 @@ sealed interface RecipePageEvent {
     data object ClickOnlineRecipes : RecipePageEvent
     data class ClickSaveRecipe(val recipe: Recipe) : RecipePageEvent
     data class ClickDeleteRecipe(val recipe: Recipe) : RecipePageEvent
-    data class ShowSnackbar(val message: String) : RecipePageEvent
+    //data class ShowSnackbar(val message: String) : RecipePageEvent
 }
 
 @HiltViewModel
@@ -57,7 +57,7 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.ClickOnlineRecipes -> onOnlineRecipesClick()
             is RecipePageEvent.ClickSaveRecipe -> viewModelScope.launch { onSaveRecipeClick(event.recipe) }
             is RecipePageEvent.ClickDeleteRecipe -> viewModelScope.launch { onDeleteRecipeClick(event.recipe) }
-            is RecipePageEvent.ShowSnackbar -> emitEvent(RecipePageEvent.ShowSnackbar(event.message))
+            //is RecipePageEvent.ShowSnackbar -> emitEvent(RecipePageEvent.ShowSnackbar(event.message))
         }
     }
 
@@ -80,7 +80,5 @@ class RecipePageViewModel @Inject constructor(
     }
 
     private fun emitEvent(event: RecipePageEvent) = viewModelScope.launch { _events.emit(event) }
-
-    companion object
 
 }
