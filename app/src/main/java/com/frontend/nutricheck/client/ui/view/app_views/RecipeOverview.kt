@@ -17,6 +17,8 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,13 +27,7 @@ fun RecipeOverview(
     //actions: NavigationActions,
     recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
     editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
-    recipeId: String = "",
-    recipe: Recipe = Recipe(),
-    ingredients: List<FoodComponent> = emptyList(),
-    onFoodClick: (String) -> Unit = {},
-    onEditClick: () -> Unit = {},
-    onDoneClick: (String) -> Unit = {},
-    onSave: (String, String) -> Unit = { _, _ -> },
+    reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(),
     onBack: () -> Unit = {}
 ) {
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
@@ -41,9 +37,13 @@ fun RecipeOverview(
     if (!isEditing) {
         RecipeOverviewBaseContent(
             recipe = recipeOverviewState.recipe,
+            onDownLoad = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDownloadRecipe(it)) },
             onEdit = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe) },
             onDelete = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDeleteRecipe(it)) },
             onUpload = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickUploadRecipe(it)) },
+            onReport = { reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport) }, //TODO: Implement report functionality
+            onDismiss = {}, //TODO: Implement dismiss functionality
+            onReportClick = {}, //TODO: Implement report click functionality
             onBack = onBack
         )
     } else {
@@ -51,9 +51,8 @@ fun RecipeOverview(
             RecipeOverviewEditContent(
                 draft = draft,
                 onEvent = editRecipeViewModel::onEvent,
-                onCancel = { editRecipeViewModel.onEvent(EditRecipeEvent.EditCanceled) },
                 onSave = { editRecipeViewModel.onEvent(EditRecipeEvent.RecipeSaved) },
-                onBack = onBack
+                onCancel = { editRecipeViewModel.onEvent(EditRecipeEvent.EditCanceled) }
             )
         }
     }
@@ -75,15 +74,7 @@ fun RecipeOverview(
 @Composable
 fun RecipeOverviewPreview() {
     AppTheme(darkTheme = true) {
-        RecipeOverview(
-            ingredients =
-                listOf(
-                    Recipe(),
-                    Recipe(),
-                    Recipe(),
-                    Recipe()
-                ),
-        )
+        RecipeOverview()
     }
 }
 

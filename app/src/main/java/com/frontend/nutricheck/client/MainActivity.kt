@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme(darkTheme = true) {
                 MainScreen()
-
             }
         }
     }

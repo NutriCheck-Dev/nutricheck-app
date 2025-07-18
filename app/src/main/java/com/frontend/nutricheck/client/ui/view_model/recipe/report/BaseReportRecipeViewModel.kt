@@ -8,14 +8,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 abstract class BaseReportRecipeViewModel : BaseViewModel () {
-
-    private val _close = MutableSharedFlow<Unit>()
-    val close: SharedFlow<Unit> = _close.asSharedFlow()
-
-    fun closeDialog() {viewModelScope.launch { _close.emit(Unit) }}
-
-
-    abstract fun onClickMessage() 
-    abstract fun onClickSendReport()
-    abstract fun onClickCancel()
+    abstract fun onInputTextChanged(text: String)
+    abstract fun onReportClick()
+    abstract suspend fun onClickSendReport()
 }

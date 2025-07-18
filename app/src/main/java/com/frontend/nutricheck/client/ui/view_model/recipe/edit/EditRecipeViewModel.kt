@@ -25,7 +25,7 @@ data class RecipeDraft(
     fun toRecipe(): Recipe = Recipe(
         id = id,
         name = title,
-        description = description,
+        instructions = description,
         ingredients = ingredients,
     )
 }
@@ -64,7 +64,7 @@ class EditRecipeViewModel @Inject constructor(
                         _editRecipeDraft.value = RecipeDraft(
                             id = recipe.id,
                             title = recipe.name,
-                            description = recipe.description,
+                            description = recipe.instructions,
                             ingredients = recipe.ingredients.toSet()
                         )
                     }
@@ -103,7 +103,7 @@ class EditRecipeViewModel @Inject constructor(
             RecipeDraft(
                 id = recipe.id,
                 title = recipe.name,
-                description = recipe.description,
+                description = recipe.instructions,
                 ingredients = recipe.ingredients
             )
         }

@@ -7,7 +7,7 @@ object RecipeMapper {
     fun toDto(recipe: Recipe): RecipeDTO = RecipeDTO(
         id = recipe.id,
         name = recipe.name,
-        instructions = recipe.description,
+        instructions = recipe.instructions,
         servings = recipe.servings,
         calories = recipe.calories,
         carbohydrates = recipe.carbohydrates,
@@ -20,7 +20,7 @@ object RecipeMapper {
         Recipe(
             id = recipeDto.id,
             name = recipeDto.name,
-            description = recipeDto.instructions,
+            instructions = recipeDto.instructions,
             servings = recipeDto.servings,
             calories = recipeDto.calories,
             carbohydrates = recipeDto.carbohydrates,

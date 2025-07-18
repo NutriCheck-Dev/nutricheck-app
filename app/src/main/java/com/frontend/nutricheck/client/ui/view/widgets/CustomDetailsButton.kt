@@ -23,7 +23,11 @@ fun CustomDetailsButton(
     isOnPublicRecipe: Boolean = false,
     isOnFoodItem: Boolean = false,
     isOnIngredientButton: Boolean = false,
-    onOptionSelected: (DropdownMenuOptions) -> Unit = {},
+    onDownloadClick: () -> Unit = { },
+    onDeleteClick: () -> Unit = { },
+    onEditClick: () -> Unit = { },
+    onUploadClick: () -> Unit = { },
+    onReportClick: () -> Unit = { },
     expanded: Boolean = false,
     onExpandedChange: (Boolean) -> Unit = { }
 ) {
@@ -31,7 +35,7 @@ fun CustomDetailsButton(
     val styles = MaterialTheme.typography
     val optionsList = if (isOnOwnedRecipe) {
         DropdownMenuOptions.entries
-            .minus(DropdownMenuOptions.SAVE)
+            .minus(DropdownMenuOptions.DOWNLOAD)
             .sortedBy { it.name }
     } else if (isOnPublicRecipe) {
         DropdownMenuOptions.entries
@@ -45,7 +49,7 @@ fun CustomDetailsButton(
     } else if (isOnIngredientButton) {
         DropdownMenuOptions.entries
             .minus(listOf(
-                DropdownMenuOptions.SAVE,
+                DropdownMenuOptions.DOWNLOAD,
                 DropdownMenuOptions.UPLOAD,
                 DropdownMenuOptions.REPORT))
             .sortedBy { it.name }
@@ -87,7 +91,13 @@ fun CustomDetailsButton(
                         )},
                     onClick = {
                         onExpandedChange(false)
-                        onOptionSelected(option)
+                        when (option) {
+                            DropdownMenuOptions.DOWNLOAD -> onDownloadClick()
+                            DropdownMenuOptions.DELETE -> onDeleteClick()
+                            DropdownMenuOptions.EDIT -> onEditClick()
+                            DropdownMenuOptions.UPLOAD -> onUploadClick()
+                            DropdownMenuOptions.REPORT -> onReportClick()
+                        }
                     }
                 )
                 if (optionsList.last() != option) {

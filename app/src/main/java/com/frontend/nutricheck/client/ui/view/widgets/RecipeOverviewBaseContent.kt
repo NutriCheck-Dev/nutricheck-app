@@ -27,16 +27,21 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
+import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverviewBaseContent(
-    recipe: Recipe,
-    onEdit: () -> Unit,
-    onDelete: (Recipe) -> Unit,
-    onUpload: (Recipe) -> Unit,
+    recipe: Recipe = Recipe(),
+    onDownLoad: (Recipe) -> Unit = {},
+    onEdit: () -> Unit = {},
+    onDelete: (Recipe) -> Unit = {},
+    onUpload: (Recipe) -> Unit = {},
     onReport: (Recipe) -> Unit = {},
-    onBack: () -> Unit
+    showReportDialog: Boolean = false,
+    onReportClick: () -> Unit = {},
+    onDismiss: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
@@ -65,7 +70,12 @@ fun RecipeOverviewBaseContent(
                             isOnDishItemButton = false,
                             isOnOwnedRecipe = recipe.visibility == RecipeVisibility.OWNER ,
                             isOnPublicRecipe = recipe.visibility == RecipeVisibility.PUBLIC,
-                            onExpandedChange = { expanded = it }
+                            onExpandedChange = { expanded = it },
+                            onDownloadClick = { onDownLoad },
+                            onEditClick = { onEdit },
+                            onDeleteClick = { onDelete },
+                            onUploadClick = { onUpload },
+                            onReportClick = { onReportClick }
                         )
                 }
             )
@@ -106,7 +116,7 @@ fun RecipeOverviewBaseContent(
                     style = styles.titleMedium,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                if (recipe.description.isNotBlank()) {
+                if (recipe.instructions.isNotBlank()) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -115,11 +125,25 @@ fun RecipeOverviewBaseContent(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = recipe.description,
+                                text = recipe.instructions,
                                 style = styles.bodyMedium
                             )
                         }
                     }
+                }
+            }
+
+            if (showReportDialog) {
+                item {
+                    ReportRecipeDialog(
+                        title = "Report",
+                        confirmText = "Send",
+                        cancelText = "Cancel",
+                        onConfirm = { onReport },
+                        onDismiss = { onDismiss },
+                        reportText = "Please provide a reason for reporting this recipe."
+                        //TODO: Implement onValueChange for report text
+                    )
                 }
             }
         }

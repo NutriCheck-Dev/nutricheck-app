@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.model.data_sources.data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Save
@@ -12,7 +13,7 @@ enum class DropdownMenuOptions(
     private val option: String,
     private val icon: ImageVector
 ) {
-    SAVE("Save", Icons.Default.Save),
+    DOWNLOAD("Download", Icons.Default.Download),
     DELETE("Delete", Icons.Default.Delete),
     EDIT("Edit", Icons.Default.Edit),
     UPLOAD("Upload", Icons.Default.CloudUpload),

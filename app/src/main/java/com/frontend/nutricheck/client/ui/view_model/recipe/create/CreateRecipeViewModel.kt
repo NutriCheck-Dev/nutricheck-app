@@ -25,7 +25,7 @@ data class CreatedRecipeDraft(
     fun toRecipe(): Recipe = Recipe(
         id = id,
         name = title,
-        description = description,
+        instructions = description,
         ingredients = ingredients
     )
 }

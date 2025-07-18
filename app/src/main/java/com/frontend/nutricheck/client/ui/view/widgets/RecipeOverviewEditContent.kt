@@ -40,9 +40,8 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeDraft
 fun RecipeOverviewEditContent(
     draft: RecipeDraft,
     onEvent: (EditRecipeEvent) -> Unit,
-    onBack: () -> Unit,
-    onSave: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onSave: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
@@ -55,7 +54,7 @@ fun RecipeOverviewEditContent(
     Scaffold(
         topBar = {
             ViewsTopBar(
-                navigationIcon = { NavigateBackButton(onBack = onBack) },
+                navigationIcon = { CancelButton(onClick = onCancel) },
                 title = {
                     TextField(
                         value = draft.title,
@@ -119,16 +118,14 @@ fun RecipeOverviewEditContent(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, colors.outline)
                 ) {
                     TextField(
                         value = draft.description,
                         onValueChange = { onEvent(EditRecipeEvent.DescriptionChanged(it)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
@@ -140,7 +137,10 @@ fun RecipeOverviewEditContent(
                 confirmText = "Ja",
                 cancelText = "Nein",
                 icon = Icons.Default.Build,
-                onConfirm = { showConfirmationDialog = false },
+                onConfirm = {
+                    showConfirmationDialog = false
+                    onSave
+                            },
                 onCancel = { showConfirmationDialog = false }
             )
         }
