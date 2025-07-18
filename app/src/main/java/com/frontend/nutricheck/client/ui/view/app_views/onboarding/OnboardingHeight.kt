@@ -1,8 +1,7 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view.app_views.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,24 +29,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
-
 @Composable
-fun OnboardingGender(
+fun OnboardingHeight(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
-) {
-    var selectedGender by remember { mutableStateOf<Gender?>(state.gender) }
+    ){
+    var textState by remember {
+        mutableStateOf( if (state.height > 0.0) state.height.toString() else "" )
+    }
     val error = state.errorState
     Box(
         modifier = Modifier
@@ -83,37 +82,28 @@ fun OnboardingGender(
                     )
                 )
             }
-
-            Column(
-                modifier = Modifier.padding(top = 100.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.onboarding_question_gender),
-                    style = TextStyle(
-                        fontSize = 36.sp,
-                        lineHeight = 44.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFFFFFFFF),
-                        textAlign = TextAlign.Center,
-                    ),
-                    modifier = Modifier.padding(bottom = 16.dp)
+            Text(
+                modifier = Modifier.padding(top = 150.dp).padding(bottom = 16.dp),
+                text = stringResource(id = R.string.onboarding_question_height),
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontSize = 36.sp,
+                    lineHeight = 44.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFFFFFFFF),
                 )
-            }
-            enumValues<Gender>().forEach { gender ->
-                val textResId = when (gender) {
-                    Gender.MALE -> R.string.onboarding_label_gender_male
-                    Gender.FEMALE -> R.string.onboarding_label_gender_female
-                    Gender.DIVERS -> R.string.onboarding_label_gender_diverse
-                }
-
-                SelectOption(
-                    text = stringResource(id = textResId),
-                    onClick = { selectedGender = gender },
-                    selected = selectedGender == gender
-                )
-            }
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(56.dp),
+                value = textState,
+                onValueChange = { textState = it },
+                label = { Text(stringResource(id = R.string.onboarding_label_height)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = error != null,
+                singleLine = true
+            )
             error?.let { resId ->
                 Text(
                     modifier = Modifier
@@ -135,7 +125,7 @@ fun OnboardingGender(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onEvent(OnboardingEvent.EnterGender(selectedGender))
+                onEvent(OnboardingEvent.EnterHeight(textState))
             })
         {
             Text(
@@ -150,9 +140,3 @@ fun OnboardingGender(
         }
     }
 }
-
-
-
-
-
-

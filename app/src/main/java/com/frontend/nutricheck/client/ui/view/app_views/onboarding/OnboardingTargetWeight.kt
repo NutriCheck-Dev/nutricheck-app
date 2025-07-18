@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view.app_views.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,22 +31,21 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
+
 @Composable
-fun OnboardingHeight(
+fun OnboardingTargetWeight(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
+
     ){
-    var textState by remember {
-        mutableStateOf( if (state.height > 0.0) state.height.toString() else "" )
+    var textState: String by remember {
+        mutableStateOf (if (state.targetWeight > 0.0) state.targetWeight.toString() else (""))
     }
     val error = state.errorState
     Box(
@@ -87,7 +86,7 @@ fun OnboardingHeight(
             }
             Text(
                 modifier = Modifier.padding(top = 150.dp).padding(bottom = 16.dp),
-                text = stringResource(id = R.string.onboarding_question_height),
+                text = stringResource(id = R.string.onboarding_question_target_weight),
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     fontSize = 36.sp,
@@ -101,8 +100,8 @@ fun OnboardingHeight(
                     .width(300.dp)
                     .height(56.dp),
                 value = textState,
-                onValueChange = { textState = it },
-                label = { Text(stringResource(id = R.string.onboarding_label_height)) },
+                onValueChange = { textState  =  it },
+                label = { Text(stringResource(id = R.string.onboarding_label_target_weight)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = error != null,
                 singleLine = true
@@ -128,7 +127,7 @@ fun OnboardingHeight(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onEvent(OnboardingEvent.EnterHeight(textState))
+                onEvent(OnboardingEvent.EnterTargetWeight(textState))
             })
         {
             Text(

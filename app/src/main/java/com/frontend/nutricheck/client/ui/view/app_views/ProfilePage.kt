@@ -66,25 +66,6 @@ fun ProfilePage(
     val eightDp = 8.dp
     val thirtyTwoDp = 32.dp
 
-    LaunchedEffect(key1 = Unit) {
-        profileOverviewViewModel.events.collect { event ->
-            when (event) {
-                is ProfileEvent.DisplayWeightHistory -> {
-                    profileNavController.navigate(ProfileScreens.WeightHistoryPage.route)
-                }
-                is ProfileEvent.DisplayPersonalData -> {
-                    profileNavController.navigate(ProfileScreens.PersonalDataPage.route)
-                }
-                is ProfileEvent.SelectLanguage -> {
-                    profileNavController.navigate(ProfileScreens.SelectLanguageDialog.route)
-                }
-                is ProfileEvent.DisplayProfileOverview -> {
-                    profileNavController.navigate(ProfileScreens.ProfilePage.route)
-                }
-                else -> { /* No action needed for other events */}
-            }
-        }
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()

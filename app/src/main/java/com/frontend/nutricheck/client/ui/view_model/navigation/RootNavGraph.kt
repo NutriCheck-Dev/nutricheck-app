@@ -16,9 +16,7 @@ sealed class Screen(val route: String) {
     data object ProfilePage : Screen("profile")
     data object Add : Screen("add")
 
-    data object RecipePage : Screen("diary/recipe")
-    data object HistoryPage : Screen("diary/history")
-    data object RecipeOverview : Screen("recipe_overview")
+
     data object DishItemOverview : Screen("dish_item_overview/{dishId}") {
         fun createRoute(dishId: String) = "dish_item_overview/$dishId"
     }
@@ -37,9 +35,6 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
         dialog(Screen.Add.route) { AddNavGraph(mainNavController) }
 
 
-        composable(Screen.RecipePage.route) {  }
-        composable(Screen.HistoryPage.route) {  }
         composable(Screen.DishItemOverview.route) {  }
-        composable(Screen.RecipeOverview.route) {  }
-    }
+        }
 }

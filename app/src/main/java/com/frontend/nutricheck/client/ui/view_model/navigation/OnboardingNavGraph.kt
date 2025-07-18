@@ -9,15 +9,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingBirthdate
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingGender
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingGoal
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingHeight
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingName
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingSport
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingTargetWeight
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingWeight
-import com.frontend.nutricheck.client.ui.view.app_views.OnboardingWelcome
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingBirthdate
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingGender
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingGoal
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingHeight
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingName
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingSport
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingTargetWeight
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingWeight
+import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingWelcome
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 

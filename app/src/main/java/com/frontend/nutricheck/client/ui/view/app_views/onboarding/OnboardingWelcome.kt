@@ -1,7 +1,8 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view.app_views.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,17 +11,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,25 +23,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
-
 
 @Composable
-fun OnboardingTargetWeight(
-    state : OnboardingState,
+fun OnboardingWelcome(
     onEvent : (OnboardingEvent) -> Unit,
-
-    ){
-    var textState: String by remember {
-        mutableStateOf (if (state.targetWeight > 0.0) state.targetWeight.toString() else (""))
-    }
-    val error = state.errorState
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -84,36 +69,42 @@ fun OnboardingTargetWeight(
                     )
                 )
             }
-            Text(
-                modifier = Modifier.padding(top = 150.dp).padding(bottom = 16.dp),
-                text = stringResource(id = R.string.onboarding_question_target_weight),
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontSize = 36.sp,
-                    lineHeight = 44.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFFFFFFF),
-                )
-            )
-            OutlinedTextField(
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(56.dp),
-                value = textState,
-                onValueChange = { textState  =  it },
-                label = { Text(stringResource(id = R.string.onboarding_label_target_weight)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError = error != null,
-                singleLine = true
-            )
-            error?.let { resId ->
+            Column(
+                modifier = Modifier.padding(top = 100.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    modifier = Modifier
-                        .padding(top = 16.dp),
-                    text = stringResource(id = resId),
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center
+                    text = stringResource(id = R.string.onboarding_title),
+                    style = TextStyle(
+                        fontSize = 45.sp,
+                        lineHeight = 52.sp,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xFFFFFFFF),
+                        textAlign = TextAlign.Center,
+                    ),
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
+                Text(
+                    text = stringResource(id = R.string.onboarding_description),
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontWeight = FontWeight(400),
+                        color = Color(0x99FFFFFF),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.25.sp,
+                    )
+                )
+                Image(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .width(150.dp)
+                        .height(150.dp),
+                    painter = painterResource(id = R.drawable.onboarding_graph),
+                    contentDescription = "Onboarding Graph",
+
+                    )
             }
         }
         Button(
@@ -127,11 +118,11 @@ fun OnboardingTargetWeight(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onEvent(OnboardingEvent.EnterTargetWeight(textState))
+                onEvent(OnboardingEvent.StartOnboarding)
             })
         {
             Text(
-                text = stringResource(id = R.string.onboarding_button_next),
+                text = stringResource(id = R.string.onboarding_button_start),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight(500),

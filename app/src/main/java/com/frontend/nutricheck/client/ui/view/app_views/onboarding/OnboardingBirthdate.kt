@@ -1,8 +1,10 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view.app_views.onboarding
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -31,18 +35,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
-fun OnboardingSport(
+fun OnboardingBirthdate(
     state : OnboardingState,
-    onEvent : (OnboardingEvent) -> Unit
-) {
-    var selectedActivity by remember { mutableStateOf<ActivityLevel?>(state.activityLevel) }
+    onEvent : (OnboardingEvent) -> Unit,
+    ) {
+    var selectedDate by remember { mutableStateOf(state.birthdate) }
+    var showDatePicker by remember { mutableStateOf(false) }
     val error = state.errorState
+
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
+    val displayDate = selectedDate?.let { dateFormat.format(it) } ?: ""
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -79,42 +96,50 @@ fun OnboardingSport(
                     )
                 )
             }
-
-            Column(
-                modifier = Modifier.padding(top = 100.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.onboarding_question_activity_level),
-                    style = TextStyle(
-                        fontSize = 36.sp,
-                        lineHeight = 44.sp,
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFFFFFFFF),
-                        textAlign = TextAlign.Center,
-                    ),
-                    modifier = Modifier.padding(bottom = 16.dp)
+            Text(
+                modifier = Modifier.padding(top = 150.dp).padding(bottom = 16.dp),
+                text = stringResource(id = R.string.onboarding_question_birthdate),
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontSize = 36.sp,
+                    lineHeight = 44.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFFFFFFFF),
                 )
-            }
-            enumValues<ActivityLevel>().forEach { level ->
-                val textResId = when (level) {
-                    ActivityLevel.NEVER ->
-                        R.string.onboarding_label_activity_level_never
-                    ActivityLevel.OCCASIONALLY ->
-                        R.string.onboarding_label_activity_level_occasionally
-                    ActivityLevel.REGULARLY ->
-                        R.string.onboarding_label_activity_level_regularly
-                    ActivityLevel.FREQUENTLY ->
-                        R.string.onboarding_label_activity_level_frequently
+            )
+
+            OutlinedTextField(
+                value = displayDate,
+                onValueChange = { },
+                modifier = Modifier
+                    .width(300.dp)
+                    .clickable { showDatePicker = true },
+                label = {
+                    Text(stringResource(id = R.string.onboarding_label_birthdate))
+                },
+                readOnly = true,
+                isError = error != null,
+                singleLine = true
+            )
+
+        }
+        if (showDatePicker) {
+            val datePickerDialog = DatePickerDialog(
+            context,
+            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
+                val newCal = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, selectedYear)
+                    set(Calendar.MONTH, selectedMonth)
+                    set(Calendar.DAY_OF_MONTH, selectedDay)
                 }
-
-                SelectOption(
-                    text = stringResource(id = textResId),
-                    onClick = { selectedActivity = level },
-                    selected = selectedActivity == level
-                )
+                selectedDate = newCal.time
+                showDatePicker = false
+            }, year, month, day
+            )
+            datePickerDialog.setOnDismissListener {
+                showDatePicker = false
             }
+        datePickerDialog.show()
             error?.let { resId ->
                 Text(
                     modifier = Modifier
@@ -135,9 +160,9 @@ fun OnboardingSport(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF4580FF)
             ),
+            enabled = selectedDate != null,
             onClick = {
-                onEvent(OnboardingEvent.EnterSportFrequency(selectedActivity))
-            })
+                onEvent(OnboardingEvent.EnterBirthdate(selectedDate))})
         {
             Text(
                 text = stringResource(id = R.string.onboarding_button_next),
@@ -151,4 +176,3 @@ fun OnboardingSport(
         }
     }
 }
-

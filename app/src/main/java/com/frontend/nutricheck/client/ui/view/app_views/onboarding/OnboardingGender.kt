@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view.app_views.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,22 +29,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
+
 @Composable
-fun OnboardingGoal(
+fun OnboardingGender(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
 ) {
-    var selectedGoal by remember { mutableStateOf<WeightGoal?>(null) }
+    var selectedGender by remember { mutableStateOf<Gender?>(state.gender) }
     val error = state.errorState
     Box(
         modifier = Modifier
@@ -89,7 +87,7 @@ fun OnboardingGoal(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(id = R.string.onboarding_question_goal),
+                    text = stringResource(id = R.string.onboarding_question_gender),
                     style = TextStyle(
                         fontSize = 36.sp,
                         lineHeight = 44.sp,
@@ -100,17 +98,17 @@ fun OnboardingGoal(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
-            enumValues<WeightGoal>().forEach { goal ->
-                val textResId = when (goal) {
-                    WeightGoal.GAIN_WEIGHT -> R.string.onboarding_label_goal_gain_weight
-                    WeightGoal.LOSE_WEIGHT -> R.string.onboarding_label_goal_lose_weight
-                    WeightGoal.MAINTAIN_WEIGHT -> R.string.onboarding_label_goal_maintain_weight
+            enumValues<Gender>().forEach { gender ->
+                val textResId = when (gender) {
+                    Gender.MALE -> R.string.onboarding_label_gender_male
+                    Gender.FEMALE -> R.string.onboarding_label_gender_female
+                    Gender.DIVERS -> R.string.onboarding_label_gender_diverse
                 }
 
                 SelectOption(
                     text = stringResource(id = textResId),
-                    onClick = { selectedGoal = goal },
-                    selected = selectedGoal == goal
+                    onClick = { selectedGender = gender },
+                    selected = selectedGender == gender
                 )
             }
             error?.let { resId ->
@@ -123,7 +121,6 @@ fun OnboardingGoal(
                 )
             }
         }
-
         Button(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -135,7 +132,7 @@ fun OnboardingGoal(
                 containerColor = Color(0xFF4580FF)
             ),
             onClick = {
-                onEvent(OnboardingEvent.EnterWeightGoal(selectedGoal))
+                onEvent(OnboardingEvent.EnterGender(selectedGender))
             })
         {
             Text(
@@ -150,3 +147,9 @@ fun OnboardingGoal(
         }
     }
 }
+
+
+
+
+
+

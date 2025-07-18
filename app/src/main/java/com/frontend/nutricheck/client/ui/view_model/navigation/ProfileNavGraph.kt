@@ -31,6 +31,27 @@ fun ProfilePageNavGraph() {
     val state by profileOverviewViewModel.data.collectAsState()
 
 
+    LaunchedEffect(key1 = Unit) {
+        profileOverviewViewModel.events.collect { event ->
+            when (event) {
+                is ProfileEvent.DisplayWeightHistory -> {
+                    profileNavController.navigate(ProfileScreens.WeightHistoryPage.route)
+                }
+                is ProfileEvent.DisplayPersonalData -> {
+                    profileNavController.navigate(ProfileScreens.PersonalDataPage.route)
+                }
+                is ProfileEvent.SelectLanguage -> {
+                    profileNavController.navigate(ProfileScreens.SelectLanguageDialog.route)
+                }
+                is ProfileEvent.DisplayProfileOverview -> {
+                    profileNavController.navigate(ProfileScreens.ProfilePage.route)
+                }
+                else -> { /* No action needed for other events */}
+            }
+        }
+    }
+
+
     NavHost(
         navController = profileNavController,
         startDestination = ProfileScreens.ProfilePage.route

@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view.app_views
+package com.frontend.nutricheck.client.ui.view.app_views.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
