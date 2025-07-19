@@ -37,7 +37,7 @@ fun RecipeOverviewBaseContent(
     onEdit: () -> Unit = {},
     onDelete: (Recipe) -> Unit = {},
     onUpload: (Recipe) -> Unit = {},
-    onReport: (Recipe) -> Unit = {},
+    onSendReport: (Recipe) -> Unit = {},
     showReportDialog: Boolean = false,
     onReportClick: () -> Unit = {},
     onDismiss: () -> Unit = {},
@@ -139,7 +139,7 @@ fun RecipeOverviewBaseContent(
                         title = "Report",
                         confirmText = "Send",
                         cancelText = "Cancel",
-                        onConfirm = { onReport },
+                        onConfirm = { onSendReport },
                         onDismiss = { onDismiss },
                         reportText = "Please provide a reason for reporting this recipe."
                         //TODO: Implement onValueChange for report text

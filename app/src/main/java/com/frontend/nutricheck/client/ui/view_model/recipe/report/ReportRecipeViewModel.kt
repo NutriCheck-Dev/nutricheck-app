@@ -23,6 +23,7 @@ data class ReportRecipeState(
 sealed interface ReportRecipeEvent {
     data class InputTextChanged(val inputText: String) : ReportRecipeEvent
     data object ReportClicked : ReportRecipeEvent
+    data object DissmissDialog : ReportRecipeEvent
     data object SendReport : ReportRecipeEvent
 }
 
@@ -35,11 +36,12 @@ class ReportRecipeViewModel @Inject constructor(
     private val _events = MutableSharedFlow<ReportRecipeEvent>()
     val events: SharedFlow<ReportRecipeEvent> = _events.asSharedFlow()
 
-    suspend fun onEvent(event: ReportRecipeEvent) {
+    fun onEvent(event: ReportRecipeEvent) {
         when (event) {
             is ReportRecipeEvent.InputTextChanged -> onInputTextChanged(event.inputText)
             is ReportRecipeEvent.ReportClicked -> onReportClick()
-            is ReportRecipeEvent.SendReport -> onClickSendReport()
+            is ReportRecipeEvent.DissmissDialog -> onDismissDialog()
+            is ReportRecipeEvent.SendReport -> viewModelScope.launch { onClickSendReport() }
         }
     }
 
@@ -49,6 +51,9 @@ class ReportRecipeViewModel @Inject constructor(
 
     override fun onReportClick() =
         _reportRecipeState.update { it.copy(isReporting = true) }
+
+    override fun onDismissDialog() =
+        _reportRecipeState.update { it.copy(isReporting = false, inputText = "") }
 
     override suspend fun onClickSendReport() {
         val recipeReport = RecipeReport(
@@ -63,4 +68,5 @@ class ReportRecipeViewModel @Inject constructor(
         emitEvent(ReportRecipeEvent.SendReport)
     }
 
+    fun setRecipe(recipe: Recipe) = _reportRecipeState.update { it.copy(recipe = recipe) }
 }

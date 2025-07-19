@@ -8,8 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewBaseContent
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewEditContent
@@ -32,6 +30,7 @@ fun RecipeOverview(
 ) {
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
     val draftState by editRecipeViewModel.editRecipeDraft.collectAsState()
+    val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
     val isEditing = recipeOverviewState.isEditing
 
     if (!isEditing) {
@@ -41,10 +40,14 @@ fun RecipeOverview(
             onEdit = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe) },
             onDelete = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDeleteRecipe(it)) },
             onUpload = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickUploadRecipe(it)) },
-            onReport = { reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport) }, //TODO: Implement report functionality
-            onDismiss = {}, //TODO: Implement dismiss functionality
-            onReportClick = {}, //TODO: Implement report click functionality
-            onBack = onBack
+            onSendReport = {
+                reportRecipeViewModel.setRecipe(it)
+                reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport)
+                       },
+            onDismiss = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DissmissDialog) }, //TODO: Implement dismiss functionality
+            onReportClick = { reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked) }, //TODO: Implement report click functionality
+            onBack = onBack,
+            showReportDialog = reportRecipeState.isReporting
         )
     } else {
         draftState?.let { draft ->
