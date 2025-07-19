@@ -28,9 +28,21 @@ sealed class AddScreens(val route: String) {
 
 }
 @Composable
-fun AddNavGraph(mainNavController: NavHostController) {
+fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     val addNavController = rememberNavController()
     val addDialogViewModel: AddDialogViewModel = hiltViewModel()
+
+    var startDestination = when (origin) {
+        AddDialogOrigin.BOTTOM_NAV_BAR -> {
+            AddScreens.AddMainPage.route
+        }
+        AddDialogOrigin.RECIPE_PAGE -> {
+            AddScreens.AddRecipe.route
+        }
+        AddDialogOrigin.HISTORY_PAGE -> {
+            AddScreens.AddMeal.route
+        }
+    }
 
     LaunchedEffect(key1 = Unit) {
         addDialogViewModel.events.collect { event ->
@@ -50,7 +62,7 @@ fun AddNavGraph(mainNavController: NavHostController) {
 
     NavHost(
         navController = addNavController,
-        startDestination = AddScreens.AddMainPage.route,
+        startDestination = startDestination,
     ) {
         dialog(AddScreens.AddMainPage.route) {
             AddDialog(

@@ -29,6 +29,7 @@ fun DiaryNavGraph() {
     val historyViewModel : HistoryViewModel = hiltViewModel()
 
 
+
     NavHost(
         navController = diaryNavController,
         startDestination = AddScreens.AddMainPage.route,

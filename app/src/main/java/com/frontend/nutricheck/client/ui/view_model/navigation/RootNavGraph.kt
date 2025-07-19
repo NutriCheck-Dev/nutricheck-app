@@ -23,6 +23,8 @@ sealed class Screen(val route: String) {
 }
     @Composable
 fun RootNavGraph(mainNavController: NavHostController, startDestination: String) {
+    val bottomNavBar = AddDialogOrigin.BOTTOM_NAV_BAR
+
     NavHost(
         navController = mainNavController,
         startDestination = startDestination,
@@ -32,7 +34,7 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
         composable(Screen.HomePage.route) { HomePage() }
         composable(Screen.DiaryPage.route) { DiaryNavGraph() }
         composable(Screen.ProfilePage.route) { ProfilePageNavGraph() }
-        dialog(Screen.Add.route) { AddNavGraph(mainNavController) }
+        dialog(Screen.Add.route) { AddNavGraph(mainNavController, bottomNavBar) }
 
 
         composable(Screen.DishItemOverview.route) {  }

@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
+import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
 @Composable
@@ -43,6 +45,25 @@ fun RecipePage(
     onDetailsCick: (String) -> Unit = {},
     onAddRecipeClick: () -> Unit = {}
 ) {
+
+    LaunchedEffect(key1 = Unit) {
+        recipePageViewModel.events.collect { event ->
+            when (event) {
+                is RecipePageEvent. -> {
+                    onRecipeSelected(event.recipeId)
+                }
+                is RecipePageEvent.OnDetailsClick -> {
+                    onDetailsCick(event.recipeId)
+                }
+                else -> { /* No action needed for other events */ }
+            }
+        }
+
+    }
+
+
+
+
     var selectedTab by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
 
