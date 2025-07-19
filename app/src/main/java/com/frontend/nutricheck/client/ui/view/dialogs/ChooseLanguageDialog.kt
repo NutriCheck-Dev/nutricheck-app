@@ -20,7 +20,7 @@ import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewM
 
 @Composable
 fun ChooseLanguageDialog(
-    profileOverviewViewModel: ProfileOverviewViewModel,
+    onEvent : (ProfileEvent) -> Unit,
     currentLanguage: String,
     onDismissRequest: () -> Unit
 ) {
@@ -59,8 +59,7 @@ fun ChooseLanguageDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                profileOverviewViewModel
-                    .onEvent(ProfileEvent.SaveLanguage(selectedLanguage))
+                onEvent(ProfileEvent.SaveLanguage(selectedLanguage))
                 onDismissRequest()
             }) {
                 Text(stringResource(id = R.string.save))

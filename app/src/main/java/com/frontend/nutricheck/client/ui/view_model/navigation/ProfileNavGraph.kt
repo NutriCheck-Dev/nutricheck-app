@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import com.frontend.nutricheck.client.ui.view.app_views.PersonalDataPage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 import com.frontend.nutricheck.client.ui.view.app_views.WeightHistoryPage
@@ -29,6 +30,7 @@ fun ProfilePageNavGraph() {
     val profileOverviewViewModel : ProfileOverviewViewModel = hiltViewModel()
     val profileNavController = rememberNavController()
     val state by profileOverviewViewModel.data.collectAsState()
+    val weightState by profileOverviewViewModel.weightData.collectAsState()
 
 
     LaunchedEffect(key1 = Unit) {
@@ -59,12 +61,12 @@ fun ProfilePageNavGraph() {
         composable(ProfileScreens.ProfilePage.route) {
             ProfilePage(
                 state = state,
-                onEvent = profileOverviewViewModel::onEvent,
-                profileNavController = profileNavController,
-                profileOverviewViewModel = profileOverviewViewModel) }
-
+                onEvent = profileOverviewViewModel::onEvent)
+        }
         composable(ProfileScreens.WeightHistoryPage.route) {
-            WeightHistoryPage(profileOverviewViewModel) }
+            WeightHistoryPage(
+                weightState = weightState,
+                onEvent = profileOverviewViewModel::onEvent) }
         composable(ProfileScreens.PersonalDataPage.route) {
             PersonalDataPage(
                 state = state,
@@ -72,8 +74,8 @@ fun ProfilePageNavGraph() {
 
         dialog(ProfileScreens.SelectLanguageDialog.route) {
             ChooseLanguageDialog(
-                profileOverviewViewModel = profileOverviewViewModel,
-                currentLanguage = state.selectedLanguage,
+                currentLanguage = state.userData.language,
+                onEvent = profileOverviewViewModel::onEvent,
                 onDismissRequest = {
                     profileNavController.popBackStack()
                 })

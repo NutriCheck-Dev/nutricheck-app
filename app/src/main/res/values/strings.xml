@@ -69,4 +69,6 @@
     <string name="search_page_title">Zutaten hinzufügen</string>
     <string name="search_page_label_all">Alle</string>
     <string name="search_page_label_my_recipes">Meine Rezepte</string>
+    <string name="back_button_description">zurück Knopf</string>
+    <string name="add_weight_entry_description">neues Gewicht hinzufügen Knopf\n</string>
 </resources>

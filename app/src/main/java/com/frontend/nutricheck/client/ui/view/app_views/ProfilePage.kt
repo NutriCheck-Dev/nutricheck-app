@@ -51,16 +51,14 @@ import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewM
 fun ProfilePage(
     state : ProfileState,
     onEvent : (ProfileEvent) -> Unit,
-    profileNavController : NavController,
-    profileOverviewViewModel : ProfileOverviewViewModel
-) {
-    var darkmode : Boolean = true
+   ) {
 
     val greetingText = stringResource(id = R.string.profile_name, state.userData.username)
     val userHeightText = stringResource(id = R.string.height_cm, state.userData.height.toString())
     val userWeightText = stringResource(id = R.string.weight_kg, state.userData.weight.toString())
     val userAgeText = stringResource(id = R.string.age_years, state.userData.age)
     val scrollState = rememberScrollState()
+    var darkmode = state.userData.theme == "dark"
 
     val sixteenDp = 16.dp
     val eightDp = 8.dp
