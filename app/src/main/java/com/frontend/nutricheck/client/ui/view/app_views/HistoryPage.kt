@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,15 +16,34 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieSummary
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
+import com.frontend.nutricheck.client.ui.view_model.HistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.navigation.DiaryScreens
 
 
 @Composable
 fun HistoryPage(
-    modifier: Modifier = Modifier,
-    viewModel: HistoryViewModel = hiltViewModel(),
+    historyViewModel: HistoryViewModel,
     onSwitchClick: (String) -> Unit = {}
 ) {
+
+    LaunchedEffect(key1 = Unit) {
+        historyViewModel.events.collect { event ->
+            when (event) {
+                is HistoryEvent.DisplayMealsOfDay -> {
+                    // Handle displaying meals of the day
+                }
+                is HistoryEvent.DisplayNutritionOfDay ->  {
+                    // Handle displaying nutrition of the day
+                }
+
+                else -> { /* No action needed for other events */ }
+
+            }
+        }
+    }
+
+
     val scrollState = rememberScrollState()
 
     Column(
@@ -35,7 +55,7 @@ fun HistoryPage(
         CalorieSummary(
             modifier = Modifier
                 .padding(7.dp),
-            historyViewModel = viewModel,
+            historyViewModel = historyViewModel,
             title = "Verbleibende Kalorien",
             goalCalories = 300,
             consumedCalories = 200,
@@ -60,6 +80,8 @@ fun HistoryPage(
 @Preview(showBackground = true)
 @Composable
 fun HistoryPagePreview() {
-    val navController = rememberNavController()
-    HistoryPage() // Dummy NavigationActions
+    HistoryPage(
+        historyViewModel = hiltViewModel(),
+        onSwitchClick = {}
+    )
 }

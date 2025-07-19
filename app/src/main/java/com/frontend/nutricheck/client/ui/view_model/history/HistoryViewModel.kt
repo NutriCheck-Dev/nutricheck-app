@@ -37,15 +37,26 @@ class HistoryViewModel @Inject constructor() : BaseHistoryViewModel() {
     val _events = MutableSharedFlow<HistoryEvent>()
     val events: SharedFlow<HistoryEvent> = _events.asSharedFlow()
 
-    fun onEvent(event: HistoryEvent) {}
+    fun onEvent(event: HistoryEvent) {
+        when (event) {
+            is HistoryEvent.DisplayNutritionOfDay -> displayNutritionOfDay(event.day)
+            is HistoryEvent.DisplayMealsOfDay -> displayMealsOfDay(event.day)
+            is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
+            is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
+            is HistoryEvent.TotalCaloriesClick -> onTotalCaloriesClick(event.totalCalories)
+            is HistoryEvent.SwitchClick -> onSwitchClick(event.isSwitched)
+        }
+    }
+    // Die benötigten Parameter sollten über den State bereitgestellt werden, siehe beispiel Profile,
+    // außer die Rückgabewerte an das ViewModel, die werden über Events gesendet
 
     override fun onAddEntryClick() {}
 
     override fun selectDate(date: String) {}
     override fun displayNutritionOfDay(day: String) {}
     override fun displayMealsOfDay(day: String) {}
-    override fun onFoodClicked() {}
-    override fun onDetailsClick() {}
-    override fun onTotalCaloriesClick() {}
-    override fun onSwitchClick() {}
+    override fun onFoodClicked(foodId: String) {}
+    override fun onDetailsClick(detailsId: String) {}
+    override fun onTotalCaloriesClick(totalCalories: Int) {}
+    override fun onSwitchClick(isSwitched: Boolean) {}
 }

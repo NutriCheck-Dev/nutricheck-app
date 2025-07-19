@@ -30,7 +30,7 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
         composable(Screen.Onboarding.route) { OnboardingNavGraph(mainNavController) }
 
         composable(Screen.HomePage.route) { HomePage() }
-        composable(Screen.DiaryPage.route) { DiaryPage() }
+        composable(Screen.DiaryPage.route) { DiaryNavGraph() }
         composable(Screen.ProfilePage.route) { ProfilePageNavGraph() }
         dialog(Screen.Add.route) { AddNavGraph(mainNavController) }
 

@@ -24,17 +24,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
+import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
 @Composable
 fun RecipePage(
+    recipePageViewModel: RecipePageViewModel,
     modifier: Modifier = Modifier,
-    //viewModel: RecipePageViewModel = hiltViewModel(),
     localRecipes: @Composable () -> Unit = {},
     remoteRecipes: @Composable () -> Unit = {},
     onRecipeSelected: (String) -> Unit = {},
@@ -95,11 +97,11 @@ fun RecipePage(
 @Preview
 @Composable
 fun RecipePagePreview() {
-    val navController = rememberNavController()
     AppTheme(
         darkTheme = true
     ) {
         RecipePage(
+            recipePageViewModel = hiltViewModel(),
             localRecipes = {
                 DishItemList(
                     list = listOf(
