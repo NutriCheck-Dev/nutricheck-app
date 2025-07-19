@@ -17,14 +17,17 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 
 @Composable
 fun BottomNavigationBar(
-    navController:  NavHostController,
     currentDestination: String,
+    onClickAdd: () -> Unit,
+    onClickHome: () -> Unit,
+    onClickDiary: () -> Unit,
+    onClickProfile: () -> Unit
    ) {
     NavigationBar {
 
         NavigationBarItem(
             selected = currentDestination == Screen.HomePage.route,
-            onClick = { navController.navigate(Screen.HomePage.route) { launchSingleTop = true } },
+            onClick = { onClickHome },
             icon = { Icon(Icons.Default.Home,
                 contentDescription = stringResource(id = R.string.navigation_bar_label_home)) },
             label = { Text(stringResource(id = R.string.navigation_bar_label_home)) }
@@ -32,7 +35,7 @@ fun BottomNavigationBar(
 
         NavigationBarItem(
             selected = currentDestination == Screen.DiaryPage.route,
-            onClick = { navController.navigate(Screen.DiaryPage.route) { launchSingleTop = true } },
+            onClick = { onClickDiary },
             icon = { Icon(Icons.Default.DateRange,
                    contentDescription = stringResource(id = R.string.navigation_bar_label_diary)) },
             label = { Text(stringResource (id = R.string.navigation_bar_label_diary)) }
@@ -40,7 +43,7 @@ fun BottomNavigationBar(
 
         NavigationBarItem(
             selected = currentDestination == Screen.ProfilePage.route,
-            onClick = { navController.navigate(Screen.ProfilePage.route) { launchSingleTop = true } },
+            onClick = { onClickProfile },
             icon = { Icon((Icons.Default.AccountCircle),
                 contentDescription = stringResource(id = R.string.navigation_bar_label_profile)) },
             label = { Text(stringResource(id = R.string.navigation_bar_label_profile)) }
@@ -48,7 +51,7 @@ fun BottomNavigationBar(
 
         NavigationBarItem(
             selected = currentDestination == "add",
-            onClick = { navController.navigate(Screen.Add.route) },
+            onClick = { onClickAdd },
             icon = { Icon(Icons.Default.AddCircle,
                 contentDescription = stringResource(id = R.string.navigation_bar_label_add)) },
             label = { Text(stringResource(id = R.string.navigation_bar_label_add)) }

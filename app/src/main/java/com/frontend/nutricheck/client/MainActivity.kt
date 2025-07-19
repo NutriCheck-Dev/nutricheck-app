@@ -59,9 +59,12 @@ fun MainScreen(
         Scaffold(
             bottomBar = {
                 BottomNavigationBar(
-                    navController = mainNavController,
                     currentDestination = currentDestination,
-                )
+                    onClickAdd = { mainNavController.navigate(Screen.Add.route) },
+                    onClickHome = { mainNavController.navigate(Screen.HomePage.route) },
+                    onClickDiary = { mainNavController.navigate(Screen.DiaryPage.route) },
+                    onClickProfile = { mainNavController.navigate(Screen.ProfilePage.route) }
+                    )
             }
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
