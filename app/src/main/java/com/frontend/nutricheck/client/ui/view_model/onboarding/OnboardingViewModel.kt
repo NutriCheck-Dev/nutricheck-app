@@ -5,6 +5,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,7 +58,8 @@ data class OnboardingState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val onboardingRepository: OnboardingRepository
+    private val onboardingRepository: OnboardingRepository,
+    private val userDataRepository: UserDataRepository
 ) : BaseOnboardingViewModel() {
 
     private val _events = MutableSharedFlow<OnboardingEvent>()
@@ -197,9 +200,18 @@ class OnboardingViewModel @Inject constructor(
      }
 
     private fun completeOnboarding() {
-        TODO("send collected data to the model")
-
+        val newUserData = UserData(
+            username = _data.value.username,
+            birthdate = _data.value.birthdate!!,
+            gender = _data.value.gender!!,
+            height = _data.value.height,
+            weight = _data.value.weight,
+            activityLevel = _data.value.activityLevel!!,
+            weightGoal = _data.value.weightGoal!!,
+            targetWeight = _data.value.targetWeight
+        )
         viewModelScope.launch {
+            userDataRepository.addUserData(newUserData)
             onboardingRepository.setOnboardingCompleted()
         }
         emitEvent(OnboardingEvent.NavigateToDashboard)

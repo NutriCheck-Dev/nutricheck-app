@@ -49,12 +49,12 @@ fun RecipePage(
     LaunchedEffect(key1 = Unit) {
         recipePageViewModel.events.collect { event ->
             when (event) {
-                is RecipePageEvent. -> {
-                    onRecipeSelected(event.recipeId)
-                }
-                is RecipePageEvent.OnDetailsClick -> {
-                    onDetailsCick(event.recipeId)
-                }
+//                is RecipePageEvent. -> {
+//                    onRecipeSelected(event.recipeId)
+//                }
+//                is RecipePageEvent.OnDetailsClick -> {
+//                    onDetailsCick(event.recipeId)
+//                }
                 else -> { /* No action needed for other events */ }
             }
         }
