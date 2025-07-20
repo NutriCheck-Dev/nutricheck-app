@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.jakarta.inject.api)
     implementation(libs.compose)
     implementation(libs.vico.core)
+    implementation(libs.androidx.camera.view)
     kapt(libs.androidx.room.compiler)
     kapt(libs.hilt.compiler)
     testImplementation(libs.junit)
@@ -96,5 +97,6 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.accompanist.permissions)
+    implementation(libs.coil.compose)
 
 }

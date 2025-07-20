@@ -2,18 +2,16 @@ package com.frontend.nutricheck.client.model.repositories.foodproducts
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
+import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import javax.inject.Inject
 
 class FoodProductRepositoryImpl @Inject constructor(
     val foodDao: FoodDao
 ) : FoodProductRepository {
-    override suspend fun getFoodProductsByQuery(query: String): List<FoodProduct> {
-        // TODO: Implementiere die Logik, um FoodProducts anhand des query-Strings zu suchen
-        return emptyList()
-    }
+    private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
-    override suspend fun getFoodProductById(id: String): FoodProduct? {
-        // TODO: Implementiere die Logik, um ein FoodProduct anhand der ID zu finden
-        return null
+    override suspend fun searchFoodProduct(foodProductName: String): List<FoodProduct> {
+        TODO("Not yet implemented")
     }
 }
