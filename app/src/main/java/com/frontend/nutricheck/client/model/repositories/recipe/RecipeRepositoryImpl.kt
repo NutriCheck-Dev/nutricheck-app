@@ -4,6 +4,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
+import com.frontend.nutricheck.client.model.repositories.mapper.RecipeMapper
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -16,7 +17,18 @@ class RecipeRepositoryImpl @Inject constructor(
 
     override suspend fun deleteRecipe(recipe: Recipe) = recipeDao.delete(recipe)
     override suspend fun searchRecipe(recipeName: String): List<Recipe> {
-        TODO("Not yet implemented")
+        val resultList = mutableListOf<Recipe>()
+        api.getRecipes(recipeName).let { response ->
+            if (response.isSuccessful) {
+                val fetchedRecipes = response.body()
+                fetchedRecipes?.forEach { dto ->
+                    val recipe = RecipeMapper.toEntity(dto)
+                    resultList.add(recipe)
+                }
+                return resultList
+            }
+        }
+        return emptyList()
     }
 
     override fun getMyRecipes(): Flow<List<Recipe>> = recipeDao.getAll()
