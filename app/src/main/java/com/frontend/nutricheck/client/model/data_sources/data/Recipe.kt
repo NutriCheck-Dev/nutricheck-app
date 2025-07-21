@@ -44,10 +44,10 @@ data class Recipe(
         return this.copy(report = newReport)
     }
     fun calculateNutritionalValues(): Recipe {
-        val totalCalories = ingredients.sumOf { it.foodComponent.calories }
-        val totalCarbohydrates = ingredients.sumOf { it.foodComponent.carbohydrates }
-        val totalProtein = ingredients.sumOf { it.foodComponent.protein }
-        val totalFat = ingredients.sumOf { it.foodComponent.fat }
+        val totalCalories = ingredients.sumOf { it.foodProduct.calories }
+        val totalCarbohydrates = ingredients.sumOf { it.foodProduct.carbohydrates }
+        val totalProtein = ingredients.sumOf { it.foodProduct.protein }
+        val totalFat = ingredients.sumOf { it.foodProduct.fat }
 
         return this.copy(
             calories = totalCalories,

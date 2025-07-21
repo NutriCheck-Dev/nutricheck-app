@@ -68,7 +68,7 @@ fun WeightHistoryPage(
 @Composable
 private fun WeightHistoryItem(weightEntry: Weight) {
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-    TODO("change text to date of weight entry")
+    //TODO("change text to date of weight entry")
 
     Row(
         modifier = Modifier

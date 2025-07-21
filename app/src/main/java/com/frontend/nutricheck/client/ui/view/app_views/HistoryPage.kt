@@ -1,3 +1,5 @@
+package com.frontend.nutricheck.client.ui.view.app_views
+
 import android.app.DatePickerDialog
 import android.widget.DatePicker
 import androidx.compose.foundation.background
@@ -28,6 +30,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.DateSelectorBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
+import kotlinx.coroutines.flow.flow
 import java.util.Calendar
 import java.util.Date
 
@@ -125,7 +128,7 @@ class FakeHistoryRepository : HistoryRepository {
     override suspend fun getMealsForDay(date: Date) = emptyList<Meal>()
     override suspend fun addFoodToMeal(name: String, foodId: String) {}
     override suspend fun removeFoodFromMeal(name: String, foodId: String) {}
-    override suspend fun getHistoryByDate(date: Date) = kotlinx.coroutines.flow.flow { emit(HistoryDay()) }
+    override suspend fun getHistoryByDate(date: Date) = flow { emit(HistoryDay()) }
     override suspend fun addMeal(meal: Meal) {}
     override suspend fun saveAsRecipe(meal: Meal, recipeName: String, recipeDescription: String) {}
 }

@@ -109,7 +109,7 @@ class RecipePageViewModel @Inject constructor(
 
     private fun emitEvent(event: RecipePageEvent) = viewModelScope.launch { _events.emit(event) }
 
-    private suspend fun performOnlineSearch() {
+    private fun performOnlineSearch() {
         viewModelScope.launch {
             setLoading()
 

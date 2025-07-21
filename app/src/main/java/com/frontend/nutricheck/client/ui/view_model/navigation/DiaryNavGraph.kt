@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
-import HistoryPage
+import com.frontend.nutricheck.client.ui.view.app_views.HistoryPage
 import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
