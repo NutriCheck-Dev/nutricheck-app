@@ -23,41 +23,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
+import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
+import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeightHistoryPage(
-    // Die Signatur wurde angepasst, um eine Liste von Weight-Objekten zu erhalten
     weightState: List<Weight>,
     onEvent: (ProfileEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            ViewsTopBar(
                 title = { Text(stringResource(id = R.string.profile_menu_item_weight_history)) },
                 navigationIcon = {
-                    // Back-Button oben links
-                    IconButton(onClick = { onEvent(ProfileEvent.DisplayProfileOverview) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back_button_description)
-                        )
-                    }
+                    NavigateBackButton(
+                        onBack = { onEvent(ProfileEvent.DisplayProfileOverview) }
+                    )
                 },
                 actions = {
-                    // Plus-Button oben rechts
-                    IconButton(onClick = { /* onEvent(ProfileEvent.AddNewWeight) */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(id = R.string.add_weight_entry_description)
-                        )
-                    }
+                    CustomAddButton(
+                        onClick = { onEvent(ProfileEvent.AddNewWeight) }
+                    )
                 }
             )
         }
@@ -79,8 +73,7 @@ fun WeightHistoryPage(
 
 @Composable
 private fun WeightHistoryItem(weightEntry: Weight) {
-    // Formatiert das Datum für die Anzeige
-    val dateFormat = SimpleDateFormat("dd. MMMM yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
     Row(
         modifier = Modifier
@@ -89,12 +82,10 @@ private fun WeightHistoryItem(weightEntry: Weight) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Linke Seite: Datum
         Text(
-            text =  "25.24.2025",//dateFormat.format(weightEntry.date),
+            text =  "25.24.2025",
             style = MaterialTheme.typography.bodyLarge
         )
-        // Rechte Seite: Gewicht
         Text(
             text = "${weightEntry.value} kg",
             style = MaterialTheme.typography.bodyLarge
@@ -105,11 +96,10 @@ private fun WeightHistoryItem(weightEntry: Weight) {
 @Preview
 @Composable
 fun WeightHistoryPagePreview() {
-    // Beispiel-Daten für die Vorschau
     val sampleWeights = listOf(
-        Weight(date = System.currentTimeMillis(), value = 70.0),
-        Weight(date = System.currentTimeMillis() - 86400000, value = 69.5),
-        Weight(date = System.currentTimeMillis() - 172800000, value = 69.0)
+        Weight(enterDate = java.util.Date(), value = 70.0),
+        Weight(enterDate = java.util.Date(), value = 69.5),
+        Weight(enterDate = java.util.Date(), value = 69.0)
     )
 
     WeightHistoryPage(weightState = sampleWeights, onEvent = {})
