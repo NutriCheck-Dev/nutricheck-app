@@ -29,9 +29,11 @@ sealed interface ProfileEvent {
     object DisplayPersonalData : ProfileEvent
     object DisplayWeightHistory : ProfileEvent
     object SelectLanguage : ProfileEvent
+    object AddNewWeight : ProfileEvent
     data class UpdateUserData(val userData: UserData) : ProfileEvent
     data class SaveLanguage(val language: String) : ProfileEvent
     data class ChangeTheme(val theme: String) : ProfileEvent
+    data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
 }
 
 @HiltViewModel
@@ -50,12 +52,14 @@ class ProfileOverviewViewModel @Inject constructor(
     fun onEvent(event: ProfileEvent) {
         when(event) {
             is ProfileEvent.DisplayProfileOverview -> { displayProfileOverview() }
-            is ProfileEvent.DisplayPersonalData -> { displayPersonalData() }
+            is ProfileEvent.DisplayPersonalData -> { emitEvent(ProfileEvent.DisplayPersonalData) }
             is ProfileEvent.DisplayWeightHistory -> { displayWeightHistory() }
-            is ProfileEvent.SelectLanguage -> { editLanguage() }
+            is ProfileEvent.SelectLanguage -> { emitEvent(ProfileEvent.SelectLanguage) }
             is ProfileEvent.SaveLanguage -> { onSaveLanguageClick(event.language) }
             is ProfileEvent.ChangeTheme -> { onChangeThemeClick(event.theme) }
             is ProfileEvent.UpdateUserData -> { validate(event.userData) }
+            is ProfileEvent.AddNewWeight -> { emitEvent(ProfileEvent.AddNewWeight) }
+            is ProfileEvent.SaveNewWeight -> {saveNewWeight(event.weight, event.date)}
         }
     }
 
@@ -67,16 +71,17 @@ class ProfileOverviewViewModel @Inject constructor(
 
         TODO("Get weight history from data source")
     }
-    private fun editLanguage() {
-        emitEvent(ProfileEvent.SelectLanguage)
+    private fun saveNewWeight(weight: String, date: Date) {
+        val weightValue = weight.toIntOrNull()
+        if (weightValue == null || weightValue <= 0) {
+            _data.value = _data.value.copy(errorMessage = R.string.onboarding_error_weight_required)
+            return
+        }
+        TODO("persist weight data")
     }
     private fun displayProfileOverview() {
         emitEvent(ProfileEvent.DisplayProfileOverview)
     }
-    private fun displayPersonalData() {
-        emitEvent(ProfileEvent.DisplayPersonalData)
-    }
-
     private fun onSaveLanguageClick(language: String) {
         val newUserData = _data.value.userData.copy(language = language)
         _data.value = _data.value.copy(userData = newUserData)

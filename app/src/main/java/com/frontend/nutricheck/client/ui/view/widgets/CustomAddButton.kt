@@ -9,12 +9,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 
+@Preview
 @Composable
-fun CustomAddButton() {
+fun CustomAddButton(
+    onClick: () -> Unit = {}
+) {
     val colors = MaterialTheme.colorScheme
     IconButton(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
             .background(
                 color = colors.onSurfaceVariant,

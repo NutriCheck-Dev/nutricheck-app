@@ -9,22 +9,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.ui.view.app_views.PersonalDataPage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 import com.frontend.nutricheck.client.ui.view.app_views.WeightHistoryPage
+import com.frontend.nutricheck.client.ui.view.dialogs.AddWeightDialog
 import com.frontend.nutricheck.client.ui.view.dialogs.ChooseLanguageDialog
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
-import com.frontend.nutricheck.client.model.data_sources.data.Weight
-import java.time.Instant
-import java.time.ZoneId
-import java.util.Date
 
 sealed class ProfileScreens(val route: String) {
     object ProfilePage : ProfileScreens("profile_page_route")
     object WeightHistoryPage : ProfileScreens("weight_history_page_route")
     object PersonalDataPage : ProfileScreens("personal_data_page_route")
     object SelectLanguageDialog : ProfileScreens("select_language_dialog_route")
+    object AddWeightDialog : ProfileScreens("add_weight_dialog_route")
 
 }
 
@@ -33,7 +33,7 @@ fun ProfilePageNavGraph() {
     val profileOverviewViewModel : ProfileOverviewViewModel = hiltViewModel()
     val profileNavController = rememberNavController()
     val state by profileOverviewViewModel.data.collectAsState()
-    val weightState by profileOverviewViewModel.data.collectAsState()
+    //val weightState by profileOverviewViewModel.weightData.collectAsState()
 
 
     LaunchedEffect(key1 = Unit) {
@@ -50,6 +50,9 @@ fun ProfilePageNavGraph() {
                 }
                 is ProfileEvent.DisplayProfileOverview -> {
                     profileNavController.navigate(ProfileScreens.ProfilePage.route)
+                }
+                is  ProfileEvent.AddNewWeight -> {
+                    profileNavController.navigate(ProfileScreens.AddWeightDialog.route)
                 }
                 else -> { /* No action needed for other events */}
             }
@@ -68,27 +71,28 @@ fun ProfilePageNavGraph() {
         }
         composable(ProfileScreens.WeightHistoryPage.route) {
             WeightHistoryPage(
-                weightState = List<Weight>(weightState.weightData.size) { index ->
-                    Weight(
-                        value = 30.0,
-                        enterDate = Date.from(
-                            Instant.now().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                        )
-                    )
-                },
-                onEvent = profileOverviewViewModel::onEvent) }
+                weightState = emptyList(), //TODO("change parameter to state.weightData")
+                onEvent = profileOverviewViewModel::onEvent,
+                onBack = { profileNavController.popBackStack() })
+        }
         composable(ProfileScreens.PersonalDataPage.route) {
             PersonalDataPage(
                 state = state,
-                onEvent = profileOverviewViewModel::onEvent) }
-
+                onEvent = profileOverviewViewModel::onEvent,
+                onBack = { profileNavController.popBackStack() })
+        }
         dialog(ProfileScreens.SelectLanguageDialog.route) {
             ChooseLanguageDialog(
                 currentLanguage = state.userData.language,
                 onEvent = profileOverviewViewModel::onEvent,
-                onDismissRequest = {
-                    profileNavController.popBackStack()
-                })
+                onDismissRequest = { profileNavController.popBackStack() })
+        }
+        dialog(ProfileScreens.AddWeightDialog.route) {
+            AddWeightDialog(
+                state = state,
+                onEvent = profileOverviewViewModel::onEvent,
+                onDismissRequest = { profileNavController.popBackStack() }
+            )
         }
     }
 }
