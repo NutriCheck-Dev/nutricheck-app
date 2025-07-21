@@ -1,18 +1,21 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun CustomAddButton(onClick: () -> Unit = {}) {
+fun CustomCloseButton(
+    onClick: () -> Unit = {}
+) {
     val colors = MaterialTheme.colorScheme
+
     IconButton(
         onClick = onClick,
         modifier = Modifier
@@ -22,8 +25,8 @@ fun CustomAddButton(onClick: () -> Unit = {}) {
             )
     ) {
         Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Hinzufügen",
+            imageVector = Icons.Default.Close,
+            contentDescription = "Cancel",
             tint = colors.surface
         )
     }

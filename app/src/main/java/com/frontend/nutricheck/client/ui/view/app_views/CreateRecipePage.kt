@@ -19,37 +19,40 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeViewModel
 
 @Composable
 fun CreateRecipePage(
     modifier: Modifier = Modifier,
-    title: String = "Create Recipe",
-    ingredients: List<FoodComponent> = emptyList(),
-    description: String = "",
-    onSave: () -> Unit = {},
+    createRecipeViewModel: CreateRecipeViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    var titleText by remember { mutableStateOf(title) }
-    var ingredients by remember { mutableStateOf(ingredients) }
-    var descriptionText by remember { mutableStateOf(description) }
+    val draft by createRecipeViewModel.createdRecipeDraft.collectAsState()
+    val currentTitle = draft?.title.orEmpty()
+    val ingredients = draft?.ingredients ?: emptySet()
+    val currentIngredients = ingredients.map { it.foodComponent }.toSet()
+    val currentDescription = draft?.description.orEmpty()
+    val errorResourceId by createRecipeViewModel.errorState.collectAsState()
 
     Scaffold(
         modifier = modifier
@@ -58,15 +61,36 @@ fun CreateRecipePage(
         topBar = {
             ViewsTopBar(
                 navigationIcon = { NavigateBackButton(onBack = onBack) },
-                title = { Text(
-                    text = titleText,
-                    style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = colors.onSurfaceVariant
+                title = { TextField(
+                    value = currentTitle,
+                    placeholder = {
+                        Text(
+                            text = "Rezeptname",
+                            style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                            color = colors.onSurfaceVariant
+                        )
+                    },
+                    onValueChange = { new ->
+                        createRecipeViewModel.onEvent(CreateRecipeEvent.TitleChanged(new))
+                    },
+                    singleLine = true,
+                    textStyle = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        errorContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent,
+                    )
                 ) },
                 actions = {
-                    IconButton(onClick = onSave) {
+                    IconButton(onClick = {
+                        createRecipeViewModel.onEvent(CreateRecipeEvent.RecipeSaved)
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Save Recipe",
@@ -91,10 +115,21 @@ fun CreateRecipePage(
                 )
                 Spacer(Modifier.height(10.dp))
                 DishItemList(
-                    list = ingredients,
+                    foodComponents = currentIngredients,
                     isEditing = true,
-                    trailingContent = { CustomDetailsButton() }
+                    trailingContent = { item ->
+                        CustomDetailsButton()
+                    }
                 )
+
+                if (errorResourceId == R.string.create_recipe_error_ingredients) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(errorResourceId!!),
+                        color = colors.error,
+                        style = styles.bodySmall.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
             }
 
             item {
@@ -110,8 +145,10 @@ fun CreateRecipePage(
                     border = BorderStroke(1.dp, colors.outline)
                 ) {
                     TextField(
-                        value = descriptionText,
-                        onValueChange = { descriptionText = it },
+                        value = currentDescription,
+                        onValueChange = { newDiscription ->
+                            createRecipeViewModel.onEvent(CreateRecipeEvent.DescriptionChanged(newDiscription))
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                     )
@@ -126,9 +163,6 @@ fun CreateRecipePage(
 fun CreateRecipePagePreview() {
     AppTheme(darkTheme = true) {
         CreateRecipePage(
-            title = "Sample Recipe",
-            description = "This is a sample recipe description.",
-            onSave = {},
             onBack = {}
         )
     }

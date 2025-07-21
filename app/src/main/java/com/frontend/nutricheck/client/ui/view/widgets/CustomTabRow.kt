@@ -28,7 +28,7 @@ fun CustomTabRow(
     modifier: Modifier = Modifier,
     options: List<String> = emptyList(),
     selectedOption: Int = 0,
-    onSelect: (String) -> Unit = {}
+    onSelect: (Int) -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
@@ -40,13 +40,14 @@ fun CustomTabRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         options.forEachIndexed { index, label ->
+            val isSelected = index == selectedOption
             val textColor by animateColorAsState(
-                targetValue = if (index == selectedOption) colors.onPrimaryContainer
+                targetValue = if (isSelected) colors.onPrimaryContainer
                 else colors.onSurfaceVariant,
             )
 
             val backgroundColor by animateColorAsState(
-                targetValue = if (index == selectedOption) colors.primaryContainer
+                targetValue = if (isSelected) colors.primaryContainer
                 else Color.Transparent,
             )
 
@@ -55,14 +56,13 @@ fun CustomTabRow(
                     .weight(1f)
                     .fillMaxHeight()
                     .background(backgroundColor, RoundedCornerShape(4.dp))
-                    .clickable { onSelect(label) },
+                    .clickable { onSelect(index) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = label,
                     style = styles.bodyMedium.copy(
-                        fontWeight = if (index == selectedOption) FontWeight.Bold
-                        else FontWeight.Normal
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                     ),
                     color = textColor
                 )

@@ -31,5 +31,5 @@ data class Ingredient (
     val recipeId: String = "",
     val foodProductId: String = "",
     val quantity: Double = 0.0,
-    val foodProduct: FoodProduct = FoodProduct(),
+    val foodComponent: FoodComponent,
 )

@@ -62,6 +62,8 @@
     <string name="navigation_bar_label_add">Hinzufügen</string>
     <string name="navigation_bar_label_diary">Tagebuch</string>
 
+    <string name = "create_recipe_error_ingredients">Bitte mindestens eine Zutat hinzufügen</string>
+
 
     <string name="add_dialog_meal_title">Mahlzeit hinzufügen</string>
     <string name="add_dialog_recipe_title">Rezept hinzufügen</string>

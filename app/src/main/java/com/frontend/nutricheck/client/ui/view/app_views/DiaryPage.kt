@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import HistoryPage
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
 
 enum class DiaryTab(val title: String) {
@@ -60,13 +58,9 @@ fun DiaryPage(
                 .padding(top = 14.dp)
                 .fillMaxSize()
         ) {
-            TODO("change parameters")
             when (selectedTab) {
                 DiaryTab.HISTORY -> HistoryPage(historyViewModel = hiltViewModel())
-                DiaryTab.RECIPES -> RecipePage(
-                    recipePageViewModel = hiltViewModel(),
-                    modifier = Modifier
-                )
+                DiaryTab.RECIPES -> RecipePage()
             }
         }
     }

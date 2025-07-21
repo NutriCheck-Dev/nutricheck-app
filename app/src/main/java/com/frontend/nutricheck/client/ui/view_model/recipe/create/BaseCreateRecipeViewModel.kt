@@ -1,21 +1,16 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe.create
 
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 
 
 abstract class BaseCreateRecipeViewModel: BaseViewModel () {
 
-    abstract fun validate(draft: Recipe): Boolean
-
-    protected abstract suspend fun persistDraft(draft: Recipe): Result<Unit>
-
-    fun save(onSuccess: () -> Unit = {}) {}
-
-    abstract fun onClickAddIngredient()
-    abstract fun onClickRemoveIngredient(ingredientId: String)  
-    abstract fun onClickSaveRecipe()
-    abstract fun onClickDiscardDraft()
-    abstract fun onIngredientClick()
+    abstract fun onTitleAdded(newTitle: String)
+    abstract fun onIngredientAdded(ingredient: Ingredient)
+    abstract fun onIngredientRemoved(ingredient: Ingredient)
+    abstract fun onDescriptionAdded(newDescription: String)
+    abstract fun onCancelCreation()
+    abstract fun onSaveRecipe()
    
 }

@@ -20,9 +20,10 @@ data class RecipeOverviewState(
     val isEditing: Boolean = false
 )
 sealed interface RecipeOverviewEvent {
+    data class ClickDownloadRecipe(val recipe: Recipe) : RecipeOverviewEvent
     data object ClickEditRecipe : RecipeOverviewEvent
     data class ClickDeleteRecipe(val recipe: Recipe) : RecipeOverviewEvent
-    data class ClickShareRecipe(val recipe: Recipe) : RecipeOverviewEvent
+    data class ClickUploadRecipe(val recipe: Recipe) : RecipeOverviewEvent
 }
 
 @HiltViewModel
@@ -54,6 +55,12 @@ class RecipeOverviewViewModel @Inject constructor(
 
     fun onEvent(event: RecipeOverviewEvent) {
         when (event) {
+            is RecipeOverviewEvent.ClickDownloadRecipe -> {
+                viewModelScope.launch {
+                    onDownloadRecipe(event.recipe)
+                    _events.emit(RecipeOverviewEvent.ClickDownloadRecipe(event.recipe))
+                }
+            }
             is RecipeOverviewEvent.ClickEditRecipe -> onEditClicked()
             is RecipeOverviewEvent.ClickDeleteRecipe -> {
                 viewModelScope.launch {
@@ -61,17 +68,21 @@ class RecipeOverviewViewModel @Inject constructor(
                     _events.emit(RecipeOverviewEvent.ClickDeleteRecipe(event.recipe))
                 }
             }
-            is RecipeOverviewEvent.ClickShareRecipe -> {
+            is RecipeOverviewEvent.ClickUploadRecipe -> {
                 viewModelScope.launch {
                     onShareRecipe(event.recipe)
-                    _events.emit(RecipeOverviewEvent.ClickShareRecipe(event.recipe))
+                    _events.emit(RecipeOverviewEvent.ClickUploadRecipe(event.recipe))
                 }
             }
         }
     }
 
+    override suspend fun onDownloadRecipe(recipe: Recipe) {
+        recipeRepository.insertRecipe(recipe)
+    }
+
     override fun onEditClicked() {
-        _recipeOverviewState.update { it.copy(isEditing = true) }
+        _recipeOverviewState.update { it.copy(isEditing = !_recipeOverviewState.value.isEditing) }
     }
 
     override suspend fun onDeleteRecipe(recipe: Recipe) {
@@ -81,10 +92,4 @@ class RecipeOverviewViewModel @Inject constructor(
     override suspend fun onShareRecipe(recipe: Recipe) {
         TODO("Not yet implemented")
     }
-
-
-    override fun addToMealClick(recipe: Recipe) {
-        TODO("Not yet implemented")
-    }
-
 }

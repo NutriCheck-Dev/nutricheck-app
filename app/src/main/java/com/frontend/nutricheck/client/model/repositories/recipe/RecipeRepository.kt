@@ -1,10 +1,11 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.Result
 import kotlinx.coroutines.flow.Flow
 
 interface RecipeRepository {
-    suspend fun searchRecipe(recipeName: String): List<Recipe>
+    suspend fun searchRecipe(recipeName: String): Result<List<Recipe>>
     suspend fun insertRecipe(recipe: Recipe)
     suspend fun deleteRecipe(recipe: Recipe)
     fun getMyRecipes(): Flow<List<Recipe>>
