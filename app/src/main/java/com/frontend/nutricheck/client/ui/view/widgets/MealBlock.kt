@@ -61,7 +61,7 @@ fun MealHeader(
 fun MealFooter(
     modifier: Modifier = Modifier,
     text: String = "+ Hinzufügen",
-    onMoreClick: () -> Unit = {}
+    onAddClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -73,11 +73,11 @@ fun MealFooter(
 
     ) {
         Text(
-            text = "+ Hinzufügen",
+            text = text,
             color = Color(0xFF4580FF),
             lineHeight = 16.sp,
             fontSize = 12.sp,
-            modifier = Modifier.clickable(onClick = onMoreClick),
+            modifier = Modifier.clickable(onClick = onAddClick),
             )
     }
 }
@@ -89,7 +89,7 @@ fun MealBlock(
     mealName: String,
     totalCalories: Double,
     meals: List<MealItem>,
-    addOnClick: () -> Unit = {},
+    onAddClick: () -> Unit = {},
     optionsOnClick: () -> Unit = {}
 ) {
     Column(
@@ -126,7 +126,7 @@ fun MealBlock(
 
             HorizontalDivider(color = Color(0xFFFFFFFF), thickness = 1.dp)
         }
-        MealFooter()
+        MealFooter(onAddClick = onAddClick)
     }
 }
 

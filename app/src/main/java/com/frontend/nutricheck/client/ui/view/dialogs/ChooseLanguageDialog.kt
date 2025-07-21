@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
 
 @Composable
 fun ChooseLanguageDialog(

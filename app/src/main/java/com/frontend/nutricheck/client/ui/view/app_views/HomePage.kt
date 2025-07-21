@@ -16,21 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieHistoryDiagram
 import com.frontend.nutricheck.client.ui.view.widgets.CaloriesToday
 import com.frontend.nutricheck.client.ui.view.widgets.NutrientBreakdown
 import com.frontend.nutricheck.client.ui.view.widgets.WeightHistoryDiagram
-import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieViewModel
 
 @Composable
 fun HomePage(
     modifier: Modifier = Modifier,
-    calorieHistoryViewModel: HistoryViewModel = hiltViewModel(),
-    dailyCalorieViewModel: DailyCalorieViewModel = hiltViewModel(),
-    weightHistoryViewModel: HistoryViewModel = hiltViewModel(),
+
     onPeriodSelectedClick: (String) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
@@ -49,7 +44,6 @@ fun HomePage(
             CaloriesToday(
                 modifier = Modifier
                     .fillMaxSize().weight(1f),
-                dailyCalorieViewModel = dailyCalorieViewModel,
                 calories = 0,
                 subtitle = "kcal",
                 calorieValue = 850,           // Beispielwert

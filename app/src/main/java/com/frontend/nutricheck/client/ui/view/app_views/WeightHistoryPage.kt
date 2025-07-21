@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -71,7 +70,7 @@ fun WeightHistoryPage(
         ) {
             items(weightState) { weightEntry ->
                 WeightHistoryItem(weightEntry = weightEntry)
-                Divider()
+
             }
         }
     }
@@ -102,15 +101,3 @@ private fun WeightHistoryItem(weightEntry: Weight) {
     }
 }
 
-@Preview
-@Composable
-fun WeightHistoryPagePreview() {
-    // Beispiel-Daten für die Vorschau
-    val sampleWeights = listOf(
-        Weight(date = System.currentTimeMillis(), value = 70.0),
-        Weight(date = System.currentTimeMillis() - 86400000, value = 69.5),
-        Weight(date = System.currentTimeMillis() - 172800000, value = 69.0)
-    )
-
-    WeightHistoryPage(weightState = sampleWeights, onEvent = {})
-}

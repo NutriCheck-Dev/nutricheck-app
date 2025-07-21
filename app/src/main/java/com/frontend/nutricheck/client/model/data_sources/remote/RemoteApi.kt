@@ -11,6 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface RemoteApi {
+
     @GET("/search/product/{name}")
     suspend fun searchFoodProduct(@Path("name") name: String): Response<List<FoodProductDTO>>
 
@@ -24,8 +25,8 @@ interface RemoteApi {
     suspend fun reportRecipe(@Body recipeReport: ReportDTO): Response<ReportDTO>
 
     @GET("/recipe/download/{recipeId}")
-    suspend fun downloadRecipe(@Path("recipeID") recipeID: String): Response<RecipeDTO>
+    suspend fun downloadRecipe(@Path("recipeId") recipeId: String): Response<RecipeDTO>
 
-    @GET("/ai/estimate")
+    @POST("/ai/estimate")
     suspend fun estimateMeal(@Body picture: String): Response<MealDTO>
 }

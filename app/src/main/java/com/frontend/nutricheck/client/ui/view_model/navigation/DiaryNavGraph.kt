@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import HistoryPage
 import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
-import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel

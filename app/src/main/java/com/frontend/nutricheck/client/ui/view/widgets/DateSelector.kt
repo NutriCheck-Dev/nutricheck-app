@@ -1,47 +1,115 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
-import android.app.DatePickerDialog
-import android.widget.DatePicker
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun DateSelector(
-    modifier: Modifier = Modifier,
-    selectedDate: LocalDate = LocalDate.now(),
-    onDateSelected: (LocalDate) -> Unit
+fun DateSelectorBar(
+    selectedDate: Date,
+    onPreviousDay: () -> Unit,
+    onNextDay: () -> Unit,
+    onOpenCalendar: () -> Unit
 ) {
-    val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) }
+    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    val todayFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+    val current = todayFormat.format(Date())
+    val selected = todayFormat.format(selectedDate)
 
-    OutlinedButton(
-        modifier = modifier,
-        onClick = { showDialog = true }
+    val displayText = if (current == selected) "Today" else dateFormat.format(selectedDate)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Datum wählen: ${selectedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))}")
-    }
-
-    if (showDialog) {
-        val listener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, day: Int ->
-            val date = LocalDate.of(year, month + 1, day)
-            onDateSelected(date)
-            showDialog = false
+        IconButton(onClick = onPreviousDay) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous day", tint = Color(0xFF71727A))
         }
 
-        val calendar = Calendar.getInstance()
-        calendar.set(selectedDate.year, selectedDate.monthValue - 1, selectedDate.dayOfMonth)
+        Spacer(modifier = Modifier.width(8.dp))
 
+        Text(
+            text = displayText,
+            color = Color(0xFF71727A),
+            fontSize = 18.sp,
+            modifier = Modifier.clickable { onOpenCalendar() }
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        IconButton(onClick = onNextDay) {
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next day", tint = Color(0xFF71727A))
+        }
+    }
+}
+
+@Preview
+@Composable
+fun displayDateSelectorBarPreview() {
+    var showDatePicker by remember { mutableStateOf(false) }
+    val calendar = Calendar.getInstance()
+    var selectedDate by remember { mutableStateOf(calendar.time) }
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
+
+    DateSelectorBar(
+        selectedDate = selectedDate,
+        onPreviousDay = { /* ... */ },
+        onNextDay = { /* ... */ },
+        onOpenCalendar = {
+            showDatePicker = true
+        }
+    )
+
+    if (showDatePicker) {
         DatePickerDialog(
-            context,
-            listener,
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            selectedDate = Date(it)
+                        }
+                        showDatePicker = false
+                    }
+                ) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) { Text("Abbrechen") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
     }
 }

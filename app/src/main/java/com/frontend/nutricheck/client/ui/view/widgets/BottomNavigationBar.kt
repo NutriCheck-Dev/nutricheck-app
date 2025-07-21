@@ -11,7 +11,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 

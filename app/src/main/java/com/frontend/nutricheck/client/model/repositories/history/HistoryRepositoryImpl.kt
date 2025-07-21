@@ -3,6 +3,8 @@ package com.frontend.nutricheck.client.model.repositories.history
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
+import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
+import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 import javax.inject.Inject
@@ -10,6 +12,7 @@ import javax.inject.Inject
 class HistoryRepositoryImpl @Inject constructor(
     private val historyDao: HistoryDao
 ) : HistoryRepository {
+    private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
     override suspend fun getCalorieHistory(): List<HistoryDay> {
         TODO("Not yet implemented")

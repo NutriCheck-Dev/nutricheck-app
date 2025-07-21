@@ -5,9 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
-import com.frontend.nutricheck.client.ui.view.app_views.DiaryPage
 import com.frontend.nutricheck.client.ui.view.app_views.HomePage
-import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 
 sealed class Screen(val route: String) {
     data object Onboarding : Screen("onboarding")

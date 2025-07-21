@@ -40,12 +40,8 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation.NavController
-import com.frontend.nutricheck.client.ui.view_model.navigation.ProfileScreens
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
 
 @Composable
 fun ProfilePage(

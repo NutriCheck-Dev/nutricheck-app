@@ -15,7 +15,6 @@ import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddDialogEvent
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddDialogViewModel
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
