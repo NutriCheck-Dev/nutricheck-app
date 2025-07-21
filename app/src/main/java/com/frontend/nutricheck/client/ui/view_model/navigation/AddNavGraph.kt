@@ -44,7 +44,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         }
     }
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(Unit) {
         addDialogViewModel.events.collect { event ->
             when (event) {
                 is AddDialogEvent.AddMeal -> {

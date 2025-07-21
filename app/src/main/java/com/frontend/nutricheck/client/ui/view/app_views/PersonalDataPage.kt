@@ -43,6 +43,8 @@ import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
+import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -51,6 +53,8 @@ import java.util.Locale
 fun PersonalDataPage(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
+    onBack: () -> Unit = {}
+
 ) {
     var editableUserData by remember { mutableStateOf(state.userData) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -59,19 +63,19 @@ fun PersonalDataPage(
     LaunchedEffect(state.userData) {
         editableUserData = state.userData
     }
+    ViewsTopBar(
+        navigationIcon = { NavigateBackButton(onBack = onBack) },
+        title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
+    )
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(16.dp),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
         item {
-            Text(
-                stringResource(id = R.string.profile_menu_item_personal_data),
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(50.dp))
         }
         personalDataFormItems(
             userData = editableUserData,
@@ -81,7 +85,6 @@ fun PersonalDataPage(
                 showDatePicker = true
             }
         )
-
         item {
             state.errorMessage?.let { errorResId ->
                 Text(
@@ -359,6 +362,7 @@ fun PersonalDataPreview() {
 
     PersonalDataPage(
         state = ProfileState(userData = previewUserData),
-        onEvent = {}
+        onEvent = {},
+        onBack = {}
     )
 }

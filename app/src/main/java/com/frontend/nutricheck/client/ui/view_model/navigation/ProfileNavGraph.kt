@@ -72,12 +72,14 @@ fun ProfilePageNavGraph() {
         composable(ProfileScreens.WeightHistoryPage.route) {
             WeightHistoryPage(
                 weightState = emptyList(), //TODO("change parameter to state.weightData")
-                onEvent = profileOverviewViewModel::onEvent)
+                onEvent = profileOverviewViewModel::onEvent,
+                onBack = { profileNavController.popBackStack() })
         }
         composable(ProfileScreens.PersonalDataPage.route) {
             PersonalDataPage(
                 state = state,
-                onEvent = profileOverviewViewModel::onEvent)
+                onEvent = profileOverviewViewModel::onEvent,
+                onBack = { profileNavController.popBackStack() })
         }
         dialog(ProfileScreens.SelectLanguageDialog.route) {
             ChooseLanguageDialog(
@@ -87,9 +89,9 @@ fun ProfilePageNavGraph() {
         }
         dialog(ProfileScreens.AddWeightDialog.route) {
             AddWeightDialog(
+                state = state,
                 onEvent = profileOverviewViewModel::onEvent,
-                onDismissRequest = { profileNavController.popBackStack() },
-                state = state
+                onDismissRequest = { profileNavController.popBackStack() }
             )
         }
     }
