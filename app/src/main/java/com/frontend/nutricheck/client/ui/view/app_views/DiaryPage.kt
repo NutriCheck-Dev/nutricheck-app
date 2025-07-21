@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
@@ -59,29 +60,12 @@ fun DiaryPage(
                 .padding(top = 14.dp)
                 .fillMaxSize()
         ) {
+            TODO("change parameters")
             when (selectedTab) {
-                DiaryTab.HISTORY -> HistoryPage()
+                DiaryTab.HISTORY -> HistoryPage(historyViewModel = hiltViewModel())
                 DiaryTab.RECIPES -> RecipePage(
-                    localRecipes = {
-                        DishItemList(
-                            list = listOf(
-                                Recipe(),
-                                Recipe(),
-                                Recipe(),
-                                Recipe()
-                            )
-                        )
-                    },
-                    remoteRecipes = {
-                        DishItemList(
-                            list = listOf(
-                                Recipe(),
-                                Recipe(),
-                                Recipe(),
-                                Recipe()
-                            )
-                        )
-                    },
+                    recipePageViewModel = hiltViewModel(),
+                    modifier = Modifier
                 )
             }
         }

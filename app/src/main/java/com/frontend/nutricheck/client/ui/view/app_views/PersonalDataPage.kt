@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
@@ -48,7 +47,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalDataPage(
     state: ProfileState,
@@ -291,7 +289,7 @@ private fun EditableDataRow(
         )
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 private fun EditableDropdownRow(
     label: String,

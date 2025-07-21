@@ -71,4 +71,7 @@
     <string name="search_page_label_my_recipes">Meine Rezepte</string>
     <string name="back_button_description">zurück Knopf</string>
     <string name="add_weight_entry_description">neues Gewicht hinzufügen Knopf\n</string>
+    <string name="add_weight_entry_title">Trage ein Gewicht ein</string>
+    <string name="date_label">Datum</string>
+    <string name="select_date_description">Auswählen eines Datums</string>
 </resources>
