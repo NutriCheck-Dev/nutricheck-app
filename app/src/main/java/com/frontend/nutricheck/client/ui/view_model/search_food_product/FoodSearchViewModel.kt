@@ -22,10 +22,13 @@ data class SearchState(
     val selectedTab: Int = 0,
     val results: List<FoodComponent> = emptyList(),
     val addedComponents: List<FoodComponent> = emptyList(),
+    val isFromAddIngredient: Boolean = false
 )
 
 sealed interface  SearchEvent {
     data class QueryChanged(val query: String) : SearchEvent
+    data class AddFoodComponent(val foodComponent: FoodComponent) : SearchEvent
+    data class RemoveFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     object Search : SearchEvent
     object Retry : SearchEvent
     object Clear : SearchEvent
@@ -48,6 +51,8 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.QueryChanged -> {
                 _searchState.update { it.copy(query = event.query) }
             }
+            is SearchEvent.AddFoodComponent -> onClickAddFoodComponent(event.foodComponent)
+            is SearchEvent.RemoveFoodComponent -> onClickRemoveFoodComponent(event.foodComponent)
             is SearchEvent.Search -> onClickSearchFoodComponent()
             is SearchEvent.Retry -> onClickSearchFoodComponent()
             is SearchEvent.Clear -> _searchState.update { it.copy(results = emptyList(), query = "") }
@@ -85,6 +90,11 @@ class FoodSearchViewModel @Inject constructor(
     override fun onClickAddFoodComponent(foodComponent: FoodComponent) =
         _searchState.update { state ->
             state.copy(addedComponents = state.addedComponents + foodComponent)
+        }
+
+    override fun onClickRemoveFoodComponent(foodComponent: FoodComponent) =
+        _searchState.update { state ->
+            state.copy(addedComponents = state.addedComponents - foodComponent)
         }
 
     override fun onFoodClick() {

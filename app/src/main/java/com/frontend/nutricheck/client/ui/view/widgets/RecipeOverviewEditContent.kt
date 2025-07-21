@@ -54,7 +54,7 @@ fun RecipeOverviewEditContent(
     Scaffold(
         topBar = {
             ViewsTopBar(
-                navigationIcon = { CancelButton(onClick = onCancel) },
+                navigationIcon = { CustomCloseButton(onClick = onCancel) },
                 title = {
                     TextField(
                         value = draft.title,

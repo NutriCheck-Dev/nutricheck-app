@@ -117,7 +117,9 @@ fun CreateRecipePage(
                 DishItemList(
                     foodComponents = currentIngredients,
                     isEditing = true,
-                    trailingContent = { CustomDetailsButton() }
+                    trailingContent = { item ->
+                        CustomDetailsButton()
+                    }
                 )
 
                 if (errorResourceId == R.string.create_recipe_error_ingredients) {

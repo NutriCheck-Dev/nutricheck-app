@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 data class RecipePageState(
     val myRecipes: List<Recipe> = emptyList(),
@@ -109,15 +110,31 @@ class RecipePageViewModel @Inject constructor(
     private fun emitEvent(event: RecipePageEvent) = viewModelScope.launch { _events.emit(event) }
 
     private suspend fun performOnlineSearch() {
-        val query = _recipePageState.value.query.trim()
-        if (query.isBlank()) {
-            _onlineResults.value = emptyList()
-            return
-        }
-        when (val result = recipeRepository.searchRecipe(query)) {
-            is Result.Success -> _onlineResults.value = result.data
-            is Result.Error -> {
+        viewModelScope.launch {
+            setLoading()
+
+            val query = _recipePageState.value.query.trim()
+            if (query.isBlank()) {
                 _onlineResults.value = emptyList()
+                setReady()
+                return@launch
+            }
+            try {
+                when (val result = recipeRepository.searchRecipe(query)) {
+                    is Result.Success -> {
+                        _onlineResults.value = result.data
+                        setReady()}
+                    is Result.Error -> {
+                        _onlineResults.value = emptyList()
+                        setError("Server-Fehler beim Abrufen der Rezepte: ${result.message}")
+                    }
+                }
+            } catch (io: IOException) {
+                _onlineResults.value = emptyList()
+                setError("Netzwerkfehler: ${io.message ?: "Unbekannter Fehler"}")
+            } catch (e: Exception) {
+                _onlineResults.value = emptyList()
+                setError("Unerwarteter Fehler: ${e.message ?: ""}")
             }
         }
     }

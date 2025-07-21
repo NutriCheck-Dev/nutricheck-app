@@ -17,6 +17,7 @@ abstract class BaseFoodSearchOverviewViewModel : BaseViewModel () {
 
     abstract fun onClickSearchFoodComponent()
     abstract fun onClickAddFoodComponent(foodComponent: FoodComponent)
+    abstract fun onClickRemoveFoodComponent(foodComponent: FoodComponent)
     abstract fun onFoodClick()
     abstract fun onRecipeClick()
 
