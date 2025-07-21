@@ -47,7 +47,12 @@ fun RecipePage(
         ) {
 
 
-            FoodComponentSearchBar()
+            FoodComponentSearchBar(
+                query = recipePageState.query,
+                onQueryChange = { recipePageViewModel.onEvent(RecipePageEvent.QueryChanged(it))},
+                onSearch = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) },
+                placeholder = { Text("Rezept suchen") }
+            )
 
 
             CustomTabRow(
@@ -76,15 +81,35 @@ fun RecipePage(
                     .padding(8.dp)
                     .verticalScroll(scrollState)
             ) {
-
-                DishItemList(
-                    foodComponents = recipes,
-                    trailingContent = { CustomDetailsButton(
-                        isOnDishItemButton = true,
-                        isOnOwnedRecipe = recipePageState.selectedTab == 0,
-                        isOnPublicRecipe = recipePageState.selectedTab == 1,
-                    ) }
-                )
+                when (recipePageState.selectedTab) {
+                    0 -> DishItemList(
+                        foodComponents = recipes,
+                        trailingContent = {
+                            CustomDetailsButton(
+                                isOnDishItemButton = true,
+                                isOnOwnedRecipe = true,
+                            )
+                        }
+                    )
+                    1 -> {
+                        if (recipePageState.query.isBlank()) {
+                            Text(
+                                text = "Bitte geben Sie einen Suchbegriff ein",
+                                modifier = Modifier.align(Alignment.Center)
+                                )
+                        } else {
+                            DishItemList(
+                                foodComponents = recipePageState.onlineRecipes.toSet(),
+                                trailingContent = {
+                                    CustomDetailsButton(
+                                        isOnDishItemButton = true,
+                                        isOnPublicRecipe = true
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
 
                 ExtendedFloatingActionButton(
                     modifier = Modifier

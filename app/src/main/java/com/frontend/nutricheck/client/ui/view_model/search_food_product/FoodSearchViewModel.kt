@@ -1,47 +1,91 @@
 package com.frontend.nutricheck.client.ui.view_model.search_food_product
 
+import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.io.IOException
 
 data class SearchState(
     val query: String = "",
-    val results: List<FoodComponent> = emptyList()
+    val selectedTab: Int = 0,
+    val results: List<FoodComponent> = emptyList(),
+    val addedComponents: List<FoodComponent> = emptyList(),
 )
 
 sealed interface  SearchEvent {
     data class QueryChanged(val query: String) : SearchEvent
-    data object Retry : SearchEvent
-    data object Clear : SearchEvent
+    object Search : SearchEvent
+    object Retry : SearchEvent
+    object Clear : SearchEvent
 }
 
 @HiltViewModel
-class FoodSearchViewModel @Inject constructor() : BaseFoodSearchOverviewViewModel() {
+class FoodSearchViewModel @Inject constructor(
+    private val recipeRepository: RecipeRepositoryImpl,
+    private val foodProductRepository: FoodProductRepositoryImpl
+) : BaseFoodSearchOverviewViewModel() {
 
-    private val _state = MutableStateFlow(SearchState())
-    val state: StateFlow<SearchState> = _state.asStateFlow()
-
-    private val searchJob = MutableStateFlow<Job?>(null)
+    private val _searchState = MutableStateFlow(SearchState())
+    val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
 
     val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
 
-    fun onEvent(event: SearchEvent) {}
-
-    override fun onClickSearchFoodProduct() {
-        // Logic to handle search food product click
+    fun onEvent(event: SearchEvent) {
+        when (event) {
+            is SearchEvent.QueryChanged -> {
+                _searchState.update { it.copy(query = event.query) }
+            }
+            is SearchEvent.Search -> onClickSearchFoodComponent()
+            is SearchEvent.Retry -> onClickSearchFoodComponent()
+            is SearchEvent.Clear -> _searchState.update { it.copy(results = emptyList(), query = "") }
+        }
     }
 
-    override fun onClickAddFoodProduct() {
-        // Logic to handle add food product click
+    override fun onClickSearchFoodComponent() {
+        setLoading()
+
+        viewModelScope.launch {
+            val query = _searchState.value.query.trim()
+            if (query.isEmpty()) {
+                _searchState.value = SearchState()
+                setReady()
+                return@launch
+            }
+
+            try {
+                val foodProducts = foodProductRepository.searchFoodProduct(query)
+                val recipes = (recipeRepository.searchRecipe(query)
+                        as? Result.Success)?.data.orEmpty()
+                val mixed = (foodProducts + recipes)
+                    .sortedBy { it.name }
+
+                _searchState.update { it.copy(results = mixed) }
+                setReady()
+            } catch (io: IOException) {
+                setError("Netzwerkfehler: Bitte überprüfen Sie Ihre Internetverbindung.")
+            } catch (e: Exception) {
+                setError("Ein unerwarteter Fehler ist aufgetreten: ${e.message}")
+            }
+        }
     }
+
+    override fun onClickAddFoodComponent(foodComponent: FoodComponent) =
+        _searchState.update { state ->
+            state.copy(addedComponents = state.addedComponents + foodComponent)
+        }
 
     override fun onFoodClick() {
         TODO("Not yet implemented")
@@ -50,14 +94,4 @@ class FoodSearchViewModel @Inject constructor() : BaseFoodSearchOverviewViewMode
     override fun onRecipeClick() {
         TODO("Not yet implemented")
     }
-
-    override fun onMyRecipesClick() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onOnlieRecipesClick() {
-        TODO("Not yet implemented")
-    }
-
-    private fun performSearch(query: String, force: Boolean = false) {}
 }
