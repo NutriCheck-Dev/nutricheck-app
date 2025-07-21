@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.onboarding
+package com.frontend.nutricheck.client.model.repositories.user
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -12,13 +12,12 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val Context.dataStore:
-        DataStore<Preferences> by preferencesDataStore(name = "nutricheck_settings")
-
 @Singleton
 class OnboardingRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    private val Context.dataStore:
+            DataStore<Preferences> by preferencesDataStore(name = "nutricheck_settings")
 
     private object PreferencesKeys {
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
