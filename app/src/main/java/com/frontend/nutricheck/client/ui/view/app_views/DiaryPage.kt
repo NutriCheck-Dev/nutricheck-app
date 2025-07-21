@@ -14,12 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
 enum class DiaryTab(val title: String) {
     HISTORY("Verlauf"),
@@ -29,8 +27,8 @@ enum class DiaryTab(val title: String) {
 @Composable
 fun DiaryPage(
     modifier: Modifier = Modifier,
-    historyViewModel: HistoryViewModel = hiltViewModel(),
-    //recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
+    historyViewModel: HistoryViewModel,
+    recipePageViewModel: RecipePageViewModel
 ) {
     MaterialTheme.colorScheme
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.RECIPES) }
@@ -66,10 +64,3 @@ fun DiaryPage(
     }
 }
 
-@Preview
-@Composable
-fun DiaryPagePreview() {
-    AppTheme(darkTheme = true) {
-        DiaryPage()
-    }
-}

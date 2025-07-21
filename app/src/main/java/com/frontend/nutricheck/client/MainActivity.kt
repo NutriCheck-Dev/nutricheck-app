@@ -57,13 +57,15 @@ fun MainScreen(
     startDestination?.let { destination ->
         Scaffold(
             bottomBar = {
-                BottomNavigationBar(
-                    currentDestination = currentDestination,
-                    onClickAdd = { mainNavController.navigate(Screen.Add.route) },
-                    onClickHome = { mainNavController.navigate(Screen.HomePage.route) },
-                    onClickDiary = { mainNavController.navigate(Screen.DiaryPage.route) },
-                    onClickProfile = { mainNavController.navigate(Screen.ProfilePage.route) }
+                if (destination != Screen.Onboarding.route) {
+                    BottomNavigationBar(
+                        currentDestination = currentDestination,
+                        onClickAdd = { mainNavController.navigate(Screen.Add.route) },
+                        onClickHome = { mainNavController.navigate(Screen.HomePage.route) },
+                        onClickDiary = { mainNavController.navigate(Screen.DiaryPage.route) },
+                        onClickProfile = { mainNavController.navigate(Screen.ProfilePage.route) }
                     )
+                }
             }
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {

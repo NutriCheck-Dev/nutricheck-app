@@ -1,7 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views.onboarding
 
-import android.app.DatePickerDialog
-import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,9 +13,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,7 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -48,7 +50,7 @@ fun OnboardingBirthdate(
     onEvent : (OnboardingEvent) -> Unit,
     ) {
     var selectedDate by remember { mutableStateOf(state.birthdate) }
-    var showDatePicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(true) }
     val error = state.errorState
 
     val context = LocalContext.current
@@ -124,30 +126,28 @@ fun OnboardingBirthdate(
 
         }
         if (showDatePicker) {
-            val datePickerDialog = DatePickerDialog(
-            context,
-            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
-                val newCal = Calendar.getInstance().apply {
-                    set(Calendar.YEAR, selectedYear)
-                    set(Calendar.MONTH, selectedMonth)
-                    set(Calendar.DAY_OF_MONTH, selectedDay)
+            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate?.time)
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                selectedDate = Date(it)
+                            }
+                            showDatePicker = false
+                        }
+                    ) {
+                        Text(stringResource(id = R.string.save))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) {
+                        Text(stringResource(id = R.string.cancel))
+                    }
                 }
-                selectedDate = newCal.time
-                showDatePicker = false
-            }, year, month, day
-            )
-            datePickerDialog.setOnDismissListener {
-                showDatePicker = false
-            }
-        datePickerDialog.show()
-            error?.let { resId ->
-                Text(
-                    modifier = Modifier
-                        .padding(top = 16.dp),
-                    text = stringResource(id = resId),
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center
-                )
+            ) {
+                DatePicker(state = datePickerState)
             }
         }
         Button(

@@ -63,7 +63,7 @@ fun OnboardingNavGraph(
                     onboardingNavController.navigate(OnboardingScreen.TargetWeight.route)
                 is OnboardingEvent.NavigateToDashboard -> {
                     mainNavController.navigate(Screen.HomePage.route) {
-                        popUpTo(Screen.Onboarding.route) { inclusive = true }
+                        //popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
                 }
                 else -> { /* No action needed for other events */}

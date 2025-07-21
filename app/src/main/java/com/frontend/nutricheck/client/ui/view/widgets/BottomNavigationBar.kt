@@ -26,7 +26,7 @@ fun BottomNavigationBar(
 
         NavigationBarItem(
             selected = currentDestination == Screen.HomePage.route,
-            onClick = { onClickHome },
+            onClick = { onClickHome.invoke() },
             icon = { Icon(Icons.Default.Home,
                 contentDescription = stringResource(id = R.string.navigation_bar_label_home)) },
             label = { Text(stringResource(id = R.string.navigation_bar_label_home)) }
@@ -34,7 +34,7 @@ fun BottomNavigationBar(
 
         NavigationBarItem(
             selected = currentDestination == Screen.DiaryPage.route,
-            onClick = { onClickDiary },
+            onClick = { onClickDiary.invoke() },
             icon = { Icon(Icons.Default.DateRange,
                    contentDescription = stringResource(id = R.string.navigation_bar_label_diary)) },
             label = { Text(stringResource (id = R.string.navigation_bar_label_diary)) }
@@ -42,7 +42,7 @@ fun BottomNavigationBar(
 
         NavigationBarItem(
             selected = currentDestination == Screen.ProfilePage.route,
-            onClick = { onClickProfile },
+            onClick = { onClickProfile.invoke() },
             icon = { Icon((Icons.Default.AccountCircle),
                 contentDescription = stringResource(id = R.string.navigation_bar_label_profile)) },
             label = { Text(stringResource(id = R.string.navigation_bar_label_profile)) }
@@ -50,7 +50,7 @@ fun BottomNavigationBar(
 
         NavigationBarItem(
             selected = currentDestination == "add",
-            onClick = { onClickAdd },
+            onClick = { onClickAdd.invoke() },
             icon = { Icon(Icons.Default.AddCircle,
                 contentDescription = stringResource(id = R.string.navigation_bar_label_add)) },
             label = { Text(stringResource(id = R.string.navigation_bar_label_add)) }

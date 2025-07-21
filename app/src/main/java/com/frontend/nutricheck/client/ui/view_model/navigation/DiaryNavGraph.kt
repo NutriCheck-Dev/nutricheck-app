@@ -9,6 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.frontend.nutricheck.client.ui.view.app_views.DiaryPage
 import com.frontend.nutricheck.client.ui.view.app_views.FoodOverview
 import com.frontend.nutricheck.client.ui.view.app_views.RecipeOverview
 
@@ -19,6 +20,7 @@ sealed class DiaryScreens(val route: String) {
     object MealOverview : DiaryScreens("meal_overview")
     object FoodOverview : DiaryScreens("food_overview")
     object RecipeOverview : DiaryScreens("recipe_overview")
+    object DiaryPage : DiaryScreens("diary_page")
 
 }
 @Composable
@@ -32,13 +34,14 @@ fun DiaryNavGraph() {
 
     NavHost(
         navController = diaryNavController,
-        startDestination = AddScreens.AddMainPage.route,
+        startDestination = DiaryScreens.DiaryPage.route,
     ) {
         composable(DiaryScreens.HistoryPage.route) { HistoryPage(historyViewModel = historyViewModel) }
         composable(DiaryScreens.RecipePage.route) { RecipePage(recipePageViewModel = recipePageViewModel) }
+        composable(DiaryScreens.DiaryPage.route) { DiaryPage(historyViewModel = historyViewModel, recipePageViewModel = recipePageViewModel) }
         composable(DiaryScreens.RecipeOverview.route) { RecipeOverview() }
         composable(DiaryScreens.FoodOverview.route) { FoodOverview() }
-        composable(DiaryScreens.MealOverview.route) { TODO("MealOverviewPage()") }
+        composable(DiaryScreens.MealOverview.route) {  }
 
 
     }
