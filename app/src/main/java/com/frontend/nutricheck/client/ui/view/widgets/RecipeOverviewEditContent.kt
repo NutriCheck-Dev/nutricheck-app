@@ -48,7 +48,7 @@ fun RecipeOverviewEditContent(
     var showConfirmationDialog by remember { mutableStateOf(false) }
     val foodComponents: Set<FoodComponent> =
         draft.ingredients
-            .map { it.foodComponent }
+            .map { it.foodProduct }
             .toSet()
 
     Scaffold(

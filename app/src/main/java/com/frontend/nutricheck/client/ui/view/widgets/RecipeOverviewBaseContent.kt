@@ -48,7 +48,7 @@ fun RecipeOverviewBaseContent(
     var expanded by remember { mutableStateOf(false) }
     val foodComponents: Set<FoodComponent> =
         recipe.ingredients
-            .map { it.foodComponent }
+            .map { it.foodProduct }
             .toSet()
 
     Scaffold(

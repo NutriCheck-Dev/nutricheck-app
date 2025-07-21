@@ -35,7 +35,7 @@ sealed interface HistoryEvent {
 }
 
 @HiltViewModel
-open class HistoryViewModel @Inject constructor(
+class HistoryViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
 
 ) : BaseHistoryViewModel() {

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
+import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
 
 enum class DiaryTab(val title: String) {
     HISTORY("Verlauf"),
@@ -28,7 +29,7 @@ enum class DiaryTab(val title: String) {
 @Composable
 fun DiaryPage(
     modifier: Modifier = Modifier,
-    //historyViewModel: HistoryViewModel = hiltViewModel(),
+    historyViewModel: HistoryViewModel = hiltViewModel(),
     //recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
 ) {
     MaterialTheme.colorScheme
@@ -58,7 +59,7 @@ fun DiaryPage(
                 .fillMaxSize()
         ) {
             when (selectedTab) {
-                DiaryTab.HISTORY -> HistoryPage(historyViewModel = hiltViewModel())
+                DiaryTab.HISTORY -> HistoryPage(historyViewModel = historyViewModel)
                 DiaryTab.RECIPES -> RecipePage()
             }
         }

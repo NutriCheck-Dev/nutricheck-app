@@ -90,7 +90,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v240alpha10)
     implementation(libs.hilt.android)
     implementation(libs.moshi.kotlin)
-
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.lifecycle)

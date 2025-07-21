@@ -34,8 +34,8 @@ fun DiaryNavGraph() {
         navController = diaryNavController,
         startDestination = AddScreens.AddMainPage.route,
     ) {
-        composable(DiaryScreens.HistoryPage.route) { HistoryPage(historyViewModel) }
-        composable(DiaryScreens.RecipePage.route) { RecipePage(recipePageViewModel) }
+        composable(DiaryScreens.HistoryPage.route) { HistoryPage(historyViewModel = historyViewModel) }
+        composable(DiaryScreens.RecipePage.route) { RecipePage(recipePageViewModel = recipePageViewModel) }
         composable(DiaryScreens.RecipeOverview.route) { RecipeOverview() }
         composable(DiaryScreens.FoodOverview.route) { FoodOverview() }
         composable(DiaryScreens.MealOverview.route) { TODO("MealOverviewPage()") }

@@ -14,13 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
@@ -37,7 +34,7 @@ import java.util.Date
 
 @Composable
 fun HistoryPage(
-    historyViewModel: HistoryViewModel = hiltViewModel(),
+    historyViewModel: HistoryViewModel,
     onSwitchClick: (String) -> Unit = {}
 ) {
     val state by historyViewModel.historyState.collectAsState()
@@ -135,12 +132,3 @@ class FakeHistoryRepository : HistoryRepository {
 
 
 
-// FakeViewModel mit Repository-Dependency
-class FakeHistoryViewModel : HistoryViewModel(FakeHistoryRepository())
-
-@Preview(showBackground = true)
-@Composable
-fun HistoryPagePreview() {
-    val fakeViewModel = remember { FakeHistoryViewModel() }
-    HistoryPage(historyViewModel = fakeViewModel)
-}

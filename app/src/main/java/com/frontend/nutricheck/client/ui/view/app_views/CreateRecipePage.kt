@@ -50,7 +50,7 @@ fun CreateRecipePage(
     val draft by createRecipeViewModel.createdRecipeDraft.collectAsState()
     val currentTitle = draft?.title.orEmpty()
     val ingredients = draft?.ingredients ?: emptySet()
-    val currentIngredients = ingredients.map { it.foodComponent }.toSet()
+    val currentIngredients = ingredients.map { it.foodProduct }.toSet()
     val currentDescription = draft?.description.orEmpty()
     val errorResourceId by createRecipeViewModel.errorState.collectAsState()
 

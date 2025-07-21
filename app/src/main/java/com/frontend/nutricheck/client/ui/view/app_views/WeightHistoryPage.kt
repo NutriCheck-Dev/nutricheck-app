@@ -59,7 +59,6 @@ fun WeightHistoryPage(
         ) {
             items(weightState) { weightEntry ->
                 WeightHistoryItem(weightEntry = weightEntry)
-                Divider()
             }
         }
     }
