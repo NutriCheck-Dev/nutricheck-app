@@ -23,6 +23,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeVi
 fun RecipeOverview(
     modifier: Modifier = Modifier,
     //actions: NavigationActions,
+    onAddIngredient: (String) -> Unit = {},
     recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
     editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
     reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(),

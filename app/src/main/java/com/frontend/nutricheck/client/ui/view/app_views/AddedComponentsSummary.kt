@@ -21,6 +21,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
 
@@ -28,6 +29,7 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEv
 fun AddedComponentsSummary(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel = hiltViewModel(),
+    editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
     onSave: () -> Unit = {}, //TODO: Implement save logic + icon for it
     onBack: () -> Unit = {}
 ) {

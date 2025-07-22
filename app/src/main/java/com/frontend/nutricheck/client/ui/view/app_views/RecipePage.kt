@@ -38,7 +38,8 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewMo
 fun RecipePage(
     modifier: Modifier = Modifier,
     recipePageViewModel: RecipePageViewModel = hiltViewModel(),
-    onAddRecipeClick: () -> Unit = {}
+    onAddRecipeClick: () -> Unit = {},
+    onItemClick: (String) -> Unit = {}
 ) {
     val recipePageState by recipePageViewModel.recipePageState.collectAsState()
     val uiState by recipePageViewModel.uiState.collectAsState()
@@ -107,6 +108,9 @@ fun RecipePage(
                         when (recipePageState.selectedTab) {
                             0 -> DishItemList(
                                 foodComponents = recipes,
+                                onItemClick = { component ->
+                                    onItemClick(component.id)
+                                },
                                 trailingContent = {
                                     CustomDetailsButton(
                                         isOnDishItemButton = true,

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
@@ -41,6 +42,7 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEv
 fun SearchPage(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel = hiltViewModel(),
+    onConfirm: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme

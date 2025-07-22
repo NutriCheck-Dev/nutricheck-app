@@ -39,7 +39,6 @@ class FoodSearchViewModel @Inject constructor(
     private val recipeRepository: RecipeRepositoryImpl,
     private val foodProductRepository: FoodProductRepositoryImpl
 ) : BaseFoodSearchOverviewViewModel() {
-
     private val _searchState = MutableStateFlow(SearchState())
     val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
 

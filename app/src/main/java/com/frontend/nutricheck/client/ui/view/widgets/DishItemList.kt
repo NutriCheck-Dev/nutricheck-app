@@ -30,7 +30,7 @@ fun DishItemList(
     trailingContent: @Composable ((item: FoodComponent) -> Unit)? = null,
     isEditing: Boolean = false,
     onAddButtonClick: () -> Unit = {},
-    onClick: () -> Unit = {}
+    onItemClick: (FoodComponent) -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     Column(
@@ -43,7 +43,7 @@ fun DishItemList(
             DishItemButton(
                 foodComponent = item,
                 trailingContent = { trailingContent?.invoke(item) },
-                onClick = onClick)
+                onClick = { onItemClick(item) })
         }
 
         if(isEditing) {
