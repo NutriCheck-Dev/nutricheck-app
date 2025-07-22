@@ -19,17 +19,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.em
+import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros.DailyMacrosState
 
 @Composable
 fun NutrientBreakdown(
     modifier: Modifier = Modifier,
-    nutrients: Map<String, Pair<Int, Int>> // key = label, value = Pair(value, goal)
+    dailyMacrosState: DailyMacrosState,
 ) {
+    val protein = dailyMacrosState.dailyProtein
+    val proteinGoal = dailyMacrosState.dailyProteinGoal
+    val carbs = dailyMacrosState.dailyCarbs
+    val carbsGoal = dailyMacrosState.dailyCarbsGoal
+    val fat = dailyMacrosState.dailyFat
+    val fatGoal = dailyMacrosState.dailyFatGoal
     Surface(
         color = Color(0xff121212),
         modifier = modifier
@@ -56,14 +61,21 @@ fun NutrientBreakdown(
                     .offset(20.dp, 49.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                nutrients.forEach { (label, valueGoal) ->
-                    val (value, goal) = valueGoal
-                    MacroProgress(
-                        label = label,
-                        value = "${value}g",
-                        progress = value.toFloat() / goal.toFloat()
-                    )
-                }
+                MacroProgress(
+                    label = "Protein",
+                    value = "${protein}g",
+                    progress = protein.toFloat() / proteinGoal.toFloat()
+                )
+                MacroProgress(
+                    label = "Carbs",
+                    value = "${carbs}g",
+                    progress = carbs.toFloat() / carbsGoal.toFloat()
+                )
+                MacroProgress(
+                    label = "Fat",
+                    value = "${fat}g",
+                    progress = fat.toFloat() / fatGoal.toFloat()
+                )
             }
         }
     }
@@ -116,15 +128,3 @@ fun MacroProgress(
     }
 }
 
-@Preview
-@Composable
-fun NutrientBreakdownPreview() {
-    NutrientBreakdown(
-        nutrients = mapOf(
-            "Eiweiß" to (20 to 146),
-            "Kohlenhydrate" to (220 to 300),
-            "Fett" to (58 to 90)
-        ),
-        modifier = Modifier.padding(16.dp)
-    )
-}

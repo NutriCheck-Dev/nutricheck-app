@@ -1,7 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import android.app.DatePickerDialog
-import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,24 +8,27 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
-import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieSummary
 import com.frontend.nutricheck.client.ui.view.widgets.DateSelectorBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
-import kotlinx.coroutines.flow.flow
 import java.util.Calendar
 import java.util.Date
 
@@ -38,7 +39,10 @@ fun HistoryPage(
     onSwitchClick: (String) -> Unit = {}
 ) {
     val state by historyViewModel.historyState.collectAsState()
+    var selectedDate by remember { mutableStateOf(Date()) }
+    var showDatePicker by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+    //val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
 
     val breakfast = state.mealsGrouped[DayTime.BREAKFAST].orEmpty()
     val breakfastItems = breakfast.flatMap { it.items }.toList()
@@ -66,7 +70,7 @@ fun HistoryPage(
         }
     }
 
-    val context = LocalContext.current
+
     val calendar = Calendar.getInstance()
     calendar.time = Date()
 
@@ -78,30 +82,37 @@ fun HistoryPage(
     ) {
         Spacer(modifier = Modifier.height(7.dp))
         DateSelectorBar(
-            selectedDate = calendar.time,
-            onPreviousDay = { /* Handle previous day */ },
-            onNextDay = { /* Handle next day */ },
-            onOpenCalendar = {
-                DatePickerDialog(
-                    context,
-                    { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                        // Handle date selection
-                    },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
-                ).show()
-            }
+            selectedDate = selectedDate,
+            onPreviousDay = { selectedDate = Date(selectedDate.time - 24 * 60 * 60 * 1000) },
+            onNextDay = { selectedDate = Date(selectedDate.time + 24 * 60 * 60 * 1000) },
+            onOpenCalendar = { showDatePicker = true }
         )
+        if (showDatePicker) {
+            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate?.time)
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                selectedDate = Date(it)
+                            }
+                            showDatePicker = false
+                        }
+                    ) { Text("OK") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) { Text("Abbrechen") }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
 
         CalorieSummary(
             modifier = Modifier
                 .padding(7.dp),
-            title = "Verbleibende Kalorien",
-            goalCalories = 300,
-            consumedCalories = 200,
-            remainingCalories = 100,
-
+            state = state
         )
         Spacer(modifier = Modifier.height(20.dp))
         MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", 300.0, meals= breakfastItems, onAddClick = { historyViewModel.onAddEntryClick(calendar.time) })
@@ -112,22 +123,6 @@ fun HistoryPage(
         Spacer(modifier = Modifier.height(5.dp))
         MealBlock(modifier = Modifier.padding(7.dp), "Snack", 300.0, meals= snackItems, onAddClick = { historyViewModel.onAddEntryClick(calendar.time) })
     }
-}
-
-// Fake-Repository für die Preview
-class FakeHistoryRepository : HistoryRepository {
-    // Implementiere alle Methoden mit Dummy-Daten oder leeren Listen
-    override suspend fun getCalorieHistory() = emptyList<HistoryDay>()
-    override suspend fun getDailyHistory(date: Date) = HistoryDay()
-    override suspend fun requestAiMeal() = Meal()
-    override suspend fun deleteMeal(meal: Meal) {}
-    override suspend fun updateMeal(meal: Meal) {}
-    override suspend fun getMealsForDay(date: Date) = emptyList<Meal>()
-    override suspend fun addFoodToMeal(name: String, foodId: String) {}
-    override suspend fun removeFoodFromMeal(name: String, foodId: String) {}
-    override suspend fun getHistoryByDate(date: Date) = flow { emit(HistoryDay()) }
-    override suspend fun addMeal(meal: Meal) {}
-    override suspend fun saveAsRecipe(meal: Meal, recipeName: String, recipeDescription: String) {}
 }
 
 

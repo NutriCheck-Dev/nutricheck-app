@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ data class HistoryState(
     val mealsGrouped: Map<DayTime, List<Meal>> = emptyMap(),
     val foodId: String = "",
     val totalCalories: Int = 0,
+    val goalCalories: Int = 0,
     val isSwitched: Boolean = false
 )
 
@@ -37,7 +39,7 @@ sealed interface HistoryEvent {
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
-
+    private val userDataRepository: UserDataRepository
 ) : BaseHistoryViewModel() {
     private val _historyState = MutableStateFlow(HistoryState())
     val historyState = _historyState.asStateFlow()
@@ -89,7 +91,6 @@ class HistoryViewModel @Inject constructor(
                     mealsGrouped = grouped
                 )
             }
-            _events.emit(HistoryEvent.DisplayMealsOfDay(day))
         }
     }
 

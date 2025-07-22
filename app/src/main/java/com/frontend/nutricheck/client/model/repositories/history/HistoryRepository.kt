@@ -7,6 +7,7 @@ import java.util.Date
 
 interface HistoryRepository {
     suspend fun getCalorieHistory(): List<HistoryDay>
+    suspend fun getTodaysCalories(): Int
     suspend fun getDailyHistory(date: Date): HistoryDay
     suspend fun requestAiMeal(): Meal
     suspend fun deleteMeal(meal: Meal)

@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history
 
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9,9 +11,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 data class CalorieHistoryState(
-    val timePeriodMap: List<String> = emptyList(),
-    val selectedTimePeriod: String = "",
-    val caloriesHistory: List<Pair<String, Int>> = emptyList()
+    //val selectedTimePeriod: String = "", falls gepickt gespeichert werden soll
+    val caloriesHistory: List<Float> = emptyList(),
+    val calorieGoal : Int = 0
 )
 
 sealed interface CalorieHistoryEvent {
@@ -20,7 +22,10 @@ sealed interface CalorieHistoryEvent {
 }
 
 @HiltViewModel
-class CalorieHistoryViewModel @Inject constructor() : BaseCalorieHistoryViewModel() {
+class CalorieHistoryViewModel @Inject constructor(
+    private val historyRepository: HistoryRepository,
+    private val userDataRepository: UserDataRepository
+) : BaseCalorieHistoryViewModel() {
 
     private val _calorieHistoryState = MutableStateFlow(CalorieHistoryState())
     val calorieHistoryState = _calorieHistoryState.asStateFlow()

@@ -13,10 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,32 +21,28 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history.CalorieHistoryState
 
 
 @Composable
 fun CalorieHistoryDiagram(
     modifier: Modifier = Modifier,
-    title: String = "Kalorienübersicht",
+    calorieHistoryState: CalorieHistoryState,
     calorieData: List<Float> = listOf(
         2100f, 1850f, 1930f, 0f, 2400f, 1820f, 2010f, 2200f, 1900f, 2300f,
         0f, 2500f, 1800f, 2100f, 0f, 2300f, 1900f, 1750f, 2000f, 1980f,
         0f, 2400f, 1860f, 2230f, 2100f, 0f, 1950f, 1780f, 2350f, 2010f,
-        0f, 1800f, 2200f, 2100f, 2460f, 0f, 1990f, 1820f, 1760f, 2000f,
-        0f, 2170f, 1930f, 2300f, 2200f, 0f, 2480f, 1900f, 1750f, 2050f,
-        1850f, 0f, 2100f, 1880f, 2350f, 1800f, 0f, 1980f, 1920f, 2220f,
-        2400f, 0f, 2100f, 2000f, 1960f, 0f, 2320f, 1830f, 1900f, 1800f,
-        0f, 2160f, 2290f, 1990f, 1900f, 2450f, 0f, 2050f, 2200f, 2100f,
-        0f, 1800f, 2500f, 1920f, 1980f, 0f, 2380f, 2000f, 1860f, 1900f
+        2100f, 1850f, 1930f, 0f, 2400f, 1820f, 2010f, 2200f, 1900f, 2300f,
+        0f, 2500f, 1800f, 2100f, 0f, 2300f, 1900f, 1750f, 2000f, 1980f,
+        0f, 2400f, 1860f, 2230f, 2100f, 0f, 1950f, 1780f, 2350f, 2010f,
+
     ),
-    selectedRange: String = "90T",
+    selectedRange : String,
     onPeriodSelected: (String) -> Unit = {},
-    firstPeriod: String = "7T",
-    secondPeriod: String = "30T",
-    thirdPeriod: String = "90T"
 ) {
+    val calorieGoal = calorieHistoryState.calorieGoal
     Column(
         modifier = modifier
             .height(184.dp)
@@ -64,39 +56,42 @@ fun CalorieHistoryDiagram(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = title,
+                text = "Kalorienverlauf",
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
-            var selected by remember { mutableStateOf(1) }
             ChartRangeSwitcher(
-                options = listOf("7T", "30T", "90T"),
-                selectedOption = selected,
+                options = listOf("7T", "30T", "60T"),
+                selectedOption = listOf("7T", "30T", "60T").indexOf(selectedRange),
                 onSelect = { clicked ->
-                    selected = listOf("7T", "30T", "90T").indexOf(clicked)
+                    onPeriodSelected(clicked)
                 }
             )
         }
 
         Spacer(modifier = Modifier.height(25.dp))
-
-        CaloryBarChart(calorieData, selectedRange)
+        val calorieData = when (selectedRange) {
+            "7T" -> calorieData.takeLast(7)
+            "30T" -> calorieData.takeLast(30)
+            "60T" -> calorieData
+            else -> emptyList()
+        }
+        CalorieBarChart(calorieData, selectedRange, 2000)
     }
 }
 
 @Composable
-fun CaloryBarChart(data: List<Float>, selectedRange: String, modifier: Modifier = Modifier) {
+fun CalorieBarChart(data: List<Float>, selectedRange: String, calorieGoal: Int, modifier: Modifier = Modifier) {
     val maxValue = data.maxOrNull() ?: 1f
     val minValue = data.minOrNull() ?: 0f
 
     val steps = 3
     val yStep = (maxValue - minValue) / steps
 
-    val yLabels = (0..steps).map { i -> minValue + i * yStep }
 
     val days = listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
-    val startIndex = 0 // z. B. wenn Daten bei Montag starten
+    val startIndex = 0 // z.B. wenn Daten bei Montag starten
     val labelMap = when (selectedRange) {
         "7T" -> (0 until data.size).associateWith { i -> days[(startIndex + i) % 7] }
         "30T" -> mapOf(
@@ -105,7 +100,7 @@ fun CaloryBarChart(data: List<Float>, selectedRange: String, modifier: Modifier 
             (data.size * 3 / 4) to "3W",
             (data.size - 1) to "1M"
         )
-        "90T" -> mapOf(
+        "60T" -> mapOf(
             (data.size * 1 / 4) to "3W",
             (data.size * 2 / 4) to "6W",
             (data.size * 3 / 4) to "9W",
@@ -138,32 +133,11 @@ fun CaloryBarChart(data: List<Float>, selectedRange: String, modifier: Modifier 
             }
 
             val heightRatio = size.height / (rawMax - visualMin)
-
+            val visualMax = maxOf(rawMax, calorieGoal.toFloat())
             val steps = 3
             val yStep = (rawMax - visualMin) / steps
             val yLabels = (0..steps).map { i -> visualMin + i * yStep }
 
-            // Y-Achse & Hilfslinien
-            yLabels.forEach { yValue ->
-                val y = size.height - (yValue - visualMin) * heightRatio
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
-                    strokeWidth = 2f
-                )
-                drawContext.canvas.nativeCanvas.drawText(
-                    "%.0f".format(yValue),
-                    -4.5f,
-                    y + 12f,
-                    android.graphics.Paint().apply {
-                        color = android.graphics.Color.WHITE
-                        textSize = 30f
-                        isAntiAlias = true
-                        textAlign = android.graphics.Paint.Align.RIGHT
-                    }
-                )
-            }
 
             // Balken
             val totalSpacing = size.width - (data.size * barWidth)
@@ -178,6 +152,26 @@ fun CaloryBarChart(data: List<Float>, selectedRange: String, modifier: Modifier 
                     size = Size(barWidth, barHeight)
                 )
             }
+            // Ziel-Linie
+            val goalY = size.height - ((calorieGoal - visualMin) / (visualMax - visualMin)) * size.height
+            drawLine(
+                color = Color.Green,
+                start = Offset(0f, goalY),
+                end = Offset(size.width, goalY),
+                strokeWidth = 3f
+            )
+            // Ziel-Label
+            drawContext.canvas.nativeCanvas.drawText(
+                "$calorieGoal",
+                -4.5f,
+                goalY + 12f,
+                android.graphics.Paint().apply {
+                    color = android.graphics.Color.GREEN
+                    textSize = 30f
+                    isAntiAlias = true
+                    textAlign = android.graphics.Paint.Align.RIGHT
+                }
+            )
 
             // X-Achse Labels
             labelMap.forEach { (index, label) ->
@@ -198,10 +192,3 @@ fun CaloryBarChart(data: List<Float>, selectedRange: String, modifier: Modifier 
     }
 }
 
-
-
-@Preview(showBackground = true)
-@Composable
-fun BarChartPreview() {
-    CalorieHistoryDiagram()
-}

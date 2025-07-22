@@ -80,7 +80,8 @@ fun ChartRangeSwitcher(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = textColor,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        lineHeight = 14.sp
                     )
                 }
             }
