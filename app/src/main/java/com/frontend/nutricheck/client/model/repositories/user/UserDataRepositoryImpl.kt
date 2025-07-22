@@ -12,25 +12,27 @@ class UserDataRepositoryImpl @Inject constructor(
     private val userDataDao: UserDataDao
 ): UserDataRepository {
 
-    override suspend fun getUserData(): List<UserData> {
-        TODO("Not yet implemented")
+    override suspend fun getUserData(): UserData {
+         return userDataDao.getUserData()?: UserData()
     }
 
     override suspend fun getWeightHistory(): List<Weight> {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getAllWeights(): Flow<List<Weight>> = weightDao.getAllWeights()
+
     override suspend fun addWeight(weight: Weight) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override suspend fun addUserData(userData: UserData) {
-        TODO("Not yet implemented")
+        userDataDao.insert(userData)
     }
 
     override suspend fun updateUserData(userData: UserData) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
 }

@@ -5,7 +5,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import kotlinx.coroutines.flow.Flow
 
 interface UserDataRepository {
-    suspend fun getUserData() : List<UserData>
+    suspend fun getUserData() : UserData
     suspend fun getWeightHistory(): List<Weight>
     suspend fun getAllWeights(): Flow<List<Weight>>
     suspend fun addWeight(weight: Weight)

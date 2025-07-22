@@ -40,6 +40,8 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.tooling.preview.Preview
+import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 
@@ -64,7 +66,6 @@ fun ProfilePage(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(sixteenDp)
             .background(color = Color(0xFF000000))
     ) {
         Column (
@@ -260,6 +261,21 @@ fun MenuItemWithSwitch(
         }
         Spacer (modifier = Modifier.width(8.dp))
     }
+}
+
+@Preview
+@Composable
+fun ProfilePagePreview() {
+    val dummyState = ProfileState(
+        userData = UserData(
+            username = "JohnDoe",
+            height = 180.0,
+            weight = 75.0,
+            age = 30,
+            theme = "light"
+        )
+    )
+    ProfilePage(state = dummyState, onEvent = {})
 }
 
 
