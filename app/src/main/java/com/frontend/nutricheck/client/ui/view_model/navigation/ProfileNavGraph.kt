@@ -31,7 +31,7 @@ fun ProfilePageNavGraph() {
     val profileOverviewViewModel : ProfileOverviewViewModel = hiltViewModel()
     val profileNavController = rememberNavController()
     val state by profileOverviewViewModel.data.collectAsState()
-    //val weightState by profileOverviewViewModel.weightData.collectAsState()
+    val weightState by profileOverviewViewModel.weightData.collectAsState()
 
 
     LaunchedEffect(key1 = Unit) {
@@ -69,7 +69,7 @@ fun ProfilePageNavGraph() {
         }
         composable(ProfileScreens.WeightHistoryPage.route) {
             WeightHistoryPage(
-                weightState = emptyList(), //TODO("change parameter to state.weightData")
+                weightState = weightState,
                 onEvent = profileOverviewViewModel::onEvent,
                 onBack = { profileNavController.popBackStack() })
         }

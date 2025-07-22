@@ -1,11 +1,13 @@
 package com.frontend.nutricheck.client.ui.view_model.onboarding
 
+import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.repositories.user.OnboardingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -213,6 +215,7 @@ class OnboardingViewModel @Inject constructor(
         )
         viewModelScope.launch {
             userDataRepository.addUserData(newUserData)
+            userDataRepository.addWeight(Weight(_data.value.weight, Date()))
             onboardingRepository.setOnboardingCompleted()
         }
         emitEvent(OnboardingEvent.NavigateToDashboard)

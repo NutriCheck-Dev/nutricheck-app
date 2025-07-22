@@ -1,9 +1,8 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import android.app.DatePickerDialog
-import android.widget.DatePicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,17 +10,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +50,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -57,8 +61,10 @@ fun PersonalDataPage(
 
 ) {
     var editableUserData by remember { mutableStateOf(state.userData) }
+    var selectedDate by remember { mutableStateOf(state.userData.birthdate) }
     var showDatePicker by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+
+
 
     LaunchedEffect(state.userData) {
         editableUserData = state.userData
@@ -108,27 +114,30 @@ fun PersonalDataPage(
         }
     }
     if (showDatePicker) {
-        val calendar = Calendar.getInstance().apply {
-            time = editableUserData.birthdate
-        }
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(
-            context,
-            { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
-                val newCal = Calendar.getInstance().apply {
-                    set(selectedYear, selectedMonth, selectedDay)
+        val datePickerState =
+            rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            selectedDate = Date(it)
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text(stringResource(id = R.string.save))
                 }
-                editableUserData = editableUserData.copy(birthdate = newCal.time)
-                showDatePicker = false
-            }, year, month, day
-        )
-        datePickerDialog.setOnDismissListener {
-            showDatePicker = false
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
-        datePickerDialog.show()
     }
 }
 private fun LazyListScope.personalDataFormItems(
@@ -316,7 +325,7 @@ private fun EditableDropdownRow(
         ExposedDropdownMenuBox(
             expanded = isExpanded,
             onExpandedChange = { isExpanded = it },
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.width(IntrinsicSize.Min)
         ) {
             TextField(
                 value = selectedValue,

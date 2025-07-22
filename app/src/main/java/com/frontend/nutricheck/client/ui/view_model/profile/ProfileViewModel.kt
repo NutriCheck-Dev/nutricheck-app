@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.ui.view_model.profile
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -48,6 +49,9 @@ class ProfileOverviewViewModel @Inject constructor(
     private val _data = MutableStateFlow(ProfileState())
     override val data: StateFlow<ProfileState> = _data.asStateFlow()
 
+    private var _weightData = MutableStateFlow<List<Weight>>(emptyList())
+    val weightData: StateFlow<List<Weight>> = _weightData.asStateFlow()
+
 
     fun onEvent(event: ProfileEvent) {
         when(event) {
@@ -64,20 +68,20 @@ class ProfileOverviewViewModel @Inject constructor(
     }
 
     private fun displayWeightHistory() {
-//        viewModelScope.launch {
-//            val weightHistory = userDataRepository.getWeightHistory()
-//        }
+        viewModelScope.launch {
+            _weightData.value = userDataRepository.getWeightHistory()
+        }
         emitEvent(ProfileEvent.DisplayWeightHistory)
-
-        TODO("Get weight history from data source")
     }
     private fun saveNewWeight(weight: String, date: Date) {
-        val weightValue = weight.toIntOrNull()
+        val weightValue = weight.toDoubleOrNull()
         if (weightValue == null || weightValue <= 0) {
             _data.value = _data.value.copy(errorMessage = R.string.onboarding_error_weight_required)
             return
         }
-        TODO("persist weight data")
+        viewModelScope.launch {
+            userDataRepository.addWeight(Weight(value = weightValue.toDouble(), enterDate = date))
+        }
     }
     private fun displayProfileOverview() {
         emitEvent(ProfileEvent.DisplayProfileOverview)
