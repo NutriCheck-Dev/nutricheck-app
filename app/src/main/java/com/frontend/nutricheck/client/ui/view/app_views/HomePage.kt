@@ -21,11 +21,11 @@ import com.frontend.nutricheck.client.ui.view.widgets.CalorieHistoryDiagram
 import com.frontend.nutricheck.client.ui.view.widgets.CaloriesToday
 import com.frontend.nutricheck.client.ui.view.widgets.NutrientBreakdown
 import com.frontend.nutricheck.client.ui.view.widgets.WeightHistoryDiagram
+import com.frontend.nutricheck.client.ui.view_model.dashboard.DashboardState
 
 @Composable
 fun HomePage(
-    modifier: Modifier = Modifier,
-
+    state : DashboardState,
     onPeriodSelectedClick: (String) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
@@ -70,5 +70,5 @@ fun HomePage(
 @Composable
 fun HomePageXDefaultPreview() {
     val navController = rememberNavController()
-    HomePage()
+    HomePage(state = DashboardState())
 }

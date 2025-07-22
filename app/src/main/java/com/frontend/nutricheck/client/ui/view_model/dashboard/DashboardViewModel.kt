@@ -1,14 +1,16 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard
 
+import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-data class DashBoardState(
+data class DashboardState(
     val dailyCalories: Int = 0,
     val dailyMacros: Map<String, Int> = emptyMap(),
     val weightHistory: List<Pair<String, Float>> = emptyList(),
@@ -25,8 +27,8 @@ sealed interface DashboardEvent {
 @HiltViewModel
  class DashboardViewModel @Inject constructor() : BaseDashboardViewModel() {
 
-    private val _dashboardState = MutableStateFlow(DashBoardState())
-    val createRecipeState = _dashboardState.asStateFlow()
+    val data : DashboardState = DashboardState()
+
 
     val _events = MutableSharedFlow<DashboardEvent>()
     val events: SharedFlow<DashboardEvent> = _events.asSharedFlow()
@@ -36,19 +38,18 @@ sealed interface DashboardEvent {
          // Implementation for displaying daily calories
      }
 
-     override fun displayDailyMacros() {
-         TODO("Not yet implemented")
-     }
+    override fun displayDailyMacros() {
+        //TODO("Not yet implemented")
+    }
 
-     override fun displayWeightHistory(timePeriod: Int) {
-         TODO("Not yet implemented")
-     }
-
-     override fun displayCalorieHistory(timePeriod: Int) {
-         TODO("Not yet implemented")
-     }
-        override fun displayRecentlyAddedItems() {
-            TODO("Not yet implemented")
-        }
+    override fun displayWeightHistory(timePeriod: Int) {
+        //TODO("Not yet implemented")
+    }
+    override fun displayCalorieHistory(timePeriod: Int) {
+        //TODO("Not yet implemented")
+    }
+    override fun displayRecentlyAddedItems() {
+        //TODO("Not yet implemented")
+    }
 
  }
