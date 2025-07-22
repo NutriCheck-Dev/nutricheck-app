@@ -96,7 +96,8 @@ fun OnboardingName(
                 onValueChange = { textState = it },
                 label = { Text(stringResource(id = R.string.onboarding_label_name)) },
                 isError = error != null,
-                singleLine = true
+                singleLine = true,
+                textStyle = TextStyle( color = Color(0xFFFFFFFF))
             )
             error?.let { resId ->
                 Text(

@@ -104,7 +104,8 @@ fun OnboardingTargetWeight(
                 label = { Text(stringResource(id = R.string.onboarding_label_target_weight)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = error != null,
-                singleLine = true
+                singleLine = true,
+                textStyle = TextStyle( color = Color(0xFFFFFFFF))
             )
             error?.let { resId ->
                 Text(

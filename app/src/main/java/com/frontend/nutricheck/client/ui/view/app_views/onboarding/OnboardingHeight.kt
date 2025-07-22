@@ -102,7 +102,8 @@ fun OnboardingHeight(
                 label = { Text(stringResource(id = R.string.onboarding_label_height)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = error != null,
-                singleLine = true
+                singleLine = true,
+                textStyle = TextStyle( color = Color(0xFFFFFFFF))
             )
             error?.let { resId ->
                 Text(
