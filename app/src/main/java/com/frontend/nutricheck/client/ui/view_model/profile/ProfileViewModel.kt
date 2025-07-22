@@ -123,6 +123,7 @@ class ProfileOverviewViewModel @Inject constructor(
         displayProfileOverview()
     }
     private fun persistData(userData: UserData) {
+        calculateCalories()
         viewModelScope.launch {
             userDataRepository.updateUserData(userData)
         }
@@ -136,5 +137,23 @@ class ProfileOverviewViewModel @Inject constructor(
         return localBirthdate.isAfter(today) || localBirthdate.isBefore(hundredYearsAgo)
     }
     private fun emitEvent(event: ProfileEvent) = viewModelScope.launch { _events.emit(event) }
+
+    private fun calculateCalories() {
+        var newDailyCalories = 0
+        val newProtein = 0
+        val newCarbs = 0
+        val newFats = 0
+        val newUserData = _data.value.userData.copy(
+            dailyCalories = newDailyCalories,
+            protein = newProtein,
+            carbs = newCarbs,
+            fats = newFats
+        )
+        _data.value = _data.value.copy(userData = newUserData)
+
+        //BMR * PAL +-500/0 = DailyCalories
+        //BMR mit Mifflin- ST jeor Formel 
+
+    }
 
 }

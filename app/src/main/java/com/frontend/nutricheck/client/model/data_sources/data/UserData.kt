@@ -16,6 +16,10 @@ data class UserData(
     val weightGoal: WeightGoal = WeightGoal.MAINTAIN_WEIGHT,
     val targetWeight: Double? = 0.0,
     val activityLevel: ActivityLevel = ActivityLevel.NEVER,
+    val dailyCalories: Int = 0,
+    val protein: Int = 0,
+    val carbs: Int = 0,
+    val fats: Int = 0,
     val language: String = "de",
     val theme: String = "light"
 )
