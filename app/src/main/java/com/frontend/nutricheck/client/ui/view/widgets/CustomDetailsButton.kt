@@ -55,7 +55,7 @@ fun CustomDetailsButton(
             .sortedBy { it.name }
     } else {emptyList()}
 
-    Box{
+    Box {
         IconButton(
             modifier = Modifier.align(Alignment.Center),
             onClick = { onExpandedChange(true) }

@@ -125,7 +125,7 @@ fun FoodProductNutrientChartsWidget(
     )
 
     Column(
-        modifier = modifier,
+        modifier = Modifier.wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         nutrients.chunked(2).forEach { rowItems ->

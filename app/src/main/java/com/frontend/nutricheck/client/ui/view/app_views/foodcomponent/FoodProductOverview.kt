@@ -1,10 +1,13 @@
 package com.frontend.nutricheck.client.ui.view.app_views.foodcomponent
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -13,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,6 +28,7 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsWidget
+import com.frontend.nutricheck.client.ui.view.widgets.ServingSizeDropdown
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 
 @Composable
@@ -58,25 +63,33 @@ fun FoodProductOverview(
             )
         }
     ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
 
             FoodProductNutrientChartsWidget(
                 foodProduct = draft,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.wrapContentHeight()
             )
 
-            Row {
-                ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
-                    Text(
-                        text = currentServingSize.getDisplayName(),
-                        style = styles.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                    )
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Text(
+                    text = "Serving Size:",
+                    style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = colors.onSurfaceVariant,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                ServingSizeDropdown()
             }
         }
     }
