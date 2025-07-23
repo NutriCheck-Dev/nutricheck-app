@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.app_views.DiaryPage
 import com.frontend.nutricheck.client.ui.view.app_views.FoodOverview
-import com.frontend.nutricheck.client.ui.view.app_views.RecipeOverview
+import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 
 
 sealed class DiaryScreens(val route: String) {

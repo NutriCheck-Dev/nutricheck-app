@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
@@ -35,6 +38,8 @@ import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
 
@@ -42,6 +47,7 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEv
 fun SearchPage(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel = hiltViewModel(),
+    editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
     onConfirm: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
@@ -66,8 +72,19 @@ fun SearchPage(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = colors.onSurfaceVariant
-                        ) }) //TODO: Implement actions for ViewsTopBar
-            } else MealSelector() //TODO: Implement actions for MealSelector
+                        ) },
+                    actions = {
+                        IconButton(onConfirm) { //TODO: NavigationEvent for onConfirm
+                            Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
+                        }
+                    })
+            } else MealSelector(
+                trailingContent = {
+                    IconButton(onConfirm) { //TODO: NavigationEvent for onConfirm
+                        Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
+                    }
+                }
+            )
         }
     ) { paddingValues ->
 
@@ -96,7 +113,6 @@ fun SearchPage(
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    //Spacer(modifier = Modifier.height(31.dp))
                     FoodComponentSearchBar(
                         query = searchState.query,
                         onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
@@ -115,7 +131,13 @@ fun SearchPage(
                         foodComponents = searchState.results.toSet(),
                         trailingContent = { item ->
                             CustomAddButton(onClick = {
-                                searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
+                                if (isFromAddIngredient) {
+                                    editRecipeViewModel.onEvent(
+                                        EditRecipeEvent.IngredientAdded(item)
+                                    )
+                                } else {
+                                    searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
+                                }
                             })
                         }
                     )

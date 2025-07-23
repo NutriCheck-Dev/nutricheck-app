@@ -2,6 +2,8 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.edit
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
@@ -20,7 +22,8 @@ data class RecipeDraft(
     val id: String,
     val title: String,
     val description: String,
-    val ingredients: Set<Ingredient>
+    val ingredients: Set<Ingredient>,
+    val addedIngredients: Set<Ingredient> = emptySet()
 ) {
     fun toRecipe(): Recipe = Recipe(
         id = id,
@@ -32,11 +35,14 @@ data class RecipeDraft(
 
 sealed interface EditRecipeEvent {
     data class TitleChanged(val title: String) : EditRecipeEvent
-    data class IngredientAdded(val ingredients: Ingredient) : EditRecipeEvent
-    data class IngredientRemoved(val ingredient: Ingredient) : EditRecipeEvent
+    data class IngredientAdded(val ingredients: FoodComponent) : EditRecipeEvent
+    data class IngredientRemovedInSummary(val ingredient: FoodComponent) : EditRecipeEvent
+    data class IngredientRemovedInEdit(val ingredient: FoodComponent) : EditRecipeEvent
     data class DescriptionChanged(val description: String) : EditRecipeEvent
+    data object SaveAddedIngredients : EditRecipeEvent
     data object EditCanceled : EditRecipeEvent
     data object RecipeSaved : EditRecipeEvent
+    data object SaveChanges : EditRecipeEvent
 }
 
 @HiltViewModel
@@ -65,7 +71,7 @@ class EditRecipeViewModel @Inject constructor(
                             id = recipe.id,
                             title = recipe.name,
                             description = recipe.instructions,
-                            ingredients = recipe.ingredients.toSet()
+                            ingredients = recipe.ingredients
                         )
                     }
                 }
@@ -80,20 +86,45 @@ class EditRecipeViewModel @Inject constructor(
             is EditRecipeEvent.TitleChanged -> onTitleChanged(event.title)
             is EditRecipeEvent.IngredientAdded -> onIngredientAdded(event.ingredients)
             is EditRecipeEvent.DescriptionChanged -> onDescriptionChanged(event.description)
-            is EditRecipeEvent.IngredientRemoved -> onIngredientRemoved(event.ingredient)
+            is EditRecipeEvent.IngredientRemovedInSummary -> onIngredientRemovedInSummary(event.ingredient)
+            is EditRecipeEvent.IngredientRemovedInEdit -> onIngredientRemovedInEdit(event.ingredient)
+            is EditRecipeEvent.SaveAddedIngredients -> onSaveAddedIngredients()
             is EditRecipeEvent.EditCanceled -> onCancelEdit()
             is EditRecipeEvent.RecipeSaved -> onSaveRecipe()
+            is EditRecipeEvent.SaveChanges -> saveChanges()
         }
     }
 
     override fun onTitleChanged(newTitle: String) =
         _editRecipeDraft.update { it?.copy(title = newTitle) }
 
-    override fun onIngredientAdded(ingredient: Ingredient) =
-        _editRecipeDraft.update { it?.copy(ingredients = it.ingredients + ingredient) }
+    override fun onIngredientAdded(ingredient: FoodComponent) {
+        val newIngredient = Ingredient(
+            id = ingredient.id, //TODO: ids noch generieren lassen
+            foodProductId = ingredient.id,
+            foodProduct = ingredient as FoodProduct
+        )
+        _editRecipeDraft.update { it?.copy(addedIngredients = it.addedIngredients + newIngredient) }
+    }
 
-    override fun onIngredientRemoved(ingredient: Ingredient) =
-        _editRecipeDraft.update { it?.copy(ingredients = it.ingredients - ingredient) }
+    override fun onIngredientRemovedInSummary(ingredient: FoodComponent) {
+        _editRecipeDraft.update { draft ->
+            draft?.copy(
+                addedIngredients = draft.addedIngredients.filterNot { it.foodProductId == ingredient.id }.toSet()
+            )
+        }
+    }
+
+    override fun onIngredientRemovedInEdit(ingredient: FoodComponent) {
+        _editRecipeDraft.update { draft ->
+            draft?.copy(
+                ingredients = draft.ingredients.filterNot { it.foodProductId == ingredient.id }.toSet()
+            )
+        }
+    }
+
+    override fun onSaveAddedIngredients() =
+        _editRecipeDraft.update { it?.copy(ingredients = it.ingredients + it.addedIngredients) }
 
     override fun onDescriptionChanged(newDescription: String) =
         _editRecipeDraft.update { it?.copy(description = newDescription) }
@@ -118,6 +149,19 @@ class EditRecipeViewModel @Inject constructor(
     }
 
     fun saveChanges() {
-        // Logic to save changes made to the recipe draft
+        val draft = _editRecipeDraft.value ?: return
+        if (draft.title.isBlank()) {
+            setError("Recipe title cannot be empty")
+            return
+        }
+        if (draft.ingredients.isEmpty()) {
+            setError("Recipe must have at least one ingredient")
+            return
+        }
+        setReady()
+        viewModelScope.launch {
+            recipeRepository.updateRecipe(draft.toRecipe())
+            _events.emit(EditRecipeEvent.RecipeSaved)
+        }
     }
 }

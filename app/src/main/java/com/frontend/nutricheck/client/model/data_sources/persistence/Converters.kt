@@ -9,6 +9,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -85,6 +86,12 @@ class Converters {
 
     @TypeConverter
     fun toRecipeVisibility(name: String?): RecipeVisibility? = name?.let { RecipeVisibility.valueOf(it) }
+
+    @TypeConverter
+    fun fromServingSize(servingSize: ServingSize?): Int? = servingSize?.ordinal
+
+    @TypeConverter
+    fun toServingSize(ordinal: Int?): ServingSize? = ordinal?.let { ServingSize.entries.getOrNull(it) }
 
     @TypeConverter
     fun fromDayTime(dayTime: DayTime?): String? = dayTime?.name

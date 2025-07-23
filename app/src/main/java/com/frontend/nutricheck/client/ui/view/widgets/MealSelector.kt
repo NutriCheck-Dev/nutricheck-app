@@ -34,7 +34,8 @@ fun MealSelector(
     title: String = "Mahlzeit auswählen",
     mealOptions: List<String> = listOf("Frühstück", "Mittagessen", "Abendessen", "Snack"),
     onMealSelected: (String) -> Unit = {},
-    onBack : () -> Unit = {}
+    onBack : () -> Unit = {},
+    trailingContent: @Composable (() -> Unit)? = null
 ) {
     val colors = MaterialTheme.colorScheme
     var expanded by remember { mutableStateOf(false) }
@@ -69,7 +70,8 @@ fun MealSelector(
             containerColor = colors.surfaceContainerHigh,
             titleContentColor = colors.onSurfaceVariant,
             navigationIconContentColor = colors.onSurfaceVariant
-        )
+        ),
+        actions = { trailingContent?.invoke() }
     )
 
     DropdownMenu(

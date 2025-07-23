@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
@@ -32,7 +33,7 @@ data class NutrientEntry(
 
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
-fun NutrientChartsWidget(
+fun RecipeNutrientChartsWidget(
     modifier: Modifier = Modifier,
     recipe: Recipe = Recipe(),
     totalCalories: Double = 0.0,
@@ -67,7 +68,7 @@ fun NutrientChartsWidget(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 pages[pageIndex].forEach { entry ->
                     AutoSizedNutrientChart(
@@ -106,12 +107,54 @@ fun NutrientChartsWidget(
     }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
+@Composable
+fun FoodProductNutrientChartsWidget(
+    modifier: Modifier = Modifier,
+    foodProduct: FoodProduct = FoodProduct(),
+    totalCalories: Double = 0.0,
+    totalCarbs: Double = 0.0,
+    totalProtein: Double = 0.0,
+    totalFat: Double = 0.0
+) {
+    val nutrients = listOf(
+        NutrientEntry("Calories", "kcal", foodProduct.calories, totalCalories),
+        NutrientEntry("Carbs", "g", foodProduct.carbohydrates, totalCarbs),
+        NutrientEntry("Protein", "g", foodProduct.protein, totalProtein),
+        NutrientEntry("Fat", "g", foodProduct.fat, totalFat)
+    )
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        nutrients.chunked(2).forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                rowItems.forEach { entry ->
+                    AutoSizedNutrientChart(
+                        nutrient = entry.label,
+                        subtitle = entry.unit,
+                        actualValue = entry.actualValue.toInt(),
+                        totalValue = entry.dailyValue.toInt(),
+                        baseHeight = 180.dp,
+                        baseWidth = 160.dp,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 fun NutrientChartsWidgetPreview() {
     AppTheme(darkTheme = true) {
-        NutrientChartsWidget(
-            recipe = Recipe(
+        FoodProductNutrientChartsWidget(
+            foodProduct = FoodProduct(
                 calories = 500.0,
                 carbohydrates = 60.0,
                 protein = 30.0,

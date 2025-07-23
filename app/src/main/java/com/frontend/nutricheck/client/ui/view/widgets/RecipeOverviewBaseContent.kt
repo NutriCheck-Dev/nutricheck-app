@@ -90,7 +90,7 @@ fun RecipeOverviewBaseContent(
         ) {
 
             item {
-                NutrientChartsWidget(
+                RecipeNutrientChartsWidget(
                     modifier = Modifier.fillMaxWidth(),
                     recipe = recipe)
             }

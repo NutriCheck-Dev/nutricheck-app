@@ -10,7 +10,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.app_views.CreateRecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.FoodOverview
-import com.frontend.nutricheck.client.ui.view.app_views.RecipeOverview
+import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddDialogEvent

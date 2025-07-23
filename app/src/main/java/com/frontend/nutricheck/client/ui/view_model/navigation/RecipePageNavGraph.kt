@@ -9,22 +9,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.view.app_views.AddedComponentsSummary
-import com.frontend.nutricheck.client.ui.view.app_views.CreateRecipePage
-import com.frontend.nutricheck.client.ui.view.app_views.RecipeOverview
+import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
-import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
 
 sealed class RecipePageScreens(val route: String) {
     object RecipePage : RecipePageScreens("recipe_page_route")
@@ -55,20 +46,30 @@ fun RecipePageNavGraph() {
     ) {
         composable(RecipePageScreens.RecipePage.route) {
             RecipePage(
-                recipePageViewModel = recipePageViewModel
+                recipePageViewModel = recipePageViewModel,
+                onItemClick = { recipeId ->
+                    recipePageNavController.navigate(
+                        RecipePageScreens.RecipeOverview.createRoute(recipeId)
+                    )
+                }
             )
         }
 
         navigation(
             startDestination = RecipePageScreens.RecipeOverview.route,
-            route = "recipe_overview_graph/{recipeId}",
+            route = RecipePageScreens.RecipeOverview.route,
             arguments = listOf(navArgument("recipeId") {
                 type = NavType.StringType })
         ) {
             composable(RecipePageScreens.RecipeOverview.route) { backStack ->
                 val recipeId = backStack.arguments!!.getString("recipeId")!!
-                val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
-                val editRecipeViewModel: EditRecipeViewModel = hiltViewModel()
+                val graphEntry = remember(backStack) {
+                    recipePageNavController.getBackStackEntry(
+                        RecipePageScreens.RecipeOverview.createRoute(recipeId)
+                    )
+                }
+                val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(graphEntry)
+                val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
 
                 RecipeOverview(
                     recipeOverviewViewModel = recipeOverviewViewModel,
@@ -82,27 +83,48 @@ fun RecipePageNavGraph() {
             }
 
             composable(RecipePageScreens.AddIngredientPage.route) { backStack ->
-                val searchViewModel: FoodSearchViewModel = hiltViewModel()
+                val recipeId = backStack.arguments!!.getString("recipeId")!!
+                val graphEntry = remember(backStack) {
+                    recipePageNavController.getBackStackEntry(
+                        RecipePageScreens.RecipeOverview.createRoute(recipeId)
+                    )
+                }
+                val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
 
                 SearchPage(
-                    searchViewModel = searchViewModel,
+                    editRecipeViewModel = editRecipeViewModel,
                     onConfirm = {
                         recipePageNavController.navigate(
-                            RecipePageScreens.AddedIngredientSummaryPage
-                                .createRoute(backStack.arguments!!.getString("reipeId")!!)
+                            RecipePageScreens.AddedIngredientSummaryPage.createRoute(recipeId)
                         )
                     }
                 )
             }
 
             composable(RecipePageScreens.AddedIngredientSummaryPage.route) { backStack ->
-                val searchViewModel: FoodSearchViewModel = hiltViewModel()
-                val editRecipeViewModel: EditRecipeViewModel = hiltViewModel()
-
+                val recipeId = backStack.arguments!!.getString("recipeId")!!
+                val graphEntry = remember(backStack) {
+                    recipePageNavController.getBackStackEntry(
+                        RecipePageScreens.RecipeOverview.createRoute(recipeId)
+                    )
+                }
+                val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
                 AddedComponentsSummary(
-                    searchViewModel = searchViewModel,
                     editRecipeViewModel = editRecipeViewModel,
                     onSave = {
+                        recipePageNavController.navigate(
+                            RecipePageScreens.RecipeOverview.createRoute(recipeId)
+                        ) {
+                            popUpTo(
+                                RecipePageScreens.RecipeOverview.createRoute(recipeId)
+                            ) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                    onBack = {
+                        recipePageNavController.popBackStack()
                     }
                 )
             }

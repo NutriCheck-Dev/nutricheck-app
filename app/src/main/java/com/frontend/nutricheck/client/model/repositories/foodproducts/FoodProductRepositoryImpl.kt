@@ -17,8 +17,7 @@ class FoodProductRepositoryImpl @Inject constructor(
         return try {
             val response = api.searchFoodProduct(foodProductName)
             if (response.isSuccessful) {
-                response.body()
-                    .orEmpty()
+                response.body()!!
                     .map { dTO ->
                         FoodProductMapper.toEntity(dTO)
                     }

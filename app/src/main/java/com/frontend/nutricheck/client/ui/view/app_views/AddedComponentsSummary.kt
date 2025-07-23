@@ -17,10 +17,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
+import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
@@ -37,6 +39,7 @@ fun AddedComponentsSummary(
     val styles = MaterialTheme.typography
     val scrollState = rememberScrollState()
     val searchState by searchViewModel.searchState.collectAsState()
+    val editRecipeState by editRecipeViewModel.editRecipeDraft.collectAsState()
     val isFromAddIngredient = searchState.isFromAddIngredient
 
     Scaffold(
@@ -52,8 +55,11 @@ fun AddedComponentsSummary(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = colors.onSurfaceVariant
-                        ) })
-            } else MealSelector()
+                        ) },
+                    actions = { CustomPersistButton(onSave) })
+            } else MealSelector(
+                trailingContent = { CustomPersistButton(onSave) }
+            )
         }
     ) { paddingValues ->
         Column(
@@ -64,10 +70,22 @@ fun AddedComponentsSummary(
                 .verticalScroll(scrollState)
         ) {
             DishItemList(
-                foodComponents = searchState.addedComponents.toSet(),
+                foodComponents = if (isFromAddIngredient) {
+                    buildSet {
+                        editRecipeState!!.addedIngredients.forEach { it.foodProduct }
+                    }
+                } else {
+                    searchState.addedComponents.toSet()
+                       },
                 trailingContent = { item ->
                     CustomCloseButton(onClick = {
-                        searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(item))
+                        if (isFromAddIngredient) {
+                            editRecipeViewModel.onEvent(
+                                EditRecipeEvent.IngredientRemovedInSummary(item)
+                            )
+                        } else {
+                            searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(item))
+                        }
                     })
                 }
             )
