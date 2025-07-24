@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
@@ -128,12 +129,12 @@ fun SearchPage(
                     )
 
                     DishItemList(
-                        foodComponents = searchState.results.toSet(),
+                        foodComponents = searchState.results,
                         trailingContent = { item ->
                             CustomAddButton(onClick = {
                                 if (isFromAddIngredient) {
                                     editRecipeViewModel.onEvent(
-                                        EditRecipeEvent.IngredientAdded(item)
+                                        EditRecipeEvent.IngredientAdded(item as FoodProduct)
                                     )
                                 } else {
                                     searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))

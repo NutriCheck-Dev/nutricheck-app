@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.app_views.DiaryPage
-import com.frontend.nutricheck.client.ui.view.app_views.FoodOverview
+import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 
 
@@ -40,7 +40,7 @@ fun DiaryNavGraph() {
         composable(DiaryScreens.RecipePage.route) { RecipePage(recipePageViewModel = recipePageViewModel) }
         composable(DiaryScreens.DiaryPage.route) { DiaryPage(historyViewModel = historyViewModel, recipePageViewModel = recipePageViewModel) }
         composable(DiaryScreens.RecipeOverview.route) { RecipeOverview() }
-        composable(DiaryScreens.FoodOverview.route) { FoodOverview() }
+        composable(DiaryScreens.FoodOverview.route) { FoodProductOverview() }
         composable(DiaryScreens.MealOverview.route) {  }
 
 

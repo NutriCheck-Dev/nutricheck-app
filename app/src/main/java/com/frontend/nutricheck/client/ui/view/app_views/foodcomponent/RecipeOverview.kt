@@ -63,7 +63,7 @@ fun RecipeOverview(
         editRecipeViewModel.events.collect { event ->
             when (event) {
                 is EditRecipeEvent.EditCanceled,
-                is EditRecipeEvent.RecipeSaved -> {
+                is EditRecipeEvent.SaveChanges -> {
                 recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe)
                 }
                 else -> Unit

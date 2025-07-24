@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 data class RecipeDraft(
     val id: String,
@@ -37,9 +38,9 @@ data class RecipeDraft(
 
 sealed interface EditRecipeEvent {
     data class TitleChanged(val title: String) : EditRecipeEvent
-    data class IngredientAdded(val ingredients: FoodComponent) : EditRecipeEvent
-    data class IngredientRemovedInSummary(val ingredient: FoodComponent) : EditRecipeEvent
-    data class IngredientRemovedInEdit(val ingredient: FoodComponent) : EditRecipeEvent
+    data class IngredientAdded(val foodProduct: FoodProduct) : EditRecipeEvent
+    data class IngredientRemovedInSummary(val foodProduct: FoodProduct) : EditRecipeEvent
+    data class IngredientRemovedInEdit(val foodProduct: FoodProduct) : EditRecipeEvent
     data class DescriptionChanged(val description: String) : EditRecipeEvent
     data object SaveAddedIngredients : EditRecipeEvent
     data object EditCanceled : EditRecipeEvent
@@ -94,10 +95,10 @@ class EditRecipeViewModel @Inject constructor(
     fun onEvent(event: EditRecipeEvent) {
         when (event) {
             is EditRecipeEvent.TitleChanged -> onTitleChanged(event.title)
-            is EditRecipeEvent.IngredientAdded -> onIngredientAdded(event.ingredients)
+            is EditRecipeEvent.IngredientAdded -> onIngredientAdded(event.foodProduct)
             is EditRecipeEvent.DescriptionChanged -> onDescriptionChanged(event.description)
-            is EditRecipeEvent.IngredientRemovedInSummary -> onIngredientRemovedInSummary(event.ingredient)
-            is EditRecipeEvent.IngredientRemovedInEdit -> onIngredientRemovedInEdit(event.ingredient)
+            is EditRecipeEvent.IngredientRemovedInSummary -> onIngredientRemovedInSummary(event.foodProduct)
+            is EditRecipeEvent.IngredientRemovedInEdit -> onIngredientRemovedInEdit(event.foodProduct)
             is EditRecipeEvent.SaveAddedIngredients -> onSaveAddedIngredients()
             is EditRecipeEvent.EditCanceled -> viewModelScope.launch { onCancelEdit() }
             is EditRecipeEvent.SaveChanges -> saveChanges()
@@ -107,28 +108,29 @@ class EditRecipeViewModel @Inject constructor(
     override fun onTitleChanged(newTitle: String) =
         _editRecipeDraft.update { it?.copy(title = newTitle) }
 
-    override fun onIngredientAdded(foodComponent: FoodComponent) {
+    override fun onIngredientAdded(foodProduct: FoodProduct) {
         val newIngredient = Ingredient(
-            id = "", //TODO: ids noch generieren lassen,
+            id = UUID.randomUUID().toString(),
             recipeId = recipeId,
-            foodProductId = foodComponent.id,
-            quantity = foodComponent.servings.toDouble()
+            foodProductId = foodProduct.id,
+            quantity = foodProduct.servings.toDouble()
         )
         _editRecipeDraft.update { it?.copy(addedIngredients = it.addedIngredients + newIngredient) }
     }
 
-    override fun onIngredientRemovedInSummary(foodComponent: FoodComponent) {
+    override fun onIngredientRemovedInSummary(foodProduct: FoodProduct) {
         _editRecipeDraft.update { draft ->
             draft?.copy(
-                addedIngredients = draft.addedIngredients.filterNot { it.foodProductId == foodComponent.id }
+                addedIngredients = draft.addedIngredients.filterNot { it.foodProductId == foodProduct.id }
             )
         }
     }
 
-    override fun onIngredientRemovedInEdit(foodComponent: FoodComponent) {
+    override fun onIngredientRemovedInEdit(foodProduct: FoodProduct) {
         _editRecipeDraft.update { draft ->
             draft?.copy(
-                ingredients = draft.ingredients.filterNot { it.foodProductId == foodComponent.id }
+                ingredients = draft.ingredients.filterNot { it.foodProductId == foodProduct.id },
+                viewIngredients = draft.viewIngredients.filterNot { it.id == foodProduct.id }
             )
         }
     }

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface IngredientDao {
 
-    @Query("SELECT * FROM ingredients WHERE id = :recipeId")
+    @Query("SELECT * FROM ingredients WHERE recipeId = :recipeId")
     fun getForRecipe(recipeId: String): Flow<List<Ingredient>>
 
     @Insert

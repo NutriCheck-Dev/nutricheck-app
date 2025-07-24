@@ -10,7 +10,7 @@ abstract class BaseCreateRecipeViewModel: BaseViewModel () {
     abstract fun onIngredientAdded(foodProduct: FoodProduct)
     abstract fun onIngredientRemovedInSummary(foodProduct: FoodProduct)
     abstract fun onIngredientRemovedInCreation(foodProduct: FoodProduct)
-    abstract fun onSaveAddedIngredients()
+    abstract suspend fun onSaveAddedIngredients()
     abstract fun onDescriptionAdded(newDescription: String)
     abstract fun onCancelCreation()
    

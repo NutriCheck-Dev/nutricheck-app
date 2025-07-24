@@ -29,8 +29,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
         FoodProduct::class,
         Recipe::class,
         UserData::class,
-        Weight::class,
-        Ingredient::class
+        Weight::class
     ],
     version = 3,
     exportSchema = false

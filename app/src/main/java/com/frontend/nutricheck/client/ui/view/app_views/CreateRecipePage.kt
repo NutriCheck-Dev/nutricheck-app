@@ -48,10 +48,9 @@ fun CreateRecipePage(
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     val draft by createRecipeViewModel.createdRecipeDraft.collectAsState()
-    val currentTitle = draft?.title.orEmpty()
-    val ingredients = draft?.ingredients ?: emptyList()
-    val currentIngredients = ingredients
-    val currentDescription = draft?.description.orEmpty()
+    val currentTitle = draft.title
+    val currentIngredients = draft.viewIngredients
+    val currentDescription = draft.description
     val errorResourceId by createRecipeViewModel.errorState.collectAsState()
 
     Scaffold(

@@ -62,7 +62,7 @@ class ReportRecipeViewModel @Inject constructor(
             recipeInstructions = _reportRecipeState.value.recipe.instructions,
             description = _reportRecipeState.value.inputText
         )
-        _reportRecipeState.value.recipe.addReport(recipeReport)
+        //TODO: Implement the actual report sending logic
         recipeRepository.updateRecipe(_reportRecipeState.value.recipe)
         _reportRecipeState.update { it.copy(isReporting = false, inputText = "") }
         emitEvent(ReportRecipeEvent.SendReport)

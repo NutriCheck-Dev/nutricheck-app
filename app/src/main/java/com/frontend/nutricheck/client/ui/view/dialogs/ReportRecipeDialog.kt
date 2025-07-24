@@ -32,7 +32,7 @@ fun ReportRecipeDialog(
 ) {
     val colors = MaterialTheme.colorScheme
     val extendedColors = MaterialTheme.extended
-    val styles = MaterialTheme.typography
+    MaterialTheme.typography
 
     AlertDialog(
         icon = {
