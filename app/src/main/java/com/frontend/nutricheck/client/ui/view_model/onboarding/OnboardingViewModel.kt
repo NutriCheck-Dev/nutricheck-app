@@ -104,7 +104,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun enterBirthdate(birthdate: Date?) {
-        if (!validateBirthdate(birthdate)) {
+        if (birthdate == null || Utils.isBirthdateInvalid(birthdate)) {
             _data.update {
                 it.copy(errorState = R.string.userData_error_birthdate_required)
             }
@@ -180,30 +180,14 @@ class OnboardingViewModel @Inject constructor(
     override fun enterTargetWeight(targetWeight: String) {
         val targetWeightAsDouble: Double? = targetWeight.toDoubleOrNull()
         if (targetWeightAsDouble == null || targetWeightAsDouble <= 0.0) {
-            _data.update {
-                it.copy(errorState = R.string.userData_error_target_weight_required)
-            }
+            _data.update { it.copy(errorState = R.string.userData_error_target_weight_required) }
             return
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(targetWeight = targetWeightAsDouble) }
         completeOnboarding()
     }
-
-    private fun validateBirthdate(birthdate: Date?): Boolean {
-        if (birthdate == null) {
-            return false
-        }
-        val localBirthdate = birthdate.toInstant()
-            .atZone(java.time.ZoneId.systemDefault())
-            .toLocalDate()
-            val today = LocalDate.now()
-            val hundredYearsAgo = today.minusYears(100)
-        return !localBirthdate.isAfter(today) && !localBirthdate.isBefore(hundredYearsAgo)
-     }
-
     private fun completeOnboarding() {
-
         val newUserData = UserData(
             username = _data.value.username,
             birthdate = _data.value.birthdate!!,
@@ -215,14 +199,13 @@ class OnboardingViewModel @Inject constructor(
             targetWeight = _data.value.targetWeight,
             age = Utils.calculateAge(_data.value.birthdate!!),
             language = "de",
-            theme = "light",
+            theme = "dark",
             dailyCaloriesGoal = 0,
             proteinGoal = 0,
-
-
+            carbsGoal = 0,
+            fatsGoal = 0
         )
-        Utils.calculateCalories(newUserData)
-
+        Utils.calculateNutrition(newUserData)
         viewModelScope.launch {
             userDataRepository.addUserData(newUserData)
             userDataRepository.addWeight(Weight(_data.value.weight, Date()))

@@ -10,7 +10,6 @@ import java.time.Period
 import java.time.ZoneId
 import java.util.Date
 
-//TODO("formatDateForDisplay aus anderen klassen auslagern")
 object Utils {
 
 fun isBirthdateInvalid(birthdate: Date): Boolean {
