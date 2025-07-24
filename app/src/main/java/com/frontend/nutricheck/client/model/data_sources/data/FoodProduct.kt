@@ -12,5 +12,5 @@ data class FoodProduct (
     override val protein: Double = 0.0,
     override val fat: Double = 0.0,
     override val servings: Int = 1,
-    val servingSize: ServingSize = ServingSize.TENGRAMS
+    val servingSize: ServingSize = ServingSize.ONEHOUNDREDGRAMS
 ) : FoodComponent
