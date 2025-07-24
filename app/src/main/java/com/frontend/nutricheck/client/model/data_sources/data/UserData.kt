@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.model.data_sources.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.frontend.nutricheck.client.ThemeSetting
 import java.util.Date
 
 @Entity(tableName = "user_data")
@@ -19,7 +20,6 @@ data class UserData(
     val proteinGoal: Int = 0,
     val carbsGoal: Int = 0,
     val fatsGoal: Int = 0,
-    val language: String = "de",
-    val theme: String = "light"
+    val language: String = "de"
 )
 

@@ -40,6 +40,8 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
+import com.frontend.nutricheck.client.AppThemeState.currentTheme
+import com.frontend.nutricheck.client.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 
@@ -54,7 +56,7 @@ fun ProfilePage(
     val userWeightText = stringResource(id = R.string.weight_kg, state.weight.toString())
     val userAgeText = stringResource(id = R.string.age_years, state.age)
     val scrollState = rememberScrollState()
-    var darkmode = state.theme == "dark"
+    var darkmode = currentTheme.value == ThemeSetting.DARK
 
     val sixteenDp = 16.dp
     val eightDp = 8.dp
@@ -179,7 +181,8 @@ fun ProfilePage(
                             stringResource(id = R.string.profile_menu_item_darkmode),
                         text = stringResource(id = R.string.profile_menu_item_darkmode),
                         isChecked = darkmode,
-                        onCheckedChange = { darkmode = it },
+                        onCheckedChange = { onEvent(ProfileEvent.ChangeTheme(
+                            if (it) ThemeSetting.DARK else ThemeSetting.LIGHT)) },
                     )
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier

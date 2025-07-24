@@ -336,7 +336,6 @@ fun PersonalDataPreview() {
             activityLevel = ActivityLevel.REGULARLY,
             weightGoal = WeightGoal.LOSE_WEIGHT,
             language = "de",
-            theme = "light",
             age = 25,
             dailyCaloriesGoal = 2500,
             proteinGoal = 80,

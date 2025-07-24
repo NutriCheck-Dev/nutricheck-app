@@ -1,9 +1,11 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
+import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
@@ -28,7 +30,7 @@ sealed interface ProfileEvent {
     object AddNewWeight : ProfileEvent
     object OnSaveClick : ProfileEvent
     data class SaveLanguage(val language: String) : ProfileEvent
-    data class ChangeTheme(val theme: String) : ProfileEvent
+    data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
     data class UpdateUserNameDraft(val username: String) : ProfileEvent
     data class UpdateUserBirthdateDraft(val birthdate: Date) : ProfileEvent
@@ -59,7 +61,6 @@ class ProfileViewModel @Inject constructor(
         activityLevel = ActivityLevel.NEVER,
         weightGoal = WeightGoal.LOSE_WEIGHT,
         language = "en",
-        theme = "light",
         age = 0,
         dailyCaloriesGoal = 0,
         proteinGoal = 0,
@@ -78,7 +79,6 @@ class ProfileViewModel @Inject constructor(
         activityLevel = ActivityLevel.NEVER,
         weightGoal = WeightGoal.LOSE_WEIGHT,
         language = "en",
-        theme = "light",
         age = 0,
         dailyCaloriesGoal = 0,
         proteinGoal = 0,
@@ -199,9 +199,8 @@ class ProfileViewModel @Inject constructor(
         _data.value = _data.value.copy(language = language)
         persistData(_data.value)
     }
-    private fun onChangeThemeClick(theme : String) {
-        _data.value = _data.value.copy(theme = theme)
-        persistData(_data.value)
+    private fun onChangeThemeClick(theme : ThemeSetting) {
+        AppThemeState.currentTheme.value = theme
     }
 
     private fun persistData(userData : UserData) {
@@ -220,7 +219,6 @@ class ProfileViewModel @Inject constructor(
             activityLevel = _dataDraft.value.activityLevel,
             weightGoal = _dataDraft.value.weightGoal,
             language = _dataDraft.value.language,
-            theme = _dataDraft.value.theme,
             age = Utils.calculateAge(_dataDraft.value.birthdate),
             dailyCaloriesGoal = _dataDraft.value.dailyCaloriesGoal,
             proteinGoal = _dataDraft.value.proteinGoal,
