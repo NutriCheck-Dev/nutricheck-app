@@ -16,7 +16,7 @@ class UserDataRepositoryImpl @Inject constructor(
          return userDataDao.getUserData()?: UserData()
     }
 
-    override suspend fun getWeightHistory(): List<Weight> {
+    override suspend fun getWeightHistory(): List<Float> {
         //TODO("Not yet implemented")
         return emptyList()
     }
@@ -33,6 +33,16 @@ class UserDataRepositoryImpl @Inject constructor(
 
     override suspend fun updateUserData(userData: UserData) {
         //TODO("Not yet implemented")
+    }
+
+    override suspend fun getTargetWeight(): Double {
+
+        return 80.0
+    }
+
+    override suspend fun getCalorieGoal(): Int {
+        //TODO("Not yet implemented")
+        return 2000
     }
 
 }

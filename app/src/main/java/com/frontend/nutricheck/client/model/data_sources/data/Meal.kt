@@ -1,9 +1,10 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
+import java.util.Date
 import kotlin.collections.plus
 
 data class Meal (
-    val historyDayId: String = "",
+    val date: Date,
     val dayTime: DayTime = DayTime.BREAKFAST,
     val items: Set<MealItem> = emptySet()
 ) {

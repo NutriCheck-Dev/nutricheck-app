@@ -23,23 +23,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.history.HistoryState
 
 // This file defines a composable function for displaying a calorie summary widget.
 @Composable
 fun CalorieSummary(
     modifier: Modifier = Modifier,
-    historyViewModel: HistoryViewModel = hiltViewModel(),
-    title: String = "Verbleibende Kalorien",
-    goalCalories: Int = 2000,
-    consumedCalories: Int = 1500,
-    remainingCalories: Int = 500,
+    state: HistoryState,
     onClick: () -> Unit = {}
 ) {
+    val goalCalories = state.goalCalories
+    val consumedCalories = state.totalCalories
+    val remainingCalories = goalCalories - consumedCalories
     Surface(
         color = Color(0xFF121212),
         modifier = modifier
@@ -53,7 +50,7 @@ fun CalorieSummary(
 
             // Titel oben links
             Text(
-                text = title,
+                text = "Verbleibende Kalorien",
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
@@ -142,16 +139,3 @@ fun MinusEqualsSymbol(symbol: String) {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun CalorieSummaryPreview() {
-    CalorieSummary(
-        historyViewModel = hiltViewModel(),
-        title = "Verbleibende Kalorien",
-        goalCalories = 2000,
-        consumedCalories = 1500,
-        remainingCalories = 500,
-        onClick = {}
-    )
-}

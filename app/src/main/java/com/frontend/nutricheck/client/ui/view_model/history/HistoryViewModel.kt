@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,13 +22,13 @@ data class HistoryState(
     val mealsGrouped: Map<DayTime, List<Meal>> = emptyMap(),
     val foodId: String = "",
     val totalCalories: Int = 0,
+    val goalCalories: Int = 0,
     val isSwitched: Boolean = false
 )
 
 sealed interface HistoryEvent {
-    data class AddEntryClick(val day: Date) : HistoryEvent
+    data class AddEntryClick(val day: Date, val dayTime: DayTime) : HistoryEvent
     data class DisplayNutritionOfDay(val day: Date) : HistoryEvent
-    data class DisplayMealsOfDay(val day: Date) : HistoryEvent
     data class FoodClicked(val foodId: String) : HistoryEvent
     data class DetailsClick(val detailsId: String) : HistoryEvent
     data class TotalCaloriesClick(val totalCalories: Int) : HistoryEvent
@@ -37,7 +38,7 @@ sealed interface HistoryEvent {
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
-
+    private val userDataRepository: UserDataRepository
 ) : BaseHistoryViewModel() {
     private val _historyState = MutableStateFlow(HistoryState())
     val historyState = _historyState.asStateFlow()
@@ -47,9 +48,8 @@ class HistoryViewModel @Inject constructor(
 
     fun onEvent(event: HistoryEvent) {
         when (event) {
-            is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day)
+            is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day, event.dayTime)
             is HistoryEvent.DisplayNutritionOfDay -> displayNutritionOfDay(event.day)
-            is HistoryEvent.DisplayMealsOfDay -> displayMealsOfDay(event.day)
             is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
             is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
             is HistoryEvent.TotalCaloriesClick -> onTotalCaloriesClick(event.totalCalories)
@@ -59,24 +59,33 @@ class HistoryViewModel @Inject constructor(
     // Die benötigten Parameter sollten über den State bereitgestellt werden, siehe beispiel Profile,
     // außer die Rückgabewerte an das ViewModel, die werden über Events gesendet
 
-    override fun onAddEntryClick(day: Date) {
+    override fun onAddEntryClick(day: Date, dayTime: DayTime) {
         viewModelScope.launch {
-            _events.emit(HistoryEvent.AddEntryClick(day))
+            _events.emit(HistoryEvent.AddEntryClick(day, dayTime))
         }
     }
 
-    override fun selectDate(date: Date) {
+    override fun selectDate(day: Date) {
         _historyState.update {
             it.copy(
-                selectedDate = date
+                selectedDate = day
             )
         }
-        displayMealsOfDay(date)
-        displayNutritionOfDay(date)
+        displayMealsOfDay(day)
+        displayCalorieGoal(day)
     }
 
-    override fun displayCalorieGoal() {
-        TODO("Not yet implemented")
+    override fun displayCalorieGoal(day: Date) {
+        viewModelScope.launch {
+            val totalCalories = historyRepository.getCaloriesOfDay(day)
+            val goalCalories = userDataRepository.getCalorieGoal()
+            _historyState.update {
+                it.copy(
+                    totalCalories = totalCalories,
+                    goalCalories = goalCalories
+                )
+            }
+        }
     }
 
     override fun displayNutritionOfDay(day: Date) {}
@@ -89,7 +98,6 @@ class HistoryViewModel @Inject constructor(
                     mealsGrouped = grouped
                 )
             }
-            _events.emit(HistoryEvent.DisplayMealsOfDay(day))
         }
     }
 

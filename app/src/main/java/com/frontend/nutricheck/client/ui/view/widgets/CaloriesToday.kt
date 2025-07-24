@@ -16,24 +16,19 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieState
 
-//This file represents a placeholder for the CaloriesToday widget.
 @Composable
 fun CaloriesToday(
     modifier: Modifier = Modifier,
-    dailyCalorieViewModel: DailyCalorieViewModel = hiltViewModel(),
-    calories: Int = 0,
-    subtitle: String = "kcal",
-    calorieValue: Int,           // z. B. 850
-    calorieGoal: Int = 2000      // für Füllstand
+    state: DailyCalorieState,
 ) {
-    val progress = (calorieValue.toFloat() / calorieGoal).coerceIn(0f, 1f)
+    val dailyCalories = state.dailyCalories
+    val calorieGoal = state.calorieGoal
+    val progress = (dailyCalories.toFloat() / calorieGoal).coerceIn(0f, 1f)
 
     Surface(
         color = Color(0xff121212),
@@ -60,10 +55,6 @@ fun CaloriesToday(
                     .size(125.dp),
                 contentAlignment = Alignment.Center
             ) {
-
-
-
-
                 // Fortschritt (Kreisfüllung)
                 Canvas(modifier = Modifier.matchParentSize()) {
                     val sweepAngle = progress * 360f
@@ -86,7 +77,7 @@ fun CaloriesToday(
 
                 // Text "850"
                 Text(
-                    text = calorieValue.toString(),
+                    text = dailyCalories.toString(),
                     color = Color.White,
                     lineHeight = 1.22.em,
                     modifier = Modifier.offset(y = (-4).dp),
@@ -106,15 +97,4 @@ fun CaloriesToday(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun CaloriesTodayPreview() {
-    CaloriesToday(
-        //dailyCalorieViewModel = DailyCalorieViewModel(),
-        calories = 2000,
-        subtitle = "kcal",
-        calorieValue = 1200,
-    )
 }

@@ -1,33 +1,32 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history
 
+import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 data class WeightHistoryState(
-    val timePeriods: List<String> = emptyList(),
-    val selectedTimePeriod: String = "",
+    //val selectedTimePeriod: String = "",
     val weightData: List<Float> = emptyList(),
+    val weightGoal : Double = 0.0,
 )
 
-sealed interface WeightHistoryEvent {
-    data class DisplayWeightHistory(val timePeriod: String) : WeightHistoryEvent
-}
-
 @HiltViewModel
-class WeightHistoryViewModel @Inject constructor() : BaseWeightHistoryViewModel() {
+class WeightHistoryViewModel @Inject constructor(
+    private val userDataRepository: UserDataRepository
+) : BaseWeightHistoryViewModel() {
 
     private val _weightHistoryState = MutableStateFlow(WeightHistoryState())
     val weightHistoryState = _weightHistoryState.asStateFlow()
 
-    private val _events = MutableSharedFlow<WeightHistoryEvent>()
-    val events: SharedFlow<WeightHistoryEvent> = _events.asSharedFlow()
-
    override fun displayWeightHistory(timePeriod: String) {
-       // Implementation for displaying weight history
+       viewModelScope.launch {
+           _weightHistoryState.value = WeightHistoryState(
+               userDataRepository.getWeightHistory(),
+               userDataRepository.getTargetWeight())
+       }
    }
 }
