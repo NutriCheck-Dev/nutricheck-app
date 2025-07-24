@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
@@ -9,6 +10,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +47,8 @@ sealed interface ProfileEvent {
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userDataRepository: UserDataRepository
+    private val userDataRepository: UserDataRepository,
+    private val appSettingsRepository: AppSettingsRepository
 ) : BaseProfileViewModel() {
 
     private val _events = MutableSharedFlow<ProfileEvent>()
@@ -201,8 +204,14 @@ class ProfileViewModel @Inject constructor(
     }
     private fun onChangeThemeClick(theme : ThemeSetting) {
         AppThemeState.currentTheme.value = theme
+        val isDarkMode = when (theme) {
+            ThemeSetting.DARK -> true
+            ThemeSetting.LIGHT -> false
+        }
+        viewModelScope.launch {
+            appSettingsRepository.setTheme(isDarkMode)
+        }
     }
-
     private fun persistData(userData : UserData) {
         viewModelScope.launch {
             userDataRepository.updateUserData(userData)
