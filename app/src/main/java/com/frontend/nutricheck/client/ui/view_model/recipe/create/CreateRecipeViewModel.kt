@@ -49,7 +49,7 @@ class CreateRecipeViewModel @Inject constructor(
     private val _createdRecipeDraft = MutableStateFlow<CreatedRecipeDraft?>(null)
     val createdRecipeDraft = _createdRecipeDraft.asStateFlow()
 
-    val _events = MutableSharedFlow<CreateRecipeEvent>()
+    private val _events = MutableSharedFlow<CreateRecipeEvent>()
     val events: SharedFlow<CreateRecipeEvent> = _events.asSharedFlow()
 
     fun onEvent(event: CreateRecipeEvent) {

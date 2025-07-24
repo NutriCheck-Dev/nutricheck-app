@@ -40,23 +40,21 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.ui.tooling.preview.Preview
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 
 @Composable
 fun ProfilePage(
-    state : ProfileState,
+    state : UserData,
     onEvent : (ProfileEvent) -> Unit,
    ) {
 
-    val greetingText = stringResource(id = R.string.profile_name, state.userData.username)
-    val userHeightText = stringResource(id = R.string.height_cm, state.userData.height.toString())
-    val userWeightText = stringResource(id = R.string.weight_kg, state.userData.weight.toString())
-    val userAgeText = stringResource(id = R.string.age_years, state.userData.age)
+    val greetingText = stringResource(id = R.string.profile_name, state.username)
+    val userHeightText = stringResource(id = R.string.height_cm, state.height.toString())
+    val userWeightText = stringResource(id = R.string.weight_kg, state.weight.toString())
+    val userAgeText = stringResource(id = R.string.age_years, state.age)
     val scrollState = rememberScrollState()
-    var darkmode = state.userData.theme == "dark"
+    var darkmode = state.theme == "dark"
 
     val sixteenDp = 16.dp
     val eightDp = 8.dp
@@ -261,21 +259,6 @@ fun MenuItemWithSwitch(
         }
         Spacer (modifier = Modifier.width(8.dp))
     }
-}
-
-@Preview
-@Composable
-fun ProfilePagePreview() {
-    val dummyState = ProfileState(
-        userData = UserData(
-            username = "JohnDoe",
-            height = 180.0,
-            weight = 75.0,
-            age = 30,
-            theme = "light"
-        )
-    )
-    ProfilePage(state = dummyState, onEvent = {})
 }
 
 

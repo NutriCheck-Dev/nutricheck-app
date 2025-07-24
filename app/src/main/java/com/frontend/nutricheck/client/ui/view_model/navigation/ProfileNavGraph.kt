@@ -15,7 +15,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.WeightHistoryPage
 import com.frontend.nutricheck.client.ui.view.dialogs.AddWeightDialog
 import com.frontend.nutricheck.client.ui.view.dialogs.ChooseLanguageDialog
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.profile.ProfileViewModel
 
 sealed class ProfileScreens(val route: String) {
     object ProfilePage : ProfileScreens("profile_page_route")
@@ -28,14 +28,16 @@ sealed class ProfileScreens(val route: String) {
 
 @Composable
 fun ProfilePageNavGraph() {
-    val profileOverviewViewModel : ProfileOverviewViewModel = hiltViewModel()
+    val profileViewModel : ProfileViewModel = hiltViewModel()
     val profileNavController = rememberNavController()
-    val state by profileOverviewViewModel.data.collectAsState()
-    val weightState by profileOverviewViewModel.weightData.collectAsState()
+    val state by profileViewModel.data.collectAsState()
+    val errorMessage by profileViewModel.errorMessage.collectAsState()
+    val userDataDraft by profileViewModel.dataDraft.collectAsState()
+    val weightState by profileViewModel.weightData.collectAsState()
 
 
     LaunchedEffect(key1 = Unit) {
-        profileOverviewViewModel.events.collect { event ->
+        profileViewModel.events.collect { event ->
             when (event) {
                 is ProfileEvent.DisplayWeightHistory -> {
                     profileNavController.navigate(ProfileScreens.WeightHistoryPage.route)
@@ -65,30 +67,31 @@ fun ProfilePageNavGraph() {
         composable(ProfileScreens.ProfilePage.route) {
             ProfilePage(
                 state = state,
-                onEvent = profileOverviewViewModel::onEvent)
+                onEvent = profileViewModel::onEvent)
         }
         composable(ProfileScreens.WeightHistoryPage.route) {
             WeightHistoryPage(
                 weightState = weightState,
-                onEvent = profileOverviewViewModel::onEvent,
+                onEvent = profileViewModel::onEvent,
                 onBack = { profileNavController.popBackStack() })
         }
         composable(ProfileScreens.PersonalDataPage.route) {
             PersonalDataPage(
-                state = state,
-                onEvent = profileOverviewViewModel::onEvent,
+                state = userDataDraft!!,
+                errorMessage = errorMessage,
+                onEvent = profileViewModel::onEvent,
                 onBack = { profileNavController.popBackStack() })
         }
         dialog(ProfileScreens.SelectLanguageDialog.route) {
             ChooseLanguageDialog(
-                currentLanguage = state.userData.language,
-                onEvent = profileOverviewViewModel::onEvent,
+                currentLanguage = state.language,
+                onEvent = profileViewModel::onEvent,
                 onDismissRequest = { profileNavController.popBackStack() })
         }
         dialog(ProfileScreens.AddWeightDialog.route) {
             AddWeightDialog(
-                state = state,
-                onEvent = profileOverviewViewModel::onEvent,
+                errorMessage = errorMessage,
+                onEvent = profileViewModel::onEvent,
                 onDismissRequest = { profileNavController.popBackStack() }
             )
         }

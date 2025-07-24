@@ -27,13 +27,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -43,32 +43,25 @@ import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun PersonalDataPage(
-    state: ProfileState,
+    state: UserData,
+    errorMessage: Int? = null,
     onEvent: (ProfileEvent) -> Unit,
     onBack: () -> Unit = {}
 
 ) {
-    var editableUserData by remember { mutableStateOf(state.userData) }
-    var selectedDate by remember { mutableStateOf(state.userData.birthdate) }
+    var selectedDate by remember { mutableStateOf(state.birthdate) }
     var showDatePicker by remember { mutableStateOf(false) }
 
-
-
-    LaunchedEffect(state.userData) {
-        editableUserData = state.userData
-    }
     ViewsTopBar(
         navigationIcon = { NavigateBackButton(onBack = onBack) },
         title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
@@ -84,15 +77,14 @@ fun PersonalDataPage(
             Spacer(modifier = Modifier.height(50.dp))
         }
         personalDataFormItems(
-            userData = editableUserData,
-            onUserDataChange = { updatedUserData ->
-                editableUserData = updatedUserData},
+            userData = state,
+            onEvent = onEvent,
             onBirthdateClick = {
                 showDatePicker = true
             }
         )
         item {
-            state.errorMessage?.let { errorResId ->
+            errorMessage?.let { errorResId ->
                 Text(
                     text = stringResource(id = errorResId),
                     color = MaterialTheme.colorScheme.error,
@@ -105,7 +97,7 @@ fun PersonalDataPage(
             Spacer(modifier = Modifier.height(8.dp))
             Button(
                 onClick = {
-                    onEvent(ProfileEvent.UpdateUserData(editableUserData))
+                    onEvent(ProfileEvent.OnSaveClick)
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -140,16 +132,17 @@ fun PersonalDataPage(
         }
     }
 }
+
 private fun LazyListScope.personalDataFormItems(
     userData: UserData,
-    onUserDataChange: (UserData) -> Unit,
+    onEvent: (ProfileEvent) -> Unit,
     onBirthdateClick: () -> Unit
 ) {
     item {
         EditableDataRow(
             label = stringResource(id = R.string.profile_menu_item_name),
             value = userData.username,
-            onValueChange = { onUserDataChange(userData.copy(username = it)) },
+            onValueChange = { onEvent(ProfileEvent.UpdateUserNameDraft(it)) },
             keyboardType = KeyboardType.Text
         )
     }
@@ -157,7 +150,7 @@ private fun LazyListScope.personalDataFormItems(
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY)
         Row(modifier = Modifier.clickable { onBirthdateClick() }) {
             EditableDataRow(
-                label = stringResource(id = R.string.onboarding_label_birthdate),
+                label = stringResource(id = R.string.userData_label_birthdate),
                 value = dateFormat.format(userData.birthdate),
                 onValueChange = { /* Bleibt leer wegen DatePicker */ },
                 keyboardType = KeyboardType.Text,
@@ -177,8 +170,7 @@ private fun LazyListScope.personalDataFormItems(
             options = genderOptions.map { it.second },
             onOptionSelected = { formattedString ->
                 val selectedGender = genderOptions.find { it.second == formattedString }?.first
-                selectedGender?.let {
-                    onUserDataChange(userData.copy(gender = it))
+                selectedGender?.let { onEvent(ProfileEvent.UpdateUserGenderDraft(it))
                 }
             }
         )
@@ -186,16 +178,16 @@ private fun LazyListScope.personalDataFormItems(
     item {
         EditableDataRow(
             label = stringResource(id = R.string.profile_menu_height),
-            value = userData.height?.toString() ?: "",
-            onValueChange = { onUserDataChange(userData.copy(height = it.toDoubleOrNull())) },
+            value = userData.height.toString(),
+            onValueChange = { onEvent(ProfileEvent.UpdateUserHeightDraft(it)) },
             keyboardType = KeyboardType.Number
         )
     }
     item {
         EditableDataRow(
             label = stringResource(id = R.string.profile_menu_weight),
-            value = userData.weight?.toString() ?: "",
-            onValueChange = { onUserDataChange(userData.copy(weight = it.toDoubleOrNull())) },
+            value = userData.weight.toString(),
+            onValueChange = { onEvent(ProfileEvent.UpdateUserWeightDraft(it)) },
             keyboardType = KeyboardType.Number
         )
     }
@@ -209,17 +201,15 @@ private fun LazyListScope.personalDataFormItems(
             options = WeightGoal.entries.map { formatWeightGoal(it) },
             onOptionSelected = { formattedString ->
                 val selectedGoal = weightGoalOptions.find { it.second == formattedString }?.first
-                selectedGoal?.let {
-                    onUserDataChange(userData.copy(weightGoal = it))
-                }
+                selectedGoal?.let { onEvent(ProfileEvent.UpdateUserWeightGoalDraft(it)) }
             }
         )
     }
     item {
         EditableDataRow(
-            label = stringResource(id = R.string.onboarding_label_target_weight),
-            value = userData.targetWeight?.toString() ?: "",
-            onValueChange = { onUserDataChange(userData.copy(targetWeight = it.toDoubleOrNull())) },
+            label = stringResource(id = R.string.userData_label_target_weight),
+            value = userData.targetWeight.toString(),
+            onValueChange = { onEvent(ProfileEvent.UpdateUserTargetWeightDraft(it)) },
             keyboardType = KeyboardType.Number
         )
     }
@@ -233,43 +223,23 @@ private fun LazyListScope.personalDataFormItems(
             options = activityLevelOptions.map { it.second },
             onOptionSelected = { formattedString ->
                 val selectedLevel = activityLevelOptions.find { it.second == formattedString }?.first
-                selectedLevel?.let {
-                    onUserDataChange(userData.copy(activityLevel = it))
-                }
+                selectedLevel?.let { onEvent(ProfileEvent.UpdateUserActivityLevelDraft(it)) }
             }
         )
     }
 }
 @Composable
 private fun formatGender(gender: Gender): String {
-    return when (gender) {
-        Gender.MALE -> stringResource(id = R.string.onboarding_label_gender_male)
-        Gender.FEMALE -> stringResource(id = R.string.onboarding_label_gender_female)
-        Gender.DIVERS -> stringResource(id = R.string.onboarding_label_gender_diverse)
-    }
+    return gender.getDescription(LocalContext.current)
 }
 
 @Composable
 private fun formatActivityLevel(level: ActivityLevel): String {
-    return when (level) {
-        ActivityLevel.OCCASIONALLY ->
-            stringResource(id = R.string.onboarding_label_activity_level_occasionally)
-        ActivityLevel.REGULARLY ->
-            stringResource(id = R.string.onboarding_label_activity_level_regularly)
-        ActivityLevel.NEVER ->
-            stringResource(id = R.string.onboarding_label_activity_level_never)
-        ActivityLevel.FREQUENTLY ->
-            stringResource(id = R.string.onboarding_label_activity_level_frequently)
-    }
+    return level.getDescription(LocalContext.current)
 }
 @Composable
 private fun formatWeightGoal(goal: WeightGoal): String {
-    return when (goal) {
-        WeightGoal.GAIN_WEIGHT -> stringResource(id = R.string.onboarding_label_goal_gain_weight)
-        WeightGoal.LOSE_WEIGHT -> stringResource(id = R.string.onboarding_label_goal_lose_weight)
-        WeightGoal.MAINTAIN_WEIGHT ->
-            stringResource(id = R.string.onboarding_label_goal_maintain_weight)
-    }
+    return goal.getDescription(LocalContext.current)
 }
 
 @Composable
@@ -355,22 +325,24 @@ private fun EditableDropdownRow(
 @Preview (showBackground = true)
 @Composable
 fun PersonalDataPreview() {
-    val previewDate = Calendar.getInstance().apply {
-        set(2000, Calendar.JUNE, 15)
-    }.time
-    val previewUserData = UserData(
-        username = "Max Mustermann",
-        birthdate = previewDate,
-        gender = Gender.MALE,
-        height = 180.0,
-        weight = 75.0,
-        weightGoal = WeightGoal.MAINTAIN_WEIGHT,
-        targetWeight = 75.0,
-        activityLevel = ActivityLevel.OCCASIONALLY
-    )
-
     PersonalDataPage(
-        state = ProfileState(userData = previewUserData),
+        state = (UserData(
+            username = "Peter",
+            birthdate = Date(),
+            gender = Gender.MALE,
+            height = 195.0,
+            weight = 95.0,
+            targetWeight = 95.0,
+            activityLevel = ActivityLevel.REGULARLY,
+            weightGoal = WeightGoal.LOSE_WEIGHT,
+            language = "de",
+            theme = "light",
+            age = 25,
+            dailyCaloriesGoal = 2500,
+            proteinGoal = 80,
+            carbsGoal = 90,
+            fatsGoal = 20
+        )),
         onEvent = {},
         onBack = {}
     )

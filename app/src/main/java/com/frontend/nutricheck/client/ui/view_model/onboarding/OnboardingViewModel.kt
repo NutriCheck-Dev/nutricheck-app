@@ -1,15 +1,15 @@
 package com.frontend.nutricheck.client.ui.view_model.onboarding
 
-import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.user.OnboardingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -94,7 +94,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterName(name: String) {
         if (name.isBlank()) {
             _data.update {
-                it.copy(errorState = (R.string.onboarding_error_name_required))
+                it.copy(errorState = (R.string.userData_error_name_required))
             }
             return
         }
@@ -106,7 +106,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterBirthdate(birthdate: Date?) {
         if (!validateBirthdate(birthdate)) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_birthdate_required)
+                it.copy(errorState = R.string.userData_error_birthdate_required)
             }
             return
         }
@@ -118,7 +118,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterGender(gender: Gender?) {
         if (gender == null) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_gender_required)
+                it.copy(errorState = R.string.userData_error_gender_required)
             }
             return
         }
@@ -131,7 +131,7 @@ class OnboardingViewModel @Inject constructor(
         val heightAsDouble : Double? = height.toDoubleOrNull()
         if (heightAsDouble == null || heightAsDouble <= 0) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_height_required)
+                it.copy(errorState = R.string.userData_error_height_required)
             }
             return
         }
@@ -144,7 +144,7 @@ class OnboardingViewModel @Inject constructor(
         val weightAsDouble: Double? = weight.toDoubleOrNull()
         if (weightAsDouble == null || weightAsDouble <= 0) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_weight_required)
+                it.copy(errorState = R.string.userData_error_weight_required)
             }
             return
         }
@@ -156,7 +156,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterSportFrequency(activityLevel: ActivityLevel?) {
         if (activityLevel == null) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_activity_level_required)
+                it.copy(errorState = R.string.userData_error_activity_level_required)
             }
             return
         }
@@ -168,7 +168,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterWeightGoal(weightGoal: WeightGoal?) {
         if (weightGoal == null) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_goal_required)
+                it.copy(errorState = R.string.userData_error_goal_required)
             }
             return
         }
@@ -181,7 +181,7 @@ class OnboardingViewModel @Inject constructor(
         val targetWeightAsDouble: Double? = targetWeight.toDoubleOrNull()
         if (targetWeightAsDouble == null || targetWeightAsDouble <= 0.0) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_target_weight_required)
+                it.copy(errorState = R.string.userData_error_target_weight_required)
             }
             return
         }
@@ -203,6 +203,7 @@ class OnboardingViewModel @Inject constructor(
      }
 
     private fun completeOnboarding() {
+
         val newUserData = UserData(
             username = _data.value.username,
             birthdate = _data.value.birthdate!!,
@@ -211,8 +212,17 @@ class OnboardingViewModel @Inject constructor(
             weight = _data.value.weight,
             activityLevel = _data.value.activityLevel!!,
             weightGoal = _data.value.weightGoal!!,
-            targetWeight = _data.value.targetWeight
+            targetWeight = _data.value.targetWeight,
+            age = Utils.calculateAge(_data.value.birthdate!!),
+            language = "de",
+            theme = "light",
+            dailyCaloriesGoal = 0,
+            proteinGoal = 0,
+
+
         )
+        Utils.calculateCalories(newUserData)
+
         viewModelScope.launch {
             userDataRepository.addUserData(newUserData)
             userDataRepository.addWeight(Weight(_data.value.weight, Date()))

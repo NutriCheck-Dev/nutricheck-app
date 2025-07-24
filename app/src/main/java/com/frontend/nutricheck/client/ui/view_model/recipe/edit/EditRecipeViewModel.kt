@@ -72,7 +72,7 @@ class EditRecipeViewModel @Inject constructor(
         }
     }
 
-    val _events = MutableSharedFlow<EditRecipeEvent>()
+    private val _events = MutableSharedFlow<EditRecipeEvent>()
     val events: SharedFlow<EditRecipeEvent> = _events.asSharedFlow()
 
     fun onEvent(event: EditRecipeEvent) {

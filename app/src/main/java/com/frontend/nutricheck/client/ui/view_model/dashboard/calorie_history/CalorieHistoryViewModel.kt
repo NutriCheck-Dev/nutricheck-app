@@ -25,7 +25,7 @@ class CalorieHistoryViewModel @Inject constructor() : BaseCalorieHistoryViewMode
     private val _calorieHistoryState = MutableStateFlow(CalorieHistoryState())
     val calorieHistoryState = _calorieHistoryState.asStateFlow()
 
-    val _events = MutableSharedFlow<CalorieHistoryEvent>()
+    private val _events = MutableSharedFlow<CalorieHistoryEvent>()
     val events: SharedFlow<CalorieHistoryEvent> = _events.asSharedFlow()
 
 

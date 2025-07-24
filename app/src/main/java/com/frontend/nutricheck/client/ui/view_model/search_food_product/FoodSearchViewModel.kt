@@ -43,7 +43,7 @@ class FoodSearchViewModel @Inject constructor(
     private val _searchState = MutableStateFlow(SearchState())
     val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
 
-    val _events = MutableSharedFlow<SearchEvent>()
+    private val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
 
     fun onEvent(event: SearchEvent) {

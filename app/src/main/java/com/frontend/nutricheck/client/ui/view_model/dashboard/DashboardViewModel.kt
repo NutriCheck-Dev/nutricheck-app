@@ -1,14 +1,10 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard
 
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 data class DashboardState(
     val dailyCalories: Int = 0,
@@ -30,7 +26,7 @@ sealed interface DashboardEvent {
     val data : DashboardState = DashboardState()
 
 
-    val _events = MutableSharedFlow<DashboardEvent>()
+    private val _events = MutableSharedFlow<DashboardEvent>()
     val events: SharedFlow<DashboardEvent> = _events.asSharedFlow()
     fun onEvent(event: DashboardEvent) {}
 

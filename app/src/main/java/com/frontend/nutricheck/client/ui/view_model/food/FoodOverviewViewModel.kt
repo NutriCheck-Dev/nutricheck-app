@@ -29,7 +29,7 @@ class FoodOverviewViewModel @Inject constructor() : BaseFoodOverviewViewModel<Fo
     val carbs = draft.map { it.carbohydrates }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
     val fat = draft.map { it.fat }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    val _events = MutableSharedFlow<CreateRecipeEvent>()
+    private val _events = MutableSharedFlow<CreateRecipeEvent>()
     val events: SharedFlow<CreateRecipeEvent> = _events.asSharedFlow()
 
     fun onEvent(event: CreateRecipeEvent) {}
