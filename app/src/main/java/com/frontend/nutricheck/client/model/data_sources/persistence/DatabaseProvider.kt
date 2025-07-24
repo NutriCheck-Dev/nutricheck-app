@@ -14,7 +14,7 @@ object DatabaseProvider {
                         context.applicationContext,
                         LocalDatabase::class.java,
                         "nutricheck_database"
-                    ).fallbackToDestructiveMigration(false)
+                    ).fallbackToDestructiveMigration(true)
                 .build()
                 .also { Instance = it }
 
