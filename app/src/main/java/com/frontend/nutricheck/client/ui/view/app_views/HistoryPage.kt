@@ -27,6 +27,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieSummary
 import com.frontend.nutricheck.client.ui.view.widgets.DateSelectorBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
+import com.frontend.nutricheck.client.ui.view_model.history.DisplayMealItem
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
 import java.util.Calendar
@@ -44,15 +45,10 @@ fun HistoryPage(
     val scrollState = rememberScrollState()
     //val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
 
-    val breakfast = state.mealsGrouped[DayTime.BREAKFAST].orEmpty()
-    val breakfastItems = breakfast.flatMap { it.items }.toList()
-    val lunch = state.mealsGrouped[DayTime.LUNCH].orEmpty()
-    val lunchItems = lunch.flatMap { it.items }.toList()
-
-    val dinner = state.mealsGrouped[DayTime.DINNER].orEmpty()
-    val dinnerItems = dinner.flatMap { it.items }.toList()
-    val snack = state.mealsGrouped[DayTime.SNACK].orEmpty()
-    val snackItems = snack.flatMap { it.items }.toList()
+    val breakfastItems: List<DisplayMealItem> = emptyList()
+    val lunchItems: List<DisplayMealItem> = emptyList()
+    val dinnerItems: List<DisplayMealItem> = emptyList()
+    val snackItems: List<DisplayMealItem> = emptyList()
 
 
 
@@ -62,7 +58,6 @@ fun HistoryPage(
                 is HistoryEvent.AddEntryClick -> {
                     // Handle displaying meals of the day
                 }
-
 
                 else -> { /* No action needed for other events */ }
 
@@ -88,7 +83,7 @@ fun HistoryPage(
             onOpenCalendar = { showDatePicker = true }
         )
         if (showDatePicker) {
-            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate?.time)
+            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
             DatePickerDialog(
                 onDismissRequest = { showDatePicker = false },
                 confirmButton = {
@@ -116,13 +111,13 @@ fun HistoryPage(
             state = state
         )
         Spacer(modifier = Modifier.height(20.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", breakfastItems.sumOf { it.quantity * it.food.calories }, meals= breakfastItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.BREAKFAST) })
+        MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", breakfastItems.sumOf { it.quantity * it.calories }, items = breakfastItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.BREAKFAST) })
         Spacer(modifier = Modifier.height(5.dp))
         MealBlock(modifier = Modifier.padding(7.dp), "Mittagessen", 300.0, items= lunchItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.LUNCH) })
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Abendessen", 300.0, meals= dinnerItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.DINNER) })
+        MealBlock(modifier = Modifier.padding(7.dp), "Abendessen", 300.0, items = dinnerItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.DINNER) })
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Snack", 300.0, meals= snackItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.SNACK) })
+        MealBlock(modifier = Modifier.padding(7.dp), "Snack", 300.0, items = snackItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.SNACK) })
     }
 }
 

@@ -29,7 +29,6 @@ data class HistoryState(
 sealed interface HistoryEvent {
     data class AddEntryClick(val day: Date, val dayTime: DayTime) : HistoryEvent
     data class DisplayNutritionOfDay(val day: Date) : HistoryEvent
-    data class DisplayMealsOfDay(val day: Date) : HistoryEvent
     data class FoodClicked(val foodId: String) : HistoryEvent
     data class DetailsClick(val detailsId: String) : HistoryEvent
     data class TotalCaloriesClick(val totalCalories: Int) : HistoryEvent
@@ -51,7 +50,6 @@ class HistoryViewModel @Inject constructor(
         when (event) {
             is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day, event.dayTime)
             is HistoryEvent.DisplayNutritionOfDay -> displayNutritionOfDay(event.day)
-            is HistoryEvent.DisplayMealsOfDay -> displayMealsOfDay(event.day)
             is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
             is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
             is HistoryEvent.TotalCaloriesClick -> onTotalCaloriesClick(event.totalCalories)

@@ -17,15 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
-import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
-import com.frontend.nutricheck.client.model.data_sources.data.MealItem
-import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.ui.view_model.history.DisplayMealItem
 
 @Composable
 fun MealHeader(

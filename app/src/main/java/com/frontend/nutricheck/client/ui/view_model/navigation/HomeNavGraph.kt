@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.app_views.HomePage
-import com.frontend.nutricheck.client.ui.view_model.dashboard.DashboardViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history.CalorieHistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros.DailyMacrosViewModel
@@ -15,14 +14,11 @@ import com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history.Wei
 
 sealed class HomeScreens(val route: String) {
     object HomePage : HomeScreens("home_page_route")
-    //evlt WeighthistoryPage?
-    //evtl HistoryPage?
 
 }
 
 @Composable
 fun HomeNavGraph() {
-    val dashboardViewModel : DashboardViewModel = hiltViewModel()
     val calorieHistoryViewModel : CalorieHistoryViewModel = hiltViewModel()
     val dailyCalorieViewModel : DailyCalorieViewModel = hiltViewModel()
     val dailyMacrosViewModel : DailyMacrosViewModel = hiltViewModel()
@@ -36,7 +32,12 @@ fun HomeNavGraph() {
         startDestination = HomeScreens.HomePage.route,
     ) {
         composable(HomeScreens.HomePage.route) {
-            HomePage(dashboardViewModel, calorieHistoryViewModel, dailyCalorieViewModel, dailyMacrosViewModel, weightHistoryViewModel)
+            HomePage(
+                calorieHistoryViewModel = calorieHistoryViewModel,
+                dailyCalorieViewModel = dailyCalorieViewModel,
+                dailyMacrosViewModel = dailyMacrosViewModel,
+                weightHistoryViewModel = weightHistoryViewModel
+            )
         }
     }
 }

@@ -30,7 +30,6 @@ import com.frontend.nutricheck.client.ui.view.widgets.CalorieHistoryDiagram
 import com.frontend.nutricheck.client.ui.view.widgets.CaloriesToday
 import com.frontend.nutricheck.client.ui.view.widgets.NutrientBreakdown
 import com.frontend.nutricheck.client.ui.view.widgets.WeightHistoryDiagram
-import com.frontend.nutricheck.client.ui.view_model.dashboard.DashboardViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history.CalorieHistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros.DailyMacrosViewModel
@@ -38,7 +37,6 @@ import com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history.Wei
 
 @Composable
 fun HomePage(
-
     calorieHistoryViewModel: CalorieHistoryViewModel,
     dailyCalorieViewModel: DailyCalorieViewModel,
     dailyMacrosViewModel: DailyMacrosViewModel,
