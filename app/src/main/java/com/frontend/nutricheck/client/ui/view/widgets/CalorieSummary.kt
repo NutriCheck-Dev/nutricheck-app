@@ -31,8 +31,7 @@ import com.frontend.nutricheck.client.ui.view_model.history.HistoryState
 @Composable
 fun CalorieSummary(
     modifier: Modifier = Modifier,
-    state: HistoryState,
-    onClick: () -> Unit = {}
+    state: HistoryState
 ) {
     val goalCalories = state.goalCalories
     val consumedCalories = state.totalCalories

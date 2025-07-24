@@ -93,9 +93,9 @@ fun RecipePage(
                         }
                     )
                     val recipes = if (recipePageState.selectedTab == 0) {
-                        recipePageState.myRecipes.toSet()
+                        recipePageState.myRecipes
                     } else {
-                        recipePageState.onlineRecipes.toSet()
+                        recipePageState.onlineRecipes
                     }
 
                     Box(
@@ -126,7 +126,7 @@ fun RecipePage(
                                     )
                                 } else {
                                     DishItemList(
-                                        foodComponents = recipePageState.onlineRecipes.toSet(),
+                                        foodComponents = recipePageState.onlineRecipes,
                                         trailingContent = {
                                             CustomDetailsButton(
                                                 isOnDishItemButton = true,

@@ -26,7 +26,7 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 @Composable
 fun DishItemList(
     modifier: Modifier = Modifier,
-    foodComponents: Set<FoodComponent> = emptySet(),
+    foodComponents: List<FoodComponent> = emptyList(),
     trailingContent: @Composable ((item: FoodComponent) -> Unit)? = null,
     isEditing: Boolean = false,
     onAddButtonClick: () -> Unit = {},
@@ -67,21 +67,5 @@ fun DishItemList(
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun DishItemListPreview() {
-    AppTheme(darkTheme = true) {
-        DishItemList(
-            isEditing = true,
-            foodComponents = setOf(
-                Recipe(),
-                Recipe(),
-                Recipe(),
-                Recipe()
-            )
-        )
     }
 }

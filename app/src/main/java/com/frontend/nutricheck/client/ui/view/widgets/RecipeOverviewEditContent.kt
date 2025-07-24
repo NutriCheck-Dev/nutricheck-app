@@ -39,6 +39,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeDraft
 @Composable
 fun RecipeOverviewEditContent(
     draft: RecipeDraft,
+    ingredients: List<FoodComponent>,
     onEvent: (EditRecipeEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit
@@ -46,10 +47,6 @@ fun RecipeOverviewEditContent(
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     var showConfirmationDialog by remember { mutableStateOf(false) }
-    val foodComponents: Set<FoodComponent> =
-        draft.ingredients
-            .map { it.foodProduct }
-            .toSet()
 
     Scaffold(
         topBar = {
@@ -106,7 +103,7 @@ fun RecipeOverviewEditContent(
 
                 DishItemList(
                     isEditing = true,
-                    foodComponents = foodComponents,
+                    foodComponents = ingredients,
                     modifier = Modifier
                         .fillMaxWidth()
                 )

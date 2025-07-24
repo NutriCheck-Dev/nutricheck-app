@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.theme.AppTheme
@@ -21,9 +20,6 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeVi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverview(
-    modifier: Modifier = Modifier,
-    //actions: NavigationActions,
-    onAddIngredient: (String) -> Unit = {},
     recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
     editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
     reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(),
@@ -48,15 +44,17 @@ fun RecipeOverview(
             onDismiss = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DissmissDialog) }, //TODO: Implement dismiss functionality
             onReportClick = { reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked) }, //TODO: Implement report click functionality
             onBack = onBack,
-            showReportDialog = reportRecipeState.isReporting
+            showReportDialog = reportRecipeState.isReporting,
+            ingredients = recipeOverviewState.ingredients
         )
     } else {
         draftState?.let { draft ->
             RecipeOverviewEditContent(
                 draft = draft,
                 onEvent = editRecipeViewModel::onEvent,
-                onSave = { editRecipeViewModel.onEvent(EditRecipeEvent.RecipeSaved) },
-                onCancel = { editRecipeViewModel.onEvent(EditRecipeEvent.EditCanceled) }
+                onSave = { editRecipeViewModel.onEvent(EditRecipeEvent.SaveChanges) },
+                onCancel = { editRecipeViewModel.onEvent(EditRecipeEvent.EditCanceled) },
+                ingredients = draftState!!.viewIngredients
             )
         }
     }

@@ -21,7 +21,6 @@ import com.frontend.nutricheck.client.ui.theme.extended
 
 @Composable
 fun ReportRecipeDialog(
-    recipeId: String = "",
     title: String = "Report",
     confirmText: String = "Send",
     cancelText: String = "Cancel",

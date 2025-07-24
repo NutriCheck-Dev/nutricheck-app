@@ -5,11 +5,10 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 
 abstract class BaseEditRecipeViewModel() : BaseViewModel () {
     abstract fun onTitleChanged(newTitle: String)
-    abstract fun onIngredientAdded(ingredient: FoodComponent)
-    abstract fun onIngredientRemovedInSummary(ingredient: FoodComponent)
-    abstract fun onIngredientRemovedInEdit(ingredient: FoodComponent)
+    abstract fun onIngredientAdded(foodComponent: FoodComponent)
+    abstract fun onIngredientRemovedInSummary(foodComponent: FoodComponent)
+    abstract fun onIngredientRemovedInEdit(foodComponent: FoodComponent)
     abstract fun onSaveAddedIngredients()
     abstract fun onDescriptionChanged(newDescription: String)
-    abstract fun onCancelEdit()
-    abstract fun onSaveRecipe()
+    abstract suspend fun onCancelEdit()
 }

@@ -6,6 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,14 +24,14 @@ data class RecipeDraft(
     val id: String,
     val title: String,
     val description: String,
-    val ingredients: Set<Ingredient>,
-    val addedIngredients: Set<Ingredient> = emptySet()
+    val ingredients: List<Ingredient> = emptyList(),
+    val addedIngredients: List<Ingredient> = emptyList(),
+    val viewIngredients: List<FoodComponent> = emptyList(),
 ) {
     fun toRecipe(): Recipe = Recipe(
         id = id,
         name = title,
-        instructions = description,
-        ingredients = ingredients,
+        instructions = description
     )
 }
 
@@ -41,13 +43,13 @@ sealed interface EditRecipeEvent {
     data class DescriptionChanged(val description: String) : EditRecipeEvent
     data object SaveAddedIngredients : EditRecipeEvent
     data object EditCanceled : EditRecipeEvent
-    data object RecipeSaved : EditRecipeEvent
     data object SaveChanges : EditRecipeEvent
 }
 
 @HiltViewModel
 class EditRecipeViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
+    private val foodProductRepository: FoodProductRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseEditRecipeViewModel() {
 
@@ -70,9 +72,17 @@ class EditRecipeViewModel @Inject constructor(
                         _editRecipeDraft.value = RecipeDraft(
                             id = recipe.id,
                             title = recipe.name,
-                            description = recipe.instructions,
-                            ingredients = recipe.ingredients
+                            description = recipe.instructions
                         )
+                    }
+                }
+            recipeRepository.getIngredientsForRecipe(recipeId)
+                .collect { ingredients ->
+                    val foodComponents = ingredients.map { ingredient ->
+                        getFoodComponentOfIngredient(ingredient)
+                    }
+                    _editRecipeDraft.update {
+                        it!!.copy(ingredients = ingredients, viewIngredients = foodComponents)
                     }
                 }
         }
@@ -89,8 +99,7 @@ class EditRecipeViewModel @Inject constructor(
             is EditRecipeEvent.IngredientRemovedInSummary -> onIngredientRemovedInSummary(event.ingredient)
             is EditRecipeEvent.IngredientRemovedInEdit -> onIngredientRemovedInEdit(event.ingredient)
             is EditRecipeEvent.SaveAddedIngredients -> onSaveAddedIngredients()
-            is EditRecipeEvent.EditCanceled -> onCancelEdit()
-            is EditRecipeEvent.RecipeSaved -> onSaveRecipe()
+            is EditRecipeEvent.EditCanceled -> viewModelScope.launch { onCancelEdit() }
             is EditRecipeEvent.SaveChanges -> saveChanges()
         }
     }
@@ -98,27 +107,28 @@ class EditRecipeViewModel @Inject constructor(
     override fun onTitleChanged(newTitle: String) =
         _editRecipeDraft.update { it?.copy(title = newTitle) }
 
-    override fun onIngredientAdded(ingredient: FoodComponent) {
+    override fun onIngredientAdded(foodComponent: FoodComponent) {
         val newIngredient = Ingredient(
-            id = ingredient.id, //TODO: ids noch generieren lassen
-            foodProductId = ingredient.id,
-            foodProduct = ingredient as FoodProduct
+            id = "", //TODO: ids noch generieren lassen,
+            recipeId = recipeId,
+            foodProductId = foodComponent.id,
+            quantity = foodComponent.servings.toDouble()
         )
         _editRecipeDraft.update { it?.copy(addedIngredients = it.addedIngredients + newIngredient) }
     }
 
-    override fun onIngredientRemovedInSummary(ingredient: FoodComponent) {
+    override fun onIngredientRemovedInSummary(foodComponent: FoodComponent) {
         _editRecipeDraft.update { draft ->
             draft?.copy(
-                addedIngredients = draft.addedIngredients.filterNot { it.foodProductId == ingredient.id }.toSet()
+                addedIngredients = draft.addedIngredients.filterNot { it.foodProductId == foodComponent.id }
             )
         }
     }
 
-    override fun onIngredientRemovedInEdit(ingredient: FoodComponent) {
+    override fun onIngredientRemovedInEdit(foodComponent: FoodComponent) {
         _editRecipeDraft.update { draft ->
             draft?.copy(
-                ingredients = draft.ingredients.filterNot { it.foodProductId == ingredient.id }.toSet()
+                ingredients = draft.ingredients.filterNot { it.foodProductId == foodComponent.id }
             )
         }
     }
@@ -129,22 +139,14 @@ class EditRecipeViewModel @Inject constructor(
     override fun onDescriptionChanged(newDescription: String) =
         _editRecipeDraft.update { it?.copy(description = newDescription) }
 
-    override fun onCancelEdit() {
+    override suspend fun onCancelEdit() {
         _editRecipeDraft.value = _recipe.value!!.let { recipe ->
             RecipeDraft(
-                id = recipe.id,
+                id = recipeId,
                 title = recipe.name,
                 description = recipe.instructions,
-                ingredients = recipe.ingredients
+                ingredients = recipeRepository.getIngredientsForRecipe(recipeId).first()
             )
-        }
-    }
-
-    override fun onSaveRecipe() {
-        val updatedRecipe = _editRecipeDraft.value!!.toRecipe()
-        viewModelScope.launch {
-            recipeRepository.updateRecipe(updatedRecipe)
-            _recipe.value = updatedRecipe
         }
     }
 
@@ -161,7 +163,10 @@ class EditRecipeViewModel @Inject constructor(
         setReady()
         viewModelScope.launch {
             recipeRepository.updateRecipe(draft.toRecipe())
-            _events.emit(EditRecipeEvent.RecipeSaved)
+            _events.emit(EditRecipeEvent.SaveChanges)
         }
     }
+
+    private suspend fun getFoodComponentOfIngredient(ingredient: Ingredient) : FoodProduct =
+        foodProductRepository.getFoodProductById(ingredient.foodProductId).first()
 }

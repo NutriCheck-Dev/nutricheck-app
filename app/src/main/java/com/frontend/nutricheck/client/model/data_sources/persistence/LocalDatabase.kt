@@ -14,6 +14,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDataDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
@@ -28,17 +29,18 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
         FoodProduct::class,
         Recipe::class,
         UserData::class,
-        Weight::class
+        Weight::class,
+        Ingredient::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
-    //DAOs registrieren
     abstract fun foodDao(): FoodDao
     abstract fun recipeDao(): RecipeDao
     abstract fun historyDao(): HistoryDao
     abstract fun weightDao(): WeightDao
     abstract fun userDataDao(): UserDataDao
+    abstract fun ingredientDao(): IngredientDao
 }

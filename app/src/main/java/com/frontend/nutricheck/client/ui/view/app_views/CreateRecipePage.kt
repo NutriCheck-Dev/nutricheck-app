@@ -49,8 +49,8 @@ fun CreateRecipePage(
     val styles = MaterialTheme.typography
     val draft by createRecipeViewModel.createdRecipeDraft.collectAsState()
     val currentTitle = draft?.title.orEmpty()
-    val ingredients = draft?.ingredients ?: emptySet()
-    val currentIngredients = ingredients.map { it.foodProduct }.toSet()
+    val ingredients = draft?.ingredients ?: emptyList()
+    val currentIngredients = ingredients
     val currentDescription = draft?.description.orEmpty()
     val errorResourceId by createRecipeViewModel.errorState.collectAsState()
 

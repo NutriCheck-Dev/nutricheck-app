@@ -2,7 +2,10 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.overview
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -12,11 +15,13 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class RecipeOverviewState(
     val recipe: Recipe = Recipe(),
+    val ingredients: List<FoodProduct> = emptyList(),
     val isEditing: Boolean = false
 )
 sealed interface RecipeOverviewEvent {
@@ -29,6 +34,7 @@ sealed interface RecipeOverviewEvent {
 @HiltViewModel
 class RecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
+    private val foodProductRepository: FoodProductRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseRecipeOverviewViewModel() {
     private val _recipeOverviewState = MutableStateFlow(RecipeOverviewState())
@@ -44,9 +50,15 @@ class RecipeOverviewViewModel @Inject constructor(
                     _recipeOverviewState.update { it.copy(recipe = recipe)
                     }
                 }
+            recipeRepository.getIngredientsForRecipe(recipeId)
+                .collect { ingredients ->
+                    val foodComponents = ingredients.map { getFoodComponentOfIngredient(it) }
+                    _recipeOverviewState.update { it.copy(ingredients = foodComponents) }
+                }
 
         }
     }
+
 
     val _events = MutableSharedFlow<RecipeOverviewEvent>()
     val events: SharedFlow<RecipeOverviewEvent> = _events.asSharedFlow()
@@ -92,4 +104,7 @@ class RecipeOverviewViewModel @Inject constructor(
     override suspend fun onShareRecipe(recipe: Recipe) {
         //("Not yet implemented")
     }
+
+    private suspend fun getFoodComponentOfIngredient(ingredient: Ingredient) : FoodProduct =
+        foodProductRepository.getFoodProductById(ingredient.foodProductId).first()
 }

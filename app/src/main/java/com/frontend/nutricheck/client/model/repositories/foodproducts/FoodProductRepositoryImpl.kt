@@ -5,6 +5,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.FoodProductMapper
+import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 import javax.inject.Inject
 
@@ -28,4 +29,7 @@ class FoodProductRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override fun getFoodProductById(foodProductId: String): Flow<FoodProduct> =
+        foodDao.getById(foodProductId)
 }
