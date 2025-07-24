@@ -27,7 +27,7 @@ data class HistoryState(
 )
 
 sealed interface HistoryEvent {
-    data class AddEntryClick(val day: Date) : HistoryEvent
+    data class AddEntryClick(val day: Date, val dayTime: DayTime) : HistoryEvent
     data class DisplayNutritionOfDay(val day: Date) : HistoryEvent
     data class DisplayMealsOfDay(val day: Date) : HistoryEvent
     data class FoodClicked(val foodId: String) : HistoryEvent
@@ -49,7 +49,7 @@ class HistoryViewModel @Inject constructor(
 
     fun onEvent(event: HistoryEvent) {
         when (event) {
-            is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day)
+            is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day, event.dayTime)
             is HistoryEvent.DisplayNutritionOfDay -> displayNutritionOfDay(event.day)
             is HistoryEvent.DisplayMealsOfDay -> displayMealsOfDay(event.day)
             is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
@@ -61,24 +61,33 @@ class HistoryViewModel @Inject constructor(
     // Die benötigten Parameter sollten über den State bereitgestellt werden, siehe beispiel Profile,
     // außer die Rückgabewerte an das ViewModel, die werden über Events gesendet
 
-    override fun onAddEntryClick(day: Date) {
+    override fun onAddEntryClick(day: Date, dayTime: DayTime) {
         viewModelScope.launch {
-            _events.emit(HistoryEvent.AddEntryClick(day))
+            _events.emit(HistoryEvent.AddEntryClick(day, dayTime))
         }
     }
 
-    override fun selectDate(date: Date) {
+    override fun selectDate(day: Date) {
         _historyState.update {
             it.copy(
-                selectedDate = date
+                selectedDate = day
             )
         }
-        displayMealsOfDay(date)
-        displayNutritionOfDay(date)
+        displayMealsOfDay(day)
+        displayCalorieGoal(day)
     }
 
-    override fun displayCalorieGoal() {
-        TODO("Not yet implemented")
+    override fun displayCalorieGoal(day: Date) {
+        viewModelScope.launch {
+            val totalCalories = historyRepository.getCaloriesOfDay(day)
+            val goalCalories = userDataRepository.getCalorieGoal()
+            _historyState.update {
+                it.copy(
+                    totalCalories = totalCalories,
+                    goalCalories = goalCalories
+                )
+            }
+        }
     }
 
     override fun displayNutritionOfDay(day: Date) {}

@@ -38,7 +38,7 @@ import com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history.Wei
 
 @Composable
 fun HomePage(
-    dashboardViewModel: DashboardViewModel,
+
     calorieHistoryViewModel: CalorieHistoryViewModel,
     dailyCalorieViewModel: DailyCalorieViewModel,
     dailyMacrosViewModel: DailyMacrosViewModel,

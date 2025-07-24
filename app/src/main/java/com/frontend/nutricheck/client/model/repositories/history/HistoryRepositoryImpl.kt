@@ -18,7 +18,7 @@ class HistoryRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getTodaysCalories(): Int {
+    override suspend fun getCaloriesOfDay(date: Date): Int {
         TODO("Not yet implemented")
         return 2000
     }

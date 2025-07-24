@@ -8,6 +8,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 
 data class DailyCalorieState(
     val dailyCalories: Int = 0,
@@ -25,8 +28,9 @@ class DailyCalorieViewModel @Inject constructor(
 
 
      override fun displayDailyCalories() {
+         val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
          viewModelScope.launch {
-             val calories = historyRepository.getTodaysCalories() // z.B. 850
+             val calories = historyRepository.getCaloriesOfDay(currentDate) // z.B. 850
              val goal = userDataRepository.getCalorieGoal() // z.B. 2000
              _dailyCalorieState.value = DailyCalorieState(
                  dailyCalories = calories,

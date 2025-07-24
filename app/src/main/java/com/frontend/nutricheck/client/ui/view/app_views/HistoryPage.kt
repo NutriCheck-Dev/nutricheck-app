@@ -95,6 +95,7 @@ fun HistoryPage(
                     TextButton(
                         onClick = {
                             datePickerState.selectedDateMillis?.let {
+
                                 selectedDate = Date(it)
                             }
                             showDatePicker = false
@@ -115,13 +116,13 @@ fun HistoryPage(
             state = state
         )
         Spacer(modifier = Modifier.height(20.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", 300.0, meals= breakfastItems, onAddClick = { historyViewModel.onAddEntryClick(calendar.time) })
+        MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", breakfastItems.sumOf { it.quantity * it.food.calories }, meals= breakfastItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.BREAKFAST) })
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Mittagessen", 300.0, meals= lunchItems, onAddClick = { historyViewModel.onAddEntryClick(calendar.time) })
+        MealBlock(modifier = Modifier.padding(7.dp), "Mittagessen", 300.0, items= lunchItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.LUNCH) })
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Abendessen", 300.0, meals= dinnerItems, onAddClick = { historyViewModel.onAddEntryClick(calendar.time) })
+        MealBlock(modifier = Modifier.padding(7.dp), "Abendessen", 300.0, meals= dinnerItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.DINNER) })
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Snack", 300.0, meals= snackItems, onAddClick = { historyViewModel.onAddEntryClick(calendar.time) })
+        MealBlock(modifier = Modifier.padding(7.dp), "Snack", 300.0, meals= snackItems, onAddClick = { historyViewModel.onAddEntryClick(selectedDate, DayTime.SNACK) })
     }
 }
 
