@@ -7,6 +7,10 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
@@ -16,9 +20,13 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
 
 @Database(
     entities = [
+        HistoryDay::class,
+        Ingredient::class,
+        Meal::class,
+        MealFoodItem::class,
+        MealRecipeItem::class,
         FoodProduct::class,
         Recipe::class,
-        HistoryDay::class,
         UserData::class,
         Weight::class
     ],

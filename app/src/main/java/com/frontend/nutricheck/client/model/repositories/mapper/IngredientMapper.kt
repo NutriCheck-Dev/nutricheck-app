@@ -1,26 +1,25 @@
 package com.frontend.nutricheck.client.model.repositories.mapper
 
 import com.frontend.nutricheck.client.dto.IngredientDTO
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
 
 object IngredientMapper {
-    fun toDTO(ingredient: Ingredient) : IngredientDTO = IngredientDTO(
-        recipeId = ingredient.recipeId,
-        foodProductId = ingredient.foodProductId,
-        foodProduct = FoodProductMapper.toDTO(ingredient.foodProduct),
-        quantity = ingredient.quantity
+    fun toDTO(ingredientWithFP: IngredientWithFoodProduct) : IngredientDTO = IngredientDTO(
+        recipeId = ingredientWithFP.ingredient.recipeId,
+        foodProductId = ingredientWithFP.ingredient.foodProductId,
+        foodProduct = FoodProductMapper.toDTO(ingredientWithFP.foodProduct),
+        quantity = ingredientWithFP.ingredient.quantity
     )
 
-    fun toEntity(ingredientDTO: IngredientDTO) : Ingredient =
-        Ingredient(
+    fun toEntities(ingredientDTO: IngredientDTO) : Pair<Ingredient, FoodProduct> {
+        val ingredient = Ingredient(
             recipeId = ingredientDTO.recipeId,
             foodProductId = ingredientDTO.foodProductId,
-            foodProduct = FoodProductMapper.toEntity(ingredientDTO.foodProduct),
             quantity = ingredientDTO.quantity
         )
-    fun toEntityList(ingredientDTOs: List<IngredientDTO>): List<Ingredient> =
-        ingredientDTOs.map { toEntity(it) }
-    fun toDTOList(ingredients: List<Ingredient>): List<IngredientDTO> {
-        TODO("Implement the conversion from List<Ingredient> to List<IngredientDTO>")
+        val foodProduct = FoodProductMapper.toEntity(ingredientDTO.foodProduct)
+        return ingredient to foodProduct
     }
 }
