@@ -100,7 +100,7 @@ fun OnboardingWeight(
                 value = textState,
                 onValueChange = { textState = it },
                 label = {
-                    Text(stringResource(id = R.string.onboarding_label_weight))
+                    Text(stringResource(id = R.string.userData_label_weight))
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = error != null,

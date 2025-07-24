@@ -94,7 +94,7 @@ fun OnboardingName(
                     .height(56.dp),
                 value = textState,
                 onValueChange = { textState = it },
-                label = { Text(stringResource(id = R.string.onboarding_label_name)) },
+                label = { Text(stringResource(id = R.string.userData_label_name)) },
                 isError = error != null,
                 singleLine = true,
                 textStyle = TextStyle( color = Color(0xFFFFFFFF))
