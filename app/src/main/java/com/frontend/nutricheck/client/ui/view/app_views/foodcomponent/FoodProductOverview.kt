@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
 import com.frontend.nutricheck.client.ui.theme.AppTheme
+import com.frontend.nutricheck.client.ui.view.widgets.CustomNumberPicker
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsWidget
@@ -35,7 +37,6 @@ import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 fun FoodProductOverview(
     draft: FoodProduct = FoodProduct(),
     isFromIngredient: Boolean = false,
-    currentServingSize: ServingSize = ServingSize.entries.first(),
     onCancel: () -> Unit = { },
     onPersist: (FoodProduct) -> Unit = { },
     onDropdownItemClick: (ServingSize) -> Unit = { },
@@ -45,6 +46,7 @@ fun FoodProductOverview(
     val actions = if (isFromIngredient) CustomPersistButton({ onPersist }) else null
     val servingSizes = listOf(ServingSize.entries)
     var expanded by remember { mutableStateOf(false) }
+    var count by remember { mutableIntStateOf(1) }
 
     Scaffold(
         topBar = {
@@ -90,6 +92,25 @@ fun FoodProductOverview(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 ServingSizeDropdown()
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Text(
+                    text = "Servings:",
+                    style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = colors.onSurfaceVariant,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                CustomNumberPicker(
+                    value = count,
+                    range = 1..200,
+                    onValueChange = { count = it }
+                )
             }
         }
     }

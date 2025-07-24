@@ -97,5 +97,6 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.accompanist.permissions)
     implementation(libs.coil.compose)
+    implementation(libs.compose.numberpicker)
 
 }

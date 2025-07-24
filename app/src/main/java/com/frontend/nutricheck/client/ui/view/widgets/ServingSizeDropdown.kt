@@ -19,10 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -36,11 +32,12 @@ fun ServingSizeDropdown(
     modifier: Modifier = Modifier,
     options: List<ServingSize> = ServingSize.entries.toList(),
     current: ServingSize = ServingSize.ONEGRAM,
+    expanded: Boolean = false,
+    onExpandedChange: (Boolean) -> Unit = {},
     onSelect: (ServingSize) -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    var expanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -55,7 +52,7 @@ fun ServingSizeDropdown(
             color =  colors.surfaceVariant,
             modifier = Modifier
                 .wrapContentSize()
-                .clickable { expanded = true }
+                .clickable { onExpandedChange.invoke(expanded) }
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -76,7 +73,7 @@ fun ServingSizeDropdown(
 
     DropdownMenu(
         expanded = expanded,
-        onDismissRequest = { expanded = false },
+        onDismissRequest = { onExpandedChange.invoke(false) },
         modifier = Modifier
             .wrapContentSize()
             .background(colors.onSurface, RoundedCornerShape(8.dp))
@@ -91,7 +88,7 @@ fun ServingSizeDropdown(
                     ) },
                 onClick = {
                     onSelect(size)
-                    expanded = false
+                    onExpandedChange(false)
                 }
             )
         }

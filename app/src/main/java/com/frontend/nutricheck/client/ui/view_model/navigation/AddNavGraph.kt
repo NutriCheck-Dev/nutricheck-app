@@ -1,8 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,8 +11,6 @@ import com.frontend.nutricheck.client.ui.view.app_views.FoodOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
-import com.frontend.nutricheck.client.ui.view_model.add_components.AddDialogEvent
-import com.frontend.nutricheck.client.ui.view_model.add_components.AddDialogViewModel
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
@@ -29,7 +25,6 @@ sealed class AddScreens(val route: String) {
 @Composable
 fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     val addNavController = rememberNavController()
-    val addDialogViewModel: AddDialogViewModel = hiltViewModel()
 
     var startDestination = when (origin) {
         AddDialogOrigin.BOTTOM_NAV_BAR -> {
@@ -43,21 +38,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        addDialogViewModel.events.collect { event ->
-            when (event) {
-                is AddDialogEvent.AddMeal -> {
-                    addNavController.navigate(AddScreens.AddMeal.route)
-                }
-                is AddDialogEvent.ScanFood -> {
-                    addNavController.navigate(AddScreens.AddAiMeal.route)
-                }
-                is AddDialogEvent.AddRecipe -> {
-                    addNavController.navigate(AddScreens.AddRecipe.route)
-                }
-            }
-        }
-    }
+    //TODO: LaunchedEffect mit events implementieren
 
     NavHost(
         navController = addNavController,

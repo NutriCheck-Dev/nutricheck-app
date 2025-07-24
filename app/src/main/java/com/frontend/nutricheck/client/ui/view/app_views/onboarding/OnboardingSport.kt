@@ -41,7 +41,7 @@ fun OnboardingSport(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit
 ) {
-    var selectedActivity by remember { mutableStateOf<ActivityLevel?>(state.activityLevel) }
+    var selectedActivity by remember { mutableStateOf(state.activityLevel) }
     val error = state.errorState
     Box(
         modifier = Modifier

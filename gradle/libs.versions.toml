@@ -23,6 +23,7 @@ materialIconsExtended = "<1.5.0>"
 materialIconsExtendedAndroid = "1.6.7"
 moshiKotlin = "1.15.2"
 navigationCompose = "2.4.0-alpha10"
+numberpicker = "1.0.3"
 playServicesBase = "18.7.1"
 serialization = "1.7.3"
 roomCommonJvm = "2.7.2"
@@ -68,6 +69,7 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
+compose-numberpicker = { group = "com.chargemap.compose", name = "numberpicker", version.ref = "numberpicker" }
 play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "playServicesBase" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }

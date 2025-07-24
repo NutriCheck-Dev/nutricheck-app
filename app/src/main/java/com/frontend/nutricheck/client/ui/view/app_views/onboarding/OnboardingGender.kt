@@ -42,7 +42,7 @@ fun OnboardingGender(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
 ) {
-    var selectedGender by remember { mutableStateOf<Gender?>(state.gender) }
+    var selectedGender by remember { mutableStateOf(state.gender) }
     val error = state.errorState
     Box(
         modifier = Modifier
