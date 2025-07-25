@@ -78,10 +78,9 @@ class EditRecipeViewModel @Inject constructor(
                     }
                 }
             recipeRepository.getIngredientsForRecipe(recipeId)
-                .collect { ingredients ->
-                    val foodComponents = ingredients.map { ingredient ->
-                        getFoodComponentOfIngredient(ingredient)
-                    }
+                .collect { ingredientWithFoodProduct ->
+                    val ingredients = ingredientWithFoodProduct.map { it.ingredient }
+                    val foodComponents = ingredientWithFoodProduct.map { it.foodProduct }
                     _editRecipeDraft.update {
                         it!!.copy(ingredients = ingredients, viewIngredients = foodComponents)
                     }
@@ -147,7 +146,10 @@ class EditRecipeViewModel @Inject constructor(
                 id = recipeId,
                 title = recipe.name,
                 description = recipe.instructions,
-                ingredients = recipeRepository.getIngredientsForRecipe(recipeId).first()
+                ingredients = recipeRepository
+                    .getRecipesWithIngredientsById(recipeId)
+                    .first()
+                    .ingredients
             )
         }
     }
@@ -168,7 +170,4 @@ class EditRecipeViewModel @Inject constructor(
             _events.emit(EditRecipeEvent.SaveChanges)
         }
     }
-
-    private suspend fun getFoodComponentOfIngredient(ingredient: Ingredient) : FoodProduct =
-        foodProductRepository.getFoodProductById(ingredient.foodProductId).first()
 }

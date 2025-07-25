@@ -3,7 +3,6 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.overview
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -52,7 +50,7 @@ class RecipeOverviewViewModel @Inject constructor(
                 }
             recipeRepository.getIngredientsForRecipe(recipeId)
                 .collect { ingredients ->
-                    val foodComponents = ingredients.map { getFoodComponentOfIngredient(it) }
+                    val foodComponents = ingredients.map { it.foodProduct }
                     _recipeOverviewState.update { it.copy(ingredients = foodComponents) }
                 }
 
@@ -104,7 +102,4 @@ class RecipeOverviewViewModel @Inject constructor(
     override suspend fun onShareRecipe(recipe: Recipe) {
         //("Not yet implemented")
     }
-
-    private suspend fun getFoodComponentOfIngredient(ingredient: Ingredient) : FoodProduct =
-        foodProductRepository.getFoodProductById(ingredient.foodProductId).first()
 }

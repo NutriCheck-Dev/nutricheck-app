@@ -24,44 +24,6 @@ class Converters {
     @TypeConverter
     fun toDate(timestamp: Long?): Date? = timestamp?.let { Date(it) }
 
-    @TypeConverter
-    fun fromMealList(meals: List<Meal>?): String =
-        moshi
-            .adapter<List<Meal>>(Types.newParameterizedType(List::class.java, Meal::class.java))
-            .toJson(meals ?: emptyList())
-
-    @TypeConverter
-    fun toMealList(json: String): List<Meal> {
-        val type = Types.newParameterizedType(List::class.java, Meal::class.java)
-        val adapter = moshi.adapter<List<Meal>>(type)
-        return adapter.fromJson(json) ?: emptyList()
-    }
-
-    @TypeConverter
-    fun fromIngredientSet(set: Set<Ingredient>?): String =
-        moshi
-            .adapter<Set<Ingredient>>(Types.newParameterizedType(Set::class.java, Ingredient::class.java))
-            .toJson(set ?: emptySet())
-
-    @TypeConverter
-    fun toIngredientSet(json: String): Set<Ingredient> {
-        val type = Types.newParameterizedType(Set::class.java, Ingredient::class.java)
-        val adapter = moshi.adapter<Set<Ingredient>>(type)
-        return adapter.fromJson(json) ?: emptySet()
-    }
-
-    @TypeConverter
-    fun fromMealItemSet(set: Set<MealItem>?): String =
-        moshi
-            .adapter<Set<MealItem>>(Types.newParameterizedType(Set::class.java, MealItem::class.java))
-            .toJson(set ?: emptySet())
-
-    @TypeConverter
-    fun toMealItemSet(json: String): Set<MealItem> {
-        val type = Types.newParameterizedType(Set::class.java, MealItem::class.java)
-        val adapter = moshi.adapter<Set<MealItem>>(type)
-        return adapter.fromJson(json) ?: emptySet()
-    }
 
     @TypeConverter
     fun fromGender(gender: Gender?): String? = gender?.name
