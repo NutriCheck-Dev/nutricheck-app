@@ -1,141 +1,115 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
-import android.content.res.Resources
-import android.widget.EditText
-import android.widget.NumberPicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Popup
-import com.frontend.nutricheck.client.ui.theme.AppTheme
-import androidx.compose.ui.graphics.toArgb
 
 @Composable
 fun CustomNumberPicker(
     modifier: Modifier = Modifier,
-    value: Int,
-    range: IntRange,
-    onValueChange: (Int) -> Unit
+    list: List<String>,
+    textStyle: TextStyle,
+    state: LazyListState,
+    flingBehavior: FlingBehavior,
+    visibleCount: Int,
+    halfCount: Int,
+    onSelectedIndexChange: (Int) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
-    val styles = MaterialTheme.typography
+    val height = with(LocalDensity.current) {
+        textStyle.fontSize.toDp() + 8.dp
+    }
+    val centeredIndex by remember {
+        derivedStateOf { state.firstVisibleItemIndex + halfCount }
+    }
 
-    Box(modifier = Modifier
-        .width(180.dp)
-        .background(colors.surfaceVariant, RoundedCornerShape(8.dp))
-        .border(1.dp, colors.outline, RoundedCornerShape(8.dp)),
+    LaunchedEffect(centeredIndex) {
+        val realIndex = (centeredIndex - halfCount).coerceIn(0, list.lastIndex)
+        onSelectedIndexChange(realIndex)
+    }
+
+    Box(
+        modifier = modifier
+            .background(colors.surfaceVariant, RoundedCornerShape(8.dp))
+            .border(1.dp, colors.outline, RoundedCornerShape(8.dp)),
         contentAlignment = Alignment.Center
     ) {
-        Surface(
-            tonalElevation = 2.dp,
-            shape = RoundedCornerShape(8.dp),
-            color = colors.surfaceVariant,
+        LazyColumn(
+            state = state,
+            flingBehavior = flingBehavior,
             modifier = Modifier
-                .wrapContentSize()
-                .clickable { expanded = true }
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "$value",
-                    style = styles.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Spacer(Modifier.weight(1f))
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null,
-                )
-            }
-        }
-        if (expanded) {
-            Popup(
-                onDismissRequest = { expanded = false },
-                alignment = Alignment.TopStart,
-                offset = IntOffset(0, 48)
-            ) {
-                Surface(
-                    tonalElevation = 4.dp,
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .height(160.dp)
-                        .background(colors.surface)
-                ) {
-                    AndroidView(
-                        modifier = modifier.fillMaxSize(),
-                        factory =  { context ->
-                            NumberPicker(context).apply {
-                                minValue = range.first
-                                maxValue = range.last
-                                wrapSelectorWheel = true
-                                post {
-                                    val input = findViewById<EditText>(
-                                        Resources.getSystem().getIdentifier(
-                                            "numberpicker_input",
-                                            "id",
-                                            "android"
-                                        )
-                                    )
-                                    input?.setTextColor(colors.onSurfaceVariant.toArgb())
-                                    input?.highlightColor = colors.onSurfaceVariant.toArgb()
-                                }
-                                setOnValueChangedListener { _, _, new ->
-                                    onValueChange(new)
-                                }
-                            }
-                        },
-                        update = { picker ->
-                            if (picker.value != value) picker.value = value
-                        }
+                .padding(4.dp)
+                .height(height * visibleCount)
+                .fillMaxWidth()
+                .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+                .drawWithContent{
+                    drawContent()
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            0f to Color.Transparent,
+                            0.5f to colors.surfaceVariant,
+                            1f to Color.Transparent
+                        ),
+                        blendMode = BlendMode.DstIn
                     )
-                }
+                },
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(halfCount) {
+                Spacer(Modifier
+                    .fillMaxWidth()
+                    .height(height)
+                )
+            }
+
+            items(list) { value ->
+                Text(
+                    text = value,
+                    style = textStyle,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height)
+                        .wrapContentHeight(Alignment.CenterVertically)
+                )
+            }
+
+            items(halfCount) {
+                Spacer(Modifier
+                    .fillMaxWidth()
+                    .height(height)
+                )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun AndroidNumberPickerPreview() {
-    var value by remember { mutableIntStateOf(5) }
-    AppTheme(darkTheme = true) {
-        CustomNumberPicker(
-            value = value,
-            range = 0..10,
-            onValueChange = { newValue -> value = newValue }
-        )
     }
 }

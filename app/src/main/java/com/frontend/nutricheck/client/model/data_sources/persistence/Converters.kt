@@ -4,15 +4,11 @@ import androidx.room.TypeConverter
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
-import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
 import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import java.util.Date
 
 class Converters {

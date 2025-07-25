@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
 import com.frontend.nutricheck.client.ui.theme.AppTheme
-import com.frontend.nutricheck.client.ui.view.widgets.CustomNumberPicker
+import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsWidget
@@ -106,7 +106,7 @@ fun FoodProductOverview(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                CustomNumberPicker(
+                ServingsPicker(
                     value = count,
                     range = 1..200,
                     onValueChange = { count = it }
