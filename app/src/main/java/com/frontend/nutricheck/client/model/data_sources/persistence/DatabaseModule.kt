@@ -1,10 +1,14 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence
 
 import android.content.Context
+import androidx.room.Database
 import androidx.room.Room
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDataDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
@@ -54,4 +58,16 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideIngredientDao(database: LocalDatabase): IngredientDao = database.ingredientDao()
+
+    @Singleton
+    @Provides
+    fun provideMealDao(database: LocalDatabase): MealDao = database.mealDao()
+
+    @Singleton
+    @Provides
+    fun provideMealFoodItemDao(database: LocalDatabase): MealFoodItemDao = database.mealFoodItemDao()
+
+    @Singleton
+    @Provides
+    fun provideMealRecipeItemDao(database: LocalDatabase): MealRecipeItemDao = database.mealRecipeItemDao()
 }
