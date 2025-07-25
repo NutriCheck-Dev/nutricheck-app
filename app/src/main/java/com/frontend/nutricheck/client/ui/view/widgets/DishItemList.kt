@@ -17,16 +17,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 @Composable
 fun DishItemList(
     modifier: Modifier = Modifier,
-    foodComponents: Set<FoodComponent> = emptySet(),
+    foodComponents: List<FoodComponent> = emptyList(),
     trailingContent: @Composable ((item: FoodComponent) -> Unit)? = null,
     isEditing: Boolean = false,
     onAddButtonClick: () -> Unit = {},
@@ -67,21 +64,5 @@ fun DishItemList(
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun DishItemListPreview() {
-    AppTheme(darkTheme = true) {
-        DishItemList(
-            isEditing = true,
-            foodComponents = setOf(
-                Recipe(),
-                Recipe(),
-                Recipe(),
-                Recipe()
-            )
-        )
     }
 }

@@ -21,7 +21,6 @@ import com.frontend.nutricheck.client.ui.theme.extended
 
 @Composable
 fun ReportRecipeDialog(
-    recipeId: String = "",
     title: String = "Report",
     confirmText: String = "Send",
     cancelText: String = "Cancel",
@@ -33,7 +32,7 @@ fun ReportRecipeDialog(
 ) {
     val colors = MaterialTheme.colorScheme
     val extendedColors = MaterialTheme.extended
-    val styles = MaterialTheme.typography
+    MaterialTheme.typography
 
     AlertDialog(
         icon = {

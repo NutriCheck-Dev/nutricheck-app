@@ -7,9 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.app_views.CreateRecipePage
-import com.frontend.nutricheck.client.ui.view.app_views.FoodOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
+import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
 
 sealed class AddScreens(val route: String) {
@@ -60,7 +60,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
 
         composable(AddScreens.AddAiMeal.route) { TODO( "insert addAI meal page" ) }
 
-        composable (AddScreens.FoodOverview.route) { FoodOverview() }
+        composable (AddScreens.FoodOverview.route) { FoodProductOverview() }
         composable (AddScreens.RecipeOverview.route) { RecipeOverview() }
     }
 }

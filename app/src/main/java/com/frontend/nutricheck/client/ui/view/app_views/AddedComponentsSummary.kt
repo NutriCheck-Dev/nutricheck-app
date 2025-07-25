@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
@@ -71,17 +72,15 @@ fun AddedComponentsSummary(
         ) {
             DishItemList(
                 foodComponents = if (isFromAddIngredient) {
-                    buildSet {
-                        editRecipeState!!.addedIngredients.forEach { it.foodProduct }
-                    }
+                    editRecipeState!!.viewIngredients
                 } else {
-                    searchState.addedComponents.toSet()
+                    searchState.addedComponents
                        },
                 trailingContent = { item ->
                     CustomCloseButton(onClick = {
                         if (isFromAddIngredient) {
                             editRecipeViewModel.onEvent(
-                                EditRecipeEvent.IngredientRemovedInSummary(item)
+                                EditRecipeEvent.IngredientRemovedInSummary(item as FoodProduct)
                             )
                         } else {
                             searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(item))

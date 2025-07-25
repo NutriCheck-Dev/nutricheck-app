@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDataDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
@@ -49,4 +50,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideUserDataDao(database: LocalDatabase): UserDataDao = database.userDataDao()
+
+    @Singleton
+    @Provides
+    fun provideIngredientDao(database: LocalDatabase): IngredientDao = database.ingredientDao()
 }

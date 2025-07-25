@@ -33,6 +33,7 @@ import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
 @Composable
 fun RecipeOverviewBaseContent(
     recipe: Recipe = Recipe(),
+    ingredients: List<FoodComponent>,
     onDownLoad: (Recipe) -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: (Recipe) -> Unit = {},
@@ -46,10 +47,6 @@ fun RecipeOverviewBaseContent(
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     var expanded by remember { mutableStateOf(false) }
-    val foodComponents: Set<FoodComponent> =
-        recipe.ingredients
-            .map { it.foodProduct }
-            .toSet()
 
     Scaffold(
         topBar = {
@@ -105,7 +102,7 @@ fun RecipeOverviewBaseContent(
 
                 DishItemList(
                     isEditing = false,
-                    foodComponents = foodComponents,
+                    foodComponents = ingredients,
                     modifier = Modifier
                         .fillMaxWidth()
                 )

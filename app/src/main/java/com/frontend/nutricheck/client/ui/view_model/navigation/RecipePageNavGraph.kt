@@ -74,11 +74,6 @@ fun RecipePageNavGraph() {
                 RecipeOverview(
                     recipeOverviewViewModel = recipeOverviewViewModel,
                     editRecipeViewModel = editRecipeViewModel,
-                    onAddIngredient = {
-                        recipePageNavController.navigate(
-                            RecipePageScreens.AddIngredientPage.createRoute(recipeId)
-                        )
-                    }
                 )
             }
 
