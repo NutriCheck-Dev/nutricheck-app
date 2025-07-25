@@ -1,18 +1,12 @@
 package com.frontend.nutricheck.client.ui.view_model.food
 
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
-abstract class BaseFoodOverviewViewModel<DRAFT>(
-    initialDraft: DRAFT
-) :BaseViewModel() {
+abstract class BaseFoodOverviewViewModel() :BaseViewModel() {
 
-    private val _draft = MutableStateFlow(initialDraft)
-    val draft: StateFlow<DRAFT> = _draft.asStateFlow()
-
-    abstract fun addToMealClick(id: String)
-
-    abstract fun onEditClick()
+    abstract fun onSaveAndAddClick(): FoodProduct
+    abstract fun onServingsChanged(servings: Int)
+    abstract fun onServingSizeChanged(servingSize: ServingSize)
 }

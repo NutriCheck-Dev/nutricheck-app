@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -32,7 +31,6 @@ sealed interface RecipeOverviewEvent {
 @HiltViewModel
 class RecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
-    private val foodProductRepository: FoodProductRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseRecipeOverviewViewModel() {
     private val _recipeOverviewState = MutableStateFlow(RecipeOverviewState())

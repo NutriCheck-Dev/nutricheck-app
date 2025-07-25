@@ -75,8 +75,8 @@ fun ServingsPicker(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expanded = true }
-                .padding(16.dp),
+                .clickable { expanded = !expanded }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
