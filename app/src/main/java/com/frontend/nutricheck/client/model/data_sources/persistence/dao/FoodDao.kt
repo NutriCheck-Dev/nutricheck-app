@@ -3,9 +3,11 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,6 +21,8 @@ interface FoodDao : BaseDao<FoodProduct> {
 
     @Delete
     override suspend fun delete(obj: FoodProduct)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(mealFoodItems: List<FoodProduct>)
 
     @Query("SELECT * FROM foods WHERE id = :id")
     fun getById(id: String): Flow<FoodProduct>

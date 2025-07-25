@@ -4,6 +4,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 
 sealed interface DisplayMealItem {
     val name: String
@@ -36,4 +37,23 @@ data class DisplayMealRecipeItem(
     override val carbohydrates get() = recipe.carbohydrates
     override val protein get() = recipe.protein
     override val fat get() = recipe.fat
+}
+
+fun buildDisplayMealItems(meals: List<MealWithAll>): List<DisplayMealItem> {
+    return meals.flatMap { mealWithAll ->
+        // Alle Food-Items
+        mealWithAll.mealFoodItems.map { foodItemWithProduct ->
+            DisplayMealFoodItem(
+                item = foodItemWithProduct.mealFoodItem,
+                product = foodItemWithProduct.foodProduct
+            )
+        } +
+                // Alle Recipe-Items
+                mealWithAll.mealRecipeItems.map { recipeItemWithRecipe ->
+                    DisplayMealRecipeItem(
+                        item = recipeItemWithRecipe.mealRecipeItem,
+                        recipe = recipeItemWithRecipe.recipe
+                    )
+                }
+    }
 }

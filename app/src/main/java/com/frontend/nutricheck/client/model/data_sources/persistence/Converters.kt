@@ -13,16 +13,36 @@ import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import java.util.Calendar
 import java.util.Date
 
 class Converters {
     private val moshi = Moshi.Builder().build()
 
     @TypeConverter
-    fun fromDate(date: Date): Long? = date.time
+    fun fromDate(date: Date): Long? {
+        val calendar = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        return calendar.timeInMillis
+    }
 
     @TypeConverter
-    fun toDate(timestamp: Long?): Date? = timestamp?.let { Date(it) }
+    fun toDate(timestamp: Long?): Date? {
+        if (timestamp == null) return null
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = timestamp
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        return calendar.time
+    }
 
 
     @TypeConverter

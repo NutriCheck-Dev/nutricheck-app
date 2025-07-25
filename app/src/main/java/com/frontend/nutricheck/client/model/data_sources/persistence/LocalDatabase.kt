@@ -15,6 +15,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDataDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
@@ -42,4 +45,7 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun weightDao(): WeightDao
     abstract fun userDataDao(): UserDataDao
     abstract fun ingredientDao(): IngredientDao
+    abstract fun mealDao(): MealDao
+    abstract fun mealFoodItemDao(): MealFoodItemDao
+    abstract fun mealRecipeItemDao(): MealRecipeItemDao
 }

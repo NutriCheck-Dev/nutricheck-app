@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.ui.view_model.history
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,7 @@ import javax.inject.Inject
 data class HistoryState(
     val selectedDate: Date = Date(),
     val nutritionOfDay: Map<String, Int> = emptyMap(),
-    val mealsGrouped: Map<DayTime, List<Meal>> = emptyMap(),
+    val mealsGrouped: Map<DayTime, List<MealWithAll>> = emptyMap(),
     val foodId: String = "",
     val totalCalories: Int = 0,
     val goalCalories: Int = 0,
@@ -58,7 +59,9 @@ class HistoryViewModel @Inject constructor(
     }
     // Die benötigten Parameter sollten über den State bereitgestellt werden, siehe beispiel Profile,
     // außer die Rückgabewerte an das ViewModel, die werden über Events gesendet
-
+    init {
+        selectDate(Date())
+    }
     override fun onAddEntryClick(day: Date, dayTime: DayTime) {
         viewModelScope.launch {
             _events.emit(HistoryEvent.AddEntryClick(day, dayTime))
@@ -91,11 +94,11 @@ class HistoryViewModel @Inject constructor(
     override fun displayNutritionOfDay(day: Date) {}
     override fun displayMealsOfDay(day: Date) {
         viewModelScope.launch {
-            val meals = historyRepository.getMealsForDay(day)
-            val grouped = meals.groupBy { meal -> meal.dayTime }
+            val mealsWithAll = historyRepository.getMealsForDay(day)
+            val groupedMeals = mealsWithAll.groupBy { it.meal.dayTime }
             _historyState.update {
                 it.copy(
-                    mealsGrouped = grouped
+                    mealsGrouped = groupedMeals
                 )
             }
         }
