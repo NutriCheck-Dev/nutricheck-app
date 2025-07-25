@@ -12,49 +12,43 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.theme.AppTheme
-import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsWidget
 import com.frontend.nutricheck.client.ui.view.widgets.ServingSizeDropdown
+import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 
 @Composable
 fun FoodProductOverview(
-    draft: FoodProduct = FoodProduct(),
-    isFromIngredient: Boolean = false,
-    onCancel: () -> Unit = { },
-    onPersist: (FoodProduct) -> Unit = { },
-    onDropdownItemClick: (ServingSize) -> Unit = { },
+    foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel()
 ) {
+    val foodProductState by foodProductOverviewViewModel.foodProductOverviewState.collectAsState()
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val actions = if (isFromIngredient) CustomPersistButton({ onPersist }) else null
-    val servingSizes = listOf(ServingSize.entries)
-    var expanded by remember { mutableStateOf(false) }
-    var count by remember { mutableIntStateOf(1) }
+    val onPersist = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
+    val onCancel = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.GoBack)
+    val actions = if (foodProductState.isFromIngredient) CustomPersistButton { onPersist } else null
 
     Scaffold(
         topBar = {
             ViewsTopBar(
-                navigationIcon = { CustomCloseButton(onClick = onCancel) },
+                navigationIcon = { CustomCloseButton(onClick = { onCancel }) },
                 title = {
                     Text(
-                        text = draft.name,
+                        text = foodProductState.foodName,
                         style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -75,7 +69,7 @@ fun FoodProductOverview(
         ) {
 
             FoodProductNutrientChartsWidget(
-                foodProduct = draft,
+                foodProduct = foodProductState.foodProduct,
                 modifier = Modifier.wrapContentHeight()
             )
 
@@ -91,7 +85,16 @@ fun FoodProductOverview(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                ServingSizeDropdown()
+                ServingSizeDropdown(
+                    currentServingSize = foodProductState.servingSize,
+                    expanded = foodProductState.servingSizeDropDownExpanded,
+                    onExpandedChange = { foodProductOverviewViewModel.onEvent(
+                        FoodProductOverviewEvent.ServingSizeDropDownClick
+                    ) },
+                    onSelect = { foodProductOverviewViewModel.onEvent(
+                        FoodProductOverviewEvent.ServingSizeChanged(it)
+                    )}
+                )
             }
 
             Row(
@@ -107,9 +110,11 @@ fun FoodProductOverview(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 ServingsPicker(
-                    value = count,
+                    value = foodProductState.servings,
                     range = 1..200,
-                    onValueChange = { count = it }
+                    onValueChange = { foodProductOverviewViewModel.onEvent(
+                        FoodProductOverviewEvent.ServingsChanged(it)
+                    ) }
                 )
             }
         }

@@ -13,4 +13,7 @@ enum class ServingSize(private val amount: Int) {
             "$amount grams"
         }
     }
+    fun getAmount(): Int {
+        return amount
+    }
 }

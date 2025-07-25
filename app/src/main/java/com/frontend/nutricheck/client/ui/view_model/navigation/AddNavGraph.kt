@@ -1,6 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +13,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOver
 import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
@@ -18,8 +21,12 @@ sealed class AddScreens(val route: String) {
     object AddMeal : AddScreens("add_meal")
     object AddRecipe : AddScreens("add_recipe")
     object MealOverview : AddScreens("meal_overview")
-    object FoodOverview : AddScreens("food_overview")
-    object RecipeOverview : AddScreens("recipe_overview")
+    object FoodOverview : AddScreens("food_product_overview/{foodId}") {
+        fun createRoute(foodId: String) = "food_product_overview/$foodId"
+    }
+    object RecipeOverview : AddScreens("recipe_overview/{recipeId}") {
+        fun createRoute(recipeId: String) = "recipe_overview/$recipeId"
+    }
 
 }
 @Composable
@@ -60,7 +67,16 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
 
         composable(AddScreens.AddAiMeal.route) { TODO( "insert addAI meal page" ) }
 
-        composable (AddScreens.FoodOverview.route) { FoodProductOverview() }
+        composable (AddScreens.FoodOverview.route) { backStack ->
+            val foodId = backStack.arguments!!.getString("foodId")!!
+            val graphEntry = remember(backStack) {
+                addNavController.getBackStackEntry(
+                    AddScreens.FoodOverview.createRoute(foodId)
+                )
+            }
+            val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
+            FoodProductOverview(foodProductOverviewViewModel = foodProductOverviewViewModel)
+        }
         composable (AddScreens.RecipeOverview.route) { RecipeOverview() }
     }
 }
