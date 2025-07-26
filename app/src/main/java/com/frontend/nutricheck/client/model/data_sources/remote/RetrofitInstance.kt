@@ -9,7 +9,8 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
 
-    private const val BASE_URL = "https://1d25b66e-2926-4996-bb00-2d7fe74c098f.ka.bw-cloud-instance.org/"
+    private const val BASE_URL =
+        "https://1d25b66e-2926-4996-bb00-2d7fe74c098f.ka.bw-cloud-instance.org/"
 
     private val okHttpClient: OkHttpClient by lazy {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -36,9 +37,7 @@ object RetrofitInstance {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient) // Den benutzerdefinierten OkHttpClient verwenden
-            .addConverterFactory(
-                GsonConverterFactory.create(GsonBuilder().create())
-            ) // Gson-Instanz ggf. anpassen
+            .addConverterFactory(GsonConverterFactory.create()) // Gson-Instanz ggf. anpassen
             .build()
     }
 
