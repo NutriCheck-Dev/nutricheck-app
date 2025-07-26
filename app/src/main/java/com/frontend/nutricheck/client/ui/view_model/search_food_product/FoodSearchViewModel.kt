@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.search_food_product
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Result
@@ -37,10 +38,19 @@ sealed interface  SearchEvent {
 @HiltViewModel
 class FoodSearchViewModel @Inject constructor(
     private val recipeRepository: RecipeRepositoryImpl,
-    private val foodProductRepository: FoodProductRepositoryImpl
+    private val foodProductRepository: FoodProductRepositoryImpl,
+    savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
+
+    private val isFromAddIngredient = savedStateHandle.get<Boolean>("fromAddIngredient")
     private val _searchState = MutableStateFlow(SearchState())
     val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
+
+    init {
+        isFromAddIngredient?.let {
+            _searchState.update { it.copy(isFromAddIngredient = isFromAddIngredient) }
+        }
+    }
 
     val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()

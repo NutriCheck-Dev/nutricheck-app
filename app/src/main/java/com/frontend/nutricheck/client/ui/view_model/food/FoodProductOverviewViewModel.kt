@@ -98,7 +98,6 @@ class FoodProductOverviewViewModel @Inject constructor(
 
     override fun onBackClick() {
         _foodProductOverviewState.update { FoodProductOverviewState() }
-        emitEvent(FoodProductOverviewEvent.GoBack)
     }
 
     override fun onServingsChanged(servings: Int) {

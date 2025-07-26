@@ -33,7 +33,8 @@ import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewView
 
 @Composable
 fun FoodProductOverview(
-    foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel()
+    foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(),
+    onBack: () -> Unit = { }
 ) {
     val foodProductState by foodProductOverviewViewModel.foodProductOverviewState.collectAsState()
     val colors = MaterialTheme.colorScheme
@@ -45,7 +46,12 @@ fun FoodProductOverview(
     Scaffold(
         topBar = {
             ViewsTopBar(
-                navigationIcon = { CustomCloseButton(onClick = { onCancel }) },
+                navigationIcon = {
+                    CustomCloseButton {
+                        onCancel
+                        onBack.invoke()
+                    }
+                                 },
                 title = {
                     Text(
                         text = foodProductState.foodName,
