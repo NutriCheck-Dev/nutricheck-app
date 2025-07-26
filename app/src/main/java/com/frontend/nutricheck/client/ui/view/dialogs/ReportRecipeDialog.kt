@@ -72,11 +72,3 @@ fun ReportRecipeDialog(
         }
     )
 }
-
-@Preview
-@Composable
-fun ReportRecipeDialogPreview() {
-    AppTheme(darkTheme = true) {
-        ReportRecipeDialog()
-    }
-}
