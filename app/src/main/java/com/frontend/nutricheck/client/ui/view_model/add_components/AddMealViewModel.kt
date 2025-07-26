@@ -6,7 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -37,7 +37,7 @@ sealed interface AddMealEvent {
 
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
-    private val historyRepository: HistoryRepository,
+    private val historyRepository: HistoryRepositoryImpl,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
     private val historyDateMillis: Long? = savedStateHandle.get<Long>("historyDate")

@@ -6,8 +6,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
-import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,8 +49,8 @@ sealed interface EditRecipeEvent {
 
 @HiltViewModel
 class EditRecipeViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository,
-    private val foodProductRepository: FoodProductRepository,
+    private val recipeRepository: RecipeRepositoryImpl,
+    private val foodProductRepository: FoodProductRepositoryImpl,
     savedStateHandle: SavedStateHandle
 ) : BaseEditRecipeViewModel() {
 

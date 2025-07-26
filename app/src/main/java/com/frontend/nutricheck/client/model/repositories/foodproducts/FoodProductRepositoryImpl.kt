@@ -14,9 +14,9 @@ class FoodProductRepositoryImpl @Inject constructor(
 ) : FoodProductRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
-    override suspend fun searchFoodProduct(foodProductName: String): List<FoodProduct> {
+    override suspend fun searchFoodProduct(foodProductName: String, language: String): List<FoodProduct> {
         return try {
-            val response = api.searchFoodProduct(foodProductName)
+            val response = api.searchFoodProduct(foodProductName, language)
             if (response.isSuccessful) {
                 response.body()!!
                     .map { dTO ->
