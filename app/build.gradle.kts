@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     alias(libs.plugins.hilt)
 }
 
@@ -66,8 +66,8 @@ dependencies {
     implementation(libs.compose)
     implementation(libs.vico.core)
     implementation(libs.androidx.camera.view)
-    kapt(libs.androidx.room.compiler)
-    kapt(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
+    ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
