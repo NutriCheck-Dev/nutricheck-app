@@ -13,30 +13,24 @@ import retrofit2.http.Query
 
 interface RemoteApi {
 
-    // Rezept hochladen (POST)
+    //User: Recipes
     @POST("/user/recipes")
     suspend fun uploadRecipe(@Body recipe: RecipeDTO): Response<RecipeDTO>
 
-    // Rezept herunterladen (GET)
     @GET("/user/recipes/{recipeId}")
     suspend fun downloadRecipe(@Path("recipeId") recipeId: String): Response<RecipeDTO>
 
-    // Meldeantrag hochladen (POST)
     @POST("/user/recipes/report")
     suspend fun reportRecipe(@Body recipeReport: ReportDTO): Response<ReportDTO>
 
-    // Lebensmittel suchen, mit language Query-Parameter (default "de")
-    @GET("/search/products/{name}")
-    suspend fun searchFoodProduct(
-        @Path("name") name: String,
-        @Query("language") language: String = "de"
-    ): Response<List<FoodProductDTO>>
-
-    // Rezepte suchen
-    @GET("/search/recipes/{name}")
+    //User: Search and Meal
+    @GET("/user/search/products/{name}")
+    suspend fun searchFoodProduct(@Path("name") name: String,
+                                  @Query("language") language: String ): Response<List<FoodProductDTO>>
+    @GET("/user/search/recipes/{name}")
     suspend fun getRecipes(@Path("name") name: String): Response<List<RecipeDTO>>
 
-    // Mahlzeit schätzen lassen (POST)
-    @POST("/meal")
+    //TODO: How to pass picture
+    @POST("/user/meal")
     suspend fun estimateMeal(@Body picture: String): Response<MealDTO>
 }

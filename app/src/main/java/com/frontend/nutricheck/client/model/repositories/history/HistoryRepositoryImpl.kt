@@ -33,8 +33,18 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCaloriesOfDay(date: Date): Int {
-        TODO("Not yet implemented")
-        return 2000
+        val mealsWithAll = mealDao.getMealsWithAllForDay(date) // oder repository.getMealsWithAllForDay(date)
+        return mealsWithAll.sumOf { mealWithAll ->
+            // Alle FoodItems dieses Meals
+            val foodItemsCalories = mealWithAll.mealFoodItems.sumOf { itemWithProduct ->
+                itemWithProduct.mealFoodItem.quantity * itemWithProduct.foodProduct.calories
+            }
+            // Alle RecipeItems dieses Meals
+            val recipeItemsCalories = mealWithAll.mealRecipeItems.sumOf { itemWithRecipe ->
+                itemWithRecipe.mealRecipeItem.quantity * itemWithRecipe.recipe.calories
+            }
+            foodItemsCalories + recipeItemsCalories
+        }.toInt() // auf ganze Zahl runden
     }
 
     override suspend fun getDailyHistory(date: Date): HistoryDay {
