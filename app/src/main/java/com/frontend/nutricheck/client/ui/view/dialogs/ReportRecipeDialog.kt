@@ -18,9 +18,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.theme.extended
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @Composable
 fun ReportRecipeDialog(
+    reportRecipeViewModel: ReportRecipeViewModel,
     title: String = "Report",
     confirmText: String = "Send",
     cancelText: String = "Cancel",

@@ -2,7 +2,6 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 
 data class RecipeWithIngredients(
@@ -12,5 +11,5 @@ data class RecipeWithIngredients(
         parentColumn = "id",
         entityColumn = "recipeId"
     )
-    val ingredients: List<Ingredient>
+    val ingredients: List<IngredientWithFoodProduct>
 )

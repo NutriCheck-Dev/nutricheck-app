@@ -32,10 +32,12 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
 import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverviewBaseContent(
+    reportRecipeViewModel: ReportRecipeViewModel,
     recipe: Recipe = Recipe(),
     ingredients: List<FoodComponent>,
     onItemClick: (FoodComponent) -> Unit = {},
@@ -161,6 +163,7 @@ fun RecipeOverviewBaseContent(
             if (showReportDialog) {
                 item {
                     ReportRecipeDialog(
+                        reportRecipeViewModel = reportRecipeViewModel,
                         title = "Report",
                         confirmText = "Send",
                         cancelText = "Cancel",

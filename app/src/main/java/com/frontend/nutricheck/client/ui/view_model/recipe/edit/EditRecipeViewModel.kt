@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -27,7 +26,7 @@ data class RecipeDraft(
     val description: String,
     val ingredients: List<Ingredient> = emptyList(),
     val addedIngredients: List<Ingredient> = emptyList(),
-    val viewIngredients: List<FoodComponent> = emptyList(),
+    val viewIngredients: List<FoodComponent> = emptyList()
 ) {
     fun toRecipe(): Recipe = Recipe(
         id = id,
@@ -66,23 +65,20 @@ class EditRecipeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            recipeRepository.getRecipeById(recipeId)
-                .collect { recipe ->
+            recipeRepository.getRecipesWithIngredientsById(recipeId)
+                .collect { recipeWithIngredients ->
+                    val recipe = recipeWithIngredients.recipe
+                    val ingredientsWithProducts = recipeWithIngredients.ingredients
+                    val ingredients = ingredientsWithProducts.map { it.ingredient }
                     _recipe.value = recipe
                     if (_editRecipeDraft.value == null) {
                         _editRecipeDraft.value = RecipeDraft(
                             id = recipe.id,
                             title = recipe.name,
-                            description = recipe.instructions
+                            description = recipe.instructions,
+                            ingredients = ingredients,
+                            viewIngredients = ingredientsWithProducts.map { it.foodProduct }
                         )
-                    }
-                }
-            recipeRepository.getIngredientsForRecipe(recipeId)
-                .collect { ingredientWithFoodProduct ->
-                    val ingredients = ingredientWithFoodProduct.map { it.ingredient }
-                    val foodComponents = ingredientWithFoodProduct.map { it.foodProduct }
-                    _editRecipeDraft.update {
-                        it!!.copy(ingredients = ingredients, viewIngredients = foodComponents)
                     }
                 }
         }
@@ -146,10 +142,7 @@ class EditRecipeViewModel @Inject constructor(
                 id = recipeId,
                 title = recipe.name,
                 description = recipe.instructions,
-                ingredients = recipeRepository
-                    .getRecipesWithIngredientsById(recipeId)
-                    .first()
-                    .ingredients
+                ingredients = emptyList(), //TODO
             )
         }
     }

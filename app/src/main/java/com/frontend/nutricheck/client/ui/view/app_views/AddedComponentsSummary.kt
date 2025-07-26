@@ -32,10 +32,10 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEv
 @Composable
 fun AddedComponentsSummary(
     modifier: Modifier = Modifier,
-    searchViewModel: FoodSearchViewModel = hiltViewModel(),
-    editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
+    searchViewModel: FoodSearchViewModel,
+    editRecipeViewModel: EditRecipeViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
-    onSave: () -> Unit = {}, //TODO: Implement save logic + icon for it
+    onSave: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme

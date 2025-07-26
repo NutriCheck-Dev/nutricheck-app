@@ -5,7 +5,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.RecipeWithIngredients
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
@@ -46,20 +45,8 @@ class RecipeRepositoryImpl @Inject constructor(
     override fun getRecipesWithIngredientsById(recipeId: String): Flow<RecipeWithIngredients> =
         recipeDao.getRecipeWithIngredientsById(recipeId)
 
-    override fun getOnlineRecipes(): Flow<List<Recipe>> =
-        recipeDao.getAllMyRecipes()
-
-    override fun getMyRecipes(): Flow<List<Recipe>> =
-        recipeDao.getAllMyRecipes()
-
-    override fun getRecipeById(recipeId: String) =
-        recipeDao.getById(recipeId)
-
     override suspend fun updateRecipe(recipe: Recipe) =
         recipeDao.update(recipe)
-
-    override fun getIngredientsForRecipe(recipeId: String): Flow<List<IngredientWithFoodProduct>> =
-        ingredientDao.getIngredientsWithFoodProducts(recipeId)
 
     override suspend fun addIngredient(ingredient: Ingredient) =
         ingredientDao.insert(ingredient)

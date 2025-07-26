@@ -38,7 +38,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewMo
 @Composable
 fun RecipePage(
     modifier: Modifier = Modifier,
-    recipePageViewModel: RecipePageViewModel = hiltViewModel(),
+    recipePageViewModel: RecipePageViewModel,
     onAddRecipeClick: () -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {}
 ) {

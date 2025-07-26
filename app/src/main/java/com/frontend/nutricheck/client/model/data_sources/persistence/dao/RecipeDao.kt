@@ -20,15 +20,9 @@ interface RecipeDao : BaseDao<Recipe> {
     @Delete
     override suspend fun delete(obj: Recipe)
 
-    @Query("SELECT * FROM recipes WHERE id = :id")
-    fun getById(id: String): Flow<Recipe>
-
-    @Query("SELECT * FROM recipes ORDER BY name ASC")
-    fun getAll(): Flow<List<Recipe>>
-
     @Transaction
     @Query("SELECT * FROM recipes ORDER BY name ASC")
-    fun getAllMyRecipes(): Flow<List<Recipe>>
+    fun getAllMyRecipes(): Flow<List<RecipeWithIngredients>>
 
     @Transaction
     @Query("SELECT * FROM recipes")

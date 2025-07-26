@@ -48,7 +48,8 @@ fun RecipeOverview(
             onReportClick = { reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked) }, //TODO: Implement report click functionality
             onBack = onBack,
             showReportDialog = reportRecipeState.isReporting,
-            ingredients = recipeOverviewState.ingredients
+            ingredients = recipeOverviewState.ingredients,
+            reportRecipeViewModel = reportRecipeViewModel
         )
     } else {
         draftState?.let { draft ->

@@ -43,7 +43,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeVi
 @Composable
 fun CreateRecipePage(
     modifier: Modifier = Modifier,
-    createRecipeViewModel: CreateRecipeViewModel = hiltViewModel(),
+    createRecipeViewModel: CreateRecipeViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
     onBack: () -> Unit = {},
 ) {
@@ -157,15 +157,5 @@ fun CreateRecipePage(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun CreateRecipePagePreview() {
-    AppTheme(darkTheme = true) {
-        CreateRecipePage(
-            onBack = {}
-        )
     }
 }

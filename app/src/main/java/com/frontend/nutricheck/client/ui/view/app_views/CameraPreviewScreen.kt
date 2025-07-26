@@ -21,14 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealViewModel
 
 @Composable
 fun CameraPreviewScreen(
-    addAiMealViewModel: AddAiMealViewModel = hiltViewModel()
+    addAiMealViewModel: AddAiMealViewModel
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current

@@ -39,19 +39,17 @@ class RecipeOverviewViewModel @Inject constructor(
     private val recipeId: String = checkNotNull(savedStateHandle["recipeId"]) {
         "Missing recipeId in savedStateHandle"
     }
+
     init {
         viewModelScope.launch {
-            recipeRepository.getRecipeById(recipeId)
-                .collect { recipe ->
-                    _recipeOverviewState.update { it.copy(recipe = recipe)
+            recipeRepository.getRecipesWithIngredientsById(recipeId)
+                .collect { recipeWithIngredients ->
+                    val recipe = recipeWithIngredients.recipe
+                    val ingredientsWithProducts = recipeWithIngredients.ingredients
+                    val ingredients = ingredientsWithProducts.map { it.foodProduct }
+                    _recipeOverviewState.update { it.copy(recipe = recipe, ingredients = ingredients)
                     }
                 }
-            recipeRepository.getIngredientsForRecipe(recipeId)
-                .collect { ingredients ->
-                    val foodComponents = ingredients.map { it.foodProduct }
-                    _recipeOverviewState.update { it.copy(ingredients = foodComponents) }
-                }
-
         }
     }
 

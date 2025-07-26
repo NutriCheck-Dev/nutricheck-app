@@ -18,10 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsWidget
@@ -33,7 +30,7 @@ import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewView
 
 @Composable
 fun FoodProductOverview(
-    foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(),
+    foodProductOverviewViewModel: FoodProductOverviewViewModel,
     onBack: () -> Unit = { }
 ) {
     val foodProductState by foodProductOverviewViewModel.foodProductOverviewState.collectAsState()
@@ -124,13 +121,5 @@ fun FoodProductOverview(
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun FoodProductOverviewPreview() {
-    AppTheme(darkTheme = true) {
-        FoodProductOverview()
     }
 }

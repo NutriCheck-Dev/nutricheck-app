@@ -48,14 +48,12 @@ class RecipePageViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             combine(
-                recipeRepository.getMyRecipes(),
+                recipeRepository.getMyRecipesWithIngredients(),
                 _onlineResults,
                 _recipePageState.map { it.selectedTab },
                 _recipePageState.map { it.query }
             ) { myRecipes, onlineRecipes, tab, query ->
-                val filteredMyRecipes = myRecipes
-                    .filter { query.isBlank() || it.name.contains(query, ignoreCase = true) }
-                    .sortedBy { it.name }
+                val filteredMyRecipes = myRecipes.map { it.recipe }.sortedBy { it.name }
                 val filteredOnlineRecipes = if (tab == 1 && query.isBlank()) {
                     onlineRecipes
                 } else {

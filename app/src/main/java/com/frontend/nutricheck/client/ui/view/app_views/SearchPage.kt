@@ -26,13 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
@@ -49,8 +46,8 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEv
 @Composable
 fun SearchPage(
     modifier: Modifier = Modifier,
-    searchViewModel: FoodSearchViewModel = hiltViewModel(),
-    editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
+    searchViewModel: FoodSearchViewModel,
+    editRecipeViewModel: EditRecipeViewModel,
     onMealSelected: (DayTime) -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {},
     onConfirm: () -> Unit = {},
@@ -153,13 +150,5 @@ fun SearchPage(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun SearchPagePreview() {
-    AppTheme(darkTheme = true) {
-        SearchPage()
     }
 }

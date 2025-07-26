@@ -58,7 +58,7 @@ fun DiaryPage(
         ) {
             when (selectedTab) {
                 DiaryTab.HISTORY -> HistoryPage(historyViewModel = historyViewModel)
-                DiaryTab.RECIPES -> RecipePage()
+                DiaryTab.RECIPES -> RecipePage(recipePageViewModel = recipePageViewModel)
             }
         }
     }
