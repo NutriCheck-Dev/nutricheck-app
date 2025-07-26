@@ -29,6 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
@@ -49,6 +51,8 @@ fun SearchPage(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel = hiltViewModel(),
     editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
+    onMealSelected: (DayTime) -> Unit = {},
+    onItemClick: (FoodComponent) -> Unit = {},
     onConfirm: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
@@ -75,16 +79,19 @@ fun SearchPage(
                             color = colors.onSurfaceVariant
                         ) },
                     actions = {
-                        IconButton(onConfirm) { //TODO: NavigationEvent for onConfirm
+                        IconButton(onConfirm) {
                             Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
                         }
                     })
             } else MealSelector(
+                dayTime = searchState.dayTime,
                 trailingContent = {
-                    IconButton(onConfirm) { //TODO: NavigationEvent for onConfirm
+                    IconButton(onConfirm) {
                         Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
                     }
-                }
+                },
+                onBack = onBack,
+                onMealSelected = onMealSelected
             )
         }
     ) { paddingValues ->
@@ -140,7 +147,8 @@ fun SearchPage(
                                     searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
                                 }
                             })
-                        }
+                        },
+                        onItemClick = onItemClick
                     )
                 }
             }

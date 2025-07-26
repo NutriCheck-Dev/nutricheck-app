@@ -38,6 +38,7 @@ import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
 fun RecipeOverviewBaseContent(
     recipe: Recipe = Recipe(),
     ingredients: List<FoodComponent>,
+    onItemClick: (FoodComponent) -> Unit = {},
     onDownLoad: (Recipe) -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: (Recipe) -> Unit = {},
@@ -129,6 +130,7 @@ fun RecipeOverviewBaseContent(
                 DishItemList(
                     isEditing = false,
                     foodComponents = ingredients,
+                    onItemClick = onItemClick,
                     modifier = Modifier
                         .fillMaxWidth()
                 )

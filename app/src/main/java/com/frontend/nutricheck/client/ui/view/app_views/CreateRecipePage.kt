@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
@@ -43,6 +44,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeVi
 fun CreateRecipePage(
     modifier: Modifier = Modifier,
     createRecipeViewModel: CreateRecipeViewModel = hiltViewModel(),
+    onItemClick: (FoodComponent) -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
@@ -115,6 +117,7 @@ fun CreateRecipePage(
                 Spacer(Modifier.height(10.dp))
                 DishItemList(
                     foodComponents = currentIngredients,
+                    onItemClick = onItemClick,
                     isEditing = true,
                     trailingContent = { item ->
                         CustomDetailsButton()

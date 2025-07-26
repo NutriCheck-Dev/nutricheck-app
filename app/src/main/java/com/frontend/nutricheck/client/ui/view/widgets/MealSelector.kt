@@ -24,16 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 //This file represents the Header for the SearchPage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealSelector(
-    modifier: Modifier = Modifier,
-    title: String = "Mahlzeit auswählen",
-    mealOptions: List<String> = listOf("Frühstück", "Mittagessen", "Abendessen", "Snack"),
-    onMealSelected: (String) -> Unit = {},
+    dayTime: DayTime? = null,
+    mealOptions: List<DayTime> = DayTime.entries.toList(),
+    onMealSelected: (DayTime) -> Unit = {},
     onBack : () -> Unit = {},
     trailingContent: @Composable (() -> Unit)? = null
 ) {
@@ -53,7 +53,7 @@ fun MealSelector(
                 elevation = null
             ) {
                 Text(
-                    text = title,
+                    text = dayTime?.toString() ?: "Select Meal",
                     style = MaterialTheme.typography.headlineSmall
                 )
 
@@ -80,7 +80,7 @@ fun MealSelector(
     ) {
         mealOptions.forEach { meal ->
             DropdownMenuItem(
-                text = { Text(meal) },
+                text = { Text(meal.toString()) },
                 onClick = {
                     onMealSelected(meal)
                     expanded = false

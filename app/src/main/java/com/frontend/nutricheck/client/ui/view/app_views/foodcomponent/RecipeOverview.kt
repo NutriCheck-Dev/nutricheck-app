@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewBaseContent
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewEditContent
@@ -23,6 +24,7 @@ fun RecipeOverview(
     recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
     editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
     reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(),
+    onItemClick: (FoodComponent) -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
@@ -33,6 +35,7 @@ fun RecipeOverview(
     if (!isEditing) {
         RecipeOverviewBaseContent(
             recipe = recipeOverviewState.recipe,
+            onItemClick = onItemClick,
             onDownLoad = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDownloadRecipe(it)) },
             onEdit = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe) },
             onDelete = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDeleteRecipe(it)) },
@@ -54,7 +57,8 @@ fun RecipeOverview(
                 onEvent = editRecipeViewModel::onEvent,
                 onSave = { editRecipeViewModel.onEvent(EditRecipeEvent.SaveChanges) },
                 onCancel = { editRecipeViewModel.onEvent(EditRecipeEvent.EditCanceled) },
-                ingredients = draftState!!.viewIngredients
+                ingredients = draftState!!.viewIngredients,
+                onItemClick = onItemClick
             )
         }
     }

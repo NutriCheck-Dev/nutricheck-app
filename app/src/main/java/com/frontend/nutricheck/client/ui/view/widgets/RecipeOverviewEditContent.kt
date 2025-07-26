@@ -40,6 +40,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeDraft
 fun RecipeOverviewEditContent(
     draft: RecipeDraft,
     ingredients: List<FoodComponent>,
+    onItemClick: (FoodComponent) -> Unit,
     onEvent: (EditRecipeEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit
@@ -104,6 +105,7 @@ fun RecipeOverviewEditContent(
                 DishItemList(
                     isEditing = true,
                     foodComponents = ingredients,
+                    onItemClick = onItemClick,
                     modifier = Modifier
                         .fillMaxWidth()
                 )

@@ -3,7 +3,7 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.page
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
-import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,7 +37,7 @@ sealed interface RecipePageEvent {
 
 @HiltViewModel
 class RecipePageViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepositoryImpl
 ) : BaseRecipePageViewModel() {
 
 

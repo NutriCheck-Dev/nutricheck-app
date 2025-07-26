@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence
 
 import android.content.Context
-import androidx.room.Database
 import androidx.room.Room
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao

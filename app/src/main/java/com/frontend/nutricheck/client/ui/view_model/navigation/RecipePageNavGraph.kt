@@ -18,11 +18,11 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOvervi
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
 sealed class RecipePageScreens(val route: String) {
-    object RecipePage : RecipePageScreens("recipe_page_route")
-    object RecipeOverview : RecipePageScreens("recipe_overview_route/{recipeId}") {
-        fun createRoute(recipeId: String) = "recipe_overview_route/$recipeId"
+    object RecipePage : RecipePageScreens("recipe_page")
+    object RecipeOverview : RecipePageScreens("recipe_overview/{recipeId}") {
+        fun createRoute(recipeId: String) = "recipe_overview/$recipeId"
     }
-    object FoodProductOverview : RecipePageScreens("food_product_overview_route")
+    object FoodProductOverview : RecipePageScreens("food_product_overview")
     object CreateRecipePage : RecipePageScreens("create_recipe_page_route")
     object ReportRecipeDialog : RecipePageScreens("report_recipe_dialog_route")
     object ActionConfirmationDialog : RecipePageScreens("action_confirmation_dialog_route")

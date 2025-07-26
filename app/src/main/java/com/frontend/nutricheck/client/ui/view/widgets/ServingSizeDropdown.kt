@@ -22,19 +22,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 @Composable
 fun ServingSizeDropdown(
     modifier: Modifier = Modifier,
     options: List<ServingSize> = ServingSize.entries.toList(),
-    current: ServingSize = ServingSize.ONEGRAM,
-    expanded: Boolean = false,
-    onExpandedChange: (Boolean) -> Unit = {},
-    onSelect: (ServingSize) -> Unit = {}
+    currentServingSize: ServingSize,
+    expanded: Boolean,
+    onExpandedChange: () -> Unit,
+    onSelect: (ServingSize) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
@@ -52,12 +50,12 @@ fun ServingSizeDropdown(
             color =  colors.surfaceVariant,
             modifier = Modifier
                 .wrapContentSize()
-                .clickable { onExpandedChange.invoke(expanded) }
+                .clickable { onExpandedChange.invoke() }
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = current.getDisplayName(),
+                    text = currentServingSize.getDisplayName(),
                     style = styles.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                     color = colors.onSurfaceVariant
                 )
@@ -73,7 +71,7 @@ fun ServingSizeDropdown(
 
     DropdownMenu(
         expanded = expanded,
-        onDismissRequest = { onExpandedChange.invoke(false) },
+        onDismissRequest = { onExpandedChange.invoke() },
         modifier = Modifier
             .wrapContentSize()
             .background(colors.onSurface, RoundedCornerShape(8.dp))
@@ -88,17 +86,9 @@ fun ServingSizeDropdown(
                     ) },
                 onClick = {
                     onSelect(size)
-                    onExpandedChange(false)
+                    onExpandedChange()
                 }
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun ServingSizeDropdownPreview() {
-    AppTheme(darkTheme = true) {
-        ServingSizeDropdown()
     }
 }

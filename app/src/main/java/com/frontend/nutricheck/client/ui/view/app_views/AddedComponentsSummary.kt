@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
@@ -33,6 +34,7 @@ fun AddedComponentsSummary(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel = hiltViewModel(),
     editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
+    onItemClick: (FoodComponent) -> Unit = {},
     onSave: () -> Unit = {}, //TODO: Implement save logic + icon for it
     onBack: () -> Unit = {}
 ) {
@@ -86,7 +88,8 @@ fun AddedComponentsSummary(
                             searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(item))
                         }
                     })
-                }
+                },
+                onItemClick = onItemClick
             )
         }
     }
