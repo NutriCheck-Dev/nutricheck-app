@@ -140,7 +140,7 @@ private fun LazyListScope.personalDataFormItems(
 ) {
     item {
         EditableDataRow(
-            label = stringResource(id = R.string.profile_menu_item_name),
+            label = stringResource(id = R.string.userData_label_name),
             value = userData.username,
             onValueChange = { onEvent(ProfileEvent.UpdateUserNameDraft(it)) },
             keyboardType = KeyboardType.Text
@@ -335,7 +335,6 @@ fun PersonalDataPreview() {
             targetWeight = 95.0,
             activityLevel = ActivityLevel.REGULARLY,
             weightGoal = WeightGoal.LOSE_WEIGHT,
-            language = "de",
             age = 25,
             dailyCaloriesGoal = 2500,
             proteinGoal = 80,

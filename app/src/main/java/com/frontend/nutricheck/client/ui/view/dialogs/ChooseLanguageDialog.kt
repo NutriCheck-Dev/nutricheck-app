@@ -10,21 +10,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.Language
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 
 @Composable
 fun ChooseLanguageDialog(
     onEvent : (ProfileEvent) -> Unit,
-    currentLanguage: String,
+    currentLanguage: Language,
     onDismissRequest: () -> Unit
 ) {
-    val languages = listOf("Deutsch", "English")
-    var selectedLanguage = currentLanguage
+    val languages = Language.entries.toTypedArray()
+    var selectedLanguage by remember { mutableStateOf(currentLanguage) }
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { Text(text = stringResource(id = R.string.select_language_title)) },
@@ -33,7 +38,7 @@ fun ChooseLanguageDialog(
                 languages.forEach { language ->
                     Button(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = if (language.equals(selectedLanguage, ignoreCase = true)) {
+                        colors = if (language == selectedLanguage) {
                             ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -46,7 +51,7 @@ fun ChooseLanguageDialog(
                         },
                         onClick = { selectedLanguage = language }
                     ) {
-                        Text(text = language)
+                        Text(text = language.displayName)
                     }
                 }
             }

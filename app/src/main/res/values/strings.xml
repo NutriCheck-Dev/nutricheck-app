@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NutriCheck</string>
+    <string name="app_name" translatable="false">NutriCheck</string>
     <string name="onboarding_title">Willkommen bei NutriCheck!</string>
     <string name="onboarding_description">Dein smarter Kalorien- und Gewichtsbegleiter</string>
     <string name="onboarding_button_start">Loslegen</string>
@@ -42,11 +42,11 @@
     <string name="profile_menu_height">Größe</string>
     <string name="profile_menu_weight">Gewicht</string>
     <string name="age_years">%1$s Jahre</string>
-    <string name="height_cm">%1$s cm</string>
-    <string name="weight_kg">%1$s kg</string>
+    <string name="height_cm" translatable="false">%1$s cm</string>
+    <string name="weight_kg" translatable="false">%1$s kg</string>
     <string name="profile_menu_item_personal_data">Persönliche Daten &amp; Ziel</string>
     <string name="profile_menu_item_weight_history">Gewichtsverlauf</string>
-    <string name="profile_menu_item_darkmode">Darkmode</string>
+    <string name="profile_menu_item_darkmode">Dunkler Modus</string>
     <string name="profile_menu_item_language">Sprache</string>
     <string name="select_language_title">Sprache auswählen</string>
     <string name="cancel">Abbrechen</string>
@@ -54,8 +54,6 @@
     <string name="profile_menu_item_gender">Geschlecht</string>
     <string name="profile_menu_item_activity_level">Aktivitätslevel</string>
     <string name="profile_menu_item_goal">Ziel</string>
-    <string name="profile_menu_item_name">Name</string>
-
 
     <string name="navigation_bar_label_home">Start</string>
     <string name="navigation_bar_label_profile">Profil</string>

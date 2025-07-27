@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -48,6 +49,7 @@ fun MainScreen(
     val startDestination by produceState<String?>(initialValue = null, hiltWrapperViewModel) {
         val isOnboardingCompleted =
             hiltWrapperViewModel.appSettingsRepository.isOnboardingCompleted.first()
+        Log.d("MainActivity", "isOnboardingCompleted: $isOnboardingCompleted")
         value = if (isOnboardingCompleted) {
             Screen.HomePage.route
         } else {

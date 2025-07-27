@@ -99,7 +99,7 @@ fun OnboardingHeight(
                     .height(56.dp),
                 value = textState,
                 onValueChange = { textState = it },
-                label = { Text(stringResource(id = R.string.onboarding_label_height)) },
+                label = { Text(stringResource(id = R.string.userData_label_height)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = error != null,
                 singleLine = true,

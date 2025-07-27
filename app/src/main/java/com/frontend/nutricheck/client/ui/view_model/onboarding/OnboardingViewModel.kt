@@ -198,7 +198,6 @@ class OnboardingViewModel @Inject constructor(
             weightGoal = _data.value.weightGoal!!,
             targetWeight = _data.value.targetWeight,
             age = Utils.calculateAge(_data.value.birthdate!!),
-            language = "de",
             dailyCaloriesGoal = 0,
             proteinGoal = 0,
             carbsGoal = 0,

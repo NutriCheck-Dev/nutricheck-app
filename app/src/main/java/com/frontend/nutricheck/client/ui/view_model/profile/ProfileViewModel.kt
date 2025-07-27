@@ -1,11 +1,11 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
+import com.frontend.nutricheck.client.model.data_sources.data.Language
 import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.Weight
@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -31,7 +32,8 @@ sealed interface ProfileEvent {
     object SelectLanguage : ProfileEvent
     object AddNewWeight : ProfileEvent
     object OnSaveClick : ProfileEvent
-    data class SaveLanguage(val language: String) : ProfileEvent
+    object RestartApp : ProfileEvent
+    data class SaveLanguage(val language: Language) : ProfileEvent
     data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
     data class UpdateUserNameDraft(val username: String) : ProfileEvent
@@ -43,6 +45,7 @@ sealed interface ProfileEvent {
     data class UpdateUserWeightGoalDraft(val weightGoal: WeightGoal) : ProfileEvent
     data class UpdateUserGenderDraft(val gender : Gender) : ProfileEvent
 }
+
 
 
 @HiltViewModel
@@ -63,7 +66,6 @@ class ProfileViewModel @Inject constructor(
         targetWeight = 0.0,
         activityLevel = ActivityLevel.NEVER,
         weightGoal = WeightGoal.LOSE_WEIGHT,
-        language = "en",
         age = 0,
         dailyCaloriesGoal = 0,
         proteinGoal = 0,
@@ -81,7 +83,6 @@ class ProfileViewModel @Inject constructor(
         targetWeight = 0.0,
         activityLevel = ActivityLevel.NEVER,
         weightGoal = WeightGoal.LOSE_WEIGHT,
-        language = "en",
         age = 0,
         dailyCaloriesGoal = 0,
         proteinGoal = 0,
@@ -95,6 +96,12 @@ class ProfileViewModel @Inject constructor(
 
     private val _errorMessage = MutableStateFlow<Int?>(null)
     val errorMessage: StateFlow<Int?> = _errorMessage.asStateFlow()
+
+    val currentLanguage: StateFlow<Language> = appSettingsRepository.language.stateIn(
+        viewModelScope,
+        initialValue = Language.GERMAN,
+        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000)
+    )
 
     fun onEvent(event: ProfileEvent) {
         when(event) {
@@ -118,6 +125,7 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.UpdateUserWeightGoalDraft ->
                 {updateUserWeightGoalDraft(event.weightGoal)}
             is ProfileEvent.UpdateUserGenderDraft -> {updateUserGenderDraft(event.gender)}
+            is ProfileEvent.RestartApp -> { emitEvent(ProfileEvent.RestartApp) }
         }
     }
     init {
@@ -198,9 +206,11 @@ class ProfileViewModel @Inject constructor(
     private fun displayProfileOverview() {
         emitEvent(ProfileEvent.DisplayProfileOverview)
     }
-    private fun onSaveLanguageClick(language: String) {
-        _data.value = _data.value.copy(language = language)
-        persistData(_data.value)
+    private fun onSaveLanguageClick(language: Language) {
+        viewModelScope.launch {
+            appSettingsRepository.setLanguage(language)
+        }
+        emitEvent(ProfileEvent.RestartApp)
     }
     private fun onChangeThemeClick(theme : ThemeSetting) {
         AppThemeState.currentTheme.value = theme
@@ -210,11 +220,6 @@ class ProfileViewModel @Inject constructor(
         }
         viewModelScope.launch {
             appSettingsRepository.setTheme(isDarkMode)
-        }
-    }
-    private fun persistData(userData : UserData) {
-        viewModelScope.launch {
-            userDataRepository.updateUserData(userData)
         }
     }
     private fun persistDataWithCalculation () {
@@ -227,7 +232,6 @@ class ProfileViewModel @Inject constructor(
             targetWeight = _dataDraft.value.targetWeight,
             activityLevel = _dataDraft.value.activityLevel,
             weightGoal = _dataDraft.value.weightGoal,
-            language = _dataDraft.value.language,
             age = Utils.calculateAge(_dataDraft.value.birthdate),
             dailyCaloriesGoal = _dataDraft.value.dailyCaloriesGoal,
             proteinGoal = _dataDraft.value.proteinGoal,

@@ -41,7 +41,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
-import com.frontend.nutricheck.client.ThemeSetting
+import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 

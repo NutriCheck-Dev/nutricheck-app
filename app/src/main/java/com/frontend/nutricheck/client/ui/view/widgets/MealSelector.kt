@@ -91,7 +91,7 @@ fun MealSelector(
 @Preview
 @Composable
 fun MealSelectorPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         MealSelector()
     }
 }

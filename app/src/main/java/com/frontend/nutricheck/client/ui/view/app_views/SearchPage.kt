@@ -122,11 +122,3 @@ fun SearchPage(
         }
     }
 }
-
-@Preview
-@Composable
-fun SearchPagePreview() {
-    AppTheme(darkTheme = true) {
-        SearchPage()
-    }
-}

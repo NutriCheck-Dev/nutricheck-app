@@ -157,13 +157,3 @@ fun CreateRecipePage(
         }
     }
 }
-
-@Preview
-@Composable
-fun CreateRecipePagePreview() {
-    AppTheme(darkTheme = true) {
-        CreateRecipePage(
-            onBack = {}
-        )
-    }
-}

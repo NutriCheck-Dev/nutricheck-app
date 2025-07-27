@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -9,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.ui.view.app_views.PersonalDataPage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 import com.frontend.nutricheck.client.ui.view.app_views.WeightHistoryPage
@@ -21,7 +24,7 @@ sealed class ProfileScreens(val route: String) {
     object ProfilePage : ProfileScreens("profile_page_route")
     object WeightHistoryPage : ProfileScreens("weight_history_page_route")
     object PersonalDataPage : ProfileScreens("personal_data_page_route")
-    object SelectLanguageDialog : ProfileScreens("select_language_dialog_route")
+    object ChooseLanguageDialog : ProfileScreens("select_language_dialog_route")
     object AddWeightDialog : ProfileScreens("add_weight_dialog_route")
 
 }
@@ -34,6 +37,8 @@ fun ProfilePageNavGraph() {
     val errorMessage by profileViewModel.errorMessage.collectAsState()
     val userDataDraft by profileViewModel.dataDraft.collectAsState()
     val weightState by profileViewModel.weightData.collectAsState()
+    val language by profileViewModel.currentLanguage.collectAsState()
+    val context = LocalContext.current
 
 
     LaunchedEffect(key1 = Unit) {
@@ -46,13 +51,16 @@ fun ProfilePageNavGraph() {
                     profileNavController.navigate(ProfileScreens.PersonalDataPage.route)
                 }
                 is ProfileEvent.SelectLanguage -> {
-                    profileNavController.navigate(ProfileScreens.SelectLanguageDialog.route)
+                    profileNavController.navigate(ProfileScreens.ChooseLanguageDialog.route)
                 }
                 is ProfileEvent.DisplayProfileOverview -> {
                     profileNavController.navigate(ProfileScreens.ProfilePage.route)
                 }
                 is  ProfileEvent.AddNewWeight -> {
                     profileNavController.navigate(ProfileScreens.AddWeightDialog.route)
+                }
+                is ProfileEvent.RestartApp -> {
+                    (context as? Activity)?.recreate()
                 }
                 else -> { /* No action needed for other events */}
             }
@@ -77,14 +85,14 @@ fun ProfilePageNavGraph() {
         }
         composable(ProfileScreens.PersonalDataPage.route) {
             PersonalDataPage(
-                state = userDataDraft!!,
+                state = userDataDraft,
                 errorMessage = errorMessage,
                 onEvent = profileViewModel::onEvent,
                 onBack = { profileNavController.popBackStack() })
         }
-        dialog(ProfileScreens.SelectLanguageDialog.route) {
+        dialog(ProfileScreens.ChooseLanguageDialog.route) {
             ChooseLanguageDialog(
-                currentLanguage = state.language,
+                currentLanguage = language ,
                 onEvent = profileViewModel::onEvent,
                 onDismissRequest = { profileNavController.popBackStack() })
         }

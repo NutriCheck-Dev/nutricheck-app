@@ -73,7 +73,7 @@ fun DishItemList(
 @Preview
 @Composable
 fun DishItemListPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         DishItemList(
             isEditing = true,
             foodComponents = setOf(

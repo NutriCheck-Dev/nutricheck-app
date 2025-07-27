@@ -109,7 +109,7 @@ fun NutrientChartsWidget(
 @Preview
 @Composable
 fun NutrientChartsWidgetPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         NutrientChartsWidget(
             recipe = Recipe(
                 calories = 500.0,

@@ -138,7 +138,7 @@ fun DishItemMealButton(
 @Preview
 @Composable
 fun DishItemButtonPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
     DishItemButton(
         foodComponent = Recipe(),
         trailingContent = { CustomDetailsButton() },
