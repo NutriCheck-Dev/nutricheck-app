@@ -93,7 +93,6 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
             SearchPage(
                 searchViewModel = searchViewModel,
-                editRecipeViewModel = hiltViewModel(),
                 onConfirm = { addNavController.navigate(AddScreens.MealOverview.route)},
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { addNavController.popBackStack() }

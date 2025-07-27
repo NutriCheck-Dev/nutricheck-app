@@ -9,14 +9,10 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
-import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
@@ -24,14 +20,14 @@ import javax.inject.Inject
 
 class HistoryRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
-    private val recipeDao: RecipeDao,
-    private val ingredientDao: IngredientDao,
+    //private val recipeDao: RecipeDao,
+    //private val ingredientDao: IngredientDao,
     private val mealFoodItemDao: MealFoodItemDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val foodDao: FoodDao,
     private val historyDao: HistoryDao
 ) : HistoryRepository {
-    private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
+    //private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
     override suspend fun getCalorieHistory(): List<HistoryDay> {
         TODO("Not yet implemented")
@@ -115,11 +111,11 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveAsRecipe(
-        ingredientsWithProducts: List<Pair<Double, FoodProduct>>,
+        meal: Meal,
         recipeName: String,
         recipeDescription: String
     ) {
-        if (ingredientsWithProducts.isEmpty()) {
+        /**if (ingredientsWithProducts.isEmpty()) {
             throw IllegalArgumentException("Das Rezept muss mindestens eine Zutat enthalten.")
         }
         // 2. FoodProducts extrahieren
@@ -160,6 +156,6 @@ class HistoryRepositoryImpl @Inject constructor(
         ingredientDao.insertAll(ingredients)
 
         // 7. Recipe speichern
-        recipeDao.insert(newRecipe)
+        recipeDao.insert(newRecipe)*/
     }
 }
