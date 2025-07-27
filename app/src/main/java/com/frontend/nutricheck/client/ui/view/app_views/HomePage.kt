@@ -59,7 +59,6 @@ fun HomePage(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .background(Color.Black)
             .padding(horizontal = 7.dp)
     ) {
         Image(

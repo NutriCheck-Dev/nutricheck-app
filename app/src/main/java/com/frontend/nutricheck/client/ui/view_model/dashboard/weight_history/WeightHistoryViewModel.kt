@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history
 
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -10,7 +11,7 @@ import kotlinx.coroutines.launch
 
 data class WeightHistoryState(
     //val selectedTimePeriod: String = "",
-    val weightData: List<Float> = emptyList(),
+    val weightData: List<Weight> = emptyList(),
     val weightGoal : Double = 0.0,
 )
 

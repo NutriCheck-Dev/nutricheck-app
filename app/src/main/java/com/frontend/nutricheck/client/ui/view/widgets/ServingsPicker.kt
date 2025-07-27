@@ -126,7 +126,7 @@ fun ServingsPicker(
 @Composable
 fun AndroidNumberPickerPreview() {
     var value by remember { mutableIntStateOf(5) }
-    AppTheme(darkTheme = true) {
+    AppTheme {
         ServingsPicker(
             value = value,
             range = 0..10,

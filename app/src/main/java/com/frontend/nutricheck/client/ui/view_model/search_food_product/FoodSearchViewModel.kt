@@ -11,7 +11,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
-import com.frontend.nutricheck.client.model.repositories.user.UserDataRepositoryImpl
+import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -52,7 +52,7 @@ sealed interface  SearchEvent {
 
 @HiltViewModel
 class FoodSearchViewModel @Inject constructor(
-    private val userDataRepository: UserDataRepositoryImpl,
+    private val appSettingsRepository : AppSettingsRepository,
     private val recipeRepository: RecipeRepositoryImpl,
     private val foodProductRepository: FoodProductRepositoryImpl,
     private val historyRepository: HistoryRepositoryImpl,
@@ -63,11 +63,11 @@ class FoodSearchViewModel @Inject constructor(
     private val _searchState = MutableStateFlow(SearchState())
     val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
 
-    private val _events = MutableSharedFlow<SearchEvent>()
     init {
         viewModelScope.launch {
-            val userData = userDataRepository.getUserData()
-            _searchState.update { it.copy(language = userData.language) }
+            appSettingsRepository.language.collect { language ->
+                _searchState.update { it.copy(language = language.code) }
+            }
         }
         fromAddIngredient?.let {
             _searchState.update { it.copy(fromAddIngredient = fromAddIngredient) }
@@ -79,7 +79,7 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    val _events = MutableSharedFlow<SearchEvent>()
+    private val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
 
     fun onEvent(event: SearchEvent) {

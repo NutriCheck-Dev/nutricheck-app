@@ -27,7 +27,7 @@ class AppSettingsRepository @Inject constructor(
         val LANGUAGE = stringPreferencesKey("language")
     }
 
-    val onboardingCompleted: Flow<Boolean> = context.dataStore.data
+    val isOnboardingCompleted: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.ONBOARDING_COMPLETED] == true
         }
