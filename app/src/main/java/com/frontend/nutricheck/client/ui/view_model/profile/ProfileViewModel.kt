@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
@@ -241,6 +242,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userDataRepository.updateUserData(userDataWithCalories)
         }
+        _data.value = userDataWithCalories
         displayProfileOverview()
     }
     private fun emitEvent(event: ProfileEvent) = viewModelScope.launch { _events.emit(event) }

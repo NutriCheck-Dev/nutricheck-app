@@ -116,6 +116,7 @@ fun PersonalDataPage(
                         datePickerState.selectedDateMillis?.let {
                             selectedDate = Date(it)
                         }
+                        onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
                         showDatePicker = false
                     }
                 ) {
