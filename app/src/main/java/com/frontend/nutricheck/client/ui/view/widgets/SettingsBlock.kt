@@ -43,11 +43,9 @@ fun ButtonList(
         items.forEachIndexed { index, item ->
             item()
 
-            // Divider zwischen Items (außer nach dem letzten)
             if (index != items.lastIndex) {
                 HorizontalDivider(
                     modifier = Modifier
-                        //.padding(start = 64.dp, end = 16.dp)  // damit nicht bis ganz links/rechts
                         .height(1.dp),
                     color = Color.DarkGray
                 )

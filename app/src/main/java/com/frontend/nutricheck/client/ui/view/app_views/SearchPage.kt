@@ -58,7 +58,7 @@ fun SearchPage(
     val scrollState = rememberScrollState()
     val uiState by searchViewModel.uiState.collectAsState()
     val searchState by searchViewModel.searchState.collectAsState()
-    val isFromAddIngredient = searchState.isFromAddIngredient
+    val isFromAddIngredient = searchState.fromAddIngredient
 
 
     Scaffold(

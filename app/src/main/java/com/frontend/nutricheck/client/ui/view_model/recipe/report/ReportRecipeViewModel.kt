@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 data class ReportRecipeState(
     val recipe: Recipe = Recipe(),
     val inputText: String = "",
-    val isReporting: Boolean = false
+    val reporting: Boolean = false
 )
 
 sealed interface ReportRecipeEvent {
@@ -50,10 +50,10 @@ class ReportRecipeViewModel @Inject constructor(
         _reportRecipeState.update { it.copy(inputText = text) }
 
     override fun onReportClick() =
-        _reportRecipeState.update { it.copy(isReporting = true) }
+        _reportRecipeState.update { it.copy(reporting = true) }
 
     override fun onDismissDialog() =
-        _reportRecipeState.update { it.copy(isReporting = false, inputText = "") }
+        _reportRecipeState.update { it.copy(reporting = false, inputText = "") }
 
     override suspend fun onClickSendReport() {
         val recipeReport = RecipeReport(
@@ -64,7 +64,7 @@ class ReportRecipeViewModel @Inject constructor(
         )
         //TODO: Implement the actual report sending logic
         recipeRepository.updateRecipe(_reportRecipeState.value.recipe)
-        _reportRecipeState.update { it.copy(isReporting = false, inputText = "") }
+        _reportRecipeState.update { it.copy(reporting = false, inputText = "") }
         emitEvent(ReportRecipeEvent.SendReport)
     }
 

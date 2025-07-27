@@ -23,7 +23,7 @@ data class HistoryState(
     val foodId: String = "",
     val totalCalories: Int = 0,
     val goalCalories: Int = 0,
-    val isSwitched: Boolean = false
+    val switched: Boolean = false
 )
 
 sealed interface HistoryEvent {
@@ -32,7 +32,7 @@ sealed interface HistoryEvent {
     data class FoodClicked(val foodId: String) : HistoryEvent
     data class DetailsClick(val detailsId: String) : HistoryEvent
     data class TotalCaloriesClick(val totalCalories: Int) : HistoryEvent
-    data class SwitchClick(val isSwitched: Boolean) : HistoryEvent
+    data class SwitchClick(val switched: Boolean) : HistoryEvent
 }
 
 @HiltViewModel
@@ -53,7 +53,7 @@ class HistoryViewModel @Inject constructor(
             is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
             is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
             is HistoryEvent.TotalCaloriesClick -> onTotalCaloriesClick(event.totalCalories)
-            is HistoryEvent.SwitchClick -> onSwitchClick(event.isSwitched)
+            is HistoryEvent.SwitchClick -> onSwitchClick(event.switched)
         }
     }
     // Die benötigten Parameter sollten über den State bereitgestellt werden, siehe beispiel Profile,
@@ -110,5 +110,5 @@ class HistoryViewModel @Inject constructor(
         }
     }
     override fun onTotalCaloriesClick(totalCalories: Int) {}
-    override fun onSwitchClick(isSwitched: Boolean) {}
+    override fun onSwitchClick(switched: Boolean) {}
 }

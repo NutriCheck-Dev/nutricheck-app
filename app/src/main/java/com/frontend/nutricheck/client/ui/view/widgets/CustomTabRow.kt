@@ -40,14 +40,14 @@ fun CustomTabRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         options.forEachIndexed { index, label ->
-            val isSelected = index == selectedOption
+            val selected = index == selectedOption
             val textColor by animateColorAsState(
-                targetValue = if (isSelected) colors.onPrimaryContainer
+                targetValue = if (selected) colors.onPrimaryContainer
                 else colors.onSurfaceVariant,
             )
 
             val backgroundColor by animateColorAsState(
-                targetValue = if (isSelected) colors.primaryContainer
+                targetValue = if (selected) colors.primaryContainer
                 else Color.Transparent,
             )
 
@@ -62,7 +62,7 @@ fun CustomTabRow(
                 Text(
                     text = label,
                     style = styles.bodyMedium.copy(
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                     ),
                     color = textColor
                 )

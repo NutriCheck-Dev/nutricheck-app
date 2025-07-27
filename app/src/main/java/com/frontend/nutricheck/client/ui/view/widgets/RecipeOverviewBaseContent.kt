@@ -72,9 +72,9 @@ fun RecipeOverviewBaseContent(
                 actions = {
                         CustomDetailsButton(
                             expanded = expanded,
-                            isOnDishItemButton = false,
-                            isOnOwnedRecipe = recipe.visibility == RecipeVisibility.OWNER ,
-                            isOnPublicRecipe = recipe.visibility == RecipeVisibility.PUBLIC,
+                            dishItemButton = false,
+                            ownedRecipe = recipe.visibility == RecipeVisibility.OWNER ,
+                            publicRecipe = recipe.visibility == RecipeVisibility.PUBLIC,
                             onExpandedChange = { expanded = it },
                             onDownloadClick = { onDownLoad },
                             onEditClick = { onEdit },
@@ -130,7 +130,7 @@ fun RecipeOverviewBaseContent(
                 Spacer(Modifier.height(10.dp))
 
                 DishItemList(
-                    isEditing = false,
+                    editing = false,
                     foodComponents = ingredients,
                     onItemClick = onItemClick,
                     modifier = Modifier

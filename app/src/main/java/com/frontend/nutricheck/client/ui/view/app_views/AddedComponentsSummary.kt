@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
@@ -43,7 +42,7 @@ fun AddedComponentsSummary(
     val scrollState = rememberScrollState()
     val searchState by searchViewModel.searchState.collectAsState()
     val editRecipeState by editRecipeViewModel.editRecipeDraft.collectAsState()
-    val isFromAddIngredient = searchState.isFromAddIngredient
+    val isFromAddIngredient = searchState.fromAddIngredient
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

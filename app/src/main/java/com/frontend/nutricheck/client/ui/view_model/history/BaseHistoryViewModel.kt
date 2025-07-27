@@ -14,7 +14,7 @@ abstract class BaseHistoryViewModel : BaseViewModel() {
     abstract fun onFoodClicked(foodId: String)
     abstract fun onDetailsClick(detailsId: String)
     abstract fun onTotalCaloriesClick(totalCalories: Int)
-    abstract fun onSwitchClick(isSwitched: Boolean)
+    abstract fun onSwitchClick(switched: Boolean)
 
 
 }

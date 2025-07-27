@@ -62,9 +62,9 @@ fun ChartRangeSwitcher(
             verticalAlignment = Alignment.CenterVertically
         ) {
             options.forEachIndexed { index, label ->
-                val isSelected = index == selectedOption
-                val bgColor by animateColorAsState(if (isSelected) selectedBg else Color.Transparent)
-                val textColor by animateColorAsState(if (isSelected) selectedTextColor else unselectedTextColor)
+                val selected = index == selectedOption
+                val bgColor by animateColorAsState(if (selected) selectedBg else Color.Transparent)
+                val textColor by animateColorAsState(if (selected) selectedTextColor else unselectedTextColor)
 
                 Box(
                     modifier = Modifier

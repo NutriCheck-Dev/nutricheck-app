@@ -46,9 +46,9 @@ fun MainScreen(
     val backStackEntry by mainNavController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination?.route ?: Screen.HomePage.route
     val startDestination by produceState<String?>(initialValue = null, hiltWrapperViewModel) {
-        val isOnboardingCompleted =
-            hiltWrapperViewModel.onboardingRepository.isOnboardingCompleted.first()
-        value = if (!isOnboardingCompleted) {
+        val onboardingCompleted =
+            hiltWrapperViewModel.onboardingRepository.onboardingCompleted.first()
+        value = if (!onboardingCompleted) {
             Screen.HomePage.route
         } else {
             Screen.Onboarding.route

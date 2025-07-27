@@ -30,7 +30,6 @@ sealed interface RecipePageEvent {
     data object ClickOnlineRecipes : RecipePageEvent
     data class ClickSaveRecipe(val recipe: Recipe) : RecipePageEvent
     data class ClickDeleteRecipe(val recipe: Recipe) : RecipePageEvent
-    //data class ShowSnackbar(val message: String) : RecipePageEvent
     data class QueryChanged(val query: String) : RecipePageEvent
     object SearchOnline : RecipePageEvent
 }

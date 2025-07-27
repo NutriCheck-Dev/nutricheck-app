@@ -23,7 +23,7 @@ class OnboardingRepository @Inject constructor(
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     }
 
-    val isOnboardingCompleted: Flow<Boolean> = context.dataStore.data
+    val onboardingCompleted: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.ONBOARDING_COMPLETED] == true
         }

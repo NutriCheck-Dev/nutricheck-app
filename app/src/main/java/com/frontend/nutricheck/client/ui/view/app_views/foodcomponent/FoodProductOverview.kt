@@ -38,7 +38,7 @@ fun FoodProductOverview(
     val styles = MaterialTheme.typography
     val onPersist = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
     val onCancel = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.GoBack)
-    val actions = if (foodProductState.isFromIngredient) CustomPersistButton { onPersist } else null
+    val actions = if (foodProductState.fromIngredient) CustomPersistButton { onPersist } else null
 
     Scaffold(
         topBar = {

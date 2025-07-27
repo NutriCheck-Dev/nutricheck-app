@@ -77,7 +77,7 @@ fun DateSelectorBar(
 
 @Preview
 @Composable
-fun displayDateSelectorBarPreview() {
+fun DisplayDateSelectorBarPreview() {
     var showDatePicker by remember { mutableStateOf(false) }
     val calendar = Calendar.getInstance()
     var selectedDate by remember { mutableStateOf(calendar.time) }

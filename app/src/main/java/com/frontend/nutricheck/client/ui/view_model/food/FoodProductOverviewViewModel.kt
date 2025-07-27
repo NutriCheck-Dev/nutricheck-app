@@ -26,7 +26,7 @@ data class FoodProductOverviewState(
     val servings: Int = 1,
     val servingSize: ServingSize = ServingSize.ONEHOUNDREDGRAMS,
     val servingSizeDropDownExpanded: Boolean = false,
-    val isFromIngredient: Boolean = false
+    val fromIngredient: Boolean = false
 )
 
 sealed interface FoodProductOverviewEvent {

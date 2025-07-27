@@ -18,11 +18,11 @@ import com.frontend.nutricheck.client.model.data_sources.data.DropdownMenuOption
 
 @Composable
 fun CustomDetailsButton(
-    isOnDishItemButton: Boolean = false,
-    isOnOwnedRecipe: Boolean = false,
-    isOnPublicRecipe: Boolean = false,
-    isOnFoodItem: Boolean = false,
-    isOnIngredientButton: Boolean = false,
+    dishItemButton: Boolean = false,
+    ownedRecipe: Boolean = false,
+    publicRecipe: Boolean = false,
+    foodItem: Boolean = false,
+    ingredientButton: Boolean = false,
     onDownloadClick: () -> Unit = { },
     onDeleteClick: () -> Unit = { },
     onEditClick: () -> Unit = { },
@@ -33,20 +33,20 @@ fun CustomDetailsButton(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val optionsList = if (isOnOwnedRecipe) {
+    val optionsList = if (ownedRecipe) {
         DropdownMenuOptions.entries
             .minus(DropdownMenuOptions.DOWNLOAD)
             .sortedBy { it.name }
-    } else if (isOnPublicRecipe) {
+    } else if (publicRecipe) {
         DropdownMenuOptions.entries
             .minus(listOf(
                 DropdownMenuOptions.EDIT,
                 DropdownMenuOptions.DELETE,
                 DropdownMenuOptions.UPLOAD))
             .sortedBy { it.name }
-    } else if (isOnFoodItem) {
+    } else if (foodItem) {
         listOf(DropdownMenuOptions.EDIT)
-    } else if (isOnIngredientButton) {
+    } else if (ingredientButton) {
         DropdownMenuOptions.entries
             .minus(listOf(
                 DropdownMenuOptions.DOWNLOAD,
@@ -60,7 +60,7 @@ fun CustomDetailsButton(
             modifier = Modifier.align(Alignment.Center),
             onClick = { onExpandedChange(true) }
         ) {
-            if (isOnDishItemButton) {
+            if (dishItemButton) {
                 Icon(
                     imageVector = Icons.Filled.MoreHoriz,
                     contentDescription = "Details"

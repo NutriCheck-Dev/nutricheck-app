@@ -97,7 +97,7 @@ class ProfileOverviewViewModel @Inject constructor(
             _data.value =
                 _data.value.copy(errorMessage = R.string.onboarding_error_name_required)
             return
-        } else if (isBirthdateInvalid(userData.birthdate)) {
+        } else if (birthdateInvalid(userData.birthdate)) {
             _data.value =
                 _data.value.copy(errorMessage = R.string.onboarding_error_birthdate_required)
             return
@@ -123,7 +123,7 @@ class ProfileOverviewViewModel @Inject constructor(
             userDataRepository.updateUserData(userData)
         }
     }
-    private fun isBirthdateInvalid(birthdate: Date): Boolean {
+    private fun birthdateInvalid(birthdate: Date): Boolean {
         val localBirthdate = Instant.ofEpochMilli(birthdate.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDate()

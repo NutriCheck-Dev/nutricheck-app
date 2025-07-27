@@ -36,7 +36,7 @@ data class SearchState(
     val selectedTab: Int = 0,
     val results: List<FoodComponent> = emptyList(),
     val addedComponents: List<FoodComponent> = emptyList(),
-    val isFromAddIngredient: Boolean = false
+    val fromAddIngredient: Boolean = false
 )
 
 sealed interface  SearchEvent {
@@ -59,7 +59,7 @@ class FoodSearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
 
-    private val isFromAddIngredient = savedStateHandle.get<Boolean>("fromAddIngredient")
+    private val fromAddIngredient = savedStateHandle.get<Boolean>("fromAddIngredient")
     private val _searchState = MutableStateFlow(SearchState())
     val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
 
@@ -68,8 +68,8 @@ class FoodSearchViewModel @Inject constructor(
             val userData = userDataRepository.getUserData()
             _searchState.update { it.copy(language = userData.language) }
         }
-        isFromAddIngredient?.let {
-            _searchState.update { it.copy(isFromAddIngredient = isFromAddIngredient) }
+        fromAddIngredient?.let {
+            _searchState.update { it.copy(fromAddIngredient = fromAddIngredient) }
         }
         if (_searchState.value.date == null) {
             val today = LocalDate.now()

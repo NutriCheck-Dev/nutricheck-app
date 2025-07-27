@@ -103,7 +103,7 @@ fun RecipeOverviewEditContent(
                 Spacer(Modifier.height(10.dp))
 
                 DishItemList(
-                    isEditing = true,
+                    editing = true,
                     foodComponents = ingredients,
                     onItemClick = onItemClick,
                     modifier = Modifier

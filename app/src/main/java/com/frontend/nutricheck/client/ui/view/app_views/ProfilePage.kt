@@ -180,7 +180,7 @@ fun ProfilePage(
                         contentDescription =
                             stringResource(id = R.string.profile_menu_item_darkmode),
                         text = stringResource(id = R.string.profile_menu_item_darkmode),
-                        isChecked = darkmode,
+                        checked = darkmode,
                         onCheckedChange = { darkmode = it },
                     )
                     HorizontalDivider(color = Color.Gray,
@@ -233,12 +233,12 @@ fun MenuItemWithSwitch(
     icon: ImageVector,
     contentDescription: String,
     text: String,
-    isChecked: Boolean,
+    checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
-            .clickable { onCheckedChange(!isChecked) }
+            .clickable { onCheckedChange(!checked) }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(top = 12.dp, bottom = 12.dp),
@@ -255,7 +255,7 @@ fun MenuItemWithSwitch(
             Switch(
                 colors = SwitchDefaults.colors(
                     checkedTrackColor = Color(0xFF4580FF)),
-                checked = isChecked,
+                checked = checked,
                 onCheckedChange = onCheckedChange,
             )
         }

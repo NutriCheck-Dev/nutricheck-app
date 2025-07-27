@@ -47,9 +47,9 @@ fun RecipePageNavGraph() {
         composable(RecipePageScreens.RecipePage.route) {
             RecipePage(
                 recipePageViewModel = recipePageViewModel,
-                onItemClick = { recipeId ->
+                onItemClick = { recipe ->
                     recipePageNavController.navigate(
-                        RecipePageScreens.RecipeOverview.createRoute(recipeId)
+                        RecipePageScreens.RecipeOverview.createRoute(recipe.id)
                     )
                 }
             )
@@ -88,6 +88,7 @@ fun RecipePageNavGraph() {
 
                 SearchPage(
                     editRecipeViewModel = editRecipeViewModel,
+                    searchViewModel = hiltViewModel(),
                     onConfirm = {
                         recipePageNavController.navigate(
                             RecipePageScreens.AddedIngredientSummaryPage.createRoute(recipeId)
@@ -106,6 +107,7 @@ fun RecipePageNavGraph() {
                 val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
                 AddedComponentsSummary(
                     editRecipeViewModel = editRecipeViewModel,
+                    searchViewModel = hiltViewModel(),
                     onSave = {
                         recipePageNavController.navigate(
                             RecipePageScreens.RecipeOverview.createRoute(recipeId)

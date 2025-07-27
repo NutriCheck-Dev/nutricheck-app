@@ -40,7 +40,7 @@ fun DiaryNavGraph() {
         composable(DiaryScreens.RecipePage.route) { RecipePage(recipePageViewModel = recipePageViewModel) }
         composable(DiaryScreens.DiaryPage.route) { DiaryPage(historyViewModel = historyViewModel, recipePageViewModel = recipePageViewModel) }
         composable(DiaryScreens.RecipeOverview.route) { RecipeOverview() }
-        composable(DiaryScreens.FoodOverview.route) { FoodProductOverview() }
+        composable(DiaryScreens.FoodOverview.route) { FoodProductOverview(foodProductOverviewViewModel = hiltViewModel()) }
         composable(DiaryScreens.MealOverview.route) {  }
 
 

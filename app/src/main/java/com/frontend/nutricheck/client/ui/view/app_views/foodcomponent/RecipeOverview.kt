@@ -30,7 +30,7 @@ fun RecipeOverview(
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
     val draftState by editRecipeViewModel.editRecipeDraft.collectAsState()
     val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
-    val isEditing = recipeOverviewState.isEditing
+    val isEditing = recipeOverviewState.editing
 
     if (!isEditing) {
         RecipeOverviewBaseContent(
@@ -47,7 +47,7 @@ fun RecipeOverview(
             onDismiss = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DissmissDialog) }, //TODO: Implement dismiss functionality
             onReportClick = { reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked) }, //TODO: Implement report click functionality
             onBack = onBack,
-            showReportDialog = reportRecipeState.isReporting,
+            showReportDialog = reportRecipeState.reporting,
             ingredients = recipeOverviewState.ingredients,
             reportRecipeViewModel = reportRecipeViewModel
         )

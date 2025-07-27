@@ -25,8 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
@@ -40,7 +39,7 @@ fun RecipePage(
     modifier: Modifier = Modifier,
     recipePageViewModel: RecipePageViewModel,
     onAddRecipeClick: () -> Unit = {},
-    onItemClick: (FoodComponent) -> Unit = {}
+    onItemClick: (Recipe) -> Unit = {}
 ) {
     val recipePageState by recipePageViewModel.recipePageState.collectAsState()
     val uiState by recipePageViewModel.uiState.collectAsState()
@@ -109,11 +108,13 @@ fun RecipePage(
                         when (recipePageState.selectedTab) {
                             0 -> DishItemList(
                                 foodComponents = recipes,
-                                onItemClick = onItemClick,
+                                onItemClick = { recipe ->
+                                    onItemClick.invoke(recipe as Recipe)
+                                },
                                 trailingContent = {
                                     CustomDetailsButton(
-                                        isOnDishItemButton = true,
-                                        isOnOwnedRecipe = true,
+                                        dishItemButton = true,
+                                        ownedRecipe = true,
                                     )
                                 }
                             )
@@ -126,11 +127,13 @@ fun RecipePage(
                                 } else {
                                     DishItemList(
                                         foodComponents = recipePageState.onlineRecipes,
-                                        onItemClick = onItemClick,
+                                        onItemClick = { recipe ->
+                                            onItemClick.invoke(recipe as Recipe)
+                                                      },
                                         trailingContent = {
                                             CustomDetailsButton(
-                                                isOnDishItemButton = true,
-                                                isOnPublicRecipe = true
+                                                dishItemButton = true,
+                                                publicRecipe = true
                                             )
                                         }
                                     )

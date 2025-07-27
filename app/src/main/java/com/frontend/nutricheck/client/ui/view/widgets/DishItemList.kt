@@ -25,7 +25,7 @@ fun DishItemList(
     modifier: Modifier = Modifier,
     foodComponents: List<FoodComponent> = emptyList(),
     trailingContent: @Composable ((item: FoodComponent) -> Unit)? = null,
-    isEditing: Boolean = false,
+    editing: Boolean = false,
     onAddButtonClick: () -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {}
 ) {
@@ -43,7 +43,7 @@ fun DishItemList(
                 onClick = { onItemClick(item) })
         }
 
-        if(isEditing) {
+        if(editing) {
             IconButton(
                 onClick = onAddButtonClick,
                 modifier = Modifier

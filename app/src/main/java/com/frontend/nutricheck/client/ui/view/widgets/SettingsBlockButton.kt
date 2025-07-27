@@ -26,11 +26,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SettingsBlockButton(
     modifier: Modifier = Modifier,
-    icon: ImageVector,                      // Compose-Icon statt Android.Icon
+    icon: ImageVector,
     title: String,
     subtitle: String? = null,
-    trailingContent: @Composable (() -> Unit)? = null,  // <-- hier die Magie
-    onClick: (() -> Unit)? = null           // Optional, nur bei "navigierbaren" Items
+    trailingContent: @Composable (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -66,7 +66,7 @@ fun SettingsBlockButton(
             }
         }
 
-        trailingContent?.invoke()  // <– flexibler Slot rechts
+        trailingContent?.invoke()
     }
 }
 

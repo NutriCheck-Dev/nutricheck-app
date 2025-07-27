@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 data class RecipeOverviewState(
     val recipe: Recipe = Recipe(),
     val ingredients: List<FoodProduct> = emptyList(),
-    val isEditing: Boolean = false
+    val editing: Boolean = false
 )
 sealed interface RecipeOverviewEvent {
     data class ClickDownloadRecipe(val recipe: Recipe) : RecipeOverviewEvent
@@ -88,7 +88,7 @@ class RecipeOverviewViewModel @Inject constructor(
     }
 
     override fun onEditClicked() {
-        _recipeOverviewState.update { it.copy(isEditing = !_recipeOverviewState.value.isEditing) }
+        _recipeOverviewState.update { it.copy(editing = !_recipeOverviewState.value.editing) }
     }
 
     override suspend fun onDeleteRecipe(recipe: Recipe) {
