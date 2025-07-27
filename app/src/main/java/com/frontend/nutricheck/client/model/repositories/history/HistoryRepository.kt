@@ -20,5 +20,5 @@ interface HistoryRepository {
     suspend fun removeFoodFromMeal(name: String, foodId: String = "")
     suspend fun getHistoryByDate(date: Date): Flow<HistoryDay>
     suspend fun addMeal(meal: Meal, mealFoodItemsWithProduct :List<Pair<Double, FoodProduct>>?, mealRecipeItemsWithRecipe: List<Pair<Double, Recipe>>?)
-    suspend fun saveAsRecipe(meal: Meal, recipeName: String = "", recipeDescription: String = "")
+    suspend fun saveAsRecipe(ingredientsWithProducts: List<Pair<Double, FoodProduct>>, recipeName: String, recipeDescription: String = "")
 }

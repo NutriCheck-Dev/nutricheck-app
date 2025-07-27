@@ -2,15 +2,18 @@ package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
@@ -21,6 +24,8 @@ import javax.inject.Inject
 
 class HistoryRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
+    private val recipeDao: RecipeDao,
+    private val ingredientDao: IngredientDao,
     private val mealFoodItemDao: MealFoodItemDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val foodDao: FoodDao,
@@ -110,10 +115,51 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveAsRecipe(
-        meal: Meal,
+        ingredientsWithProducts: List<Pair<Double, FoodProduct>>,
         recipeName: String,
         recipeDescription: String
     ) {
-        TODO("Not yet implemented")
+        if (ingredientsWithProducts.isEmpty()) {
+            throw IllegalArgumentException("Das Rezept muss mindestens eine Zutat enthalten.")
+        }
+        // 2. FoodProducts extrahieren
+        val foodProducts = ingredientsWithProducts.map { it.second }
+
+        // 3. Die Makros (Nährwerte) berechnen
+        val totalCalories = ingredientsWithProducts.sumOf { it.second.calories * it.first }
+        val totalProtein = ingredientsWithProducts.sumOf { it.second.protein * it.first }
+        val totalCarbs = ingredientsWithProducts.sumOf { it.second.carbohydrates * it.first }
+        val totalFat = ingredientsWithProducts.sumOf { it.second.fat * it.first }
+
+        // 4. Rezept anlegen
+        val recipeId = UUID.randomUUID().toString()
+        val newRecipe = Recipe(
+            id = recipeId,
+            name = recipeName,
+            instructions = recipeDescription,
+            calories = totalCalories,
+            protein = totalProtein,
+            carbohydrates = totalCarbs,
+            fat = totalFat
+            // weitere Felder ggf. ergänzen
+        )
+
+        // 5. Alle FoodProducts speichern (sofern noch nicht in DB)
+        foodDao.insertAll(foodProducts)
+
+        // 6. Die Zutaten mit korrektem recipeId speichern
+        val ingredients = ingredientsWithProducts.map { (quantity, foodProduct) ->
+            Ingredient(
+                id = UUID.randomUUID().toString(),
+                recipeId = recipeId,
+                foodProductId = foodProduct.id,
+                quantity = quantity
+
+            )
+        }
+        ingredientDao.insertAll(ingredients)
+
+        // 7. Recipe speichern
+        recipeDao.insert(newRecipe)
     }
 }

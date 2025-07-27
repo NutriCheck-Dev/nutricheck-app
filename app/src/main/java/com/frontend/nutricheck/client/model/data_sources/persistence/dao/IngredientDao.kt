@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -31,6 +32,9 @@ interface IngredientDao {
         WHERE recipeId = :recipeId
     """)
     fun getIngredientsWithFoodProducts(recipeId: String): Flow<List<IngredientWithFoodProduct>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(ingredients: List<Ingredient>)
 
 
 }

@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.theme.AppTheme
+import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
@@ -46,7 +47,6 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEv
 fun SearchPage(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel = hiltViewModel(),
-    //editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
     onMealSelected: (DayTime) -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {},
     onConfirm: () -> Unit = {},
@@ -133,17 +133,11 @@ fun SearchPage(
 
                     DishItemList(
                         foodComponents = searchState.results,
-                        /**trailingContent = { item ->
+                        trailingContent = { item ->
                             CustomAddButton(onClick = {
-                                if (isFromAddIngredient) {
-                                    editRecipeViewModel.onEvent(
-                                        EditRecipeEvent.IngredientAdded(item as FoodProduct)
-                                    )
-                                } else {
-                                    searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
-                                }
+                                searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
                             })
-                        },*/
+                        },
                         onItemClick = onItemClick
                     )
                 }
@@ -155,7 +149,8 @@ fun SearchPage(
 @Preview
 @Composable
 fun SearchPagePreview() {
+    val searchViewModel: FoodSearchViewModel = hiltViewModel()
     AppTheme(darkTheme = true) {
-        SearchPage()
+        SearchPage(modifier = Modifier, searchViewModel)
     }
 }
