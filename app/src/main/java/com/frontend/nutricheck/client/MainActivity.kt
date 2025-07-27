@@ -49,7 +49,6 @@ fun MainScreen(
     val startDestination by produceState<String?>(initialValue = null, hiltWrapperViewModel) {
         val isOnboardingCompleted =
             hiltWrapperViewModel.appSettingsRepository.isOnboardingCompleted.first()
-        Log.d("MainActivity", "isOnboardingCompleted: $isOnboardingCompleted")
         value = if (isOnboardingCompleted) {
             Screen.HomePage.route
         } else {

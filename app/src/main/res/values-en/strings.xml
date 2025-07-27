@@ -34,7 +34,6 @@
     <string name="profile_menu_item_gender">Gender</string>
     <string name="profile_menu_item_activity_level">Activitylevel</string>
     <string name="profile_menu_item_goal">Goal</string>
-    <string name="profile_menu_item_name">Name</string>
     <string name="navigation_bar_label_home">Home</string>
     <string name="navigation_bar_label_profile">Profile</string>
     <string name="navigation_bar_label_add">Add</string>
