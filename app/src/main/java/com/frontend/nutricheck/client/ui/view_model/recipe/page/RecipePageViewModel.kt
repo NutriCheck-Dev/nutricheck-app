@@ -51,15 +51,15 @@ class RecipePageViewModel @Inject constructor(
                 _onlineResults,
                 _recipePageState.map { it.selectedTab },
                 _recipePageState.map { it.query }
-            ) { myRecipes, onlineRecipes, tab, query ->
-                val filteredMyRecipes = myRecipes.map { it.recipe }.sortedBy { it.name }
+            ) { localRecipes, onlineRecipes, tab, query ->
+                val myRecipes = localRecipes.map { it.recipe }
                 val filteredOnlineRecipes = if (tab == 1 && query.isBlank()) {
                     onlineRecipes
                 } else {
                     emptyList()
                 }
                 RecipePageState(
-                    myRecipes = filteredMyRecipes,
+                    myRecipes = myRecipes,
                     onlineRecipes = filteredOnlineRecipes,
                     selectedTab = tab,
                     query = query
@@ -79,7 +79,6 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.ClickOnlineRecipes -> onOnlineRecipesClick()
             is RecipePageEvent.ClickSaveRecipe -> viewModelScope.launch { onSaveRecipeClick(event.recipe) }
             is RecipePageEvent.ClickDeleteRecipe -> viewModelScope.launch { onDeleteRecipeClick(event.recipe) }
-            //is RecipePageEvent.ShowSnackbar -> emitEvent(RecipePageEvent.ShowSnackbar(event.message))
             is RecipePageEvent.QueryChanged -> _recipePageState.update { it.copy(query = event.query) }
             RecipePageEvent.SearchOnline -> viewModelScope.launch { performOnlineSearch() }
         }

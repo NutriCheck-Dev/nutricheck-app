@@ -89,7 +89,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.moshi.kotlin)
     implementation(libs.logging.interceptor)
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.lifecycle)

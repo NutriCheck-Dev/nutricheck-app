@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 interface RecipeDao : BaseDao<Recipe> {
     @Insert
     override suspend fun insert(obj: Recipe)
-
     @Update
     override suspend fun update(obj: Recipe)
     @Delete
@@ -22,10 +21,6 @@ interface RecipeDao : BaseDao<Recipe> {
 
     @Transaction
     @Query("SELECT * FROM recipes ORDER BY name ASC")
-    fun getAllMyRecipes(): Flow<List<RecipeWithIngredients>>
-
-    @Transaction
-    @Query("SELECT * FROM recipes")
     fun getAllRecipesWithIngredients(): Flow<List<RecipeWithIngredients>>
 
     @Transaction

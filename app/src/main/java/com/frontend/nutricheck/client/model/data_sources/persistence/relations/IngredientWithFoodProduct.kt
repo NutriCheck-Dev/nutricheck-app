@@ -8,6 +8,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 data class IngredientWithFoodProduct(
     @Embedded val ingredient: Ingredient,
     @Relation(
+        entity = FoodProduct::class,
         parentColumn = "foodProductId",
         entityColumn = "id"
     )
