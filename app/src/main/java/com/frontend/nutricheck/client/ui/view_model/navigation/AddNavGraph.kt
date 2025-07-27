@@ -11,7 +11,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.app_views.AddedComponentsSummary
 import com.frontend.nutricheck.client.ui.view.app_views.CreateRecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
@@ -50,7 +50,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     val createRecipeViewModel: CreateRecipeViewModel = hiltViewModel()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
-        if (foodComponent is FoodProductEntity) { addNavController.navigate(AddScreens.FoodOverview.createRoute(foodComponent.id))
+        if (foodComponent is FoodProduct) { addNavController.navigate(AddScreens.FoodOverview.createRoute(foodComponent.id))
         } else { addNavController.navigate(AddScreens.RecipeOverview.createRoute(foodComponent.id))}
     }
 

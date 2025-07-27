@@ -10,7 +10,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.app_views.AddedComponentsSummary
 import com.frontend.nutricheck.client.ui.view.app_views.CreateRecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
@@ -47,7 +47,7 @@ fun RecipePageNavGraph() {
     val recipePageNavController = rememberNavController()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
-        if (foodComponent is FoodProductEntity) {
+        if (foodComponent is FoodProduct) {
             recipePageNavController.navigate(
                 RecipePageScreens.FoodProductOverview.createRoute(foodComponent.id)
             )
