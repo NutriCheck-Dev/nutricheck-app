@@ -113,7 +113,7 @@ fun AddDialog(
 @Preview
 @Composable
 fun AddDialogPreview() {
-    AppTheme() {
+    AppTheme {
         AddDialog(
             onAddMealClick = {},
             onAddRecipeClick = {},
