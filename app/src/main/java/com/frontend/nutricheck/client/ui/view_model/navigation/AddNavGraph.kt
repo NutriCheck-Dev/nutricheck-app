@@ -7,7 +7,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
@@ -54,23 +53,15 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         } else { addNavController.navigate(AddScreens.RecipeOverview.createRoute(foodComponent.id))}
     }
 
-    val startDestination = when (origin) {
-        AddDialogOrigin.BOTTOM_NAV_BAR -> {
-            AddScreens.AddMainPage.route
-        }
-        AddDialogOrigin.RECIPE_PAGE -> {
-            AddScreens.AddRecipe.route
-        }
-        AddDialogOrigin.HISTORY_PAGE -> {
-            AddScreens.AddMeal.route
-        }
-    }
-
     NavHost(
         navController = addNavController,
-        startDestination = startDestination,
+        startDestination = when(origin) {
+            AddDialogOrigin.BOTTOM_NAV_BAR -> AddScreens.AddMainPage.route
+            AddDialogOrigin.RECIPE_PAGE -> AddScreens.AddRecipe.route
+            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.createRoute(false)
+        },
     ) {
-        dialog(AddScreens.AddMainPage.route) {
+        composable(AddScreens.AddMainPage.route) {
             AddDialog(
                 onAddMealClick = { addNavController.navigate(AddScreens.AddMeal.createRoute(false)) },
                 onAddRecipeClick = { addNavController.navigate(AddScreens.AddRecipe.route) },
