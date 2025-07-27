@@ -2,10 +2,11 @@ package com.frontend.nutricheck.client.model.repositories.foodproducts
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.FoodProductMapper
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import java.io.IOException
 import javax.inject.Inject
 
@@ -30,6 +31,8 @@ class FoodProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getFoodProductById(foodProductId: String): Flow<FoodProduct> =
-        foodDao.getById(foodProductId)
+    override suspend fun getFoodProductById(foodProductId: String): FoodProduct {
+        val foodProductEntity = foodDao.getById(foodProductId).first()
+        return DbFoodProductMapper.toFoodProduct(foodProductEntity)
+    }
 }

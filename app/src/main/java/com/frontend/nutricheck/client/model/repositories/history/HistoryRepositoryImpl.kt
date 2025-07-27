@@ -1,11 +1,11 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
@@ -37,11 +37,11 @@ class HistoryRepositoryImpl @Inject constructor(
         return mealsWithAll.sumOf { mealWithAll ->
             // Alle FoodItems dieses Meals
             val foodItemsCalories = mealWithAll.mealFoodItems.sumOf { itemWithProduct ->
-                itemWithProduct.mealFoodItem.quantity * itemWithProduct.foodProduct.calories
+                itemWithProduct.mealFoodItem.quantity * itemWithProduct.foodProductEntity.calories
             }
             // Alle RecipeItems dieses Meals
             val recipeItemsCalories = mealWithAll.mealRecipeItems.sumOf { itemWithRecipe ->
-                itemWithRecipe.mealRecipeItem.quantity * itemWithRecipe.recipe.calories
+                itemWithRecipe.mealRecipeItem.quantity * itemWithRecipe.recipeEntity.calories
             }
             foodItemsCalories + recipeItemsCalories
         }.toInt() // auf ganze Zahl runden
@@ -79,8 +79,8 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun addMeal(
         meal: Meal,
-        mealFoodItemsWithProduct: List<Pair<Double, FoodProduct>>?,
-        mealRecipeItemsWithRecipe: List<Pair<Double, Recipe>>?
+        mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?,
+        mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?
     ) {
         mealDao.insert(meal)
         val mealId = meal.id
@@ -94,7 +94,7 @@ class HistoryRepositoryImpl @Inject constructor(
             )
         } ?: emptyList()
 
-        val mealRecipeItems = mealRecipeItemsWithRecipe?.map { (quantity, recipe) ->
+        val mealRecipeItems = mealRecipeItemsWithRecipeEntity?.map { (quantity, recipe) ->
             MealRecipeItem(
                 id = UUID.randomUUID().toString(),
                 mealId = mealId,

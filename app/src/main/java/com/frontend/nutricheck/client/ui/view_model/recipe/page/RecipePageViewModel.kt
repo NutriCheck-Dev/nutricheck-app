@@ -2,7 +2,9 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.page
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -12,8 +14,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -39,34 +39,22 @@ class RecipePageViewModel @Inject constructor(
     private val recipeRepository: RecipeRepositoryImpl
 ) : BaseRecipePageViewModel() {
 
-
     private val _recipePageState = MutableStateFlow(RecipePageState())
     val recipePageState: StateFlow<RecipePageState> = _recipePageState.asStateFlow()
-    private val _onlineResults = MutableStateFlow<List<Recipe>>(emptyList())
+    private val _onlineResults = MutableStateFlow<List<RecipeEntity>>(emptyList())
 
     init {
         viewModelScope.launch {
-            combine(
-                recipeRepository.getMyRecipesWithIngredients(),
-                _onlineResults,
-                _recipePageState.map { it.selectedTab },
-                _recipePageState.map { it.query }
-            ) { localRecipes, onlineRecipes, tab, query ->
-                val myRecipes = localRecipes.map { it.recipe }
-                val filteredOnlineRecipes = if (tab == 1 && query.isBlank()) {
-                    onlineRecipes
-                } else {
-                    emptyList()
-                }
-                RecipePageState(
-                    myRecipes = myRecipes,
-                    onlineRecipes = filteredOnlineRecipes,
-                    selectedTab = tab,
-                    query = query
-                )
-            }.collect { newState ->
-                _recipePageState.update { newState }
-            }
+            setLoading()
+            val myRecipes = recipeRepository.getMyRecipes()
+            val onlineRecipes = emptyList<Recipe>()
+            _recipePageState.update { it.copy(
+                myRecipes = myRecipes,
+                onlineRecipes = onlineRecipes,
+                selectedTab = 0,
+                query = ""
+            ) }
+            setReady()
         }
     }
 
@@ -118,7 +106,7 @@ class RecipePageViewModel @Inject constructor(
             try {
                 when (val result = recipeRepository.searchRecipe(query)) {
                     is Result.Success -> {
-                        _onlineResults.value = result.data
+                        _onlineResults.value = result.data.map { recipe -> DbRecipeMapper.toRecipeEntity(recipe) }
                         setReady()}
                     is Result.Error -> {
                         _onlineResults.value = emptyList()

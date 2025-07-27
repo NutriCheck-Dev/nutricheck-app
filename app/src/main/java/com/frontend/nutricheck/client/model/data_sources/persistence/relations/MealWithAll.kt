@@ -2,11 +2,11 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 
 data class MealWithAll(
     @Embedded val meal: Meal,
@@ -30,7 +30,7 @@ data class MealFoodItemWithProduct(
         parentColumn = "foodProductId",
         entityColumn = "id"
     )
-    val foodProduct: FoodProduct
+    val foodProductEntity: FoodProductEntity
 )
 
 data class MealRecipeItemWithRecipe(
@@ -39,5 +39,5 @@ data class MealRecipeItemWithRecipe(
         parentColumn = "recipeId",
         entityColumn = "id"
     )
-    val recipe: Recipe
+    val recipeEntity: RecipeEntity
 )

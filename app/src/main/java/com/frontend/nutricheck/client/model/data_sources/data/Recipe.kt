@@ -1,17 +1,14 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "recipes")
 data class Recipe(
-    @PrimaryKey override val id: String = "",
-    override val name: String = "Recipe",
-    override val calories: Double = 0.0,
-    override val carbohydrates: Double = 0.0,
-    override val protein: Double = 0.0,
-    override val fat: Double = 0.0,
-    override val servings: Int = 1,
-    val instructions: String = "",
-    val visibility: RecipeVisibility = RecipeVisibility.OWNER,
+    override val id: String,
+    override val name: String,
+    override val calories: Double,
+    override val carbohydrates: Double,
+    override val protein: Double,
+    override val fat: Double,
+    override val servings: Int,
+    val ingredients: List<Ingredient>,
+    val instructions: String,
+    val visibility: RecipeVisibility
 ) : FoodComponent

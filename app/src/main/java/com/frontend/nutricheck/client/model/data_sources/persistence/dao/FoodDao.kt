@@ -6,27 +6,27 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FoodDao : BaseDao<FoodProduct> {
+interface FoodDao : BaseDao<FoodProductEntity> {
 
     @Insert
-    override suspend fun insert(obj: FoodProduct)
+    override suspend fun insert(obj: FoodProductEntity)
 
     @Update
-    override suspend fun update(obj: FoodProduct)
+    override suspend fun update(obj: FoodProductEntity)
 
     @Delete
-    override suspend fun delete(obj: FoodProduct)
+    override suspend fun delete(obj: FoodProductEntity)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(mealFoodItems: List<FoodProduct>)
+    suspend fun insertAll(mealFoodItems: List<FoodProductEntity>)
 
     @Query("SELECT * FROM foods WHERE id = :id")
-    fun getById(id: String): Flow<FoodProduct>
+    fun getById(id: String): Flow<FoodProductEntity>
 
     @Query("SELECT * FROM foods")
-    fun getAll(): Flow<List<FoodProduct>>
+    fun getAll(): Flow<List<FoodProductEntity>>
 
 }

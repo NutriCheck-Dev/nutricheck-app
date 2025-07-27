@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
 import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
@@ -38,8 +39,8 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeVi
 @Composable
 fun RecipeOverviewBaseContent(
     reportRecipeViewModel: ReportRecipeViewModel,
-    recipe: Recipe = Recipe(),
-    ingredients: List<FoodComponent>,
+    recipe: Recipe,
+    ingredients: List<FoodProduct>,
     onItemClick: (FoodComponent) -> Unit = {},
     onDownLoad: (Recipe) -> Unit = {},
     onEdit: () -> Unit = {},
@@ -94,10 +95,16 @@ fun RecipeOverviewBaseContent(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
 
+            //TODO: Add actual values for total calories, carbs, protein, and fat
             item {
                 RecipeNutrientChartsWidget(
                     modifier = Modifier.fillMaxWidth(),
-                    recipe = recipe)
+                    recipe = recipe,
+                    totalCalories = 0.0,
+                    totalCarbs = 0.0,
+                    totalProtein =  0.0,
+                    totalFat = 0.0
+                )
             }
 
             item {
@@ -132,7 +139,9 @@ fun RecipeOverviewBaseContent(
                 DishItemList(
                     editing = false,
                     foodComponents = ingredients,
-                    onItemClick = onItemClick,
+                    onItemClick = { foodProduct ->
+                        onItemClick(foodProduct)
+                                  },
                     modifier = Modifier
                         .fillMaxWidth()
                 )

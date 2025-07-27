@@ -18,11 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 data class NutrientEntry(
     val label: String,
@@ -35,11 +33,11 @@ data class NutrientEntry(
 @Composable
 fun RecipeNutrientChartsWidget(
     modifier: Modifier = Modifier,
-    recipe: Recipe = Recipe(),
-    totalCalories: Double = 0.0,
-    totalCarbs: Double = 0.0,
-    totalProtein: Double = 0.0,
-    totalFat: Double = 0.0
+    recipe: Recipe,
+    totalCalories: Double,
+    totalCarbs: Double,
+    totalProtein: Double,
+    totalFat: Double
 ) {
     val nutrients = listOf(
         NutrientEntry("Calories", "kcal", recipe.calories, totalCalories),
@@ -111,7 +109,7 @@ fun RecipeNutrientChartsWidget(
 @Composable
 fun FoodProductNutrientChartsWidget(
     modifier: Modifier = Modifier,
-    foodProduct: FoodProduct = FoodProduct(),
+    foodProduct: FoodProduct,
     totalCalories: Double = 0.0,
     totalCarbs: Double = 0.0,
     totalProtein: Double = 0.0,
@@ -149,21 +147,3 @@ fun FoodProductNutrientChartsWidget(
     }
 }
 
-@Preview
-@Composable
-fun NutrientChartsWidgetPreview() {
-    AppTheme() {
-        FoodProductNutrientChartsWidget(
-            foodProduct = FoodProduct(
-                calories = 500.0,
-                carbohydrates = 60.0,
-                protein = 30.0,
-                fat = 20.0
-            ),
-            totalCalories = 2000.0,
-            totalCarbs = 300.0,
-            totalProtein = 150.0,
-            totalFat = 70.0
-        )
-    }
-}

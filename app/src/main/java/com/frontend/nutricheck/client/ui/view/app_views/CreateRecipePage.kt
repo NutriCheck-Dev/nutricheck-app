@@ -42,6 +42,7 @@ fun CreateRecipePage(
     modifier: Modifier = Modifier,
     createRecipeViewModel: CreateRecipeViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
+    onSave: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
@@ -58,7 +59,7 @@ fun CreateRecipePage(
             .background(colors.background),
         topBar = {
             ViewsTopBar(
-                navigationIcon = { NavigateBackButton(onBack = onBack) },
+                navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
                 title = { TextField(
                     value = currentTitle,
                     placeholder = {
@@ -87,6 +88,7 @@ fun CreateRecipePage(
                 ) },
                 actions = {
                     IconButton(onClick = {
+                        onSave()
                         createRecipeViewModel.onEvent(CreateRecipeEvent.RecipeSaved)
                     }) {
                         Icon(
@@ -114,7 +116,9 @@ fun CreateRecipePage(
                 Spacer(Modifier.height(10.dp))
                 DishItemList(
                     foodComponents = currentIngredients,
-                    onItemClick = onItemClick,
+                    onItemClick = { foodComponent ->
+                        onItemClick(foodComponent)
+                                  },
                     editing = true,
                     trailingContent = { item ->
                         CustomDetailsButton()

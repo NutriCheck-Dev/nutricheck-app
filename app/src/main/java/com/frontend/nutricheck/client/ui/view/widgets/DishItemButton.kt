@@ -22,11 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 //This file represents a DishItemButton composable function that displays a button for a dish item.
 @Composable
@@ -44,7 +41,7 @@ fun DishItemButton(
             .shadow(6.dp, RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        onClick = onClick
+        onClick = { onClick() }
     ) {
         Row(
             modifier = Modifier
@@ -96,7 +93,7 @@ fun DishItemMealButton(
             .fillMaxWidth(),
         color = Color(0xFF121212),
         tonalElevation = 0.dp,
-        onClick = onClick
+        onClick = { onClick() }
     ) {
         Row(
             modifier = Modifier
@@ -133,16 +130,4 @@ fun DishItemMealButton(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun DishItemButtonPreview() {
-    AppTheme() {
-    DishItemButton(
-        foodComponent = Recipe(),
-        trailingContent = { CustomDetailsButton() },
-        onClick = {}
-    )
-        }
 }

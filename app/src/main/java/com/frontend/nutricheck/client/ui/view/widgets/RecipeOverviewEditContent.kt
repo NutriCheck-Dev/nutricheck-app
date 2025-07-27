@@ -90,7 +90,12 @@ fun RecipeOverviewEditContent(
             item {
                 RecipeNutrientChartsWidget(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    recipe = draft.recipe!!,
+                    totalCalories = 0.0,
+                    totalCarbs = 0.0,
+                    totalProtein = 0.0,
+                    totalFat = 0.0
                 )
             }
 
