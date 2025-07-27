@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.model.data_sources.remote
 
-import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

@@ -52,19 +52,18 @@ fun AddDialog(
                     AddOptionButton(
                         icon = Icons.Default.Search,
                         label = stringResource(id = R.string.add_dialog_meal_title),
-                        onClick = {
-                            onAddMealClick }
+                        onClick = { onAddMealClick() }
                     )
                     AddOptionButton(
                         icon = Icons.Default.CameraAlt,
                         label = stringResource(id = R.string.add_dialog_scan_title),
-                        onClick = { onScanFoodClick }
+                        onClick = { onScanFoodClick() }
                     )
                 }
                 AddOptionButton(
                     icon = Icons.Default.Create,
                     label = stringResource(id = R.string.add_dialog_recipe_title),
-                    onClick = { onAddRecipeClick }
+                    onClick = { onAddRecipeClick() }
                 )
             }
         }

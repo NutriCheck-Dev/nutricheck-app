@@ -10,9 +10,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.ui.view.app_views.AddedComponentsSummary
-import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
-import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
+import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
@@ -43,8 +42,8 @@ fun RecipePageNavGraph() {
     NavHost(
         navController = recipePageNavController,
         startDestination = RecipePageScreens.RecipePage.route
-    ) {
-        composable(RecipePageScreens.RecipePage.route) {
+    ) { //TODO ??
+        /**composable(RecipePageScreens.RecipePage.route) {
             RecipePage(
                 recipePageViewModel = recipePageViewModel,
                 onItemClick = { recipeId ->
@@ -53,7 +52,7 @@ fun RecipePageNavGraph() {
                     )
                 }
             )
-        }
+        }*/
 
         navigation(
             startDestination = RecipePageScreens.RecipeOverview.route,
@@ -87,7 +86,7 @@ fun RecipePageNavGraph() {
                 val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
 
                 SearchPage(
-                    editRecipeViewModel = editRecipeViewModel,
+                    //editRecipeViewModel = editRecipeViewModel,
                     onConfirm = {
                         recipePageNavController.navigate(
                             RecipePageScreens.AddedIngredientSummaryPage.createRoute(recipeId)

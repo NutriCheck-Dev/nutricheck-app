@@ -31,7 +31,7 @@ import java.util.UUID
 data class SearchState(
     val language: String = "de",
     val date: Date? = null,
-    val dayTime: DayTime? = null,
+    val dayTime: DayTime? = DayTime.BREAKFAST,
     val query: String = "",
     val selectedTab: Int = 0,
     val results: List<FoodComponent> = emptyList(),
