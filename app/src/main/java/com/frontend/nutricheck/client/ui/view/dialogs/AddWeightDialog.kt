@@ -29,12 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -44,13 +41,13 @@ import java.util.Locale
 fun AddWeightDialog(
     onEvent : (ProfileEvent) -> Unit,
     onDismissRequest: () -> Unit,
-    state: ProfileState
+    errorMessage : Int? = null
 ) {
     var weightInput by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(Date()) }
     var showDatePicker by remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-    val error = state.errorMessage
+
 
     if (showDatePicker) {
         val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
@@ -85,11 +82,11 @@ fun AddWeightDialog(
                 OutlinedTextField(
                     value = weightInput,
                     onValueChange = { weightInput = it },
-                    label = { Text(stringResource(id = R.string.onboarding_label_weight)) },
+                    label = { Text(stringResource(id = R.string.userData_label_weight)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
-                error?.let { resId ->
+                errorMessage?.let { resId ->
                     Text(
                         modifier = Modifier
                             .padding(top = 16.dp),
@@ -136,20 +133,3 @@ fun AddWeightDialog(
     )
 }
 
-@Preview
-@Composable
-fun AddWeightDialogPreview() {
-    AddWeightDialog(
-        onEvent = {},
-        onDismissRequest = {},
-        state = ProfileState( errorMessage = R.string.onboarding_error_weight_required, userData = UserData (
-            username = "Test User",
-            birthdate = Date(),
-            height = 180.0,
-            weight = 75.0,
-            targetWeight = 70.0,
-            language = "en",
-            theme = "light",
-        ), weightData = emptyList())
-    )
-}

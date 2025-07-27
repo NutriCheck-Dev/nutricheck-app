@@ -9,13 +9,15 @@ data class UserData(
     @PrimaryKey val username: String = "",
     val birthdate: Date = Date(),
     val gender: Gender = Gender.DIVERS,
-    val height: Double? = 0.0,
-    val weight: Double? = 0.0,
+    val height: Double = 0.0,
+    val weight: Double = 0.0,
     val age : Int = 0,
-    val targetCalories: Double? = 0.0,
     val weightGoal: WeightGoal = WeightGoal.MAINTAIN_WEIGHT,
-    val targetWeight: Double? = 0.0,
+    val targetWeight: Double = 0.0,
     val activityLevel: ActivityLevel = ActivityLevel.NEVER,
-    val language: String = "de",
-    val theme: String = "light"
+    val dailyCaloriesGoal: Int = 0,
+    val proteinGoal: Int = 0,
+    val carbsGoal: Int = 0,
+    val fatsGoal: Int = 0
 )
+

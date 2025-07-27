@@ -152,7 +152,7 @@ fun FoodProductNutrientChartsWidget(
 @Preview
 @Composable
 fun NutrientChartsWidgetPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         FoodProductNutrientChartsWidget(
             foodProduct = FoodProduct(
                 calories = 500.0,

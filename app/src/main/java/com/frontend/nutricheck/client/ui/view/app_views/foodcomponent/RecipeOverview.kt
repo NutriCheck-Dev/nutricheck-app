@@ -80,7 +80,7 @@ fun RecipeOverview(
 @Preview
 @Composable
 fun RecipeOverviewPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         RecipeOverview()
     }
 }

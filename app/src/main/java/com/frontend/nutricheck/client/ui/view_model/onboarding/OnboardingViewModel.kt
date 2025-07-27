@@ -1,13 +1,15 @@
 package com.frontend.nutricheck.client.ui.view_model.onboarding
 
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
-import com.frontend.nutricheck.client.model.repositories.user.OnboardingRepository
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.util.Date
 import javax.inject.Inject
 
@@ -59,7 +60,7 @@ data class OnboardingState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val onboardingRepository: OnboardingRepository,
+    private val appSettingsRepository: AppSettingsRepository,
     private val userDataRepository: UserDataRepository
 ) : BaseOnboardingViewModel() {
 
@@ -92,7 +93,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterName(name: String) {
         if (name.isBlank()) {
             _data.update {
-                it.copy(errorState = (R.string.onboarding_error_name_required))
+                it.copy(errorState = (R.string.userData_error_name_required))
             }
             return
         }
@@ -102,9 +103,9 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun enterBirthdate(birthdate: Date?) {
-        if (!validateBirthdate(birthdate)) {
+        if (birthdate == null || Utils.isBirthdateInvalid(birthdate)) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_birthdate_required)
+                it.copy(errorState = R.string.userData_error_birthdate_required)
             }
             return
         }
@@ -116,7 +117,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterGender(gender: Gender?) {
         if (gender == null) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_gender_required)
+                it.copy(errorState = R.string.userData_error_gender_required)
             }
             return
         }
@@ -129,7 +130,7 @@ class OnboardingViewModel @Inject constructor(
         val heightAsDouble : Double? = height.toDoubleOrNull()
         if (heightAsDouble == null || heightAsDouble <= 0) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_height_required)
+                it.copy(errorState = R.string.userData_error_height_required)
             }
             return
         }
@@ -142,7 +143,7 @@ class OnboardingViewModel @Inject constructor(
         val weightAsDouble: Double? = weight.toDoubleOrNull()
         if (weightAsDouble == null || weightAsDouble <= 0) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_weight_required)
+                it.copy(errorState = R.string.userData_error_weight_required)
             }
             return
         }
@@ -154,7 +155,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterSportFrequency(activityLevel: ActivityLevel?) {
         if (activityLevel == null) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_activity_level_required)
+                it.copy(errorState = R.string.userData_error_activity_level_required)
             }
             return
         }
@@ -166,7 +167,7 @@ class OnboardingViewModel @Inject constructor(
     override fun enterWeightGoal(weightGoal: WeightGoal?) {
         if (weightGoal == null) {
             _data.update {
-                it.copy(errorState = R.string.onboarding_error_goal_required)
+                it.copy(errorState = R.string.userData_error_goal_required)
             }
             return
         }
@@ -178,28 +179,13 @@ class OnboardingViewModel @Inject constructor(
     override fun enterTargetWeight(targetWeight: String) {
         val targetWeightAsDouble: Double? = targetWeight.toDoubleOrNull()
         if (targetWeightAsDouble == null || targetWeightAsDouble <= 0.0) {
-            _data.update {
-                it.copy(errorState = R.string.onboarding_error_target_weight_required)
-            }
+            _data.update { it.copy(errorState = R.string.userData_error_target_weight_required) }
             return
         }
         _data.update { it.copy(errorState = null) }
         _data.update { it.copy(targetWeight = targetWeightAsDouble) }
         completeOnboarding()
     }
-
-    private fun validateBirthdate(birthdate: Date?): Boolean {
-        if (birthdate == null) {
-            return false
-        }
-        val localBirthdate = birthdate.toInstant()
-            .atZone(java.time.ZoneId.systemDefault())
-            .toLocalDate()
-            val today = LocalDate.now()
-            val hundredYearsAgo = today.minusYears(100)
-        return !localBirthdate.isAfter(today) && !localBirthdate.isBefore(hundredYearsAgo)
-     }
-
     private fun completeOnboarding() {
         val newUserData = UserData(
             username = _data.value.username,
@@ -209,11 +195,18 @@ class OnboardingViewModel @Inject constructor(
             weight = _data.value.weight,
             activityLevel = _data.value.activityLevel!!,
             weightGoal = _data.value.weightGoal!!,
-            targetWeight = _data.value.targetWeight
+            targetWeight = _data.value.targetWeight,
+            age = Utils.calculateAge(_data.value.birthdate!!),
+            dailyCaloriesGoal = 0,
+            proteinGoal = 0,
+            carbsGoal = 0,
+            fatsGoal = 0
         )
+        Utils.calculateNutrition(newUserData)
         viewModelScope.launch {
             userDataRepository.addUserData(newUserData)
-            onboardingRepository.setOnboardingCompleted()
+            userDataRepository.addWeight(Weight(_data.value.weight, Date()))
+            appSettingsRepository.setOnboardingCompleted()
         }
         emitEvent(OnboardingEvent.NavigateToDashboard)
     }

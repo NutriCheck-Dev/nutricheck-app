@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -98,19 +99,9 @@ fun OnboardingSport(
                 )
             }
             enumValues<ActivityLevel>().forEach { level ->
-                val textResId = when (level) {
-                    ActivityLevel.NEVER ->
-                        R.string.onboarding_label_activity_level_never
-                    ActivityLevel.OCCASIONALLY ->
-                        R.string.onboarding_label_activity_level_occasionally
-                    ActivityLevel.REGULARLY ->
-                        R.string.onboarding_label_activity_level_regularly
-                    ActivityLevel.FREQUENTLY ->
-                        R.string.onboarding_label_activity_level_frequently
-                }
-
+                val text = level.getDescription(context = LocalContext.current)
                 SelectOption(
-                    text = stringResource(id = textResId),
+                    text = text,
                     onClick = { selectedActivity = level },
                     selected = selectedActivity == level
                 )

@@ -1,9 +1,18 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
+import com.frontend.nutricheck.client.model.data_sources.data.Gender
+import com.frontend.nutricheck.client.model.data_sources.data.Language
+import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,17 +21,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.Date
-
-data class ProfileState(
-    val userData: UserData = UserData(),
-    val weightData: List<Int> = emptyList(),
-    val errorMessage: Int? = null
-)
 
 sealed interface ProfileEvent {
     object DisplayProfileOverview : ProfileEvent
@@ -30,24 +31,77 @@ sealed interface ProfileEvent {
     object DisplayWeightHistory : ProfileEvent
     object SelectLanguage : ProfileEvent
     object AddNewWeight : ProfileEvent
-    data class UpdateUserData(val userData: UserData) : ProfileEvent
-    data class SaveLanguage(val language: String) : ProfileEvent
-    data class ChangeTheme(val theme: String) : ProfileEvent
+    object OnSaveClick : ProfileEvent
+    object RestartApp : ProfileEvent
+    data class SaveLanguage(val language: Language) : ProfileEvent
+    data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
+    data class UpdateUserNameDraft(val username: String) : ProfileEvent
+    data class UpdateUserBirthdateDraft(val birthdate: Date) : ProfileEvent
+    data class UpdateUserHeightDraft(val height: String) : ProfileEvent
+    data class UpdateUserWeightDraft(val weight: String) : ProfileEvent
+    data class UpdateUserTargetWeightDraft(val targetWeight: String) : ProfileEvent
+    data class UpdateUserActivityLevelDraft(val activityLevel: ActivityLevel) : ProfileEvent
+    data class UpdateUserWeightGoalDraft(val weightGoal: WeightGoal) : ProfileEvent
+    data class UpdateUserGenderDraft(val gender : Gender) : ProfileEvent
 }
 
+
+
 @HiltViewModel
-class ProfileOverviewViewModel @Inject constructor(
-    private val userDataRepository: UserDataRepository
-) :
-    BaseProfileViewModel<ProfileState>(initialData = ProfileState()) {
+class ProfileViewModel @Inject constructor(
+    private val userDataRepository: UserDataRepository,
+    private val appSettingsRepository: AppSettingsRepository
+) : BaseProfileViewModel() {
 
     private val _events = MutableSharedFlow<ProfileEvent>()
     val events: SharedFlow<ProfileEvent> = _events.asSharedFlow()
 
-    private val _data = MutableStateFlow(ProfileState())
-    override val data: StateFlow<ProfileState> = _data.asStateFlow()
+    private val _dataDraft = MutableStateFlow<UserData>(UserData(
+        username = "",
+        birthdate = Date(),
+        gender = Gender.MALE,
+        height = 0.0,
+        weight = 0.0,
+        targetWeight = 0.0,
+        activityLevel = ActivityLevel.NEVER,
+        weightGoal = WeightGoal.LOSE_WEIGHT,
+        age = 0,
+        dailyCaloriesGoal = 0,
+        proteinGoal = 0,
+        carbsGoal = 0,
+        fatsGoal = 0
+    ))
+    val dataDraft: StateFlow<UserData> = _dataDraft.asStateFlow()
 
+    private val _data = MutableStateFlow<UserData>(UserData(
+        username = "",
+        birthdate = Date(),
+        gender = Gender.MALE,
+        height = 0.0,
+        weight = 0.0,
+        targetWeight = 0.0,
+        activityLevel = ActivityLevel.NEVER,
+        weightGoal = WeightGoal.LOSE_WEIGHT,
+        age = 0,
+        dailyCaloriesGoal = 0,
+        proteinGoal = 0,
+        carbsGoal = 0,
+        fatsGoal = 0
+    ))
+    val data: StateFlow<UserData> = _data.asStateFlow()
+
+    private val _weightData = MutableStateFlow<List<Weight>>(emptyList())
+    val weightData: StateFlow<List<Weight>> = _weightData.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow<Int?>(null)
+    val errorMessage: StateFlow<Int?> = _errorMessage.asStateFlow()
+
+    val currentLanguage: StateFlow<Language> = appSettingsRepository.language.stateIn(
+        viewModelScope,
+        initialValue = Language.GERMAN,
+        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000)
+    )
 
     fun onEvent(event: ProfileEvent) {
         when(event) {
@@ -57,80 +111,141 @@ class ProfileOverviewViewModel @Inject constructor(
             is ProfileEvent.SelectLanguage -> { emitEvent(ProfileEvent.SelectLanguage) }
             is ProfileEvent.SaveLanguage -> { onSaveLanguageClick(event.language) }
             is ProfileEvent.ChangeTheme -> { onChangeThemeClick(event.theme) }
-            is ProfileEvent.UpdateUserData -> { validate(event.userData) }
+            is ProfileEvent.OnSaveClick -> { persistDataWithCalculation() }
             is ProfileEvent.AddNewWeight -> { emitEvent(ProfileEvent.AddNewWeight) }
             is ProfileEvent.SaveNewWeight -> {saveNewWeight(event.weight, event.date)}
+            is ProfileEvent.UpdateUserNameDraft -> {updateUserNameDraft(event.username)}
+            is ProfileEvent.UpdateUserBirthdateDraft -> {updateUserBirthdateDraft(event.birthdate)}
+            is ProfileEvent.UpdateUserHeightDraft -> {updateUserHeightDraft(event.height)}
+            is ProfileEvent.UpdateUserWeightDraft -> {updateUserWeightDraft(event.weight)}
+            is ProfileEvent.UpdateUserTargetWeightDraft ->
+                {updateUserTargetWeightDraft(event.targetWeight)}
+            is ProfileEvent.UpdateUserActivityLevelDraft ->
+                {updateUserActivityLevelDraft(event.activityLevel)}
+            is ProfileEvent.UpdateUserWeightGoalDraft ->
+                {updateUserWeightGoalDraft(event.weightGoal)}
+            is ProfileEvent.UpdateUserGenderDraft -> {updateUserGenderDraft(event.gender)}
+            is ProfileEvent.RestartApp -> { emitEvent(ProfileEvent.RestartApp) }
+        }
+    }
+    init {
+        viewModelScope.launch {
+            _data.value = userDataRepository.getUserData()
+            _dataDraft.value = _data.value
         }
     }
 
-    private fun displayWeightHistory() {
-//        viewModelScope.launch {
-//            val weightHistory = userDataRepository.getWeightHistory()
-//        }
-        emitEvent(ProfileEvent.DisplayWeightHistory)
-
-        TODO("Get weight history from data source")
-    }
-    private fun saveNewWeight(weight: String, date: Date) {
-        val weightValue = weight.toIntOrNull()
-        if (weightValue == null || weightValue <= 0) {
-            _data.value = _data.value.copy(errorMessage = R.string.onboarding_error_weight_required)
+    private fun updateUserNameDraft(username: String) {
+        if (username.isBlank()) {
+            _errorMessage.value = R.string.userData_error_name_required
             return
         }
-        TODO("persist weight data")
+        _errorMessage.value = null
+        _dataDraft.value = _dataDraft.value.copy(username = username)
+    }
+    private fun updateUserBirthdateDraft(birthdate: Date) {
+        if (Utils.isBirthdateInvalid(birthdate)) {
+            _errorMessage.value = R.string.userData_error_birthdate_required
+            return
+        }
+        _errorMessage.value = null
+        _dataDraft.value = _dataDraft.value.copy(birthdate = birthdate)
+    }
+    private fun updateUserHeightDraft(height: String) {
+        val heightValue = height.toDoubleOrNull()
+        if (heightValue == null || heightValue <= 0.0) {
+            _errorMessage.value = R.string.userData_error_height_required
+            return
+        }
+        _errorMessage.value = null
+        _dataDraft.value = _dataDraft.value.copy(height = heightValue)
+    }
+    private fun updateUserWeightDraft(weight: String) {
+        val weightValue = weight.toDoubleOrNull()
+        if (weightValue == null || weightValue <= 0.0) {
+            _errorMessage.value = R.string.userData_error_weight_required
+            return
+        }
+        _errorMessage.value = null
+        _dataDraft.value = _dataDraft.value.copy(weight = weightValue)
+    }
+    private fun updateUserTargetWeightDraft(targetWeight: String) {
+        val targetWeightValue = targetWeight.toDoubleOrNull()
+        if (targetWeightValue == null || targetWeightValue <= 0.0) {
+            _errorMessage.value = R.string.userData_error_target_weight_required
+            return
+        }
+        _errorMessage.value = null
+        _dataDraft.value = _dataDraft.value.copy(targetWeight = targetWeightValue)
+    }
+    private fun updateUserActivityLevelDraft(activityLevel: ActivityLevel) {
+        _dataDraft.value = _dataDraft.value.copy(activityLevel = activityLevel)
+    }
+    private fun updateUserWeightGoalDraft(weightGoal: WeightGoal) {
+        _dataDraft.value = _dataDraft.value.copy(weightGoal = weightGoal)
+    }
+    private fun updateUserGenderDraft(gender : Gender) {
+        _dataDraft.value = _dataDraft.value.copy(gender = gender)
+    }
+    private fun displayWeightHistory() {
+        viewModelScope.launch {
+            _weightData.value = userDataRepository.getWeightHistory()
+        }
+        emitEvent(ProfileEvent.DisplayWeightHistory)
+    }
+    private fun saveNewWeight(weight: String, date: Date) {
+        val weightValue = weight.toDoubleOrNull()
+        if (weightValue == null || weightValue <= 0) {
+            _errorMessage.value = R.string.userData_error_weight_required
+            return
+        }
+        viewModelScope.launch {
+            userDataRepository.addWeight(Weight(value = weightValue.toDouble(), enterDate = date))
+        }
     }
     private fun displayProfileOverview() {
         emitEvent(ProfileEvent.DisplayProfileOverview)
     }
-    private fun onSaveLanguageClick(language: String) {
-        val newUserData = _data.value.userData.copy(language = language)
-        _data.value = _data.value.copy(userData = newUserData)
-        persistData(newUserData)
-    }
-    private fun onChangeThemeClick(theme : String) {
-        val newUserData = _data.value.userData.copy(theme = theme)
-        _data.value = _data.value.copy(userData = newUserData)
-        persistData(newUserData)
-    }
-    private fun validate(userData: UserData) {
-        if (userData.username.isBlank()) {
-            _data.value =
-                _data.value.copy(errorMessage = R.string.onboarding_error_name_required)
-            return
-        } else if (birthdateInvalid(userData.birthdate)) {
-            _data.value =
-                _data.value.copy(errorMessage = R.string.onboarding_error_birthdate_required)
-            return
-        } else if (userData.height == null || userData.height <= 0) {
-            _data.value =
-                _data.value.copy(errorMessage = R.string.onboarding_error_height_required)
-            return
-        } else if (userData.weight == null || userData.weight <= 0) {
-            _data.value =
-                _data.value.copy(errorMessage = R.string.onboarding_error_weight_required)
-            return
-        } else if (userData.targetWeight == null || userData.targetWeight <= 0) {
-            _data.value =
-                _data.value.copy(errorMessage = R.string.onboarding_error_target_weight_required)
-            return
+    private fun onSaveLanguageClick(language: Language) {
+        viewModelScope.launch {
+            appSettingsRepository.setLanguage(language)
         }
-        _data.value = _data.value.copy(errorMessage = null, userData = userData)
-        persistData(userData)
+        emitEvent(ProfileEvent.RestartApp)
+    }
+    private fun onChangeThemeClick(theme : ThemeSetting) {
+        AppThemeState.currentTheme.value = theme
+        val isDarkMode = when (theme) {
+            ThemeSetting.DARK -> true
+            ThemeSetting.LIGHT -> false
+        }
+        viewModelScope.launch {
+            appSettingsRepository.setTheme(isDarkMode)
+        }
+    }
+    private fun persistDataWithCalculation () {
+        val userDataWithCalories = Utils.calculateNutrition(userData = UserData(
+            username = _dataDraft.value.username,
+            birthdate = _dataDraft.value.birthdate,
+            gender = _dataDraft.value.gender,
+            height = _dataDraft.value.height,
+            weight = _dataDraft.value.weight,
+            targetWeight = _dataDraft.value.targetWeight,
+            activityLevel = _dataDraft.value.activityLevel,
+            weightGoal = _dataDraft.value.weightGoal,
+            age = Utils.calculateAge(_dataDraft.value.birthdate),
+            dailyCaloriesGoal = _dataDraft.value.dailyCaloriesGoal,
+            proteinGoal = _dataDraft.value.proteinGoal,
+            carbsGoal = _dataDraft.value.carbsGoal,
+            fatsGoal = _dataDraft.value.fatsGoal
+        ))
+        viewModelScope.launch {
+            userDataRepository.updateUserData(userDataWithCalories)
+        }
         displayProfileOverview()
     }
-    private fun persistData(userData: UserData) {
-        viewModelScope.launch {
-            userDataRepository.updateUserData(userData)
-        }
-    }
-    private fun birthdateInvalid(birthdate: Date): Boolean {
-        val localBirthdate = Instant.ofEpochMilli(birthdate.time)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
-        val today = LocalDate.now()
-        val hundredYearsAgo = today.minusYears(100)
-        return localBirthdate.isAfter(today) || localBirthdate.isBefore(hundredYearsAgo)
-    }
     private fun emitEvent(event: ProfileEvent) = viewModelScope.launch { _events.emit(event) }
+
+
+
 
 }

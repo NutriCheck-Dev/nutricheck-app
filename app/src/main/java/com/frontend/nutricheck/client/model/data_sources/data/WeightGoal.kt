@@ -1,11 +1,14 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
-enum class WeightGoal(private val displayName: String) {
-    LOSE_WEIGHT("Lose Weight"),
-    MAINTAIN_WEIGHT("Maintain Weight"),
-    GAIN_WEIGHT("Gain Weight");
+import android.content.Context
+import com.frontend.nutricheck.client.R
 
-    fun getDescription(): String {
-        return "Weight Goal: $displayName"
+enum class WeightGoal(val resId: Int) {
+    LOSE_WEIGHT(R.string.userData_label_goal_lose_weight),
+    MAINTAIN_WEIGHT(R.string.userData_label_goal_maintain_weight),
+    GAIN_WEIGHT(R.string.userData_label_goal_gain_weight);
+
+    fun getDescription(context : Context): String {
+        return context.getString(resId)
     }
 }

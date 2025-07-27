@@ -57,7 +57,7 @@ class CreateRecipeViewModel @Inject constructor(
     private val _createdRecipeDraft = MutableStateFlow(CreatedRecipeDraft())
     val createdRecipeDraft = _createdRecipeDraft.asStateFlow()
 
-    val _events = MutableSharedFlow<CreateRecipeEvent>()
+    private val _events = MutableSharedFlow<CreateRecipeEvent>()
     val events: SharedFlow<CreateRecipeEvent> = _events.asSharedFlow()
 
     fun onEvent(event: CreateRecipeEvent) {
@@ -77,7 +77,7 @@ class CreateRecipeViewModel @Inject constructor(
 
     override fun onTitleAdded(newTitle: String) {
         if (newTitle.isBlank()) {
-            _errorState.value = R.string.onboarding_error_name_required
+            _errorState.value = R.string.userData_error_name_required
             return
         }
         _errorState.value = null

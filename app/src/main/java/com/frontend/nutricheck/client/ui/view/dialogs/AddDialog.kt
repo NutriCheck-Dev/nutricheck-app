@@ -74,7 +74,7 @@ fun AddDialog(
 @Preview
 @Composable
 fun AddDialogPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         AddDialog(
             onAddMealClick = {},
             onAddRecipeClick = {},

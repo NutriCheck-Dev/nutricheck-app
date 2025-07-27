@@ -54,7 +54,7 @@ class RecipeOverviewViewModel @Inject constructor(
     }
 
 
-    val _events = MutableSharedFlow<RecipeOverviewEvent>()
+    private val _events = MutableSharedFlow<RecipeOverviewEvent>()
     val events: SharedFlow<RecipeOverviewEvent> = _events.asSharedFlow()
 
 

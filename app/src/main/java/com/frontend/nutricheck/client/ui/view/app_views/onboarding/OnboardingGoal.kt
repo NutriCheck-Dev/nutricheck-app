@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -41,6 +42,7 @@ fun OnboardingGoal(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
 ) {
+    val context = LocalContext.current
     var selectedGoal by remember { mutableStateOf<WeightGoal?>(null) }
     val error = state.errorState
     Box(
@@ -98,14 +100,9 @@ fun OnboardingGoal(
                 )
             }
             enumValues<WeightGoal>().forEach { goal ->
-                val textResId = when (goal) {
-                    WeightGoal.GAIN_WEIGHT -> R.string.onboarding_label_goal_gain_weight
-                    WeightGoal.LOSE_WEIGHT -> R.string.onboarding_label_goal_lose_weight
-                    WeightGoal.MAINTAIN_WEIGHT -> R.string.onboarding_label_goal_maintain_weight
-                }
-
+                val text = goal.getDescription(context)
                 SelectOption(
-                    text = stringResource(id = textResId),
+                    text = text,
                     onClick = { selectedGoal = goal },
                     selected = selectedGoal == goal
                 )

@@ -110,7 +110,7 @@ fun OnboardingBirthdate(
                     .width(300.dp)
                     .clickable { showDatePicker = true },
                 label = {
-                    Text(stringResource(id = R.string.onboarding_label_birthdate))
+                    Text(stringResource(id = R.string.userData_label_birthdate))
                 },
                 readOnly = true,
                 isError = error != null,

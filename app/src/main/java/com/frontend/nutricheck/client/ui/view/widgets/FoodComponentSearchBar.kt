@@ -73,7 +73,7 @@ fun FoodComponentSearchBar(
 @Preview
 @Composable
 fun FoodComponentSearchBarPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         Box(
             modifier = Modifier
                 .fillMaxSize()

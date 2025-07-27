@@ -66,7 +66,6 @@ fun WeightHistoryPage(
 @Composable
 private fun WeightHistoryItem(weightEntry: Weight) {
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-    //TODO("change text to date of weight entry")
 
     Row(
         modifier = Modifier
@@ -76,7 +75,7 @@ private fun WeightHistoryItem(weightEntry: Weight) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text =  "25.24.2025",
+            text =  dateFormat.format(weightEntry.enterDate),
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
@@ -94,9 +93,9 @@ fun WeightHistoryPagePreview() {
         Weight(enterDate = java.util.Date(), value = 69.5),
         Weight(enterDate = java.util.Date(), value = 69.0)
     )
-
     WeightHistoryPage(
         weightState = sampleWeights,
         onEvent = {},
-        onBack = {})
+        onBack = {}
+    )
 }

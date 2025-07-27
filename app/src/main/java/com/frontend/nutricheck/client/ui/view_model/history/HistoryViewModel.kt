@@ -43,7 +43,7 @@ class HistoryViewModel @Inject constructor(
     private val _historyState = MutableStateFlow(HistoryState())
     val historyState = _historyState.asStateFlow()
 
-    val _events = MutableSharedFlow<HistoryEvent>()
+    private val _events = MutableSharedFlow<HistoryEvent>()
     val events: SharedFlow<HistoryEvent> = _events.asSharedFlow()
 
     fun onEvent(event: HistoryEvent) {

@@ -20,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.RootNavGraph
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
-import com.frontend.nutricheck.client.model.repositories.user.OnboardingRepository
+import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AppTheme(darkTheme = true) {
+            AppTheme {
                 MainScreen()
             }
         }
@@ -46,9 +46,9 @@ fun MainScreen(
     val backStackEntry by mainNavController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination?.route ?: Screen.HomePage.route
     val startDestination by produceState<String?>(initialValue = null, hiltWrapperViewModel) {
-        val onboardingCompleted =
-            hiltWrapperViewModel.onboardingRepository.onboardingCompleted.first()
-        value = if (!onboardingCompleted) {
+        val isOnboardingCompleted =
+            hiltWrapperViewModel.appSettingsRepository.isOnboardingCompleted.first()
+        value = if (isOnboardingCompleted) {
             Screen.HomePage.route
         } else {
             Screen.Onboarding.route
@@ -77,7 +77,7 @@ fun MainScreen(
 }
 @HiltViewModel
 class HiltWrapperViewModel @Inject constructor(
-    val onboardingRepository: OnboardingRepository
+    val appSettingsRepository: AppSettingsRepository
 ) : ViewModel()
 
 

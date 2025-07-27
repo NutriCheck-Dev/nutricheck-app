@@ -41,22 +41,23 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.tooling.preview.Preview
+import com.frontend.nutricheck.client.AppThemeState.currentTheme
+import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileState
 
 @Composable
 fun ProfilePage(
-    state : ProfileState,
+    state : UserData,
     onEvent : (ProfileEvent) -> Unit,
    ) {
 
-    val greetingText = stringResource(id = R.string.profile_name, state.userData.username)
-    val userHeightText = stringResource(id = R.string.height_cm, state.userData.height.toString())
-    val userWeightText = stringResource(id = R.string.weight_kg, state.userData.weight.toString())
-    val userAgeText = stringResource(id = R.string.age_years, state.userData.age)
+    val greetingText = stringResource(id = R.string.profile_name, state.username)
+    val userHeightText = stringResource(id = R.string.height_cm, state.height.toString())
+    val userWeightText = stringResource(id = R.string.weight_kg, state.weight.toString())
+    val userAgeText = stringResource(id = R.string.age_years, state.age)
     val scrollState = rememberScrollState()
-    var darkmode = state.userData.theme == "dark"
+    val darkmode = currentTheme.value == ThemeSetting.DARK
 
     val sixteenDp = 16.dp
     val eightDp = 8.dp
@@ -66,7 +67,6 @@ fun ProfilePage(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .background(color = Color(0xFF000000))
     ) {
         Column (
             modifier = Modifier
@@ -77,12 +77,10 @@ fun ProfilePage(
             Spacer(modifier = Modifier.height(thirtyTwoDp))
             Row(
                 Modifier
-                    .shadow(elevation = 6.dp,
-                        spotColor = Color(0x1FBBBBBB),
-                        ambientColor = Color(0x1FBBBBBB))
+                    .shadow(elevation = 6.dp)
                     .height(104.dp)
                     .fillMaxWidth()
-                    .background(color = Color(0xFF121212), shape = RoundedCornerShape(sixteenDp))
+                    .background(Color(0xFF121212), shape = RoundedCornerShape(sixteenDp))
                     .padding(start = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
@@ -92,8 +90,8 @@ fun ProfilePage(
                     style = TextStyle(
                         fontSize = 32.sp,
                         fontWeight = FontWeight(700),
-                        color = Color(0xFFFFFFFF),
                         letterSpacing = 0.1.sp,
+                        color = Color.White
                     ),
                     maxLines = 1
                 )
@@ -180,8 +178,9 @@ fun ProfilePage(
                         contentDescription =
                             stringResource(id = R.string.profile_menu_item_darkmode),
                         text = stringResource(id = R.string.profile_menu_item_darkmode),
-                        checked = darkmode,
-                        onCheckedChange = { darkmode = it },
+                        isChecked = darkmode,
+                        onCheckedChange = { onEvent(ProfileEvent.ChangeTheme(
+                            if (it) ThemeSetting.DARK else ThemeSetting.LIGHT)) },
                     )
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
@@ -233,14 +232,15 @@ fun MenuItemWithSwitch(
     icon: ImageVector,
     contentDescription: String,
     text: String,
-    checked: Boolean,
+    isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
-            .clickable { onCheckedChange(!checked) }
+            .clickable { onCheckedChange(!isChecked) }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
+            .background(shape = RoundedCornerShape(8.dp), color = Color(0xFF121212))
             .padding(top = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -255,7 +255,7 @@ fun MenuItemWithSwitch(
             Switch(
                 colors = SwitchDefaults.colors(
                     checkedTrackColor = Color(0xFF4580FF)),
-                checked = checked,
+                checked = isChecked,
                 onCheckedChange = onCheckedChange,
             )
         }
@@ -266,16 +266,15 @@ fun MenuItemWithSwitch(
 @Preview
 @Composable
 fun ProfilePagePreview() {
-    val dummyState = ProfileState(
-        userData = UserData(
-            username = "JohnDoe",
+    ProfilePage(
+        state = UserData(
+            username = "John Doe",
             height = 180.0,
             weight = 75.0,
-            age = 30,
-            theme = "light"
-        )
+            age = 30
+        ),
+        onEvent = {}
     )
-    ProfilePage(state = dummyState, onEvent = {})
 }
 
 

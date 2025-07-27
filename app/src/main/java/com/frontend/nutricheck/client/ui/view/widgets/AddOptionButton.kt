@@ -85,7 +85,7 @@ fun AddOptionButton(
 @Preview
 @Composable
 fun AddOptionButtonPreview() {
-    AppTheme(darkTheme = true) {
+    AppTheme() {
         AddOptionButton(
             icon = Icons.Default.Search,
             label = "Mahlzeit hinzufügen",
