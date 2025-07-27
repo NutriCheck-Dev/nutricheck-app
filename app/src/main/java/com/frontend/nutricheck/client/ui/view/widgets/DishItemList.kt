@@ -17,8 +17,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 @Composable
 fun DishItemList(
@@ -64,5 +67,27 @@ fun DishItemList(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun DishItemListPreview() {
+    AppTheme {
+        DishItemList(
+            foodComponents = listOf(
+                FoodProduct(name = "Pasta", id = "1"),
+                FoodProduct(name = "Tomato Sauce", id = "2")
+            ),
+            trailingContent = { item ->
+                IconButton(onClick = { /* Handle click */ }) {
+                    Icon(
+                        imageVector = Icons.Outlined.AddCircle,
+                        contentDescription = "Add"
+                    )
+                }
+            },
+            isEditing = true
+        )
     }
 }
