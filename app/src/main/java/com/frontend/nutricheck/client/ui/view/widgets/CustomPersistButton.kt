@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 fun CustomPersistButton(onClick: () -> Unit = {}) {
     val colors = MaterialTheme.colorScheme
     IconButton(
-        onClick = onClick,
+        onClick = { onClick() },
         modifier = Modifier
             .background(
                 color = colors.onSurfaceVariant,

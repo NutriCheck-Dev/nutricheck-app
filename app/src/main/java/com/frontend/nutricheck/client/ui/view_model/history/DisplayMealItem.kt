@@ -1,9 +1,9 @@
 package com.frontend.nutricheck.client.ui.view_model.history
 
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 
 sealed interface DisplayMealItem {
@@ -17,7 +17,7 @@ sealed interface DisplayMealItem {
 
 data class DisplayMealFoodItem(
     val item: MealFoodItem,
-    val product: FoodProduct
+    val product: FoodProductEntity
 ) : DisplayMealItem {
     override val name get() = product.name
     override val quantity get() = item.quantity
@@ -29,14 +29,14 @@ data class DisplayMealFoodItem(
 
 data class DisplayMealRecipeItem(
     val item: MealRecipeItem,
-    val recipe: Recipe
+    val recipeEntity: RecipeEntity
 ) : DisplayMealItem {
-    override val name get() = recipe.name
+    override val name get() = recipeEntity.name
     override val quantity get() = item.quantity
-    override val calories get() = recipe.calories
-    override val carbohydrates get() = recipe.carbohydrates
-    override val protein get() = recipe.protein
-    override val fat get() = recipe.fat
+    override val calories get() = recipeEntity.calories
+    override val carbohydrates get() = recipeEntity.carbohydrates
+    override val protein get() = recipeEntity.protein
+    override val fat get() = recipeEntity.fat
 }
 
 fun buildDisplayMealItems(meals: List<MealWithAll>): List<DisplayMealItem> {
@@ -45,14 +45,14 @@ fun buildDisplayMealItems(meals: List<MealWithAll>): List<DisplayMealItem> {
         mealWithAll.mealFoodItems.map { foodItemWithProduct ->
             DisplayMealFoodItem(
                 item = foodItemWithProduct.mealFoodItem,
-                product = foodItemWithProduct.foodProduct
+                product = foodItemWithProduct.foodProductEntity
             )
         } +
                 // Alle Recipe-Items
                 mealWithAll.mealRecipeItems.map { recipeItemWithRecipe ->
                     DisplayMealRecipeItem(
                         item = recipeItemWithRecipe.mealRecipeItem,
-                        recipe = recipeItemWithRecipe.recipe
+                        recipeEntity = recipeItemWithRecipe.recipeEntity
                     )
                 }
     }

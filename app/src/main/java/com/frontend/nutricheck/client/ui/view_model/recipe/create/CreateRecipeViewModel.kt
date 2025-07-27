@@ -5,6 +5,7 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -24,16 +24,10 @@ data class CreatedRecipeDraft(
     val id: String = UUID.randomUUID().toString(),
     val title: String = "",
     val description: String = "",
-    val ingredients: List<Ingredient> = emptyList(),
-    val addedIngredients: List<Ingredient> = emptyList(),
+    val ingredient: List<Ingredient> = emptyList(),
+    val addedIngredient: List<Ingredient> = emptyList(),
     val viewIngredients: List<FoodProduct> = emptyList()
-) {
-    fun toRecipe(): Recipe = Recipe(
-        id = id,
-        name = title,
-        instructions = description
-    )
-}
+)
 
 sealed interface CreateRecipeEvent {
     data class TitleChanged(val title: String) : CreateRecipeEvent
@@ -88,16 +82,16 @@ class CreateRecipeViewModel @Inject constructor(
         val newIngredient = Ingredient(
             id = UUID.randomUUID().toString(),
             recipeId = _createdRecipeDraft.value.id,
-            foodProductId = foodProduct.id,
+            foodProduct = foodProduct,
             quantity = foodProduct.servings.toDouble()
         )
-        _createdRecipeDraft.update { it.copy(addedIngredients = it.addedIngredients + newIngredient) }
+        _createdRecipeDraft.update { it.copy(addedIngredient = it.addedIngredient + newIngredient) }
     }
 
     override fun onIngredientRemovedInSummary(foodProduct: FoodProduct) {
         _createdRecipeDraft.update { draft ->
             draft.copy(
-                addedIngredients = draft.addedIngredients.filterNot { it.foodProductId == foodProduct.id }
+                addedIngredient = draft.addedIngredient.filterNot { it.foodProduct.id == foodProduct.id }
             )
         }
     }
@@ -105,7 +99,7 @@ class CreateRecipeViewModel @Inject constructor(
     override fun onIngredientRemovedInCreation(foodProduct: FoodProduct) {
         _createdRecipeDraft.update { draft ->
             draft.copy(
-                ingredients = draft.ingredients.filterNot { it.foodProductId == foodProduct.id },
+                ingredient = draft.ingredient.filterNot { it.foodProduct.id == foodProduct.id },
                 viewIngredients = draft.viewIngredients.filterNot { it.id == foodProduct.id }
             )
         }
@@ -114,10 +108,10 @@ class CreateRecipeViewModel @Inject constructor(
     override suspend fun onSaveAddedIngredients() =
         _createdRecipeDraft.update { draft ->
             draft.copy(
-                ingredients = draft.ingredients + draft.addedIngredients,
-                addedIngredients = emptyList(),
+                ingredient = draft.ingredient + draft.addedIngredient,
+                addedIngredient = emptyList(),
                 viewIngredients = draft.viewIngredients
-                        + draft.addedIngredients.map { getFoodComponentOfIngredient(it) }
+                        + draft.addedIngredient.map { it.foodProduct }
             )
         }
 
@@ -134,19 +128,39 @@ class CreateRecipeViewModel @Inject constructor(
             setError("Recipe title cannot be empty")
             return
         }
-        createdRecipe.ingredients.let {
+        createdRecipe.ingredient.let {
             if (it.isEmpty()) {
                 _errorState.value = R.string.create_recipe_error_ingredients
                 return
             }
         }
         _errorState.value = null
-        val recipe = createdRecipe.toRecipe()
+        val nutritionalValues = calculateNutritionalValues(createdRecipe.ingredient)
+        val recipe = Recipe(
+            id = createdRecipe.id,
+            name = createdRecipe.title,
+            calories = nutritionalValues["calories"]!!,
+            carbohydrates = nutritionalValues["carbohydrates"]!!,
+            protein = nutritionalValues["protein"]!!,
+            fat = nutritionalValues["fat"]!!,
+            servings = 1,
+            ingredients = createdRecipe.ingredient,
+            instructions = createdRecipe.description,
+            visibility = RecipeVisibility.OWNER
+        )
         viewModelScope.launch {
             recipeRepository.insertRecipe(recipe)
         }
     }
 
-    private suspend fun getFoodComponentOfIngredient(ingredient: Ingredient) : FoodProduct =
-        foodProductRepository.getFoodProductById(ingredient.foodProductId).first()
+    private fun calculateNutritionalValues(ingredients: List<Ingredient>): Map<String, Double> {
+        return ingredients.fold(mutableMapOf()) { map, ingredient ->
+            map.apply {
+                put("calories", (get("calories")!!) + ingredient.foodProduct.calories)
+                put("carbohydrates", (get("carbohydrates")!!) + ingredient.foodProduct.carbohydrates)
+                put("protein", (get("protein")!!) + ingredient.foodProduct.protein)
+                put("fat", (get("fat")!!) + ingredient.foodProduct.fat)
+            }
+        }
+    }
 }

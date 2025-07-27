@@ -5,9 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
@@ -153,34 +157,36 @@ class FoodSearchViewModel @Inject constructor(
             historyDayDate = _searchState.value.date!!,
             dayTime = _searchState.value.dayTime!!
         )
-        var mealFoodItemsWithProduct: List<Pair<Double, FoodProduct>>? = null
-        var mealRecipeItemsWithRecipe: List<Pair<Double, Recipe>>? = null
+        var mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>? = null
+        var mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>? = null
 
         _searchState.value.addedComponents.forEach { component ->
             when (component) {
                 is FoodProduct -> {
+                    val foodProductEntity = DbFoodProductMapper.toFoodProductEntity(component)
                     mealFoodItemsWithProduct = (mealFoodItemsWithProduct ?: emptyList()) + Pair(
-                        component.servings.toDouble(),
-                        component
+                        foodProductEntity.servings,
+                        foodProductEntity
                     )
                 }
                 is Recipe -> {
-                    mealRecipeItemsWithRecipe = (mealRecipeItemsWithRecipe ?: emptyList()) + Pair(
-                        component.servings.toDouble(),
-                        component
+                    val recipeEntity = DbRecipeMapper.toRecipeEntity(component)
+                    mealRecipeItemsWithRecipeEntity = (mealRecipeItemsWithRecipeEntity ?: emptyList()) + Pair(
+                        recipeEntity.servings,
+                        recipeEntity
                     )
                 }
             }
         }
 
         mealFoodItemsWithProduct = mealFoodItemsWithProduct?.takeIf { it.isNotEmpty() }
-        mealRecipeItemsWithRecipe = mealRecipeItemsWithRecipe?.takeIf { it.isNotEmpty() }
+        mealRecipeItemsWithRecipeEntity = mealRecipeItemsWithRecipeEntity?.takeIf { it.isNotEmpty() }
 
         viewModelScope.launch {
             historyRepository.addMeal(
                 meal = meal,
                 mealFoodItemsWithProduct = mealFoodItemsWithProduct,
-                mealRecipeItemsWithRecipe = mealRecipeItemsWithRecipe
+                mealRecipeItemsWithRecipeEntity = mealRecipeItemsWithRecipeEntity
             )
             _searchState.update { SearchState() }
         }

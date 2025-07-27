@@ -17,7 +17,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 data class FoodProductOverviewState(
-    val foodProduct: FoodProduct = FoodProduct(),
+    val foodProduct: FoodProduct? = null,
     val foodName: String = "",
     val calories: Double = 0.0,
     val protein: Double = 0.0,
@@ -52,20 +52,19 @@ class FoodProductOverviewViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            foodProductRepository.getFoodProductById(foodProductId)
-                .collect { foodProduct ->
-                    _foodProductOverviewState.update {
-                        it.copy(
-                            foodProduct = foodProduct,
-                            foodName = foodProduct.name,
-                            calories = foodProduct.calories,
-                            protein = foodProduct.protein,
-                            carbohydrates = foodProduct.carbohydrates,
-                            fat = foodProduct.fat,
-                            servings = foodProduct.servings,
-                            servingSize = foodProduct.servingSize
-                        ) }
-                }
+            val foodProduct = foodProductRepository.getFoodProductById(foodProductId)
+            _foodProductOverviewState.update {
+                it.copy(
+                    foodProduct = foodProduct,
+                    foodName = foodProduct.name,
+                    calories = foodProduct.calories,
+                    protein = foodProduct.protein,
+                    carbohydrates = foodProduct.carbohydrates,
+                    fat = foodProduct.fat,
+                    servings = foodProduct.servings,
+                    servingSize = foodProduct.servingSize
+                )
+            }
         }
     }
 

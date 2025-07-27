@@ -11,13 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun CustomCloseButton(
-    onClick: () -> Unit = {}
-) {
+fun CustomCloseButton(onClick: () -> Unit = {}) {
     val colors = MaterialTheme.colorScheme
 
     IconButton(
-        onClick = onClick,
+        onClick = { onClick() },
         modifier = Modifier
             .background(
                 color = colors.onSurfaceVariant,

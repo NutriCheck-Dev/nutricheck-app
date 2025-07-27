@@ -50,7 +50,7 @@ fun ServingSizeDropdown(
             color =  colors.surfaceVariant,
             modifier = Modifier
                 .wrapContentSize()
-                .clickable { onExpandedChange.invoke() }
+                .clickable { onExpandedChange() }
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -71,7 +71,7 @@ fun ServingSizeDropdown(
 
     DropdownMenu(
         expanded = expanded,
-        onDismissRequest = { onExpandedChange.invoke() },
+        onDismissRequest = { onExpandedChange() },
         modifier = Modifier
             .wrapContentSize()
             .background(colors.onSurface, RoundedCornerShape(8.dp))

@@ -39,7 +39,7 @@ fun AddOptionButton(
     val styles = MaterialTheme.typography
 
     OutlinedButton(
-        onClick = onClick,
+        onClick = { onClick() },
         modifier = modifier.size(132.dp, 86.dp),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, colors.outline),

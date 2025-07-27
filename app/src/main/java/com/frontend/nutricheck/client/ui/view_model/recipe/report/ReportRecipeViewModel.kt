@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ReportRecipeState(
-    val recipe: Recipe = Recipe(),
+    val recipe: Recipe? = null,
     val inputText: String = "",
     val reporting: Boolean = false
 )
@@ -23,7 +23,7 @@ data class ReportRecipeState(
 sealed interface ReportRecipeEvent {
     data class InputTextChanged(val inputText: String) : ReportRecipeEvent
     data object ReportClicked : ReportRecipeEvent
-    data object DissmissDialog : ReportRecipeEvent
+    data object DismissDialog : ReportRecipeEvent
     data object SendReport : ReportRecipeEvent
 }
 
@@ -40,7 +40,7 @@ class ReportRecipeViewModel @Inject constructor(
         when (event) {
             is ReportRecipeEvent.InputTextChanged -> onInputTextChanged(event.inputText)
             is ReportRecipeEvent.ReportClicked -> onReportClick()
-            is ReportRecipeEvent.DissmissDialog -> onDismissDialog()
+            is ReportRecipeEvent.DismissDialog -> onDismissDialog()
             is ReportRecipeEvent.SendReport -> viewModelScope.launch { onClickSendReport() }
         }
     }
@@ -57,16 +57,14 @@ class ReportRecipeViewModel @Inject constructor(
 
     override suspend fun onClickSendReport() {
         val recipeReport = RecipeReport(
-            recipeId = _reportRecipeState.value.recipe.id,
-            recipeName = _reportRecipeState.value.recipe.name,
-            recipeInstructions = _reportRecipeState.value.recipe.instructions,
+            recipeId = _reportRecipeState.value.recipe!!.id,
+            recipeName = _reportRecipeState.value.recipe!!.name,
+            recipeInstructions = _reportRecipeState.value.recipe!!.instructions,
             description = _reportRecipeState.value.inputText
         )
         //TODO: Implement the actual report sending logic
-        recipeRepository.updateRecipe(_reportRecipeState.value.recipe)
+        recipeRepository.updateRecipe(_reportRecipeState.value.recipe!!)
         _reportRecipeState.update { it.copy(reporting = false, inputText = "") }
         emitEvent(ReportRecipeEvent.SendReport)
     }
-
-    fun setRecipe(recipe: Recipe) = _reportRecipeState.update { it.copy(recipe = recipe) }
 }

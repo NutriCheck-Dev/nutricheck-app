@@ -46,7 +46,7 @@ fun FoodProductOverview(
                 navigationIcon = {
                     CustomCloseButton {
                         onCancel
-                        onBack.invoke()
+                        onBack()
                     }
                                  },
                 title = {
@@ -72,7 +72,7 @@ fun FoodProductOverview(
         ) {
 
             FoodProductNutrientChartsWidget(
-                foodProduct = foodProductState.foodProduct,
+                foodProduct = foodProductState.foodProduct!!,
                 modifier = Modifier.wrapContentHeight()
             )
 

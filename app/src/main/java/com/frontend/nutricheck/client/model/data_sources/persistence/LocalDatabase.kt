@@ -3,11 +3,11 @@ package com.frontend.nutricheck.client.model.data_sources.persistence
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
@@ -25,16 +25,16 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
 @Database(
     entities = [
         HistoryDay::class,
-        Ingredient::class,
+        IngredientEntity::class,
         Meal::class,
         MealFoodItem::class,
         MealRecipeItem::class,
-        FoodProduct::class,
-        Recipe::class,
+        FoodProductEntity::class,
+        RecipeEntity::class,
         UserData::class,
         Weight::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

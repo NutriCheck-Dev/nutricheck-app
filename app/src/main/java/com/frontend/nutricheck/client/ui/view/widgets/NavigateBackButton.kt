@@ -17,7 +17,7 @@ fun NavigateBackButton(
     val colors = MaterialTheme.colorScheme
 
     IconButton(
-        onClick = onBack,
+        onClick = { onBack() },
         modifier = Modifier
             .background(
                 color = colors.onSurfaceVariant,

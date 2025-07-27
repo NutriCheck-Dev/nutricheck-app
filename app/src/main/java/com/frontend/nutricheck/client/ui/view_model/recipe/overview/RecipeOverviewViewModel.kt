@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.overview
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class RecipeOverviewState(
-    val recipe: Recipe = Recipe(),
-    val ingredients: List<FoodProduct> = emptyList(),
+    val recipe: Recipe? = null,
+    val ingredients: List<Ingredient> = emptyList(),
     val editing: Boolean = false
 )
 sealed interface RecipeOverviewEvent {
@@ -42,14 +42,11 @@ class RecipeOverviewViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            recipeRepository.getRecipesWithIngredientsById(recipeId)
-                .collect { recipeWithIngredients ->
-                    val recipe = recipeWithIngredients.recipe
-                    val ingredientsWithProducts = recipeWithIngredients.ingredients
-                    val ingredients = ingredientsWithProducts.map { it.foodProduct }
-                    _recipeOverviewState.update { it.copy(recipe = recipe, ingredients = ingredients)
-                    }
-                }
+            val recipe = recipeRepository.getRecipeById(recipeId)
+            _recipeOverviewState.update { it.copy(
+                recipe = recipe,
+                ingredients = recipe.ingredients
+            ) }
         }
     }
 
@@ -84,7 +81,7 @@ class RecipeOverviewViewModel @Inject constructor(
     }
 
     override suspend fun onDownloadRecipe(recipe: Recipe) {
-        recipeRepository.insertRecipe(recipe)
+        recipeRepository.insertRecipe(recipe,)
     }
 
     override fun onEditClicked() {
@@ -96,6 +93,6 @@ class RecipeOverviewViewModel @Inject constructor(
     }
 
     override suspend fun onShareRecipe(recipe: Recipe) {
-        //("Not yet implemented")
+        recipeRepository.uploadRecipe(recipe)
     }
 }

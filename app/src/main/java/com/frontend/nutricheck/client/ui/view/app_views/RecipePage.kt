@@ -109,7 +109,7 @@ fun RecipePage(
                             0 -> DishItemList(
                                 foodComponents = recipes,
                                 onItemClick = { recipe ->
-                                    onItemClick.invoke(recipe as Recipe)
+                                    onItemClick(recipe as Recipe)
                                 },
                                 trailingContent = {
                                     CustomDetailsButton(
@@ -128,7 +128,7 @@ fun RecipePage(
                                     DishItemList(
                                         foodComponents = recipePageState.onlineRecipes,
                                         onItemClick = { recipe ->
-                                            onItemClick.invoke(recipe as Recipe)
+                                            onItemClick(recipe as Recipe)
                                                       },
                                         trailingContent = {
                                             CustomDetailsButton(
@@ -145,7 +145,7 @@ fun RecipePage(
                             modifier = Modifier
                                 .padding(12.dp)
                                 .align(Alignment.BottomEnd),
-                            onClick = onAddRecipeClick
+                            onClick = { onAddRecipeClick() }
                         ) {
                             Icon(imageVector = Icons.Filled.Add, contentDescription = null)
                             Text(

@@ -34,21 +34,20 @@ fun RecipeOverview(
 
     if (!isEditing) {
         RecipeOverviewBaseContent(
-            recipe = recipeOverviewState.recipe,
+            recipe = recipeOverviewState.recipe!!,
             onItemClick = onItemClick,
             onDownLoad = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDownloadRecipe(it)) },
             onEdit = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe) },
             onDelete = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDeleteRecipe(it)) },
             onUpload = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickUploadRecipe(it)) },
             onSendReport = {
-                reportRecipeViewModel.setRecipe(it)
                 reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport)
                        },
-            onDismiss = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DissmissDialog) }, //TODO: Implement dismiss functionality
+            onDismiss = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) }, //TODO: Implement dismiss functionality
             onReportClick = { reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked) }, //TODO: Implement report click functionality
             onBack = onBack,
             showReportDialog = reportRecipeState.reporting,
-            ingredients = recipeOverviewState.ingredients,
+            ingredients = recipeOverviewState.ingredients.map { ingredient -> ingredient.foodProduct },
             reportRecipeViewModel = reportRecipeViewModel
         )
     } else {

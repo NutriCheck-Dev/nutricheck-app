@@ -4,33 +4,22 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
-import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
-import kotlinx.coroutines.flow.Flow
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 
 @Dao
 interface IngredientDao {
 
-    @Query("SELECT * FROM ingredients WHERE recipeId = :recipeId")
-    fun getForRecipe(recipeId: String): Flow<List<Ingredient>>
-
     @Insert
-    suspend fun insert(ingredient: Ingredient)
+    suspend fun insert(ingredientEntity: IngredientEntity)
 
     @Update
-    suspend fun update(ingredient: Ingredient)
+    suspend fun update(ingredientEntity: IngredientEntity)
 
     @Delete
-    suspend fun delete(ingredient: Ingredient)
+    suspend fun delete(ingredientEntity: IngredientEntity)
 
-    @Transaction
-    @Query("""
-        SELECT * FROM ingredients
-        WHERE recipeId = :recipeId
-    """)
-    fun getIngredientsWithFoodProducts(recipeId: String): Flow<List<IngredientWithFoodProduct>>
-
+    @Query("DELETE FROM ingredients WHERE recipeId = :recipeId")
+    suspend fun deleteIngredientsOfRecipe(recipeId: String)
 
 }

@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 
 @Entity(
     tableName = "meal_food_items",
@@ -15,7 +16,7 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = FoodProduct::class,
+            entity = FoodProductEntity::class,
             parentColumns = ["id"],
             childColumns = ["foodProductId"],
             onDelete = ForeignKey.CASCADE
