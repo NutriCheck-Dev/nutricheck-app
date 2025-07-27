@@ -11,7 +11,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.ui.view.app_views.PersonalDataPage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 import com.frontend.nutricheck.client.ui.view.app_views.WeightHistoryPage

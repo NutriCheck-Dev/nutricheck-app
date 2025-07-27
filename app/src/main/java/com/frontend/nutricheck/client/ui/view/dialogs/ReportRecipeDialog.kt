@@ -75,7 +75,7 @@ fun ReportRecipeDialog(
 @Preview
 @Composable
 fun ReportRecipeDialogPreview() {
-    AppTheme() {
+    AppTheme {
         ReportRecipeDialog()
     }
 }

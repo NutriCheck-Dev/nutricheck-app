@@ -6,9 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewBaseContent
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewEditContent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent

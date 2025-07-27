@@ -1,19 +1,13 @@
 package com.frontend.nutricheck.client
 
 import android.app.Application
-import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.runtime.mutableStateOf
-import com.frontend.nutricheck.client.model.data_sources.data.Language
 import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltAndroidApp
