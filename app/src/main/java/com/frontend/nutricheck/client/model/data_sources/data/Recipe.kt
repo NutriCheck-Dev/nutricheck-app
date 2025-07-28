@@ -10,7 +10,7 @@ data class Recipe(
     override val protein: Double,
     override val fat: Double,
     val servings: Int,
-    val ingredients: List<Ingredient>,
+    var ingredients: List<Ingredient>,
     val instructions: String,
     val visibility: RecipeVisibility
 ) : FoodComponent

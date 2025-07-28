@@ -11,10 +11,10 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.History
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
-import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 import javax.inject.Inject
@@ -33,18 +33,17 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCaloriesOfDay(date: Date): Int {
-        val mealsWithAll = mealDao.getMealsWithAllForDay(date) // oder repository.getMealsWithAllForDay(date)
-        return mealsWithAll.sumOf { mealWithAll ->
-            // Alle FoodItems dieses Meals
-            val foodItemsCalories = mealWithAll.mealFoodItems.sumOf { itemWithProduct ->
-                itemWithProduct.mealFoodItem.quantity * itemWithProduct.foodProductEntity.calories
+        val meals = mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
+        return meals.sumOf { meal ->
+            val foodItemsCalories = meal.mealFoodItems.sumOf { ingredient ->
+                ingredient.quantity * ingredient.foodProduct.calories
             }
-            // Alle RecipeItems dieses Meals
-            val recipeItemsCalories = mealWithAll.mealRecipeItems.sumOf { itemWithRecipe ->
-                itemWithRecipe.mealRecipeItem.quantity * itemWithRecipe.recipeEntity.calories
+
+            val recipeItemsCalories = meal.mealRecipeItem.sumOf { recipe ->
+                recipe.quantity * recipe.recipe.calories
             }
             foodItemsCalories + recipeItemsCalories
-        }.toInt() // auf ganze Zahl runden
+        }.toInt()
     }
 
     override suspend fun getDailyHistory(date: Date): HistoryDay {
@@ -87,7 +86,6 @@ class HistoryRepositoryImpl @Inject constructor(
 
         val mealFoodItems = mealFoodItemsWithProduct?.map { (quantity, foodProduct) ->
             MealFoodItemEntity(
-                id = UUID.randomUUID().toString(),
                 mealId = mealId,
                 foodProductId = foodProduct.id,
                 quantity = quantity
@@ -96,7 +94,6 @@ class HistoryRepositoryImpl @Inject constructor(
 
         val mealRecipeItems = mealRecipeItemsWithRecipeEntity?.map { (quantity, recipe) ->
             MealRecipeItemEntity(
-                id = UUID.randomUUID().toString(),
                 mealId = mealId,
                 recipeId = recipe.id,
                 quantity = quantity

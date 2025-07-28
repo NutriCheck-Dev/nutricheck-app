@@ -6,7 +6,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Food
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 
 data class MealWithAll(
     @Embedded val meal: MealEntity,
@@ -25,7 +24,7 @@ data class MealWithAll(
 )
 
 data class MealFoodItemWithProduct(
-    @Embedded val mealFoodItem: MealFoodItemEntity,
+    @Embedded val mealFoodItemEntity: MealFoodItemEntity,
     @Relation(
         parentColumn = "foodProductId",
         entityColumn = "id"
@@ -34,10 +33,10 @@ data class MealFoodItemWithProduct(
 )
 
 data class MealRecipeItemWithRecipe(
-    @Embedded val mealRecipeItem: MealRecipeItemEntity,
+    @Embedded val mealRecipeItemEntity: MealRecipeItemEntity,
     @Relation(
         parentColumn = "recipeId",
         entityColumn = "id"
     )
-    val recipeEntity: RecipeEntity
+    val recipeWithIngredients: RecipeWithIngredients
 )
