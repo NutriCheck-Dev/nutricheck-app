@@ -6,7 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Result

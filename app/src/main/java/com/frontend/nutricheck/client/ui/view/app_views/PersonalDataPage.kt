@@ -44,7 +44,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import java.text.SimpleDateFormat

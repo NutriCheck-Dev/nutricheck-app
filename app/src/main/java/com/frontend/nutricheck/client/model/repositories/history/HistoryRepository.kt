@@ -1,8 +1,8 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import kotlinx.coroutines.flow.Flow

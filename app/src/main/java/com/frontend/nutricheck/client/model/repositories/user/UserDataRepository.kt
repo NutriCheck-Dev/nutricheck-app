@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.user
 
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
-import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import kotlinx.coroutines.flow.Flow
 
 interface UserDataRepository {

@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.model.data_sources.data
+package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

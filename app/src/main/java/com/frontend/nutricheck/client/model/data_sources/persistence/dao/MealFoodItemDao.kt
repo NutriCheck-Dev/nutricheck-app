@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItem
 
 @Dao
 interface MealFoodItemDao : BaseDao<MealFoodItem> {

@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 

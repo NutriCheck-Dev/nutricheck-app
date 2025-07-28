@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import kotlinx.coroutines.flow.Flow
 
 @Dao

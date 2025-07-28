@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import java.util.Date
 

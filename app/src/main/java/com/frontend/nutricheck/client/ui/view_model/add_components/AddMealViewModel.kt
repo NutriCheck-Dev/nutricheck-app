@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

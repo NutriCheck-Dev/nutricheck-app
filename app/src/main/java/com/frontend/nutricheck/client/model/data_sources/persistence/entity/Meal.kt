@@ -1,9 +1,10 @@
-package com.frontend.nutricheck.client.model.data_sources.data
+package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import java.util.Date
 
 @Entity(
@@ -13,7 +14,7 @@ import java.util.Date
             entity = HistoryDay::class,
             parentColumns = ["date"], // <- das ist dein PK bei HistoryDay
             childColumns = ["historyDayDate"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.Companion.CASCADE
         )
     ],
     indices = [Index(value = ["historyDayDate"])]

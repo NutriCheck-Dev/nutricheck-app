@@ -1,7 +1,10 @@
-package com.frontend.nutricheck.client.model.data_sources.data
+package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
+import com.frontend.nutricheck.client.model.data_sources.data.Gender
+import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import java.util.Date
 
 @Entity(tableName = "user_data")
@@ -20,4 +23,3 @@ data class UserData(
     val carbsGoal: Int = 0,
     val fatsGoal: Int = 0
 )
-

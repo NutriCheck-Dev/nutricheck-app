@@ -7,8 +7,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.Language
 import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
-import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
@@ -144,7 +144,7 @@ class ProfileViewModel @Inject constructor(
         _dataDraft.value = _dataDraft.value.copy(username = username)
     }
     private fun updateUserBirthdateDraft(birthdate: Date) {
-        if (Utils.isBirthdateInvalid(birthdate)) {
+        if (Utils.birthdateInvalid(birthdate)) {
             _errorMessage.value = R.string.userData_error_birthdate_required
             return
         }
