@@ -43,7 +43,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.tooling.preview.Preview
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 
 @Composable
@@ -178,7 +178,7 @@ fun ProfilePage(
                         contentDescription =
                             stringResource(id = R.string.profile_menu_item_darkmode),
                         text = stringResource(id = R.string.profile_menu_item_darkmode),
-                        isChecked = darkmode,
+                        checked = darkmode,
                         onCheckedChange = { onEvent(ProfileEvent.ChangeTheme(
                             if (it) ThemeSetting.DARK else ThemeSetting.LIGHT)) },
                     )
@@ -232,12 +232,12 @@ fun MenuItemWithSwitch(
     icon: ImageVector,
     contentDescription: String,
     text: String,
-    isChecked: Boolean,
+    checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
-            .clickable { onCheckedChange(!isChecked) }
+            .clickable { onCheckedChange(!checked) }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .background(shape = RoundedCornerShape(8.dp), color = Color(0xFF121212))
@@ -255,7 +255,7 @@ fun MenuItemWithSwitch(
             Switch(
                 colors = SwitchDefaults.colors(
                     checkedTrackColor = Color(0xFF4580FF)),
-                checked = isChecked,
+                checked = checked,
                 onCheckedChange = onCheckedChange,
             )
         }

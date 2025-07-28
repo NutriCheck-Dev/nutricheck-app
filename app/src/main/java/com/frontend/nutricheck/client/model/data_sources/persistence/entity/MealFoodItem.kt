@@ -1,35 +1,35 @@
-package com.frontend.nutricheck.client.model.data_sources.data
+package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealItem
 
 @Entity(
-    tableName = "meal_recipe_items",
+    tableName = "meal_food_items",
     foreignKeys = [
         ForeignKey(
             entity = Meal::class,
             parentColumns = ["id"],
             childColumns = ["mealId"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.Companion.CASCADE
         ),
         ForeignKey(
-            entity = RecipeEntity::class,
+            entity = FoodProductEntity::class,
             parentColumns = ["id"],
-            childColumns = ["recipeId"],
-            onDelete = ForeignKey.CASCADE
+            childColumns = ["foodProductId"],
+            onDelete = ForeignKey.Companion.CASCADE
         )
     ],
     indices = [
         Index(value = ["mealId"]),
-        Index(value = ["recipeId"])
+        Index(value = ["foodProductId"])
     ]
 )
-data class MealRecipeItem(
+data class MealFoodItem(
     @PrimaryKey override val id: String = "",
     override val mealId: String = "",
-    val recipeId: String = "",
+    val foodProductId: String = "",
     override val quantity: Double = 0.0
 ) : MealItem

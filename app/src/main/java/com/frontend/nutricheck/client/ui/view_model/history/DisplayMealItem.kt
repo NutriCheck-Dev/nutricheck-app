@@ -1,8 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model.history
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
-import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 

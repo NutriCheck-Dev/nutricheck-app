@@ -18,12 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.Weight
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -89,9 +90,9 @@ private fun WeightHistoryItem(weightEntry: Weight) {
 @Composable
 fun WeightHistoryPagePreview() {
     val sampleWeights = listOf(
-        Weight(enterDate = java.util.Date(), value = 70.0),
-        Weight(enterDate = java.util.Date(), value = 69.5),
-        Weight(enterDate = java.util.Date(), value = 69.0)
+        Weight(enterDate = Date(), value = 70.0),
+        Weight(enterDate = Date(), value = 69.5),
+        Weight(enterDate = Date(), value = 69.0)
     )
     WeightHistoryPage(
         weightState = sampleWeights,

@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model
 
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import java.time.Instant
 import java.time.LocalDate
@@ -12,7 +12,7 @@ import java.util.Date
 
 object Utils {
 
-fun isBirthdateInvalid(birthdate: Date): Boolean {
+fun birthdateInvalid(birthdate: Date): Boolean {
     val localBirthdate = Instant.ofEpochMilli(birthdate.time)
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
