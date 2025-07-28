@@ -22,6 +22,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -61,75 +62,76 @@ fun PersonalDataPage(
 ) {
     var selectedDate by remember { mutableStateOf(state.birthdate) }
     var showDatePicker by remember { mutableStateOf(false) }
-
-    ViewsTopBar(
-        navigationIcon = { NavigateBackButton(onBack = onBack) },
-        title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
-    )
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(50.dp))
-        }
-        personalDataFormItems(
-            userData = state,
-            onEvent = onEvent,
-            onBirthdateClick = {
-                showDatePicker = true
-            }
+    Scaffold {
+        ViewsTopBar(
+            navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
+            title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
         )
-        item {
-            errorMessage?.let { errorResId ->
-                Text(
-                    text = stringResource(id = errorResId),
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(50.dp))
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = {
-                    onEvent(ProfileEvent.OnSaveClick)
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(id = R.string.save))
-            }
-        }
-    }
-    if (showDatePicker) {
-        val datePickerState =
-            rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(
+            personalDataFormItems(
+                userData = state,
+                onEvent = onEvent,
+                onBirthdateClick = {
+                    showDatePicker = true
+                }
+            )
+            item {
+                errorMessage?.let { errorResId ->
+                    Text(
+                        text = stringResource(id = errorResId),
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
                     onClick = {
-                        datePickerState.selectedDateMillis?.let {
-                            selectedDate = Date(it)
-                        }
-                        onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
-                        showDatePicker = false
-                    }
+                        onEvent(ProfileEvent.OnSaveClick)
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(id = R.string.save))
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text(stringResource(id = R.string.cancel))
-                }
             }
-        ) {
-            DatePicker(state = datePickerState)
+        }
+        if (showDatePicker) {
+            val datePickerState =
+                rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                selectedDate = Date(it)
+                            }
+                            onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
+                            showDatePicker = false
+                        }
+                    ) {
+                        Text(stringResource(id = R.string.save))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) {
+                        Text(stringResource(id = R.string.cancel))
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
         }
     }
 }

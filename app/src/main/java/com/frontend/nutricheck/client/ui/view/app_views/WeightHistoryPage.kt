@@ -38,7 +38,7 @@ fun WeightHistoryPage(
                 title = { Text(stringResource(id = R.string.profile_menu_item_weight_history)) },
                 navigationIcon = {
                     NavigateBackButton(
-                        onBack = { onBack }
+                        onBack = { onBack() }
                     )
                 },
                 actions = {

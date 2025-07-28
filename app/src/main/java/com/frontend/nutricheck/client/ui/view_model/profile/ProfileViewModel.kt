@@ -31,9 +31,9 @@ sealed interface ProfileEvent {
     object DisplayPersonalData : ProfileEvent
     object DisplayWeightHistory : ProfileEvent
     object SelectLanguage : ProfileEvent
-    object AddNewWeight : ProfileEvent
     object OnSaveClick : ProfileEvent
     object RestartApp : ProfileEvent
+    object AddNewWeight : ProfileEvent
     data class SaveLanguage(val language: Language) : ProfileEvent
     data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
@@ -133,6 +133,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _data.value = userDataRepository.getUserData()
             _dataDraft.value = _data.value
+            _weightData.value = userDataRepository.getWeightHistory()
         }
     }
 
@@ -202,6 +203,7 @@ class ProfileViewModel @Inject constructor(
         }
         viewModelScope.launch {
             userDataRepository.addWeight(Weight(value = weightValue.toDouble(), enterDate = date))
+            _weightData.value = userDataRepository.getWeightHistory()
         }
     }
     private fun displayProfileOverview() {

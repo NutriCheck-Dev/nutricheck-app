@@ -15,7 +15,9 @@ class UserDataRepositoryImpl @Inject constructor(
 
     override suspend fun getWeightHistory(): List<Weight> = weightDao.getAllWeights().first()
 
-    override suspend fun addWeight(weight: Weight) { weightDao.insert(weight) }
+    override suspend fun addWeight(weight: Weight) {
+        weightDao.insert(weight)
+    }
 
     override suspend fun addUserData(userData: UserData) { userDataDao.insert(userData) }
 
