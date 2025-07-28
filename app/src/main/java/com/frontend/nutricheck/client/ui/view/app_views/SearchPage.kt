@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
@@ -38,8 +37,6 @@ import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
 
@@ -47,7 +44,6 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEv
 fun SearchPage(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel,
-    editRecipeViewModel: EditRecipeViewModel,
     onMealSelected: (DayTime) -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {},
     onConfirm: () -> Unit = {},
@@ -136,13 +132,7 @@ fun SearchPage(
                         foodComponents = searchState.results,
                         trailingContent = { item ->
                             CustomAddButton(onClick = {
-                                if (isFromAddIngredient) {
-                                    editRecipeViewModel.onEvent(
-                                        EditRecipeEvent.IngredientAdded(item as FoodProduct)
-                                    )
-                                } else {
-                                    searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
-                                }
+                                searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
                             })
                         },
                         onItemClick = onItemClick
