@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model.search_food_product
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.model.data_sources.data.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity

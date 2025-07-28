@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
+
 data class Recipe(
     override val id: String,
     override val name: String,

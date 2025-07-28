@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import java.util.Date
 
 data class Meal(

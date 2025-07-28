@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.history
 
-import com.frontend.nutricheck.client.model.data_sources.data.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import java.util.Date
 

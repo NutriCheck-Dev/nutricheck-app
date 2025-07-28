@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.model.repositories.mapper
 
 import com.frontend.nutricheck.client.dto.RecipeDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 
 object RecipeMapper {
 

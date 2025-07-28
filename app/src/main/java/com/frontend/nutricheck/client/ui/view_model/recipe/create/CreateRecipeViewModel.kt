@@ -5,7 +5,7 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel

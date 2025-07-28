@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.frontend.nutricheck.client.model.data_sources.data.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import java.util.Date
 
 @Entity(
