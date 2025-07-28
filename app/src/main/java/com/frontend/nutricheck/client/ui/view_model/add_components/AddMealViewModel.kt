@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ data class AddMealState(
     val historyDay: HistoryDay? = null,
     val mealTime: DayTime? = null,
     val currentSegment: String = "All",
-    val selectedMeal: Meal? = null
+    val selectedMeal: MealEntity? = null
 )
 
 sealed interface AddMealEvent {

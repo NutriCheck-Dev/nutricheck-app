@@ -7,7 +7,7 @@ data class Recipe(
     override val carbohydrates: Double,
     override val protein: Double,
     override val fat: Double,
-    override val servings: Int,
+    val servings: Int,
     val ingredients: List<Ingredient>,
     val instructions: String,
     val visibility: RecipeVisibility

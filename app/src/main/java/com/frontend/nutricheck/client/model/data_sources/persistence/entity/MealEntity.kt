@@ -19,8 +19,9 @@ import java.util.Date
     ],
     indices = [Index(value = ["historyDayDate"])]
 )
-data class Meal(
-    @PrimaryKey val id: String = "",
-    val historyDayDate: Date = Date(),
+data class MealEntity(
+    @PrimaryKey val id: String = "", //date as key?, search by date? ->
+    val historyDayDate: Date = Date(), //is already in parent -> why table HistoryDay?
     val dayTime: DayTime = DayTime.BREAKFAST,
+    //nutriments...
 )

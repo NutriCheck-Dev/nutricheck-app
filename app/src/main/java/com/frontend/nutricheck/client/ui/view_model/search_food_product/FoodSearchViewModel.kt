@@ -6,7 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Result
@@ -39,14 +39,14 @@ data class SearchState(
     val query: String = "",
     val selectedTab: Int = 0,
     val results: List<FoodComponent> = emptyList(),
-    val addedComponents: List<FoodComponent> = emptyList(),
+    val addedComponents: List<Pair<Double, FoodComponent>> = emptyList(),
     val fromAddIngredient: Boolean = false
 )
 
 sealed interface  SearchEvent {
     data class DayTimeChanged(val dayTime: DayTime) : SearchEvent
     data class QueryChanged(val query: String) : SearchEvent
-    data class AddFoodComponent(val foodComponent: FoodComponent) : SearchEvent
+    data class AddFoodComponent(val foodComponent: Pair<Double, FoodComponent>) : SearchEvent
     data class RemoveFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     object Search : SearchEvent
     object Retry : SearchEvent
@@ -130,14 +130,14 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    override fun onClickAddFoodComponent(foodComponent: FoodComponent) =
+    override fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) =
         _searchState.update { state ->
             state.copy(addedComponents = state.addedComponents + foodComponent)
         }
 
     override fun onClickRemoveFoodComponent(foodComponent: FoodComponent) =
         _searchState.update { state ->
-            state.copy(addedComponents = state.addedComponents - foodComponent)
+            state.copy(addedComponents = state.addedComponents.filterNot { it.second == foodComponent })
         }
 
     private fun changeQuery(query: String) {
@@ -153,7 +153,7 @@ class FoodSearchViewModel @Inject constructor(
     }
 
     private fun addComponentsToMeal() {
-        val meal = Meal(
+        val meal = MealEntity(
             id = UUID.randomUUID().toString(),
             historyDayDate = _searchState.value.date!!,
             dayTime = _searchState.value.dayTime!!
@@ -162,16 +162,13 @@ class FoodSearchViewModel @Inject constructor(
         var mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>? = null
 
         _searchState.value.addedComponents.forEach { component ->
-            when (component) {
+            when (component.second) {
                 is FoodProduct -> {
-                    val foodProductEntity = DbFoodProductMapper.toFoodProductEntity(component)
-                    mealFoodItemsWithProduct = (mealFoodItemsWithProduct ?: emptyList()) + Pair(
-                        foodProductEntity.servings,
-                        foodProductEntity
-                    )
+                    val foodProductEntity = DbFoodProductMapper.toFoodProductEntity(component.second as FoodProduct)
+                    mealFoodItemsWithProduct = (mealFoodItemsWithProduct ?: emptyList()) + Pair(component.first, foodProductEntity)
                 }
                 is Recipe -> {
-                    val recipeEntity = DbRecipeMapper.toRecipeEntity(component)
+                    val recipeEntity = DbRecipeMapper.toRecipeEntity(component.second as Recipe)
                     mealRecipeItemsWithRecipeEntity = (mealRecipeItemsWithRecipeEntity ?: emptyList()) + Pair(
                         recipeEntity.servings,
                         recipeEntity

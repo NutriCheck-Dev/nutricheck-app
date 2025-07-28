@@ -2,9 +2,9 @@ package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItem
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
@@ -51,15 +51,15 @@ class HistoryRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun requestAiMeal(): Meal {
+    override suspend fun requestAiMeal(): MealEntity {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteMeal(meal: Meal) {
+    override suspend fun deleteMeal(meal: MealEntity) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateMeal(meal: Meal) {
+    override suspend fun updateMeal(meal: MealEntity) {
         //get meal by mealId, update the meal in the database
 
     }
@@ -78,7 +78,7 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getHistoryByDate(date: Date): Flow<HistoryDay> = historyDao.getByDate(date)
 
     override suspend fun addMeal(
-        meal: Meal,
+        meal: MealEntity,
         mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?,
         mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?
     ) {
@@ -86,7 +86,7 @@ class HistoryRepositoryImpl @Inject constructor(
         val mealId = meal.id
 
         val mealFoodItems = mealFoodItemsWithProduct?.map { (quantity, foodProduct) ->
-            MealFoodItem(
+            MealFoodItemEntity(
                 id = UUID.randomUUID().toString(),
                 mealId = mealId,
                 foodProductId = foodProduct.id,
@@ -95,7 +95,7 @@ class HistoryRepositoryImpl @Inject constructor(
         } ?: emptyList()
 
         val mealRecipeItems = mealRecipeItemsWithRecipeEntity?.map { (quantity, recipe) ->
-            MealRecipeItem(
+            MealRecipeItemEntity(
                 id = UUID.randomUUID().toString(),
                 mealId = mealId,
                 recipeId = recipe.id,
@@ -110,7 +110,7 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveAsRecipe(
-        meal: Meal,
+        meal: MealEntity,
         recipeName: String,
         recipeDescription: String
     ) {

@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.model.data_sources.persistence.entity
+package com.frontend.nutricheck.client.model.data_sources.data
 
 interface MealItem {
     val id: String

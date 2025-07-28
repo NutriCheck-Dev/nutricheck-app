@@ -1,8 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model.history
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItem
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 
@@ -16,7 +16,7 @@ sealed interface DisplayMealItem {
 }
 
 data class DisplayMealFoodItem(
-    val item: MealFoodItem,
+    val item: MealFoodItemEntity,
     val product: FoodProductEntity
 ) : DisplayMealItem {
     override val name get() = product.name
@@ -28,7 +28,7 @@ data class DisplayMealFoodItem(
 }
 
 data class DisplayMealRecipeItem(
-    val item: MealRecipeItem,
+    val item: MealRecipeItemEntity,
     val recipeEntity: RecipeEntity
 ) : DisplayMealItem {
     override val name get() = recipeEntity.name
