@@ -147,7 +147,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(data = TODO()) //implement toEntity method
+                Result.Success(data = TODO()) //toEntity method
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
