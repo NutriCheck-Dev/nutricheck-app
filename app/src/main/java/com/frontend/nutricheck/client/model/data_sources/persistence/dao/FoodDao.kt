@@ -26,4 +26,7 @@ interface FoodDao : BaseDao<FoodProductEntity> {
     @Query("SELECT * FROM foods WHERE id = :id")
     fun getById(id: String): Flow<FoodProductEntity>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM foods WHERE id = :id)")
+    suspend fun exists(id: String): Boolean
+
 }
