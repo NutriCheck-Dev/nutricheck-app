@@ -16,6 +16,10 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+sealed class FoodProductOverviewMode {
+    data class FromIngredient(val )
+    object FromSearch : FoodProductOverviewMode()
+}
 data class FoodProductOverviewState(
     val foodProduct: FoodProduct? = null,
     val foodName: String = "",
