@@ -5,29 +5,29 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 
 @Entity(
-    tableName = "ingredients",
-    primaryKeys = ["recipeId", "foodProductId"],
+    tableName = "meal_recipe_items",
+    primaryKeys = ["mealId", "recipeId"],
     foreignKeys = [
         ForeignKey(
-            entity = RecipeEntity::class,
+            entity = MealEntity::class,
             parentColumns = ["id"],
-            childColumns = ["recipeId"],
+            childColumns = ["mealId"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = FoodProductEntity::class,
+            entity = RecipeEntity::class,
             parentColumns = ["id"],
-            childColumns = ["foodProductId"]
+            childColumns = ["recipeId"],
         )
     ],
     indices = [
-        Index(value = ["recipeId"]),
-        Index(value = ["foodProductId"])
+        Index(value = ["mealId"]),
+        Index(value = ["recipeId"])
     ]
 )
-data class IngredientEntity (
+data class MealRecipeItemEntity(
+    val mealId: String,
     val recipeId: String,
-    val foodProductId: String,
-    val quantity: Double,
+    val quantity: Double
 )

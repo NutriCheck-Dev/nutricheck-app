@@ -3,31 +3,30 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-
 @Entity(
-    tableName = "ingredients",
-    primaryKeys = ["recipeId", "foodProductId"],
+    tableName = "meal_food_items",
+    primaryKeys = ["mealId", "foodProductId"],
     foreignKeys = [
         ForeignKey(
-            entity = RecipeEntity::class,
+            entity = MealEntity::class,
             parentColumns = ["id"],
-            childColumns = ["recipeId"],
+            childColumns = ["mealId"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = FoodProductEntity::class,
             parentColumns = ["id"],
-            childColumns = ["foodProductId"]
+            childColumns = ["foodProductId"],
         )
     ],
     indices = [
-        Index(value = ["recipeId"]),
+        Index(value = ["mealId"]),
         Index(value = ["foodProductId"])
     ]
 )
-data class IngredientEntity (
-    val recipeId: String,
+data class MealFoodItemEntity(
+    val mealId: String,
     val foodProductId: String,
-    val quantity: Double,
+    val quantity: Double
 )

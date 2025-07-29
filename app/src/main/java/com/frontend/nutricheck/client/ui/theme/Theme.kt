@@ -8,7 +8,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.frontend.nutricheck.client.AppThemeState
-import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 
 @Immutable
 data class ExtendedColorScheme(

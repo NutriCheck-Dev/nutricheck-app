@@ -2,11 +2,11 @@ package com.frontend.nutricheck.client.ui.view_model.onboarding
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
-import com.frontend.nutricheck.client.model.data_sources.data.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
-import com.frontend.nutricheck.client.model.data_sources.data.Weight
-import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.Utils
@@ -103,7 +103,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun enterBirthdate(birthdate: Date?) {
-        if (birthdate == null || Utils.isBirthdateInvalid(birthdate)) {
+        if (birthdate == null || Utils.birthdateInvalid(birthdate)) {
             _data.update {
                 it.copy(errorState = R.string.userData_error_birthdate_required)
             }

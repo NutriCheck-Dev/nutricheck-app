@@ -1,10 +1,11 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.data.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
+import com.forntend.nutrichek.client.model.dat_sources.persistenc.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -21,6 +22,6 @@ interface HistoryRepository {
     suspend fun addFoodToMeal(name: String, foodId: String = "")
     suspend fun removeFoodFromMeal(name: String, foodId: String = "")
     suspend fun getHistoryByDate(date: Date): Flow<HistoryDay>
-    suspend fun addMeal(meal: Meal, mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?, mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?)
-    suspend fun saveAsRecipe(meal: Meal, recipeName: String = "", recipeDescription: String = "")
+    suspend fun addMeal(meal: MealEntity, mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?, mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?)
+    suspend fun saveAsRecipe(meal: MealEntity, recipeName: String = "", recipeDescription: String = "")
 }

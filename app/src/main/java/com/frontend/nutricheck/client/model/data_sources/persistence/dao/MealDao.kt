@@ -6,21 +6,21 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import java.util.Date
 
 @Dao
-interface MealDao : BaseDao<Meal> {
+interface MealDao : BaseDao<MealEntity> {
 
     @Insert
-    override suspend fun insert(obj: Meal)
+    override suspend fun insert(obj: MealEntity)
 
     @Update
-    override suspend fun update(obj: Meal)
+    override suspend fun update(obj: MealEntity)
 
     @Delete
-    override suspend fun delete(obj: Meal)
+    override suspend fun delete(obj: MealEntity)
 
     @Transaction
     @Query("SELECT * FROM meals WHERE historyDayDate = :date")

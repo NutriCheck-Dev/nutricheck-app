@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
-import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope

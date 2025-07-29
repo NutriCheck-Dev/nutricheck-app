@@ -5,21 +5,21 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 
 @Dao
-interface MealRecipeItemDao : BaseDao<MealRecipeItem> {
+interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
 
     @Insert
-    override suspend fun insert(obj: MealRecipeItem)
+    override suspend fun insert(obj: MealRecipeItemEntity)
 
     @Update
-    override suspend fun update(obj: MealRecipeItem)
+    override suspend fun update(obj: MealRecipeItemEntity)
 
     @Delete
-    override suspend fun delete(obj: MealRecipeItem)
+    override suspend fun delete(obj: MealRecipeItemEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(mealFoodItems: List<MealRecipeItem>)
+    suspend fun insertAll(mealFoodItems: List<MealRecipeItemEntity>)
 
 }

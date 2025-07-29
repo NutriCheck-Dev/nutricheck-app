@@ -3,13 +3,13 @@ package com.frontend.nutricheck.client.ui.view_model.profile
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
-import com.frontend.nutricheck.client.model.data_sources.data.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.Language
-import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
-import com.frontend.nutricheck.client.model.data_sources.data.UserData
-import com.frontend.nutricheck.client.model.data_sources.data.Weight
-import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Language
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
+import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.Utils
@@ -144,7 +144,7 @@ class ProfileViewModel @Inject constructor(
         _dataDraft.value = _dataDraft.value.copy(username = username)
     }
     private fun updateUserBirthdateDraft(birthdate: Date) {
-        if (Utils.isBirthdateInvalid(birthdate)) {
+        if (Utils.birthdateInvalid(birthdate)) {
             _errorMessage.value = R.string.userData_error_birthdate_required
             return
         }
