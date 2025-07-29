@@ -38,6 +38,14 @@ import java.util.Date
 @ExperimentalCoroutinesApi
 class ProfileViewModelTest {
 
+    class MainCoroutineRule : TestWatcher() {
+        override fun starting(description: Description?) {
+            Dispatchers.setMain(StandardTestDispatcher())
+        }
+        override fun finished(description: Description?) {
+            Dispatchers.resetMain()
+        }
+    }
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
@@ -58,7 +66,7 @@ class ProfileViewModelTest {
     }
     @Test
     fun `init loads user data from repository and updates data and dataDraft`() = runTest {
-        val birthdate = Date(1234567890L)
+        val birthdate = Date(1234567890L) // 1970-01-01
         val userData = UserData(
             username = "TestUser",
             birthdate = birthdate,
@@ -673,12 +681,4 @@ class ProfileViewModelTest {
     }
 
 
-    class MainCoroutineRule : TestWatcher() {
-        override fun starting(description: Description?) {
-            Dispatchers.setMain(StandardTestDispatcher())
-        }
-        override fun finished(description: Description?) {
-            Dispatchers.resetMain()
-        }
-    }
 }
