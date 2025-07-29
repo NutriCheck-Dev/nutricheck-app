@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
 import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 

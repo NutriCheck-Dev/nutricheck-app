@@ -3,7 +3,7 @@ package com.frontend.nutricheck.client.ui.view_model.food
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,7 +27,12 @@ data class FoodProductOverviewState(
     val servingSize: ServingSize = ServingSize.ONEHOUNDREDGRAMS,
     val servingSizeDropDownExpanded: Boolean = false,
     val fromIngredient: Boolean = false
-)
+) {
+    fun submitFoodProduct(): Pair<Double, FoodProduct> =
+        Pair(servings * (servingSize.getAmount()/100).toDouble(),
+            foodProduct!!
+        )
+}
 
 sealed interface FoodProductOverviewEvent {
     data class ServingsChanged(val servings: Int) : FoodProductOverviewEvent
@@ -60,9 +65,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                     calories = foodProduct.calories,
                     protein = foodProduct.protein,
                     carbohydrates = foodProduct.carbohydrates,
-                    fat = foodProduct.fat,
-                    servings = foodProduct.servings,
-                    servingSize = foodProduct.servingSize
+                    fat = foodProduct.fat
                 )
             }
         }
@@ -86,8 +89,6 @@ class FoodProductOverviewViewModel @Inject constructor(
         return FoodProduct(
             id = UUID.randomUUID().toString(),
             name = _foodProductOverviewState.value.foodName,
-            servings = _foodProductOverviewState.value.servings,
-            servingSize = _foodProductOverviewState.value.servingSize,
             calories = _foodProductOverviewState.value.calories,
             protein = _foodProductOverviewState.value.protein,
             carbohydrates = _foodProductOverviewState.value.carbohydrates,
@@ -128,6 +129,9 @@ class FoodProductOverviewViewModel @Inject constructor(
             )
         }
     }
+
+    private fun submitFoodProduct(): Pair<Double, FoodProduct> =
+        _foodProductOverviewState.value.submitFoodProduct()
 
     private fun emitEvent(event: FoodProductOverviewEvent) =
         viewModelScope.launch { _events.emit(event) }

@@ -42,7 +42,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.tooling.preview.Preview
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
-import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 

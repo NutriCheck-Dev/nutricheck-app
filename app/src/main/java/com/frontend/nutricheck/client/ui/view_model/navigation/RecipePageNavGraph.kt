@@ -84,7 +84,7 @@ fun RecipePageNavGraph() {
                 type = NavType.StringType })
         ) {
             composable(RecipePageScreens.RecipeOverview.route) { backStack ->
-                val recipeId = backStack.arguments!!.getString("recipeId")!!
+                val recipeId = backStack.arguments!!.getString("123")!!
                 val graphEntry = remember(backStack) {
                     recipePageNavController.getBackStackEntry(
                         RecipePageScreens.RecipeOverview.createRoute(recipeId)
@@ -112,7 +112,7 @@ fun RecipePageNavGraph() {
                 val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
 
                 SearchPage(
-                    editRecipeViewModel = editRecipeViewModel,
+                    //editRecipeViewModel = editRecipeViewModel,
                     searchViewModel = hiltViewModel(),
                     onItemClick = { foodComponent ->
                         navigateToFoodComponent(foodComponent)

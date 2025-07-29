@@ -3,21 +3,20 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.relations
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItem
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItem
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 
 data class MealWithAll(
-    @Embedded val meal: Meal,
+    @Embedded val meal: MealEntity,
     @Relation(
-        entity = MealFoodItem::class,
+        entity = MealFoodItemEntity::class,
         parentColumn = "id",
         entityColumn = "mealId"
     )
     val mealFoodItems: List<MealFoodItemWithProduct>,
     @Relation(
-        entity = MealRecipeItem::class,
+        entity = MealRecipeItemEntity::class,
         parentColumn = "id",
         entityColumn = "mealId"
     )
@@ -25,7 +24,7 @@ data class MealWithAll(
 )
 
 data class MealFoodItemWithProduct(
-    @Embedded val mealFoodItem: MealFoodItem,
+    @Embedded val mealFoodItemEntity: MealFoodItemEntity,
     @Relation(
         parentColumn = "foodProductId",
         entityColumn = "id"
@@ -34,10 +33,10 @@ data class MealFoodItemWithProduct(
 )
 
 data class MealRecipeItemWithRecipe(
-    @Embedded val mealRecipeItem: MealRecipeItem,
+    @Embedded val mealRecipeItemEntity: MealRecipeItemEntity,
     @Relation(
         parentColumn = "recipeId",
         entityColumn = "id"
     )
-    val recipeEntity: RecipeEntity
+    val recipeWithIngredients: RecipeWithIngredients
 )

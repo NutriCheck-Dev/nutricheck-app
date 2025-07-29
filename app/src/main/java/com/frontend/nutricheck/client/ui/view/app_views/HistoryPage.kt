@@ -23,7 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieSummary
 import com.frontend.nutricheck.client.ui.view.widgets.DateSelectorBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock

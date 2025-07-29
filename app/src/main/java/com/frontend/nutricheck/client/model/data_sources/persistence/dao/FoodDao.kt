@@ -26,7 +26,4 @@ interface FoodDao : BaseDao<FoodProductEntity> {
     @Query("SELECT * FROM foods WHERE id = :id")
     fun getById(id: String): Flow<FoodProductEntity>
 
-    @Query("SELECT * FROM foods")
-    fun getAll(): Flow<List<FoodProductEntity>>
-
 }
