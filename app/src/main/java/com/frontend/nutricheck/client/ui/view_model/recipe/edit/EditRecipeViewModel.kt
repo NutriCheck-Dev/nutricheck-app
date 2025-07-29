@@ -8,7 +8,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,10 +16,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
+import javax.inject.Inject
 
 data class RecipeDraft(
-    val recipe: Recipe,
+    val recipe: Recipe? = null,
     val id: String,
     val title: String,
     val description: String,
@@ -86,11 +85,11 @@ class EditRecipeViewModel @Inject constructor(
         _editRecipeDraft.update { it?.copy(title = newTitle) }
 
     override fun onIngredientAdded(foodProduct: FoodProduct) {
-        val recipe = _editRecipeDraft.value!!.recipe
+        val recipeId = _editRecipeDraft.value!!.id
         val newIngredient = Ingredient(
-            recipe = recipe,
+            recipeId = recipeId,
             foodProduct = foodProduct,
-            quantity = recipe.servings
+            quantity = 1.0,
         )
         _editRecipeDraft.update { it?.copy(addedIngredient = it.addedIngredient + newIngredient) }
     }
