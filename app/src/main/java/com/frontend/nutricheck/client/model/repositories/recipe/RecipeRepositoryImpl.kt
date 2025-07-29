@@ -47,42 +47,30 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMyRecipes(): List<Recipe> {
-        val recipesWithIngredient = recipeDao.getAllRecipesWithIngredients()
-        val list = recipesWithIngredient.first()
+        val recipesWithIngredients = recipeDao.getAllRecipesWithIngredients()
+        val list = recipesWithIngredients.first()
         return list.map { recipeWithIngredients ->
             DbRecipeMapper.toRecipe(recipeWithIngredients)
         }
     }
 
     override suspend fun getRecipeById(recipeId: String): Recipe {
-        val recipeWithIngredient = recipeDao.getRecipeWithIngredientsById(recipeId).first()
-        return DbRecipeMapper.toRecipe(recipeWithIngredient)
+        val recipeWithIngredients = recipeDao.getRecipeWithIngredientsById(recipeId).first()
+        return DbRecipeMapper.toRecipe(recipeWithIngredients)
     }
 
     override suspend fun deleteRecipe(recipe: Recipe) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
         recipeDao.delete(recipeEntity)
-        ingredientDao.deleteIngredientsOfRecipe(recipe.id)
+        //ingredientDao.deleteIngredientsOfRecipe(recipe.id) unnecessary because of cascade?
     }
 
     override suspend fun updateRecipe(recipe: Recipe) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
+        val ingredientsEntity = recipe.ingredients.map { DbIngredientMapper.toIngredientEntity(it) }
         recipeDao.update(recipeEntity)
-    }
-
-    override suspend fun addIngredient(ingredient: Ingredient) {
-        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
-        ingredientDao.insert(ingredientEntity)
-    }
-
-    override suspend fun updateIngredient(ingredient: Ingredient) {
-        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
-        ingredientDao.update(ingredientEntity)
-    }
-
-    override suspend fun removeIngredient(ingredient: Ingredient) {
-        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
-        ingredientDao.delete(ingredientEntity)
+        ingredientDao.deleteIngredientsOfRecipe(recipeEntity.id)
+        ingredientsEntity.forEach { ingredientDao.insert(it) }
     }
 
     override suspend fun uploadRecipe(recipe: Recipe): Result<Recipe> {
@@ -104,24 +92,6 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun downloadRecipe(recipeId: String): Result<Recipe> {
-        val response = api.downloadRecipe(recipeId)
-        return try {
-            if (response.isSuccessful) {
-                val recipeDto = response.body()
-                if (recipeDto != null) {
-                    Result.Success(RecipeMapper.toEntity(recipeDto))
-                } else {
-                    Result.Error(message = "Leeres Rezept erhalten.")
-                }
-            } else {
-                Result.Error(code = response.code(), message = response.errorBody()?.string())
-            }
-        }  catch (io: IOException) {
-            Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
-        }
-    }
-
     override suspend fun reportRecipe(recipeReport: RecipeReport): Result<ReportDTO> {
         val recipeReportDto = ReportMapper.toDto(recipeReport)
         return try {
@@ -139,5 +109,40 @@ class RecipeRepositoryImpl @Inject constructor(
         } catch (io: IOException) {
             Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
         }
+    }
+
+    //will maybe be removed
+    override suspend fun downloadRecipe(recipeId: String): Result<Recipe> {
+        val response = api.downloadRecipe(recipeId)
+        return try {
+            if (response.isSuccessful) {
+                val recipeDto = response.body()
+                if (recipeDto != null) {
+                    Result.Success(RecipeMapper.toEntity(recipeDto))
+                } else {
+                    Result.Error(message = "Leeres Rezept erhalten.")
+                }
+            } else {
+                Result.Error(code = response.code(), message = response.errorBody()?.string())
+            }
+        } catch (io: IOException) {
+            Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
+        }
+    }
+
+    //necessary? because do we know if one specific ingredient is updated or do we update after whole recipe is updated??
+    override suspend fun addIngredient(ingredient: Ingredient) {
+        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+        ingredientDao.insert(ingredientEntity)
+    }
+
+    override suspend fun updateIngredient(ingredient: Ingredient) {
+        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+        ingredientDao.update(ingredientEntity)
+    }
+
+    override suspend fun removeIngredient(ingredient: Ingredient) {
+        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+        ingredientDao.delete(ingredientEntity)
     }
 }
