@@ -19,7 +19,7 @@ object RecipeMapper {
             ingredients = recipe.ingredients.map { IngredientMapper.toDTO(it) }
         )
 
-    fun toEntity(recipeDto: RecipeDTO): Recipe =
+    fun toData(recipeDto: RecipeDTO): Recipe =
         Recipe(
             id = recipeDto.id,
             name = recipeDto.name,
@@ -27,7 +27,7 @@ object RecipeMapper {
             carbohydrates = recipeDto.carbohydrates,
             protein = recipeDto.protein,
             fat = recipeDto.fat,
-            ingredients = recipeDto.ingredients.map { IngredientMapper.toEntities(it) },
+            ingredients = recipeDto.ingredients.map { IngredientMapper.toData(it) },
             instructions = recipeDto.instructions,
             servings = recipeDto.servings,
             visibility = RecipeVisibility.PUBLIC
