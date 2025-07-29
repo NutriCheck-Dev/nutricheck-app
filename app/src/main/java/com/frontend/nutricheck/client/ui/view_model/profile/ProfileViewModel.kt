@@ -200,6 +200,10 @@ class ProfileViewModel @Inject constructor(
             _errorMessage.value = R.string.userData_error_weight_required
             return
         }
+        if (date > Date() || date < data.value.birthdate) {
+            _errorMessage.value = R.string.userData_error_invalid_date
+            return
+        }
         viewModelScope.launch {
             userDataRepository.addWeight(Weight(value = weightValue.toDouble(), enterDate = date))
         }
