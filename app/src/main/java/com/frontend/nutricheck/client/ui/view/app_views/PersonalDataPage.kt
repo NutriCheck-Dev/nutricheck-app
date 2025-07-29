@@ -62,10 +62,10 @@ fun PersonalDataPage(
 ) {
     var selectedDate by remember { mutableStateOf(state.birthdate) }
     var showDatePicker by remember { mutableStateOf(false) }
-    Scaffold {
+
         ViewsTopBar(
             navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
-            title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
+            title = { Text(stringResource(id = R.string.profile_menu_item_personal_data),) }
         )
 
         LazyColumn(
@@ -75,8 +75,9 @@ fun PersonalDataPage(
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             item {
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer (modifier = Modifier.height(50.dp))
             }
+
             personalDataFormItems(
                 userData = state,
                 onEvent = onEvent,
@@ -134,7 +135,7 @@ fun PersonalDataPage(
             }
         }
     }
-}
+
 
 private fun LazyListScope.personalDataFormItems(
     userData: UserData,
