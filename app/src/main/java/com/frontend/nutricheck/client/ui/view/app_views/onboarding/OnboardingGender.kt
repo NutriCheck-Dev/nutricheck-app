@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view.widgets.SelectOption
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
 

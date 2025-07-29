@@ -24,15 +24,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
-
+/**
+ * Represents all possible events that can occur in the profile screen.
+ */
 sealed interface ProfileEvent {
-    object DisplayProfileOverview : ProfileEvent
-    object DisplayPersonalData : ProfileEvent
-    object DisplayWeightHistory : ProfileEvent
-    object SelectLanguage : ProfileEvent
-    object AddNewWeight : ProfileEvent
-    object OnSaveClick : ProfileEvent
+    // Navigation events
+    object NavigateToPersonalData : ProfileEvent
+    object NavigateToLanguage : ProfileEvent
+    object NavigateToAddNewWeight : ProfileEvent
+    object NavigateToProfileOverview : ProfileEvent
     object RestartApp : ProfileEvent
+    // collected events, which lead to navigation
+    object OnPersonalDataClick : ProfileEvent
+    object OnSelectLanguageClick : ProfileEvent
+    object OnAddNewWeightClick : ProfileEvent
+    object OnDisplayProfileOverview : ProfileEvent
+    object OnRestartApp : ProfileEvent
+    // collected events, which handle data changes
+    object DisplayWeightHistory : ProfileEvent
+    object OnSaveClick : ProfileEvent
     data class SaveLanguage(val language: Language) : ProfileEvent
     data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
@@ -45,51 +55,41 @@ sealed interface ProfileEvent {
     data class UpdateUserWeightGoalDraft(val weightGoal: WeightGoal) : ProfileEvent
     data class UpdateUserGenderDraft(val gender : Gender) : ProfileEvent
 }
-
-
+/**
+ * ViewModel for the user profile screen.
+ * Manages user data, weight history, language and theme settings, and handles profile events.
+ *
+ * @property userDataRepository Repository for user data persistence.
+ * @property appSettingsRepository Repository for app settings (language, theme).
+ */
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val appSettingsRepository: AppSettingsRepository
 ) : BaseProfileViewModel() {
-
+    private val defaultUserData = UserData(
+        username = "",
+        birthdate = Date(),
+        gender = Gender.MALE,
+        height = 0.0,
+        weight = 0.0,
+        targetWeight = 0.0,
+        activityLevel = ActivityLevel.NEVER,
+        weightGoal = WeightGoal.LOSE_WEIGHT,
+        age = 0,
+        dailyCaloriesGoal = 0,
+        proteinGoal = 0,
+        carbsGoal = 0,
+        fatsGoal = 0
+    )
     private val _events = MutableSharedFlow<ProfileEvent>()
     val events: SharedFlow<ProfileEvent> = _events.asSharedFlow()
-    val initialBirthdate = Date(1234567890L) // 1.1.1970
 
-    private val _dataDraft = MutableStateFlow<UserData>(UserData(
-        username = "",
-        birthdate = Date(),
-        gender = Gender.MALE,
-        height = 0.0,
-        weight = 0.0,
-        targetWeight = 0.0,
-        activityLevel = ActivityLevel.NEVER,
-        weightGoal = WeightGoal.LOSE_WEIGHT,
-        age = 0,
-        dailyCaloriesGoal = 0,
-        proteinGoal = 0,
-        carbsGoal = 0,
-        fatsGoal = 0
-    ))
+    private val _dataDraft = MutableStateFlow<UserData>(defaultUserData)
     val dataDraft: StateFlow<UserData> = _dataDraft.asStateFlow()
 
-    private val _data = MutableStateFlow<UserData>(UserData(
-        username = "",
-        birthdate = Date(),
-        gender = Gender.MALE,
-        height = 0.0,
-        weight = 0.0,
-        targetWeight = 0.0,
-        activityLevel = ActivityLevel.NEVER,
-        weightGoal = WeightGoal.LOSE_WEIGHT,
-        age = 0,
-        dailyCaloriesGoal = 0,
-        proteinGoal = 0,
-        carbsGoal = 0,
-        fatsGoal = 0
-    ))
+    private val _data = MutableStateFlow<UserData>(defaultUserData)
     val data: StateFlow<UserData> = _data.asStateFlow()
 
     private val _weightData = MutableStateFlow<List<Weight>>(emptyList())
@@ -103,17 +103,17 @@ class ProfileViewModel @Inject constructor(
         initialValue = Language.GERMAN,
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000)
     )
-
+    /**
+     * Handles profile events and updates the state accordingly.
+     * @param event The profile event to handle.
+     */
     fun onEvent(event: ProfileEvent) {
         when(event) {
-            is ProfileEvent.DisplayProfileOverview -> { displayProfileOverview() }
-            is ProfileEvent.DisplayPersonalData -> { emitEvent(ProfileEvent.DisplayPersonalData) }
+            //handled events by the ViewModel
             is ProfileEvent.DisplayWeightHistory -> { displayWeightHistory() }
-            is ProfileEvent.SelectLanguage -> { emitEvent(ProfileEvent.SelectLanguage) }
+            is ProfileEvent.OnSaveClick -> { persistDataWithCalculation() }
             is ProfileEvent.SaveLanguage -> { onSaveLanguageClick(event.language) }
             is ProfileEvent.ChangeTheme -> { onChangeThemeClick(event.theme) }
-            is ProfileEvent.OnSaveClick -> { persistDataWithCalculation() }
-            is ProfileEvent.AddNewWeight -> { emitEvent(ProfileEvent.AddNewWeight) }
             is ProfileEvent.SaveNewWeight -> {saveNewWeight(event.weight, event.date)}
             is ProfileEvent.UpdateUserNameDraft -> {updateUserNameDraft(event.username)}
             is ProfileEvent.UpdateUserBirthdateDraft -> {updateUserBirthdateDraft(event.birthdate)}
@@ -126,7 +126,15 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.UpdateUserWeightGoalDraft ->
                 {updateUserWeightGoalDraft(event.weightGoal)}
             is ProfileEvent.UpdateUserGenderDraft -> {updateUserGenderDraft(event.gender)}
-            is ProfileEvent.RestartApp -> { emitEvent(ProfileEvent.RestartApp) }
+            //Ui Events, which are being handled by emitting a new event by the ViewModel
+            is ProfileEvent.OnPersonalDataClick -> { emitEvent(ProfileEvent.NavigateToPersonalData) }
+            is ProfileEvent.OnSelectLanguageClick -> { emitEvent(ProfileEvent.NavigateToLanguage) }
+            is ProfileEvent.OnAddNewWeightClick -> { emitEvent(ProfileEvent.NavigateToAddNewWeight) }
+            is ProfileEvent.OnDisplayProfileOverview ->
+            { emitEvent(ProfileEvent.NavigateToProfileOverview) }
+            is ProfileEvent.OnRestartApp -> { emitEvent(ProfileEvent.RestartApp) }
+            else -> { /* No action needed for other navigation events */}
+
         }
     }
     init {
@@ -208,9 +216,6 @@ class ProfileViewModel @Inject constructor(
             userDataRepository.addWeight(Weight(value = weightValue.toDouble(), enterDate = date))
         }
     }
-    private fun displayProfileOverview() {
-        emitEvent(ProfileEvent.DisplayProfileOverview)
-    }
     private fun onSaveLanguageClick(language: Language) {
         viewModelScope.launch {
             appSettingsRepository.setLanguage(language)
@@ -246,7 +251,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userDataRepository.updateUserData(userDataWithCalories)
         }
-        displayProfileOverview()
+        emitEvent(ProfileEvent.NavigateToProfileOverview)
     }
     private fun emitEvent(event: ProfileEvent) = viewModelScope.launch { _events.emit(event) }
 

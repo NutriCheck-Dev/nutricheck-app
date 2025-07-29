@@ -66,7 +66,7 @@ fun OnboardingNavGraph(
                         popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
                 }
-                else -> { /* No action needed for other events */}
+                else -> { /* No action needed for other events (non navigation events) */}
             }
         }
     }

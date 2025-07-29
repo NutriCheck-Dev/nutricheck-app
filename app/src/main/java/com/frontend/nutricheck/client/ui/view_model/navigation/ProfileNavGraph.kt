@@ -46,22 +46,22 @@ fun ProfilePageNavGraph() {
                 is ProfileEvent.DisplayWeightHistory -> {
                     profileNavController.navigate(ProfileScreens.WeightHistoryPage.route)
                 }
-                is ProfileEvent.DisplayPersonalData -> {
+                is ProfileEvent.NavigateToPersonalData -> {
                     profileNavController.navigate(ProfileScreens.PersonalDataPage.route)
                 }
-                is ProfileEvent.SelectLanguage -> {
+                is ProfileEvent.NavigateToLanguage -> {
                     profileNavController.navigate(ProfileScreens.ChooseLanguageDialog.route)
                 }
-                is ProfileEvent.DisplayProfileOverview -> {
+                is ProfileEvent.NavigateToProfileOverview -> {
                     profileNavController.navigate(ProfileScreens.ProfilePage.route)
                 }
-                is  ProfileEvent.AddNewWeight -> {
+                is  ProfileEvent.NavigateToAddNewWeight -> {
                     profileNavController.navigate(ProfileScreens.AddWeightDialog.route)
                 }
                 is ProfileEvent.RestartApp -> {
                     (context as? Activity)?.recreate()
                 }
-                else -> { /* No action needed for other events */}
+                else -> { /* No action needed for other events */ }
             }
         }
     }

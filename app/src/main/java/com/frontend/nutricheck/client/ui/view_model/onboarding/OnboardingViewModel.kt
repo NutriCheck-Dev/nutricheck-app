@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
+import kotlin.String
 
 sealed interface OnboardingEvent {
     data class EnterName(val name: String) : OnboardingEvent
@@ -32,9 +33,9 @@ sealed interface OnboardingEvent {
     data class EnterWeightGoal(val weightGoal: WeightGoal?) : OnboardingEvent
     data class EnterTargetWeight(val targetWeight: String) : OnboardingEvent
 
-    object StartOnboarding : OnboardingEvent
     object CompleteOnboarding : OnboardingEvent
 
+    object StartOnboarding : OnboardingEvent
     object NavigateToName : OnboardingEvent
     object NavigateToBirthdate : OnboardingEvent
     object NavigateToGender : OnboardingEvent
@@ -72,7 +73,8 @@ class OnboardingViewModel @Inject constructor(
 
     fun onEvent(event: OnboardingEvent) {
         when (event) {
-            is OnboardingEvent.StartOnboarding -> startOnboarding()
+            is OnboardingEvent.StartOnboarding -> { emitEvent(OnboardingEvent.NavigateToName) }
+
             is OnboardingEvent.CompleteOnboarding -> completeOnboarding()
             is OnboardingEvent.EnterName -> enterName(event.name)
             is OnboardingEvent.EnterBirthdate -> enterBirthdate(event.birthdate)
@@ -82,15 +84,11 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingEvent.EnterSportFrequency -> enterSportFrequency(event.activityLevel)
             is OnboardingEvent.EnterWeightGoal -> enterWeightGoal(event.weightGoal)
             is OnboardingEvent.EnterTargetWeight -> enterTargetWeight(event.targetWeight)
-            else -> { /* Navigationsevents werden hier nicht behandelt */ }
+            else -> { /* other navigation events are emitted in enter*functions */}
         }
     }
 
-    override fun startOnboarding() {
-        emitEvent(OnboardingEvent.NavigateToName)
-    }
-
-    override fun enterName(name: String) {
+    private fun enterName(name: String) {
         if (name.isBlank()) {
             _data.update {
                 it.copy(errorState = (R.string.userData_error_name_required))
@@ -102,7 +100,7 @@ class OnboardingViewModel @Inject constructor(
         emitEvent(OnboardingEvent.NavigateToBirthdate)
     }
 
-    override fun enterBirthdate(birthdate: Date?) {
+    private fun enterBirthdate(birthdate: Date?) {
         if (birthdate == null || Utils.isBirthdateInvalid(birthdate)) {
             _data.update {
                 it.copy(errorState = R.string.userData_error_birthdate_required)
@@ -114,7 +112,7 @@ class OnboardingViewModel @Inject constructor(
         emitEvent(OnboardingEvent.NavigateToGender)
     }
 
-    override fun enterGender(gender: Gender?) {
+    private fun enterGender(gender: Gender?) {
         if (gender == null) {
             _data.update {
                 it.copy(errorState = R.string.userData_error_gender_required)
@@ -126,7 +124,7 @@ class OnboardingViewModel @Inject constructor(
         emitEvent(OnboardingEvent.NavigateToHeight)
     }
 
-    override fun enterHeight(height: String) {
+    private fun enterHeight(height: String) {
         val heightAsDouble : Double? = height.toDoubleOrNull()
         if (heightAsDouble == null || heightAsDouble <= 0) {
             _data.update {
@@ -139,7 +137,7 @@ class OnboardingViewModel @Inject constructor(
         emitEvent(OnboardingEvent.NavigateToWeight)
     }
 
-    override fun enterWeight(weight: String) {
+    private fun enterWeight(weight: String) {
         val weightAsDouble: Double? = weight.toDoubleOrNull()
         if (weightAsDouble == null || weightAsDouble <= 0) {
             _data.update {
@@ -152,7 +150,7 @@ class OnboardingViewModel @Inject constructor(
         emitEvent(OnboardingEvent.NavigateToSportFrequency)
     }
 
-    override fun enterSportFrequency(activityLevel: ActivityLevel?) {
+    private fun enterSportFrequency(activityLevel: ActivityLevel?) {
         if (activityLevel == null) {
             _data.update {
                 it.copy(errorState = R.string.userData_error_activity_level_required)
@@ -164,7 +162,7 @@ class OnboardingViewModel @Inject constructor(
         emitEvent(OnboardingEvent.NavigateToWeightGoal)
     }
 
-    override fun enterWeightGoal(weightGoal: WeightGoal?) {
+    private fun enterWeightGoal(weightGoal: WeightGoal?) {
         if (weightGoal == null) {
             _data.update {
                 it.copy(errorState = R.string.userData_error_goal_required)
@@ -176,7 +174,7 @@ class OnboardingViewModel @Inject constructor(
         emitEvent(OnboardingEvent.NavigateToTargetWeight)
     }
 
-    override fun enterTargetWeight(targetWeight: String) {
+    private fun enterTargetWeight(targetWeight: String) {
         val targetWeightAsDouble: Double? = targetWeight.toDoubleOrNull()
         if (targetWeightAsDouble == null || targetWeightAsDouble <= 0.0) {
             _data.update { it.copy(errorState = R.string.userData_error_target_weight_required) }
