@@ -8,7 +8,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
+import javax.inject.Inject
 
 data class RecipeDraft(
     val recipe: Recipe,
@@ -90,7 +89,7 @@ class EditRecipeViewModel @Inject constructor(
         val newIngredient = Ingredient(
             recipe = recipe,
             foodProduct = foodProduct,
-            quantity = recipe.servings
+            quantity = recipe.servings.toDouble()
         )
         _editRecipeDraft.update { it?.copy(addedIngredient = it.addedIngredient + newIngredient) }
     }
@@ -122,11 +121,12 @@ class EditRecipeViewModel @Inject constructor(
         _editRecipeDraft.value =
             RecipeDraft(
                 id = recipeId,
-                title = _editRecipeDraft.value!!.recipe!!.name,
-                description = _editRecipeDraft.value!!.recipe!!.instructions,
-                ingredients = _editRecipeDraft.value!!.recipe!!.ingredients,
+                title = _editRecipeDraft.value!!.recipe.name,
+                description = _editRecipeDraft.value!!.recipe.instructions,
+                ingredients = _editRecipeDraft.value!!.recipe.ingredients,
                 addedIngredient = emptyList(),
-                viewIngredients = _editRecipeDraft.value!!.recipe!!.ingredients.map { it.foodProduct }
+                viewIngredients = _editRecipeDraft.value!!.recipe.ingredients.map { it.foodProduct },
+                recipe = _editRecipeDraft.value!!.recipe
             )
 
     }
@@ -153,7 +153,7 @@ class EditRecipeViewModel @Inject constructor(
             servings = draft.ingredients.sumOf { it.quantity.toInt() },
             ingredients = draft.ingredients,
             instructions = draft.description,
-            visibility = draft.recipe!!.visibility
+            visibility = draft.recipe.visibility
         )
         viewModelScope.launch {
             recipeRepository.updateRecipe(recipe)
