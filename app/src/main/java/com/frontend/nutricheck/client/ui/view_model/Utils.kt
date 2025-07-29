@@ -9,10 +9,11 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.ZoneId
 import java.util.Date
+import kotlin.math.roundToInt
 
 object Utils {
 
-fun birthdateInvalid(birthdate: Date): Boolean {
+fun isBirthdateInvalid(birthdate: Date): Boolean {
     val localBirthdate = Instant.ofEpochMilli(birthdate.time)
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
@@ -45,11 +46,11 @@ fun calculateNutrition(userData : UserData) : UserData {
         WeightGoal.MAINTAIN_WEIGHT -> 0
         WeightGoal.GAIN_WEIGHT -> 500
     }
-    val newDailyCalories = (bmr * pal + calorieDiffOnGoal).toInt()
-    val newProtein = (userData.weight * 1.8).toInt()
-    val newFats = (newDailyCalories * 0.25 / 9.3).toInt()
+    val newDailyCalories = (bmr * pal + calorieDiffOnGoal).roundToInt()
+    val newProtein = (userData.weight * 1.8).roundToInt()
+    val newFats = (newDailyCalories * 0.25 / 9.3).roundToInt()
     val newCarbs = ((newDailyCalories
-            - (newProtein * 4.1 + newFats * 9.3)) / 4.1).toInt()
+            - (newProtein * 4.1 + newFats * 9.3)) / 4.1).roundToInt()
     val newUserData = userData.copy(
         dailyCaloriesGoal = newDailyCalories,
         proteinGoal = newProtein,

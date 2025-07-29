@@ -103,7 +103,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun enterBirthdate(birthdate: Date?) {
-        if (birthdate == null || Utils.birthdateInvalid(birthdate)) {
+        if (birthdate == null || Utils.isBirthdateInvalid(birthdate)) {
             _data.update {
                 it.copy(errorState = R.string.userData_error_birthdate_required)
             }

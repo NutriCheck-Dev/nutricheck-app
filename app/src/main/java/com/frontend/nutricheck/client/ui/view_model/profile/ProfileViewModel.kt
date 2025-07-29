@@ -56,6 +56,7 @@ class ProfileViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<ProfileEvent>()
     val events: SharedFlow<ProfileEvent> = _events.asSharedFlow()
+    val initialBirthdate = Date(1234567890L) // 1.1.1970
 
     private val _dataDraft = MutableStateFlow<UserData>(UserData(
         username = "",
@@ -144,7 +145,7 @@ class ProfileViewModel @Inject constructor(
         _dataDraft.value = _dataDraft.value.copy(username = username)
     }
     private fun updateUserBirthdateDraft(birthdate: Date) {
-        if (Utils.birthdateInvalid(birthdate)) {
+        if (Utils.isBirthdateInvalid(birthdate)) {
             _errorMessage.value = R.string.userData_error_birthdate_required
             return
         }
