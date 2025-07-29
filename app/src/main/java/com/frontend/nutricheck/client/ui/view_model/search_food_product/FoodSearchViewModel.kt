@@ -46,7 +46,7 @@ data class SearchState(
 sealed interface  SearchEvent {
     data class DayTimeChanged(val dayTime: DayTime) : SearchEvent
     data class QueryChanged(val query: String) : SearchEvent
-    data class AddFoodComponent(val foodComponent: Pair<Double, FoodComponent>) : SearchEvent
+    data class AddFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     data class RemoveFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     object Search : SearchEvent
     object Retry : SearchEvent
@@ -85,7 +85,6 @@ class FoodSearchViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
-
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.QueryChanged -> { changeQuery(event.query) }
@@ -130,9 +129,10 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    override fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) =
+    override fun onClickAddFoodComponent(foodComponent: FoodComponent) =
+
         _searchState.update { state ->
-            state.copy(addedComponents = state.addedComponents + foodComponent)
+            state.copy(addedComponents = state.addedComponents + (1.0 to foodComponent))
         }
 
     override fun onClickRemoveFoodComponent(foodComponent: FoodComponent) =
@@ -156,7 +156,10 @@ class FoodSearchViewModel @Inject constructor(
         val meal = MealEntity(
             id = UUID.randomUUID().toString(),
             historyDayDate = _searchState.value.date!!,
-            dayTime = _searchState.value.dayTime!!
+            calories = 0.0,
+            carbohydrates = 0.0,
+            protein = 0.0,
+            fat = 0.0,
         )
         var mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>? = null
         var mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>? = null
