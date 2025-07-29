@@ -36,11 +36,12 @@ import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 
 @Composable
 fun CreateRecipePage(
     modifier: Modifier = Modifier,
-    createRecipeViewModel: CreateRecipeViewModel,
+    createRecipeViewModel: RecipeEditorViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
     onSave: () -> Unit = {},
     onBack: () -> Unit = {},
@@ -115,9 +116,9 @@ fun CreateRecipePage(
                 )
                 Spacer(Modifier.height(10.dp))
                 DishItemList(
-                    foodComponents = currentIngredients,
-                    onItemClick = { foodComponent ->
-                        onItemClick(foodComponent)
+                    ingredients = currentIngredients,
+                    onItemClick = { ingredient ->
+                        onItemClick(ingredient)
                                   },
                     editing = true,
                     trailingContent = { item ->

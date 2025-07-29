@@ -30,17 +30,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.view.dialogs.ActionConfirmationDialog
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeDraft
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverviewEditContent(
     draft: RecipeDraft,
-    ingredients: List<FoodComponent>,
-    onItemClick: (FoodComponent) -> Unit,
+    ingredients: List<Ingredient>,
+    onItemClick: (Ingredient) -> Unit,
     onEvent: (EditRecipeEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit
@@ -109,8 +108,8 @@ fun RecipeOverviewEditContent(
 
                 DishItemList(
                     editing = true,
-                    foodComponents = ingredients,
-                    onItemClick = onItemClick,
+                    ingredients = ingredients,
+                    onItemClick = { ingredient -> onItemClick(ingredient) },
                     modifier = Modifier
                         .fillMaxWidth()
                 )

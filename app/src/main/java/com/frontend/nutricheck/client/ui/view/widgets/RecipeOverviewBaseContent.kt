@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
@@ -40,8 +41,8 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeVi
 fun RecipeOverviewBaseContent(
     reportRecipeViewModel: ReportRecipeViewModel,
     recipe: Recipe,
-    ingredients: List<FoodProduct>,
-    onItemClick: (FoodComponent) -> Unit = {},
+    ingredients: List<Ingredient>,
+    onItemClick: (Ingredient) -> Unit = {},
     onDownLoad: (Recipe) -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: (Recipe) -> Unit = {},
@@ -138,9 +139,9 @@ fun RecipeOverviewBaseContent(
 
                 DishItemList(
                     editing = false,
-                    foodComponents = ingredients,
-                    onItemClick = { foodProduct ->
-                        onItemClick(foodProduct)
+                    ingredients = ingredients,
+                    onItemClick = { ingredient ->
+                        onItemClick(ingredient)
                                   },
                     modifier = Modifier
                         .fillMaxWidth()

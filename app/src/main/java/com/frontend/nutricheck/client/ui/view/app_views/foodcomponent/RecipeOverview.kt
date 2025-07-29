@@ -13,6 +13,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewBaseContent
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewEditContent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
@@ -22,7 +23,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeVi
 @Composable
 fun RecipeOverview(
     recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(),
-    editRecipeViewModel: EditRecipeViewModel = hiltViewModel(),
+    editRecipeViewModel: RecipeEditorViewModel = hiltViewModel(),
     reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(),
     onItemClick: (FoodComponent) -> Unit = {},
     onBack: () -> Unit = {}
