@@ -9,16 +9,15 @@ object DbIngredientMapper {
 
     fun toIngredientEntity(ingredient: Ingredient) : IngredientEntity =
         IngredientEntity(
-            recipeId = ingredient.recipe.id,
+            recipeId = ingredient.recipeId,
             foodProductId = ingredient.foodProduct.id,
             quantity = ingredient.quantity
         )
 
       fun toIngredient(
-        ingredientWithFoodProduct: IngredientWithFoodProduct,
-        recipe: Recipe
-    ) : Ingredient = Ingredient(
-            recipe = recipe,
+        ingredientWithFoodProduct: IngredientWithFoodProduct
+      ) : Ingredient = Ingredient(
+            recipeId = ingredientWithFoodProduct.ingredientEntity.recipeId,
             foodProduct = DbFoodProductMapper.toFoodProduct(ingredientWithFoodProduct.foodProductEntity),
             quantity =  ingredientWithFoodProduct.ingredientEntity.quantity
         )

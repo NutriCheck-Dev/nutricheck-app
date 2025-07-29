@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +32,22 @@ data class RecipeDraft(
     val servings: Int,
     val ingredients: List<Ingredient> = emptyList(),
     val viewIngredients: List<FoodProduct> = emptyList(),
-)
+) {
+    fun toRecipe(): Recipe {
+        return Recipe(
+            id = id,
+            name = title,
+            instructions = description,
+            servings = servings,
+            ingredients = ingredients,
+            calories = ingredients.sumOf { it.foodProduct.calories * it.quantity },
+            carbohydrates = ingredients.sumOf { it.foodProduct.carbohydrates * it.quantity },
+            protein = ingredients.sumOf { it.foodProduct.protein * it.quantity },
+            fat = ingredients.sumOf { it.foodProduct.fat * it.quantity },
+            visibility = original?.visibility ?: RecipeVisibility.OWNER
+        )
+    }
+}
 
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
@@ -114,7 +129,7 @@ class RecipeEditorViewModel @Inject constructor(
 
     private fun removeIngredient(ingredient: FoodProduct) {
         _draft.update { it.copy(
-            ingredients = it.ingredients.filterNot { ingredient -> ingredient.foodProduct.id == ingredient.id },
+            ingredients = it.ingredients.filterNot { ingredient -> ingredient.foodProduct.id == ingredient.foodProduct.id },
             viewIngredients = it.viewIngredients.filterNot { product -> product.id == ingredient.id }
         ) }
     }

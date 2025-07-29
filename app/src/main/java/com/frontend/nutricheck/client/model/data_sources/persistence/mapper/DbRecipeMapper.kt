@@ -32,12 +32,10 @@ object DbRecipeMapper {
             servings = recipeEntity.servings.toInt(),
             instructions = recipeEntity.instructions,
             visibility = recipeEntity.visibility,
-            ingredients = listOf()
+            ingredients = ingredientEntities.map { ingredientWithFoodProduct ->
+                DbIngredientMapper.toIngredient(ingredientWithFoodProduct)
+            }
         )
-        val ingredients = ingredientEntities.map { ingredientWithFoodProduct ->
-            DbIngredientMapper.toIngredient(ingredientWithFoodProduct, recipe)
-        }
-        recipe.ingredients = ingredients
         return recipe
     }
 }

@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+
 @Composable
 fun DishItemList(
     modifier: Modifier = Modifier,
@@ -66,3 +68,49 @@ fun DishItemList(
     }
 }
 
+@Composable
+fun DishItemList(
+    modifier: Modifier = Modifier,
+    ingredients: List<Ingredient> = emptyList(),
+    trailingContent: @Composable ((item: Ingredient) -> Unit)? = null,
+    editing: Boolean = false,
+    onAddButtonClick: () -> Unit = {},
+    onItemClick: (Ingredient) -> Unit = {}
+) {
+    val colors = MaterialTheme.colorScheme
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        ingredients.forEach { item ->
+            DishItemButton(
+                ingredient = item,
+                trailingContent = { trailingContent?.invoke(item) },
+                onClick = { onItemClick(item) })
+        }
+
+        if(editing) {
+            IconButton(
+                onClick = { onAddButtonClick() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 64.dp)
+                    .border(
+                        BorderStroke(2.dp, colors.onSurface),
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = colors.onSurface,
+                    containerColor = Color.Transparent
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AddCircle,
+                    contentDescription = "Hinzufügen"
+                )
+            }
+        }
+    }
+}

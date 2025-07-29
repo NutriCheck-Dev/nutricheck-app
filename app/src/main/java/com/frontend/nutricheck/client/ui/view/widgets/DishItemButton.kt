@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 
 //This file represents a DishItemButton composable function that displays a button for a dish item.
 @Composable
@@ -66,7 +67,7 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${foodComponent.calories} kcal, Portionsgröße ${foodComponent.servings}",
+                    text = "${foodComponent.calories} cal, Portionsgröße ${foodComponent.id}", //TODO: Replace with actual portion size if available
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -75,6 +76,59 @@ fun DishItemButton(
 
             trailingContent?.invoke()
             }
+
+    }
+}
+
+@Composable
+fun DishItemButton(
+    modifier: Modifier = Modifier,
+    trailingContent: @Composable (() -> Unit)? = { CustomDetailsButton() },
+    ingredient: Ingredient,
+    onClick: () -> Unit = {}
+) {
+    val colors = MaterialTheme.colorScheme
+    val styles = MaterialTheme.typography
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(6.dp, RoundedCornerShape(16.dp)),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        onClick = { onClick() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 64.dp)
+                .padding(horizontal = 4.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Text(
+                    text = ingredient.foodProduct.name,
+                    style = styles.bodyLarge
+                )
+
+                VerticalDivider(
+                    modifier = Modifier.size(1.dp, 24.dp),
+                    color = colors.outline
+                )
+
+                Text(
+                    text = "${ingredient.foodProduct.calories} cal, Portionsgröße ${ingredient.quantity}",
+                    style = styles.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            trailingContent?.invoke()
+        }
 
     }
 }
