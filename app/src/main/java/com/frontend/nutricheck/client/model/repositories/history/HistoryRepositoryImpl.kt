@@ -7,15 +7,15 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
@@ -34,13 +34,8 @@ class HistoryRepositoryImpl @Inject constructor(
     private val mealFoodItemDao: MealFoodItemDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val foodDao: FoodDao,
-    private val historyDao: HistoryDao
 ) : HistoryRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
-
-    override suspend fun getCalorieHistory(): List<HistoryDay> {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun getCaloriesOfDay(date: Date): Int {
         val meals = mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
@@ -105,7 +100,6 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun removeFoodFromMeal(name: String, foodId: String) {
         TODO("Not yet implemented")
     }
-    override suspend fun getHistoryByDate(date: Date): Flow<HistoryDay> = historyDao.getByDate(date)
 
     override suspend fun addMeal(
         meal: MealEntity,
