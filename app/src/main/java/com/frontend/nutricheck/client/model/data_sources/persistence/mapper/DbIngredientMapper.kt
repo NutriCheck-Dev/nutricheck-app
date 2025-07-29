@@ -13,6 +13,7 @@ object DbIngredientMapper {
             quantity = ingredient.quantity
         )
 
+
     fun toIngredient(ingredientWithFoodProduct: IngredientWithFoodProduct) : Ingredient =
         Ingredient(
             recipeId = ingredientWithFoodProduct.ingredient.recipeId,

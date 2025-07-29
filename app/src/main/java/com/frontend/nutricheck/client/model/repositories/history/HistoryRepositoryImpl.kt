@@ -1,5 +1,12 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
+import com.frontend.nutricheck.client.dto.ErrorResponseDTO
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
@@ -13,6 +20,12 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMe
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
+import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
+import com.google.gson.Gson
+import java.util.UUID
+import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
+import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
 
@@ -38,8 +51,33 @@ class HistoryRepositoryImpl @Inject constructor(
         }.toInt()
     }
 
-    override suspend fun requestAiMeal(): MealEntity {
+    override suspend fun getDailyHistory(date: Date): HistoryDay {
         TODO("Not yet implemented")
+    }
+
+  
+  override suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal> {
+        return try {
+            val response = api.estimateMeal(file)
+            val body = response.body()
+            val errorBody = response.errorBody()
+
+            if (response.isSuccessful && body != null) {
+                Result.Success(MealMapper.toEntity(body))
+            } else if (errorBody != null) {
+                val gson = Gson()
+                val errorResponse = gson.fromJson(
+                    String(errorBody.bytes()),
+                    ErrorResponseDTO::class.java
+                )
+                val message = errorResponse.title + errorResponse.detail
+                Result.Error(errorResponse.status, message)
+            } else {
+                Result.Error(message = "Unknown error")
+            }
+        } catch (e: IOException) {
+            Result.Error(message = "Connection issue>")
+        }
     }
 
     override suspend fun deleteMeal(meal: MealEntity) {
