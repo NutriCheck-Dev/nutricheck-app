@@ -4,8 +4,12 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealFoodItemWithProduct
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MealFoodItemDao : BaseDao<MealFoodItemEntity> {
@@ -21,4 +25,15 @@ interface MealFoodItemDao : BaseDao<MealFoodItemEntity> {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(mealFoodItems: List<MealFoodItemEntity>)
+
+    @Transaction
+    @Query("""
+        SELECT *
+        FROM meal_food_items
+        WHERE mealId = :mealId
+        AND foodProductId = :foodProductId
+    """)
+    suspend fun getItemOfMealById(
+        mealId: String,
+        foodProductId: String): Flow<MealFoodItemWithProduct>
 }

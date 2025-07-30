@@ -111,6 +111,14 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getIngredientById(
+        recipeId: String,
+        foodProductId: String
+    ): Ingredient {
+        val ingredientWithFoodProduct = ingredientDao.getIngredientById(recipeId, foodProductId)
+        return DbIngredientMapper.toIngredient(ingredientWithFoodProduct!!)
+    }
+
     //will maybe be removed
     override suspend fun downloadRecipe(recipeId: String): Result<Recipe> {
         val response = api.downloadRecipe(recipeId)

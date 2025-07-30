@@ -19,4 +19,5 @@ interface RecipeRepository {
     suspend fun uploadRecipe(recipe: Recipe): Result<Recipe>
     suspend fun downloadRecipe(recipeId: String): Result<Recipe>
     suspend fun reportRecipe(recipeReport: RecipeReport): Result<ReportDTO>
+    suspend fun getIngredientById(recipeId: String, foodProductId: String): Ingredient
 }

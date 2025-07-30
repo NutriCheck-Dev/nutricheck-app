@@ -24,6 +24,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchUiState
 
 @Composable
 fun AddedComponentsSummary(
@@ -37,12 +38,11 @@ fun AddedComponentsSummary(
     val styles = MaterialTheme.typography
     val scrollState = rememberScrollState()
     val searchState by searchViewModel.searchState.collectAsState()
-    val isFromAddIngredient = searchState.fromAddIngredient
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            if (isFromAddIngredient) {
+            if (searchState is SearchUiState.AddIngredientState) {
                 ViewsTopBar(
                     navigationIcon = { NavigateBackButton(onBack = onBack) },
                     title = {
@@ -67,7 +67,7 @@ fun AddedComponentsSummary(
                 .verticalScroll(scrollState)
         ) {
             DishItemList(
-                foodComponents = searchState.addedComponents,
+                foodComponents = emptyList(),//searchState.parameters.addedComponents, TODO: Fix this
                 trailingContent = { item ->
                     CustomCloseButton(onClick = {
                             searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(item))

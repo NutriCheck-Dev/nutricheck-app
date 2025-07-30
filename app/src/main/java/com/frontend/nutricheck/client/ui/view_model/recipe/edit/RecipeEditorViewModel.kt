@@ -30,8 +30,7 @@ data class RecipeDraft(
     val title: String,
     val description: String,
     val servings: Int,
-    val ingredients: List<Ingredient> = emptyList(),
-    val viewIngredients: List<FoodProduct> = emptyList(),
+    val ingredients: List<Ingredient> = emptyList()
 ) {
     fun toRecipe(): Recipe {
         return Recipe(
@@ -90,8 +89,7 @@ class RecipeEditorViewModel @Inject constructor(
                     title = recipe.name,
                     description = recipe.instructions,
                     servings = recipe.servings,
-                    ingredients = recipe.ingredients,
-                    viewIngredients = recipe.ingredients.map { it.foodProduct }
+                    ingredients = recipe.ingredients
                 )
             }
         }
@@ -129,8 +127,7 @@ class RecipeEditorViewModel @Inject constructor(
 
     private fun removeIngredient(ingredient: FoodProduct) {
         _draft.update { it.copy(
-            ingredients = it.ingredients.filterNot { ingredient -> ingredient.foodProduct.id == ingredient.foodProduct.id },
-            viewIngredients = it.viewIngredients.filterNot { product -> product.id == ingredient.id }
+            ingredients = it.ingredients.filterNot { ingredient -> ingredient.foodProduct.id == ingredient.foodProduct.id }
         ) }
     }
 
@@ -208,8 +205,7 @@ class RecipeEditorViewModel @Inject constructor(
                 title = original.name,
                 description = original.instructions,
                 servings = original.servings,
-                ingredients = original.ingredients,
-                viewIngredients = original.ingredients.map { it.foodProduct }
+                ingredients = original.ingredients
             )
         }
     }

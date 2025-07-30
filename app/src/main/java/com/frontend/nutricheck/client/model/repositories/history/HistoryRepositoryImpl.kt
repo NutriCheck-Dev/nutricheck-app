@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
@@ -11,11 +13,14 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.History
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealFoodItemMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealRecipeItemMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import java.util.Date
 import javax.inject.Inject
 
@@ -113,4 +118,26 @@ class HistoryRepositoryImpl @Inject constructor(
     ) {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getMealFoodItemById(
+        mealId: String,
+        foodProductId: String
+    ): MealFoodItem {
+        val mealFoodItemWithProduct = mealFoodItemDao.getItemOfMealById(mealId, foodProductId).first()
+        return DbMealFoodItemMapper.toMealFoodItem(mealFoodItemWithProduct)
+    }
+
+    override suspend fun updateMealFoodItem(mealFoodItem: MealFoodItem) =
+        mealFoodItemDao.update(DbMealFoodItemMapper.toMealFoodItemEntity(mealFoodItem))
+
+    override suspend fun getMealRecipeItemById(
+        mealId: String,
+        recipeId: String
+    ): MealRecipeItem {
+        val mealRecipeItemWithRecipe = mealRecipeItemDao.getItemOfMealById(mealId, recipeId).first()
+        return DbMealRecipeItemMapper.toMealRecipeItem(mealRecipeItemWithRecipe)
+    }
+
+    override suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem) =
+        mealRecipeItemDao.update(DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem))
 }

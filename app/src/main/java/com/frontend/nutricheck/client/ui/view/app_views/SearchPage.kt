@@ -39,6 +39,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchUiState
 
 @Composable
 fun SearchPage(
@@ -54,13 +55,12 @@ fun SearchPage(
     val scrollState = rememberScrollState()
     val uiState by searchViewModel.uiState.collectAsState()
     val searchState by searchViewModel.searchState.collectAsState()
-    val isFromAddIngredient = searchState.fromAddIngredient
 
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            if (isFromAddIngredient) {
+            if (searchState is SearchUiState.AddIngredientState) {
                 ViewsTopBar(
                     navigationIcon = { NavigateBackButton(onBack = onBack) },
                     title = {
@@ -77,7 +77,9 @@ fun SearchPage(
                         }
                     })
             } else MealSelector(
-                dayTime = searchState.dayTime,
+                dayTime = if (searchState is SearchUiState.AddComponentsToMealState)
+                        (searchState as SearchUiState.AddComponentsToMealState).dayTime
+                else null,
                 trailingContent = {
                     IconButton(onConfirm) {
                         Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
@@ -115,7 +117,7 @@ fun SearchPage(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     FoodComponentSearchBar(
-                        query = searchState.query,
+                        query = searchState.parameters.query,
                         onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
                         onSearch = { searchViewModel.onEvent(SearchEvent.Search) }
                     )
@@ -125,14 +127,14 @@ fun SearchPage(
                             .fillMaxWidth()
                             .padding(8.dp),
                         options = listOf("Alle", "Meine Rezepte"),
-                        selectedOption = searchState.selectedTab
+                        selectedOption = searchState.parameters.selectedTab
                     )
 
                     DishItemList(
-                        foodComponents = searchState.results,
+                        foodComponents = searchState.parameters.results,
                         trailingContent = { item ->
                             CustomAddButton(onClick = {
-                                searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
+                                //TODO: Implement addComponent logic
                             })
                         },
                         onItemClick = onItemClick

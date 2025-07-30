@@ -25,34 +25,29 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
-import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 
 @Composable
 fun CreateRecipePage(
     modifier: Modifier = Modifier,
     createRecipeViewModel: RecipeEditorViewModel,
-    onItemClick: (FoodComponent) -> Unit = {},
+    onItemClick: (Ingredient) -> Unit = {},
     onSave: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val draft by createRecipeViewModel.createdRecipeDraft.collectAsState()
+    val draft by createRecipeViewModel.draft.collectAsState()
     val currentTitle = draft.title
-    val currentIngredients = draft.viewIngredients
     val currentDescription = draft.description
-    val errorResourceId by createRecipeViewModel.errorState.collectAsState()
 
     Scaffold(
         modifier = modifier
@@ -71,7 +66,7 @@ fun CreateRecipePage(
                         )
                     },
                     onValueChange = { new ->
-                        createRecipeViewModel.onEvent(CreateRecipeEvent.TitleChanged(new))
+                        createRecipeViewModel.onEvent(RecipeEditorEvent.TitleChanged(new))
                     },
                     singleLine = true,
                     textStyle = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
@@ -90,7 +85,7 @@ fun CreateRecipePage(
                 actions = {
                     IconButton(onClick = {
                         onSave()
-                        createRecipeViewModel.onEvent(CreateRecipeEvent.RecipeSaved)
+                        createRecipeViewModel.onEvent(RecipeEditorEvent.SaveRecipe)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Check,
@@ -116,7 +111,7 @@ fun CreateRecipePage(
                 )
                 Spacer(Modifier.height(10.dp))
                 DishItemList(
-                    ingredients = currentIngredients,
+                    ingredients = draft.ingredients,
                     onItemClick = { ingredient ->
                         onItemClick(ingredient)
                                   },
@@ -126,14 +121,15 @@ fun CreateRecipePage(
                     }
                 )
 
-                if (errorResourceId == R.string.create_recipe_error_ingredients) {
+                //TODO: Add error handling for ingredients
+                /**if (errorResourceId.value == R.string.create_recipe_error_ingredients) {
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = stringResource(errorResourceId!!),
                         color = colors.error,
                         style = styles.bodySmall.copy(fontWeight = FontWeight.Bold)
                     )
-                }
+                }**/
             }
 
             item {
@@ -151,7 +147,7 @@ fun CreateRecipePage(
                     TextField(
                         value = currentDescription,
                         onValueChange = { newDiscription ->
-                            createRecipeViewModel.onEvent(CreateRecipeEvent.DescriptionChanged(newDiscription))
+                            createRecipeViewModel.onEvent(RecipeEditorEvent.DescriptionChanged(newDiscription))
                         },
                         modifier = Modifier
                             .fillMaxWidth()

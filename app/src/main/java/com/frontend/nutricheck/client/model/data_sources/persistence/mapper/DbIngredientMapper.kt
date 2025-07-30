@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.mapper
 
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
 

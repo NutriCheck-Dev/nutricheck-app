@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
@@ -19,6 +21,29 @@ interface HistoryRepository {
     suspend fun addFoodToMeal(name: String, foodId: String = "")
     suspend fun removeFoodFromMeal(name: String, foodId: String = "")
     suspend fun getHistoryByDate(date: Date): Flow<HistoryDay>
-    suspend fun addMeal(meal: MealEntity, mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?, mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?)
-    suspend fun saveAsRecipe(meal: MealEntity, recipeName: String = "", recipeDescription: String = "")
+    suspend fun addMeal(
+        meal: MealEntity,
+        mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?,
+        mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?
+    )
+
+    suspend fun saveAsRecipe(
+        meal: MealEntity,
+        recipeName: String = "",
+        recipeDescription: String = ""
+    )
+
+    suspend fun getMealFoodItemById(
+        mealId: String,
+        foodProductId: String
+    ): MealFoodItem
+
+    suspend fun updateMealFoodItem(mealFoodItem: MealFoodItem)
+
+    suspend fun getMealRecipeItemById(
+        mealId: String,
+        recipeId: String
+    ): MealRecipeItem
+
+    suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem)
 }

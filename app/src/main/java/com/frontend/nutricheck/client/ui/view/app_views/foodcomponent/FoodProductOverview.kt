@@ -26,6 +26,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.ServingSizeDropdown
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewState
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 
 @Composable
@@ -38,7 +39,8 @@ fun FoodProductOverview(
     val styles = MaterialTheme.typography
     val onPersist = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
     val onCancel = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.GoBack)
-    val actions = if (foodProductState.fromIngredient) CustomPersistButton { onPersist } else null
+    val actions = if (foodProductState is FoodProductOverviewState.IngredientState)
+        CustomPersistButton { onPersist } else null
 
     Scaffold(
         topBar = {
@@ -51,7 +53,7 @@ fun FoodProductOverview(
                                  },
                 title = {
                     Text(
-                        text = foodProductState.foodName,
+                        text = foodProductState.parameters.foodName,
                         style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -72,7 +74,7 @@ fun FoodProductOverview(
         ) {
 
             FoodProductNutrientChartsWidget(
-                foodProduct = foodProductState.foodProduct!!,
+                foodProduct = foodProductState.foodProduct,
                 modifier = Modifier.wrapContentHeight()
             )
 
@@ -89,8 +91,8 @@ fun FoodProductOverview(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 ServingSizeDropdown(
-                    currentServingSize = foodProductState.servingSize,
-                    expanded = foodProductState.servingSizeDropDownExpanded,
+                    currentServingSize = foodProductState.parameters.servingSize,
+                    expanded = foodProductState.parameters.servingSizeDropDownExpanded,
                     onExpandedChange = { foodProductOverviewViewModel.onEvent(
                         FoodProductOverviewEvent.ServingSizeDropDownClick
                     ) },
@@ -113,7 +115,7 @@ fun FoodProductOverview(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 ServingsPicker(
-                    value = foodProductState.servings,
+                    value = foodProductState.parameters.servings,
                     range = 1..200,
                     onValueChange = { foodProductOverviewViewModel.onEvent(
                         FoodProductOverviewEvent.ServingsChanged(it)

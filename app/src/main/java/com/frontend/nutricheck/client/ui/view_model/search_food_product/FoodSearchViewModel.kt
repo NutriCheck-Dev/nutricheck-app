@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -32,11 +31,11 @@ sealed class SearchMode {
 }
 
 data class CommonSearchParameters(
-    val language: String,
-    val query: String,
-    val selectedTab: Int,
-    val results: List<FoodComponent>,
-    val addedComponents: List<Pair<Double, FoodComponent>>
+    val language: String = "",
+    val query: String = "",
+    val selectedTab: Int = 0,
+    val results: List<FoodComponent> = emptyList(),
+    val addedComponents: List<Pair<Double, FoodComponent>> = emptyList()
 )
 
 sealed class SearchUiState {
@@ -79,46 +78,45 @@ class FoodSearchViewModel @Inject constructor(
     private val historyRepository: HistoryRepositoryImpl,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
-    private lateinit var _searchState: MutableStateFlow<SearchUiState>
-    val searchState: StateFlow<SearchUiState> get() = _searchState.asStateFlow()
-
     private val mode: SearchMode =
         savedStateHandle.get<String>("recipeId")?.let { SearchMode.IngredientsForRecipe(it) }
             ?: savedStateHandle.get<String>("mealId")?.let { SearchMode.ComponentsForMeal(it) }
             ?: SearchMode.LogNewMeal
 
+    private val newMealId = UUID.randomUUID().toString()
+    private val initialCommonParams = CommonSearchParameters()
+
+    private val initialState: SearchUiState =
+        when (mode) {
+            is SearchMode.IngredientsForRecipe ->
+                SearchUiState.AddIngredientState(
+                    recipeId = mode.recipeId,
+                    parameters = initialCommonParams
+                )
+
+            is SearchMode.ComponentsForMeal ->
+                SearchUiState.AddComponentsToMealState(
+                    mealId = mode.mealId,
+                    parameters = initialCommonParams
+                )
+
+            is SearchMode.LogNewMeal ->
+                SearchUiState.AddComponentsToMealState(
+                    mealId = newMealId,
+                    parameters = initialCommonParams
+                )
+        }
+
+    private var _searchState = MutableStateFlow(initialState)
+    val searchState: StateFlow<SearchUiState> = _searchState.asStateFlow()
+
     init {
         viewModelScope.launch {
-            val commonParams = CommonSearchParameters(
-                language = appSettingsRepository.language.first().code,
-                query = "",
-                selectedTab = 0,
-                results = emptyList(),
-                addedComponents = emptyList()
-            )
-            val newMealId = UUID.randomUUID().toString()
-
-            _searchState = MutableStateFlow(
-                when (mode) {
-                    is SearchMode.IngredientsForRecipe ->
-                        SearchUiState.AddIngredientState(
-                            recipeId = mode.recipeId,
-                            parameters = commonParams
-                        )
-
-                    is SearchMode.ComponentsForMeal ->
-                        SearchUiState.AddComponentsToMealState(
-                            mealId = mode.mealId,
-                            parameters = commonParams
-                        )
-
-                    is SearchMode.LogNewMeal ->
-                        SearchUiState.AddComponentsToMealState(
-                            mealId = newMealId,
-                            parameters = commonParams
-                        )
+            appSettingsRepository.language.collect { language ->
+                _searchState.update { uiState ->
+                    uiState.updateParams(uiState.parameters.copy(language = language.code))
                 }
-            )
+            }
         }
     }
 
@@ -154,7 +152,7 @@ class FoodSearchViewModel @Inject constructor(
             val language = _searchState.value.parameters.language
             var foodProducts: List<FoodProduct> = emptyList()
             var recipes: List<Recipe> = emptyList()
-            var foodProductResults: Result<List<FoodProduct>>? = null
+            var foodProductResults: Result<List<FoodProduct>>?
             var recipeResults: Result<List<Recipe>>? = null
 
             when (mode) {
@@ -230,7 +228,7 @@ class FoodSearchViewModel @Inject constructor(
 
     private fun cancelSearch() =
         _searchState.update { state ->
-            val newParams = state.parameters.copy(query = "", results = emptyList(),)
+            val newParams = state.parameters.copy(query = "", results = emptyList())
             state.updateParams(newParams)
         }
 
