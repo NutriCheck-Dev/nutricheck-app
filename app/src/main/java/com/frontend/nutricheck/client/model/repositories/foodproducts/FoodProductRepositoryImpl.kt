@@ -14,7 +14,8 @@ import java.io.IOException
 import javax.inject.Inject
 
 class FoodProductRepositoryImpl @Inject constructor(
-    val foodDao: FoodDao
+    val foodDao: FoodDao,
+    var remoteFoodProducts: List<FoodProduct>
 ) : FoodProductRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
@@ -25,7 +26,8 @@ class FoodProductRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                val foodProducts: List<FoodProduct> = body.map { FoodProductMapper.toEntity(it) }
+                val foodProducts: List<FoodProduct> = body.map { FoodProductMapper.toData(it) }
+                this.remoteFoodProducts = foodProducts
                 Result.Success(foodProducts)
             } else if (errorBody != null) {
                 val gson = Gson()
@@ -44,6 +46,11 @@ class FoodProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFoodProductById(foodProductId: String): FoodProduct {
+        for (remoteFoodProduct in remoteFoodProducts) {
+            if (remoteFoodProduct.id == foodProductId) {
+                return remoteFoodProduct
+            }
+        }
         val foodProductEntity = foodDao.getById(foodProductId).first()
         return DbFoodProductMapper.toFoodProduct(foodProductEntity)
     }
