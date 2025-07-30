@@ -28,7 +28,6 @@ data class HistoryState(
 
 sealed interface HistoryEvent {
     data class AddEntryClick(val day: Date, val dayTime: DayTime) : HistoryEvent
-    data class DisplayNutritionOfDay(val day: Date) : HistoryEvent
     data class FoodClicked(val foodId: String) : HistoryEvent
     data class RecipeClicked(val recipeId: String) : HistoryEvent
     data class DetailsClick(val detailsId: String) : HistoryEvent
@@ -49,9 +48,8 @@ class HistoryViewModel @Inject constructor(
     fun onEvent(event: HistoryEvent) {
         when (event) {
             is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day, event.dayTime)
-            is HistoryEvent.DisplayNutritionOfDay -> displayNutritionOfDay(event.day)
             is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
-            is HistoryEvent.RecipeClicked -> onDetailsClick(event.recipeId)
+            is HistoryEvent.RecipeClicked -> onRecipeClicked(event.recipeId)
             is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
             is HistoryEvent.SelectDate -> selectDate(event.day)
         }
@@ -90,7 +88,7 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    override fun displayNutritionOfDay(day: Date) {}
+    //override fun displayNutritionOfDay(day: Date) {}
     override fun displayMealsOfDay(day: Date) {
         viewModelScope.launch {
             val mealsWithAll = historyRepository.getMealsForDay(day)
@@ -103,7 +101,11 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    override fun onFoodClicked(foodId: String) {}
+    override fun onFoodClicked(foodId: String) {
+        viewModelScope.launch {
+            _events.emit(HistoryEvent.FoodClicked(foodId))
+        }
+    }
     override fun onRecipeClicked(recipeId: String) {
         viewModelScope.launch {
             _events.emit(HistoryEvent.RecipeClicked(recipeId))

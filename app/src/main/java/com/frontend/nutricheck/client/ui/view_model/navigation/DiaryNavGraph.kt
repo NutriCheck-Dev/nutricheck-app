@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.ui.view.app_views.DiaryTab
-import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
@@ -33,7 +32,7 @@ sealed class DiaryScreens(val route: String) {
 fun DiaryNavGraph(
     mainNavController: NavHostController
 ) {
-    var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.HISTORY) }
+    var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.RECIPES) }
     val recipePageViewModel: RecipePageViewModel = hiltViewModel()
     Scaffold(
         topBar = {
@@ -60,7 +59,7 @@ fun DiaryNavGraph(
         ) {
             when (selectedTab) {
                 DiaryTab.HISTORY -> HistoryPageNavGraph(mainNavController)
-                DiaryTab.RECIPES -> RecipePage(recipePageViewModel = recipePageViewModel)
+                DiaryTab.RECIPES -> RecipePageNavGraph(mainNavController)
             }
         }
     }

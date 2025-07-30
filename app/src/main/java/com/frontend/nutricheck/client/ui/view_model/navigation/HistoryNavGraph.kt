@@ -49,7 +49,6 @@ fun HistoryPageNavGraph(
         startDestination = HistoryPageScreens.HistoryPage.route
     ) {
         composable(HistoryPageScreens.HistoryPage.route) {
-            // Hier deine HistoryPage Composable
             HistoryPage(
                 historyViewModel = hiltViewModel(),
                 historyPageNavController = historyPageNavController,
@@ -63,7 +62,7 @@ fun HistoryPageNavGraph(
             val foodProductOverviewViewModel : FoodProductOverviewViewModel = hiltViewModel()
             FoodProductOverview(
                 foodProductOverviewViewModel = foodProductOverviewViewModel,
-                onBack = { historyPageNavController.popBackStack() } // wichtig!
+                onBack = { historyPageNavController.popBackStack() }
             )
         }
         composable(

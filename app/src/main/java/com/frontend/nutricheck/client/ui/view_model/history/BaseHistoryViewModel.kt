@@ -8,7 +8,7 @@ abstract class BaseHistoryViewModel : BaseViewModel() {
 
     abstract fun onAddEntryClick(day: Date, dayTime: DayTime)
     abstract fun selectDate(day: Date)
-    abstract fun displayNutritionOfDay(day: Date)
+    //abstract fun displayNutritionOfDay(day: Date)
     abstract fun displayMealsOfDay(day: Date)
     abstract fun displayCalorieGoal(day: Date)
     abstract fun onFoodClicked(foodId: String)

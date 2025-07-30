@@ -31,6 +31,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.history.buildDisplayMealItems
+import com.frontend.nutricheck.client.ui.view_model.navigation.AddDialogOrigin
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 import java.util.Calendar
 import java.util.Date
@@ -57,7 +58,7 @@ fun HistoryPage(
         historyViewModel.events.collect { event ->
             when (event) {
                 is HistoryEvent.AddEntryClick -> {
-                    mainNavController.navigate(Screen.Add.route)
+                    mainNavController.navigate(Screen.Add.createRoute(AddDialogOrigin.HISTORY_PAGE))
                 }
                 is HistoryEvent.FoodClicked -> {
                     historyPageNavController.navigate("food_details/${event.foodId}")
