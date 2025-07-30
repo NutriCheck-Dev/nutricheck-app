@@ -33,7 +33,7 @@ class DailyCalorieViewModel @Inject constructor(
          val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
          viewModelScope.launch {
              val calories = historyRepository.getCaloriesOfDay(currentDate) // z.B. 850
-             val goal = userDataRepository.getCalorieGoal()
+             val goal = userDataRepository.getDailyCalorieGoal()
              _dailyCalorieState.value = DailyCalorieState(
                  dailyCalories = calories,
                  calorieGoal = goal

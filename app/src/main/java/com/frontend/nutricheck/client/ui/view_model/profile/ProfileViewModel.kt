@@ -200,7 +200,7 @@ class ProfileViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            userDataRepository.addWeight(Weight(value = weightValue.toDouble(), enterDate = date))
+            userDataRepository.addWeight(Weight(value = weightValue.toDouble(), date = date))
         }
     }
     private fun displayProfileOverview() {
