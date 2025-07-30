@@ -19,6 +19,7 @@ import androidx.room.Index
             entity = RecipeEntity::class,
             parentColumns = ["id"],
             childColumns = ["recipeId"],
+            onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [

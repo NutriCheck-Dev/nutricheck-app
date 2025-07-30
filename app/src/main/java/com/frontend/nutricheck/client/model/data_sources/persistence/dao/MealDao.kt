@@ -25,4 +25,8 @@ interface MealDao : BaseDao<MealEntity> {
     @Transaction
     @Query("SELECT * FROM meals WHERE historyDayDate = :date")
     suspend fun getMealsWithAllForDay(date: Date): List<MealWithAll>
+
+    @Transaction
+    @Query("SELECT * FROM meals WHERE id = :id")
+    suspend fun getById(id: String): MealWithAll
 }
