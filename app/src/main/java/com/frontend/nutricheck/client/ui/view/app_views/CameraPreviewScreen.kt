@@ -20,18 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealEvent
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -49,9 +46,8 @@ fun CameraPreviewScreen(
     val context = LocalContext.current
     val surfaceRequest by addAiMealViewModel.surfaceRequest.collectAsState()
     val photoUri by addAiMealViewModel.photoUri.collectAsState()
-    val isLoading by addAiMealViewModel.isLoading.collectAsState()
+    val uiState by addAiMealViewModel.uiState.collectAsState()
 
-    val error = remember { mutableStateOf<Int?>(null) }
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     var showCameraDialog = false
 
@@ -71,9 +67,6 @@ fun CameraPreviewScreen(
             when (event) {
                 is AddAiMealEvent.ShowMealOverview -> {
                     onNavigateToMealOverview()
-                }
-                is AddAiMealEvent.ErrorTakingPhoto -> {
-                    error.value = event.error
                 }
                 else -> { /* other events */ }
             }
@@ -99,24 +92,18 @@ fun CameraPreviewScreen(
             }
         )
     }
-    if (error.value != null) {
+    if (uiState is BaseViewModel.UiState.Error) {
         ShowErrorMessage(
-            error = error.value!!,
+            error = (uiState as BaseViewModel.UiState.Error).message,
             onClick = {
-                error.value = null
+                addAiMealViewModel.onEvent(AddAiMealEvent.ResetErrorState)
                 addAiMealViewModel.onEvent(AddAiMealEvent.OnRetakePhoto)
             })
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+        if (uiState is BaseViewModel.UiState.Loading) {
+            CircularProgressIndicator()
         }
         if (photoUri == null) {
             surfaceRequest?.let { request ->
@@ -126,7 +113,7 @@ fun CameraPreviewScreen(
                 )
             }
             IconButton(
-                onClick = { addAiMealViewModel.takePhoto() },
+                onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnTakePhoto) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(24.dp)
@@ -175,13 +162,5 @@ private fun ShowErrorMessage(
                 Text(stringResource(R.string.label_ok))
             }
         }
-    )
-}
-@Preview
-@Composable
-fun CameraPreviewScreenPreview() {
-    CameraPreviewScreen(
-        addAiMealViewModel = hiltViewModel(),
-        onNavigateToMealOverview = {}
     )
 }

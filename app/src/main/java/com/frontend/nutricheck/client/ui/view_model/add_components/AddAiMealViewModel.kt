@@ -17,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -35,17 +36,29 @@ sealed interface AddAiMealEvent {
     object OnRetakePhoto : AddAiMealEvent
     object OnSubmitPhoto : AddAiMealEvent
     object OnTakePhoto : AddAiMealEvent
+    object ResetErrorState : AddAiMealEvent
 
     object ShowMealOverview : AddAiMealEvent
-    data class ErrorTakingPhoto(val error : Int) : AddAiMealEvent
 
 }
-
+/**
+ * ViewModel for handling AI-based meal estimation using camera input.
+ * Manages camera preview, photo capture, and communication with the backend API.
+ *
+ * Responsibilities:
+ * - Binds camera preview to lifecycle.
+ * - Captures photos and encodes them as Base64.
+ * - Sends the encoded image to the backend for meal estimation.
+ * - Emits UI events for navigation and error handling.
+ *
+ * @property appContext Application context for accessing resources and content resolver.
+ * @property remoteApi Remote API interface for backend communication.
+ */
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val remoteApi: RemoteApi
-) : BaseAddAiMealViewModel() {
+) : BaseViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest.asStateFlow()
 
@@ -55,9 +68,6 @@ class AddAiMealViewModel @Inject constructor(
     private val _events = MutableSharedFlow<AddAiMealEvent>()
     val events: SharedFlow<AddAiMealEvent> = _events.asSharedFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
             _surfaceRequest.update { newSurfaceRequest }
@@ -65,17 +75,27 @@ class AddAiMealViewModel @Inject constructor(
     }
 
     private val imageCaptureUseCase = ImageCapture.Builder().build()
-
+    /**
+     * Handles UI events which need to be processed by the ViewModel.
+     *
+     * @param event The event to handle.
+     */
     fun onEvent(event: AddAiMealEvent) {
         when (event) {
             is AddAiMealEvent.OnRetakePhoto -> retakePhoto()
             is AddAiMealEvent.OnSubmitPhoto -> submitPhoto()
             is AddAiMealEvent.OnTakePhoto -> takePhoto()
+            is AddAiMealEvent.ResetErrorState -> setReady()
             else -> { /* other events are for Navigation or UI updates, handled in the UI layer */ }
         }
     }
-
-    override suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
+    /**
+     * Binds the camera preview and image capture use cases to the given lifecycle owner.
+     *
+     * @param appContext The application context.
+     * @param lifecycleOwner The lifecycle owner to bind the camera to.
+     */
+    suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
         val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
         val selector = CameraSelector.DEFAULT_BACK_CAMERA
         processCameraProvider.bindToLifecycle(
@@ -87,7 +107,7 @@ class AddAiMealViewModel @Inject constructor(
         try { awaitCancellation() } finally { processCameraProvider.unbindAll() }
     }
 
-    override fun takePhoto() {
+    private fun takePhoto() {
         val name = "${System.currentTimeMillis()}.jpg"
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -111,42 +131,43 @@ class AddAiMealViewModel @Inject constructor(
                 }
                 override fun onError (exception: ImageCaptureException) {
                     _photoUri.value = null
-                    emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_encoding_image))
+                    setError(R.string.error_no_photo_taken)
                 }
             }
         )
     }
 
-    override fun submitPhoto() {
+    private fun submitPhoto() {
         val uri = _photoUri.value
         viewModelScope.launch {
-            _isLoading.value = true
+            setLoading()
             uri?.let {
                 val base64Image = uriToBase64(appContext, it)
                 if (base64Image == null) {
-                    emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_encoding_image))
+                    setError(R.string.error_encoding_image)
                 } else {
                     val response = remoteApi.estimateMeal(base64Image)
                     if (response.isSuccessful && response.body() != null) {
+                        //TODO: handle MealDTO
                         emitEvent(AddAiMealEvent.ShowMealOverview)
                     } else {
-                        emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_encoding_image))
+                        setError(R.string.error_encoding_image)
                     }
                 }
-            } ?: emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_no_photo_taken))
+            } ?: setError(R.string.error_encoding_image)
             _photoUri.value = null
-            _isLoading.value = false
+            setReady()
         }
     }
 
-    fun uriToBase64(context: Context, uri: Uri): String? {
+    private fun uriToBase64(context: Context, uri: Uri): String? {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return null
         val bytes = inputStream.readBytes()
         inputStream.close()
         return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
-    override fun retakePhoto() {
+    private fun retakePhoto() {
         _photoUri.value = null
     }
     private fun emitEvent(event: AddAiMealEvent) = viewModelScope.launch { _events.emit(event) }

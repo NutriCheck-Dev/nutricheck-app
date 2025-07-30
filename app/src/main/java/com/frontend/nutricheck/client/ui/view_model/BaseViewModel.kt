@@ -11,7 +11,7 @@ abstract class BaseViewModel : ViewModel() {
     sealed interface UiState {
         data object Ready : UiState
         data object Loading : UiState
-        data class Error(val message: String) : UiState
+        data class Error(val message: Int) : UiState
     }
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Ready)
@@ -19,5 +19,5 @@ abstract class BaseViewModel : ViewModel() {
 
     protected fun setLoading() { _uiState.value = UiState.Loading }
     protected fun setReady() { _uiState.value = UiState.Ready }
-    protected fun setError(message: String) { _uiState.value = UiState.Error(message) }
+    protected fun setError(message: Int) { _uiState.value = UiState.Error(message) }
 }

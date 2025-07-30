@@ -25,12 +25,13 @@ interface RemoteApi {
 
     //User: Search and Meal
     @GET("/user/search/products/{name}")
-    suspend fun searchFoodProduct(@Path("name") name: String,
-                                  @Query("language") language: String ): Response<List<FoodProductDTO>>
+    suspend fun searchFoodProduct(
+        @Path("name") name: String,
+        @Query("language") language: String ): Response<List<FoodProductDTO>>
+
     @GET("/user/search/recipes/{name}")
     suspend fun getRecipes(@Path("name") name: String): Response<List<RecipeDTO>>
 
-    //TODO: How to pass picture
     @POST("/user/meal")
     suspend fun estimateMeal(@Body picture: String): Response<MealDTO>
 }
