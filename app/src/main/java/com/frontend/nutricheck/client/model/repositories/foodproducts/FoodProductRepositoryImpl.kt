@@ -1,12 +1,16 @@
 package com.frontend.nutricheck.client.model.repositories.foodproducts
 
+import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.FoodProductMapper
+import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
+import java.io.IOException
 import javax.inject.Inject
 
 class FoodProductRepositoryImpl @Inject constructor(
@@ -14,19 +18,28 @@ class FoodProductRepositoryImpl @Inject constructor(
 ) : FoodProductRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
-    override suspend fun searchFoodProduct(foodProductName: String, language: String): List<FoodProduct> {
-        val response = api.searchFoodProduct(foodProductName, language)
-        if (response.isSuccessful) {
-            return response.body()?.map { FoodProductMapper.toEntity(it) } ?: emptyList()
-        } else {
-            val msg = when (response.code()) {
-                400 -> "Ungültige Anfrage (400)"
-                401 -> "Nicht autorisiert (401)"
-                404 -> "Nicht gefunden (404)"
-                500 -> "Serverfehler (500)"
-                else -> "Unbekannter Fehler (${response.code()})"
+    override suspend fun searchFoodProduct(foodProductName: String, language: String): Result<List<FoodProduct>> {
+        return try {
+            val response = api.searchFoodProduct(foodProductName, language)
+            val body = response.body()
+            val errorBody = response.errorBody()
+
+            if (response.isSuccessful && body != null) {
+                val foodProducts: List<FoodProduct> = body.map { FoodProductMapper.toEntity(it) }
+                Result.Success(foodProducts)
+            } else if (errorBody != null) {
+                val gson = Gson()
+                val errorResponse = gson.fromJson(
+                    String(errorBody.bytes()),
+                    ErrorResponseDTO::class.java
+                )
+                val message = errorResponse.title + errorResponse.detail
+                Result.Error(errorResponse.status, message)
+            } else {
+                Result.Error(message = "Unknown error")
             }
-            throw Exception(msg)
+        } catch (e: IOException) {
+            Result.Error(message = "Connection issue")
         }
     }
 

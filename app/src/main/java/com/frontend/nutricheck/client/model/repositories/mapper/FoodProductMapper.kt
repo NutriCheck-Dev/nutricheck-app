@@ -13,7 +13,7 @@ object FoodProductMapper {
         fat = foodProductEntity.fat
     )
 
-    fun toEntity(foodProductDTO: FoodProductDTO): FoodProduct =
+    fun toData(foodProductDTO: FoodProductDTO): FoodProduct =
         FoodProduct(
             id = foodProductDTO.id,
             name = foodProductDTO.name,

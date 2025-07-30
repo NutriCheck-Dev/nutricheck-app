@@ -75,7 +75,7 @@ fun AddedComponentsSummary(
                 foodComponents = if (isFromAddIngredient) {
                     editRecipeState!!.viewIngredients
                 } else {
-                    searchState.addedComponents
+                    searchState.addedComponents.map { it.second }
                        },
                 trailingContent = { item ->
                     CustomCloseButton(onClick = {

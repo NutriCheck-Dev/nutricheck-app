@@ -4,6 +4,7 @@ import com.frontend.nutricheck.client.dto.FoodProductDTO
 import com.frontend.nutricheck.client.dto.MealDTO
 import com.frontend.nutricheck.client.dto.RecipeDTO
 import com.frontend.nutricheck.client.dto.ReportDTO
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,10 +28,11 @@ interface RemoteApi {
     @GET("/user/search/products/{name}")
     suspend fun searchFoodProduct(@Path("name") name: String,
                                   @Query("language") language: String ): Response<List<FoodProductDTO>>
+
     @GET("/user/search/recipes/{name}")
-    suspend fun getRecipes(@Path("name") name: String): Response<List<RecipeDTO>>
+    suspend fun searchRecipes(@Path("name") name: String): Response<List<RecipeDTO>>
 
     //TODO: How to pass picture
     @POST("/user/meal")
-    suspend fun estimateMeal(@Body picture: String): Response<MealDTO>
+    suspend fun estimateMeal(@Body file: MultipartBody.Part): Response<MealDTO>
 }

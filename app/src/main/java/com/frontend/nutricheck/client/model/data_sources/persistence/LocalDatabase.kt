@@ -6,14 +6,12 @@ import androidx.room.TypeConverters
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.HistoryDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
@@ -24,7 +22,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
 
 @Database(
     entities = [
-        HistoryDay::class,
         IngredientEntity::class,
         MealEntity::class,
         MealFoodItemEntity::class,
@@ -41,7 +38,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun foodDao(): FoodDao
     abstract fun recipeDao(): RecipeDao
-    abstract fun historyDao(): HistoryDao
     abstract fun weightDao(): WeightDao
     abstract fun userDataDao(): UserDataDao
     abstract fun ingredientDao(): IngredientDao

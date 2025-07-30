@@ -20,7 +20,7 @@ object DbRecipeMapper {
         )
 
     fun toRecipe(recipeWithIngredients: RecipeWithIngredients) : Recipe {
-        val recipeEntity = recipeWithIngredients.recipeEntity
+        val recipeEntity = recipeWithIngredients.recipe
         val ingredientEntities = recipeWithIngredients.ingredients
         val recipe = Recipe(
             id = recipeEntity.id,
@@ -35,7 +35,7 @@ object DbRecipeMapper {
             ingredients = listOf()
         )
         val ingredients = ingredientEntities.map { ingredientWithFoodProduct ->
-            DbIngredientMapper.toIngredient(ingredientWithFoodProduct, recipe)
+            DbIngredientMapper.toIngredient(ingredientWithFoodProduct)
         }
         recipe.ingredients = ingredients
         return recipe

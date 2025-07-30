@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class RecipeDraft(
-    val recipe: Recipe,
+    val recipe: Recipe? = null,
     val id: String,
     val title: String,
     val description: String,
@@ -85,11 +85,11 @@ class EditRecipeViewModel @Inject constructor(
         _editRecipeDraft.update { it?.copy(title = newTitle) }
 
     override fun onIngredientAdded(foodProduct: FoodProduct) {
-        val recipe = _editRecipeDraft.value!!.recipe
+        val recipeId = _editRecipeDraft.value!!.id
         val newIngredient = Ingredient(
-            recipe = recipe,
+            recipeId = recipeId,
             foodProduct = foodProduct,
-            quantity = recipe.servings.toDouble()
+            quantity = 1.0,
         )
         _editRecipeDraft.update { it?.copy(addedIngredient = it.addedIngredient + newIngredient) }
     }
