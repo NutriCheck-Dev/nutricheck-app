@@ -156,41 +156,6 @@ class RecipeRepositoryImpl @Inject constructor(
         return DbIngredientMapper.toIngredient(ingredientWithFoodProduct!!)
     }
 
-    //will maybe be removed
-    override suspend fun downloadRecipe(recipeId: String): Result<Recipe> {
-        val response = api.downloadRecipe(recipeId)
-        return try {
-            if (response.isSuccessful) {
-                val recipeDto = response.body()
-                if (recipeDto != null) {
-                    Result.Success(RecipeMapper.toData(recipeDto))
-                } else {
-                    Result.Error(message = "Leeres Rezept erhalten.")
-                }
-            } else {
-                Result.Error(code = response.code(), message = response.errorBody()?.string())
-            }
-        } catch (io: IOException) {
-            Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
-        }
-    }
-
-    //necessary? because do we know if one specific ingredient is updated or do we update after whole recipe is updated??
-    override suspend fun addIngredient(ingredient: Ingredient) {
-        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
-        ingredientDao.insert(ingredientEntity)
-    }
-
-    override suspend fun updateIngredient(ingredient: Ingredient) {
-        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
-        ingredientDao.update(ingredientEntity)
-    }
-
-    override suspend fun removeIngredient(ingredient: Ingredient) {
-        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
-        ingredientDao.delete(ingredientEntity)
-    }
-
     private fun isExpired(lastUpdate: Long?): Boolean =
         lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive
 }

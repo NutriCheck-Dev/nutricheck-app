@@ -31,7 +31,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
         UserData::class,
         Weight::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
