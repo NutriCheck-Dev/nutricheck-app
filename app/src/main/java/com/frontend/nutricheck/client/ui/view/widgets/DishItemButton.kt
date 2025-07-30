@@ -66,7 +66,7 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${foodComponent.calories} kcal, Portionsgröße ${foodComponent.servings}",
+                    text = "${foodComponent.calories} kcal, Portionsgröße ${"XD"}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

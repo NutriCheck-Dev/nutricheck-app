@@ -80,10 +80,9 @@ class CreateRecipeViewModel @Inject constructor(
 
     override fun onIngredientAdded(foodProduct: FoodProduct) {
         val newIngredient = Ingredient(
-            id = UUID.randomUUID().toString(),
             recipeId = _createdRecipeDraft.value.id,
             foodProduct = foodProduct,
-            quantity = foodProduct.servings.toDouble()
+            quantity = 1.0 // Default quantity, can be adjusted later
         )
         _createdRecipeDraft.update { it.copy(addedIngredient = it.addedIngredient + newIngredient) }
     }

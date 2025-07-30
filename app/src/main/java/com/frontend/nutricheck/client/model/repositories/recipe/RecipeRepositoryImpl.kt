@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
+import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.dto.ReportDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
@@ -13,9 +14,11 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.RecipeMapper
 import com.frontend.nutricheck.client.model.repositories.mapper.ReportMapper
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.jvm.java
 
 class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
@@ -24,16 +27,26 @@ class RecipeRepositoryImpl @Inject constructor(
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
     override suspend fun searchRecipe(recipeName: String): Result<List<Recipe>> {
         return try {
-            val response = api.getRecipes(recipeName)
-            if (response.isSuccessful) {
-                val dtos = response.body().orEmpty()
-                val recipes: List<Recipe> = dtos.map { RecipeMapper.toEntity(it) }
+            val response = api.searchRecipes(recipeName)
+            val body = response.body()
+            val errorBody = response.errorBody()
+
+            if (response.isSuccessful && body != null) {
+                val recipes: List<Recipe> = body.map { RecipeMapper.toEntity(it) }
                 Result.Success(recipes)
+            } else if (errorBody != null) {
+                val gson = Gson()
+                val errorResponse = gson.fromJson(
+                    String(errorBody.bytes()),
+                    ErrorResponseDTO::class.java
+                )
+                val message = errorResponse.title + errorResponse.detail
+                Result.Error(errorResponse.status, message)
             } else {
-                Result.Error(code = response.code(), message = response.errorBody()?.string())
+                Result.Error(message = "Unknown error")
             }
-        } catch (io: IOException) {
-            Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
+        } catch (e: IOException) {
+            Result.Error(message = "Connection issue>")
         }
     }
 
@@ -74,40 +87,50 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun uploadRecipe(recipe: Recipe): Result<Recipe> {
-        val recipeDto = RecipeMapper.toDto(recipe)
         return try {
-            val response = api.uploadRecipe(recipeDto)
-            if (response.isSuccessful) {
-                val uploadedRecipe = response.body()
-                if (uploadedRecipe != null) {
-                    Result.Success(RecipeMapper.toEntity(uploadedRecipe))
-                } else {
-                    Result.Error(message = "Leeres Rezept erhalten.")
-                }
+            val response = api.uploadRecipe(RecipeMapper.toDto(recipe))
+            val body = response.body()
+            val errorBody = response.errorBody()
+
+            if (response.isSuccessful && body != null) {
+                Result.Success(RecipeMapper.toEntity(body))
+            } else if (errorBody != null) {
+                val gson = Gson()
+                val errorResponse = gson.fromJson(
+                    String(errorBody.bytes()),
+                    ErrorResponseDTO::class.java
+                )
+                val message = errorResponse.title + errorResponse.detail
+                Result.Error(errorResponse.status, message)
             } else {
-                Result.Error(code = response.code(), message = response.errorBody()?.string())
+                Result.Error(message = "Unknown error")
             }
         } catch (io: IOException) {
-            Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
+            Result.Error(message = "Connection issue")
         }
     }
 
     override suspend fun reportRecipe(recipeReport: RecipeReport): Result<ReportDTO> {
-        val recipeReportDto = ReportMapper.toDto(recipeReport)
         return try {
-            val response = api.reportRecipe(recipeReportDto)
-            if (response.isSuccessful) {
-                val reportedRecipe = response.body()
-                if (reportedRecipe != null) {
-                    Result.Success(ReportMapper.toDto(recipeReport))
-                } else {
-                    Result.Error(message = "Leeres Rezept erhalten.")
-                }
+            val response = api.reportRecipe(ReportMapper.toDto(recipeReport))
+            val body = response.body()
+            val errorBody = response.errorBody()
+
+            if (response.isSuccessful && body != null) {
+                Result.Success(data = TODO()) //toEntity method
+            } else if (errorBody != null) {
+                val gson = Gson()
+                val errorResponse = gson.fromJson(
+                    String(errorBody.bytes()),
+                    ErrorResponseDTO::class.java
+                )
+                val message = errorResponse.title + errorResponse.detail
+                Result.Error(errorResponse.status, message)
             } else {
-                Result.Error(message = "Fehler beim Melden des Rezepts: ${response.errorBody()?.string()}")
+                Result.Error(message = "Unknown error")
             }
         } catch (io: IOException) {
-            Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
+            Result.Error(message = "Connection issue")
         }
     }
 
