@@ -21,7 +21,7 @@ interface FoodDao : BaseDao<FoodProductEntity> {
     @Delete
     override suspend fun delete(obj: FoodProductEntity)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(mealFoodItems: List<FoodProductEntity>)
+    suspend fun insertAll(foodProductEntities: List<FoodProductEntity>)
 
     @Query("SELECT * FROM foods WHERE id = :id")
     fun getById(id: String): Flow<FoodProductEntity>

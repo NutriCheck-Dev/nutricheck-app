@@ -8,6 +8,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.RecipeSearchDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.RecipeSearchEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbIngredientMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
@@ -15,38 +17,51 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.RecipeMapper
 import com.frontend.nutricheck.client.model.repositories.mapper.ReportMapper
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.jvm.java
 
 class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
+    private val recipeSearchDao: RecipeSearchDao,
     private val ingredientDao: IngredientDao,
 ) : RecipeRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
-    override suspend fun searchRecipe(recipeName: String): Result<List<Recipe>> {
-        return try {
-            val response = api.searchRecipes(recipeName)
-            val body = response.body()
-            val errorBody = response.errorBody()
+    private val timeToLive = TimeUnit.MINUTES.toMillis(30)
+    override suspend fun searchRecipes(recipeName: String): Flow<Result<List<Recipe>>> = flow {
+        val cached = recipeSearchDao.resultsFor(recipeName)
+            .firstOrNull()
+            ?.map { DbRecipeMapper.toRecipe(it) }
+            ?: emptyList()
+        emit(Result.Success(cached))
 
-            if (response.isSuccessful && body != null) {
-                val recipes: List<Recipe> = body.map { RecipeMapper.toEntity(it) }
-                Result.Success(recipes)
-            } else if (errorBody != null) {
-                val gson = Gson()
-                val errorResponse = gson.fromJson(
-                    String(errorBody.bytes()),
-                    ErrorResponseDTO::class.java
-                )
-                val message = errorResponse.title + errorResponse.detail
-                Result.Error(errorResponse.status, message)
-            } else {
-                Result.Error(message = "Unknown error")
+        val lastUpdate = recipeSearchDao.getLatestUpdatedFor(recipeName)
+        if (isExpired(lastUpdate)) {
+            val networkResult = try {
+                val response = api.searchRecipes(recipeName)
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    val now = System.currentTimeMillis()
+                    val recipes = body.map { RecipeMapper.toData(it) }
+                    recipes.forEach { insertRecipe(it) }
+                    recipeSearchDao.clearQuery(recipeName)
+                    recipeSearchDao.upsertEntities(recipes.map {
+                        RecipeSearchEntity(recipeName, it.id, now)
+                    })
+                    Result.Success(recipes)
+                } else {
+                    val message = response.errorBody()!!.string()
+                    Result.Error(code = response.code(), message = message)
+                }
+            } catch (io: okio.IOException) {
+                Result.Error(message = "Oops, an error has occurred. Please check your internet connection.")
             }
-        } catch (e: IOException) {
-            Result.Error(message = "Connection issue>")
+            emit(networkResult)
         }
     }
 
@@ -75,7 +90,6 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun deleteRecipe(recipe: Recipe) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
         recipeDao.delete(recipeEntity)
-        //ingredientDao.deleteIngredientsOfRecipe(recipe.id) unnecessary because of cascade?
     }
 
     override suspend fun updateRecipe(recipe: Recipe) {
@@ -93,7 +107,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(RecipeMapper.toEntity(body))
+                Result.Success(RecipeMapper.toData(body))
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
@@ -149,7 +163,7 @@ class RecipeRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 val recipeDto = response.body()
                 if (recipeDto != null) {
-                    Result.Success(RecipeMapper.toEntity(recipeDto))
+                    Result.Success(RecipeMapper.toData(recipeDto))
                 } else {
                     Result.Error(message = "Leeres Rezept erhalten.")
                 }
@@ -176,4 +190,7 @@ class RecipeRepositoryImpl @Inject constructor(
         val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
         ingredientDao.delete(ingredientEntity)
     }
+
+    private fun isExpired(lastUpdate: Long?): Boolean =
+        lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive
 }

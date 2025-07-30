@@ -5,21 +5,24 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -75,7 +78,6 @@ class FoodSearchViewModel @Inject constructor(
     private val appSettingsRepository : AppSettingsRepository,
     private val recipeRepository: RecipeRepositoryImpl,
     private val foodProductRepository: FoodProductRepositoryImpl,
-    private val historyRepository: HistoryRepositoryImpl,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
     private val mode: SearchMode =
@@ -142,63 +144,59 @@ class FoodSearchViewModel @Inject constructor(
     }
 
     override fun onClickSearchFoodComponent() {
-        setLoading()
+        val query = _searchState.value.parameters.query
+        if (query.isBlank()) {
+            setError("Please enter a search term.")
+            return
+        }
         viewModelScope.launch {
-            val query = _searchState.value.parameters.query
-            if (query.isBlank()) {
-                setError("Please enter a search term.")
-                return@launch
-            }
             val language = _searchState.value.parameters.language
-            var foodProducts: List<FoodProduct> = emptyList()
-            var recipes: List<Recipe> = emptyList()
-            var foodProductResults: Result<List<FoodProduct>>?
-            var recipeResults: Result<List<Recipe>>? = null
-
-            when (mode) {
+            val flow: Flow<Result<List<FoodComponent>>> = when (mode) {
                 is SearchMode.IngredientsForRecipe -> {
-                    foodProductResults = foodProductRepository.searchFoodProduct(
-                        foodProductName = query,
-                        language = language
-                    )
+                    foodProductRepository
+                        .searchFoodProducts(query, language)
+                        .map { result -> result.mapData { list -> list.map { it as FoodProduct }}}
                 }
 
-                is SearchMode.ComponentsForMeal, is SearchMode.LogNewMeal -> {
-                    foodProductResults = foodProductRepository.searchFoodProduct(
-                        foodProductName = query,
-                        language = language
-                    )
-                    recipeResults = recipeRepository.searchRecipe(query)
-                }
-            }
-            foodProductResults.let {
-                when (it) {
-                    is Result.Success -> foodProducts = it.data
-                    is Result.Error -> {
-                        setError(it.message!!)
-                        return@launch
+                else -> {
+                    combine(
+                        foodProductRepository.searchFoodProducts(query, language),
+                        recipeRepository.searchRecipes(query)
+                    ) { foodProductResults, recipeResults ->
+                        when {
+                            foodProductResults is Result.Error -> foodProductResults.toError<List<FoodComponent>>()
+                            recipeResults is Result.Error -> recipeResults.toError<List<FoodComponent>>()
+                            foodProductResults is Result.Success && recipeResults is Result.Success -> {
+                                val mixedResults = (foodProductResults.data + recipeResults.data)
+                                    .sortedBy { it.name }
+                                Result.Success(mixedResults)
+                            }
+                            else -> Result.Success(emptyList())
+                        }
                     }
                 }
             }
-            recipeResults?.let {
-                when (it) {
-                    is Result.Success -> recipes = it.data
-                    is Result.Error -> {
-                        setError(it.message!!)
-                        return@launch
+            flow
+                .onStart { setLoading() }
+                .catch { setError(it.message!!) }
+                .collect { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            _searchState.update { state ->
+                                state.updateParams(
+                                    state.parameters.copy(
+                                        query = query,
+                                        results = result.data
+                                    )
+                                )
+                            }
+                        }
+                        is Result.Error -> {
+                            setError(result.message!!)
+                        }
                     }
                 }
-            }
 
-            val mixedList = (foodProducts + recipes).sortedBy { it.name }
-
-            _searchState.update { state ->
-                val newParams = state.parameters.copy(
-                    query = query,
-                    results = mixedList
-                )
-                state.updateParams(newParams)
-            }
 
         }
     }
@@ -253,4 +251,17 @@ class FoodSearchViewModel @Inject constructor(
             else -> emptyList()
         }
     }
+
+    private inline fun <T, R> Result<T>.mapData(transform: (T)->R): Result<R> =
+        when (this) {
+            is Result.Success -> Result.Success(transform(data))
+            is Result.Error -> Result.Error(code, message)
+        }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> Result<*>.toError(): Result<T> =
+        Result.Error(
+            code = (this as Result.Error).code,
+            message = this.message
+        )
 }

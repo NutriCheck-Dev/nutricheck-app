@@ -16,8 +16,8 @@ object DbIngredientMapper {
       fun toIngredient(
         ingredientWithFoodProduct: IngredientWithFoodProduct
       ) : Ingredient = Ingredient(
-            recipeId = ingredientWithFoodProduct.ingredientEntity.recipeId,
-            foodProduct = DbFoodProductMapper.toFoodProduct(ingredientWithFoodProduct.foodProductEntity),
-            quantity =  ingredientWithFoodProduct.ingredientEntity.quantity
+            recipeId = ingredientWithFoodProduct.ingredient.recipeId,
+            foodProduct = DbFoodProductMapper.toFoodProduct(ingredientWithFoodProduct.foodProduct),
+            quantity =  ingredientWithFoodProduct.ingredient.quantity
         )
 }
