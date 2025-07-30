@@ -31,9 +31,9 @@ class RecipeRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val mealFoodItemDao: MealFoodItemDao,
-    private var remoteRecipes: List<Recipe>
 ) : RecipeRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
+    private var remoteRecipes: List<Recipe> = emptyList()
 
     override suspend fun insertRecipe(recipe: Recipe) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)

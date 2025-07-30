@@ -35,7 +35,11 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
         composable(Screen.ProfilePage.route) { ProfilePageNavGraph() }
         dialog(Screen.Add.route) { backStackEntry ->
             val originArg = backStackEntry.arguments?.getString("origin")
-            val origin = AddDialogOrigin.valueOf(originArg ?: AddDialogOrigin.BOTTOM_NAV_BAR.name)
+            val effectiveOriginName: String = when (originArg) {
+                null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name
+                else -> originArg
+            }
+            val origin = AddDialogOrigin.valueOf(effectiveOriginName)
             AddNavGraph(
                 mainNavController = mainNavController,
                 origin = origin
