@@ -14,6 +14,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMe
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealRecipeItemMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
+import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
 import okhttp3.MultipartBody
 import java.io.IOException
@@ -50,7 +51,7 @@ class HistoryRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(TODO())
+                Result.Success(MealMapper.toData(body))
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(

@@ -32,7 +32,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                val recipes: List<Recipe> = body.map { RecipeMapper.toEntity(it) }
+                val recipes: List<Recipe> = body.map { RecipeMapper.toData(it) }
                 Result.Success(recipes)
             } else if (errorBody != null) {
                 val gson = Gson()
@@ -105,7 +105,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(RecipeMapper.toEntity(body))
+                Result.Success(RecipeMapper.toData(body))
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
@@ -128,7 +128,7 @@ class RecipeRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 val recipeDto = response.body()
                 if (recipeDto != null) {
-                    Result.Success(RecipeMapper.toEntity(recipeDto))
+                    Result.Success(RecipeMapper.toData(recipeDto))
                 } else {
                     Result.Error(message = "Leeres Rezept erhalten.")
                 }
