@@ -128,7 +128,7 @@ fun DishItemButton(
             }
 
             trailingContent?.invoke()
-        }
+            }
 
     }
 }

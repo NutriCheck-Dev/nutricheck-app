@@ -45,14 +45,14 @@ fun buildDisplayMealItems(meals: List<MealWithAll>): List<DisplayMealItem> {
         mealWithAll.mealFoodItems.map { foodItemWithProduct ->
             DisplayMealFoodItem(
                 item = foodItemWithProduct.mealFoodItem,
-                product = foodItemWithProduct.foodProductEntity
+                product = foodItemWithProduct.foodProduct
             )
         } +
                 // Alle Recipe-Items
                 mealWithAll.mealRecipeItems.map { recipeItemWithRecipe ->
                     DisplayMealRecipeItem(
                         item = recipeItemWithRecipe.mealRecipeItem,
-                        recipeEntity = recipeItemWithRecipe.recipeEntity
+                        recipeEntity = recipeItemWithRecipe.recipeWithIngredients.recipe
                     )
                 }
     }
