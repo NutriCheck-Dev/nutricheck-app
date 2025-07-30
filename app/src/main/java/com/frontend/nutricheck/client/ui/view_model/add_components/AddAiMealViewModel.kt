@@ -14,15 +14,29 @@ import androidx.camera.lifecycle.awaitInstance
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+sealed interface AddAiMealEvent {
+    object OnRetakePhoto : AddAiMealEvent
+    object OnSubmitPhoto : AddAiMealEvent
+    object OnTakePhoto : AddAiMealEvent
+
+    object ShowMealOverview : AddAiMealEvent
+    data class ErrorTakingPhoto(val error : Int) : AddAiMealEvent
+
+}
 
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
@@ -34,6 +48,9 @@ class AddAiMealViewModel @Inject constructor(
     private val _photoUri = MutableStateFlow<Uri?>(null)
     val photoUri: StateFlow<Uri?> = _photoUri.asStateFlow()
 
+    private val _events = MutableSharedFlow<AddAiMealEvent>()
+    val events: SharedFlow<AddAiMealEvent> = _events.asSharedFlow()
+
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
             _surfaceRequest.update { newSurfaceRequest }
@@ -41,6 +58,16 @@ class AddAiMealViewModel @Inject constructor(
     }
 
     private val imageCaptureUseCase = ImageCapture.Builder().build()
+
+    fun onEvent(event: AddAiMealEvent) {
+        when (event) {
+            is AddAiMealEvent.OnRetakePhoto -> retakePhoto()
+            is AddAiMealEvent.OnSubmitPhoto -> submitPhoto()
+            is AddAiMealEvent.OnTakePhoto -> takePhoto()
+
+            else -> { /* other events are for Navigation or UI updates, handled in the UI layer */ }
+        }
+    }
 
     override suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
         val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
@@ -78,7 +105,8 @@ class AddAiMealViewModel @Inject constructor(
                     _photoUri.value = result.savedUri
                 }
                 override fun onError (exception: ImageCaptureException) {
-                    //TODO: Handle error appropriately
+                    _photoUri.value = null
+                    emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_taking_photo))
                 }
             }
         )
@@ -87,12 +115,19 @@ class AddAiMealViewModel @Inject constructor(
     override fun submitPhoto() {
         val uri = _photoUri.value
         viewModelScope.launch {
+            
             //TODO: Implement the logic to submit the photo URI to the AI meal recognition service
             _photoUri.value = null
         }
+
+
+
+
+        emitEvent(AddAiMealEvent.ShowMealOverview)
     }
 
     override fun retakePhoto() {
         _photoUri.value = null
     }
+    private fun emitEvent(event: AddAiMealEvent) = viewModelScope.launch { _events.emit(event) }
 }

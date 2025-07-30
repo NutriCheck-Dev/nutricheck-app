@@ -16,13 +16,9 @@ import com.frontend.nutricheck.client.ui.view.app_views.CreateRecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
+import com.frontend.nutricheck.client.ui.view.app_views.CameraPreviewScreen
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
@@ -49,7 +45,8 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     val createRecipeViewModel: CreateRecipeViewModel = hiltViewModel()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
-        if (foodComponent is FoodProduct) { addNavController.navigate(AddScreens.FoodOverview.createRoute(foodComponent.id))
+        if (foodComponent is FoodProduct) {
+            addNavController.navigate(AddScreens.FoodOverview.createRoute(foodComponent.id))
         } else { addNavController.navigate(AddScreens.RecipeOverview.createRoute(foodComponent.id))}
     }
 
@@ -90,9 +87,8 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             val parentEntry = remember(backStackEntry) {
                 addNavController.getBackStackEntry(AddScreens.AddMeal.route)
             }
-            val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
             SearchPage(
-                searchViewModel = searchViewModel,
+                searchViewModel = hiltViewModel(parentEntry),
                 onConfirm = { addNavController.navigate(AddScreens.MealOverview.route)},
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { addNavController.popBackStack() }
@@ -102,9 +98,8 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             val parentEntry = remember(backStackEntry) {
                 addNavController.getBackStackEntry(AddScreens.AddMeal.route)
             }
-            val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
             AddedComponentsSummary(
-                searchViewModel = searchViewModel,
+                searchViewModel = hiltViewModel(parentEntry),
                 editRecipeViewModel = hiltViewModel(),
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onSave = { addNavController.navigate(AddScreens.HistoryPage.route) },
@@ -112,7 +107,15 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             )
         }
 
-        composable(AddScreens.AddAiMeal.route) {  }
+        composable(AddScreens.AddAiMeal.route) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                addNavController.getBackStackEntry(AddScreens.AddMeal.route)
+            }
+            CameraPreviewScreen(
+                addAiMealViewModel = hiltViewModel(parentEntry),
+                onNavigateToMealOverview = {
+                    addNavController.navigate(AddScreens.MealOverview.route) })
+        }
 
         composable (AddScreens.FoodOverview.route) { backStack ->
             val foodId = backStack.arguments!!.getString("foodId")!!
@@ -121,9 +124,8 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                     AddScreens.FoodOverview.createRoute(foodId)
                 )
             }
-            val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
             FoodProductOverview(
-                foodProductOverviewViewModel = foodProductOverviewViewModel,
+                foodProductOverviewViewModel = hiltViewModel(graphEntry),
                 onBack = { addNavController.popBackStack() }
             )
         }
@@ -134,16 +136,14 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                     AddScreens.RecipeOverview.createRoute(recipeId)
                 )
             }
-            val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(graphEntry)
-            val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
-            val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(graphEntry)
             RecipeOverview(
-                recipeOverviewViewModel = recipeOverviewViewModel,
-                editRecipeViewModel = editRecipeViewModel,
-                reportRecipeViewModel = reportRecipeViewModel,
+                recipeOverviewViewModel = hiltViewModel(graphEntry),
+                editRecipeViewModel = hiltViewModel(graphEntry),
+                reportRecipeViewModel = hiltViewModel(graphEntry),
                 onBack = { addNavController.popBackStack() }
             )
         }
+
     }
 }
 
