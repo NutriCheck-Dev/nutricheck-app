@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 
@@ -22,4 +23,6 @@ interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(mealFoodItems: List<MealRecipeItemEntity>)
 
+    @Query("SELECT * FROM meal_recipe_items WHERE recipeId = :recipeId")
+    fun getById(recipeId: String): List<MealRecipeItemEntity>?
 }
