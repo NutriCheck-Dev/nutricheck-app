@@ -1,12 +1,15 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe.page
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +39,7 @@ sealed interface RecipePageEvent {
 
 @HiltViewModel
 class RecipePageViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val recipeRepository: RecipeRepositoryImpl
 ) : BaseRecipePageViewModel() {
 
@@ -106,11 +110,13 @@ class RecipePageViewModel @Inject constructor(
             try {
                 when (val result = recipeRepository.searchRecipe(query)) {
                     is Result.Success -> {
-                        _onlineResults.value = result.data.map { recipe -> DbRecipeMapper.toRecipeEntity(recipe) }
+                        _onlineResults.value = result.data.map { recipe ->
+                            DbRecipeMapper.toRecipeEntity(recipe) }
                         setReady()}
                     is Result.Error -> {
                         _onlineResults.value = emptyList()
-                        setError("Server-Fehler beim Abrufen der Rezepte: ${result.message}")
+                        setError(appContext.getString(
+                            R.string.error_searching_recipes, result.message))
                     }
                 }
             } catch (io: IOException) {

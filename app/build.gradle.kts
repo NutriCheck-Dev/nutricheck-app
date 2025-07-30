@@ -98,4 +98,13 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
 
+
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlinx.coroutines.test)
+
 }

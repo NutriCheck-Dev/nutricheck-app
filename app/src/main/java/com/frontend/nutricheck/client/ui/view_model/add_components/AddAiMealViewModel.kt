@@ -131,7 +131,7 @@ class AddAiMealViewModel @Inject constructor(
                 }
                 override fun onError (exception: ImageCaptureException) {
                     _photoUri.value = null
-                    setError(R.string.error_no_photo_taken)
+                    setError(appContext.getString(R.string.error_no_photo_taken))
                 }
             }
         )
@@ -144,17 +144,17 @@ class AddAiMealViewModel @Inject constructor(
             uri?.let {
                 val base64Image = uriToBase64(appContext, it)
                 if (base64Image == null) {
-                    setError(R.string.error_encoding_image)
+                    setError(appContext.getString(R.string.error_encoding_image))
                 } else {
                     val response = remoteApi.estimateMeal(base64Image)
                     if (response.isSuccessful && response.body() != null) {
                         //TODO: handle MealDTO
                         emitEvent(AddAiMealEvent.ShowMealOverview)
                     } else {
-                        setError(R.string.error_encoding_image)
+                        setError(appContext.getString(R.string.error_encoding_image))
                     }
                 }
-            } ?: setError(R.string.error_encoding_image)
+            } ?: setError(appContext.getString(R.string.error_encoding_image))
             _photoUri.value = null
             setReady()
         }
