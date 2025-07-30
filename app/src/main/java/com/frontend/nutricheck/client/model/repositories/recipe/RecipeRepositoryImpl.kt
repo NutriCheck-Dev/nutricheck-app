@@ -115,7 +115,7 @@ class RecipeRepositoryImpl @Inject constructor(
         recipeId: String,
         foodProductId: String
     ): Ingredient {
-        val ingredientWithFoodProduct = ingredientDao.getIngredientById(recipeId, foodProductId)
+        val ingredientWithFoodProduct = ingredientDao.getIngredientById(recipeId, foodProductId).first()
         return DbIngredientMapper.toIngredient(ingredientWithFoodProduct!!)
     }
 
