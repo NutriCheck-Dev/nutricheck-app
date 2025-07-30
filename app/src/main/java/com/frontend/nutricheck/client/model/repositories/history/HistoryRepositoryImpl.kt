@@ -45,8 +45,6 @@ class HistoryRepositoryImpl @Inject constructor(
         }.toInt()
     }
 
-
-
   override suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal> {
         return try {
             val response = api.estimateMeal(file)
@@ -71,26 +69,19 @@ class HistoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteMeal(meal: MealEntity) {
-        TODO("Not yet implemented")
+    override suspend fun deleteMeal(meal: Meal) {
+        mealDao.deleteById(meal.id)
     }
 
-    override suspend fun updateMeal(meal: MealEntity) {
-        //get meal by mealId, update the meal in the database
-
+    override suspend fun updateMeal(meal: Meal) {
+        val entity = DbMealMapper.toMealEntity(meal)
+        mealDao.update(entity)
     }
 
     override suspend fun getMealsForDay(date: Date): List<MealWithAll> {
         return mealDao.getMealsWithAllForDay(date)
     }
 
-    override suspend fun addFoodToMeal(name: String, foodId: String) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun removeFoodFromMeal(name: String, foodId: String) {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun addMeal(
         meal: MealEntity,
@@ -122,15 +113,7 @@ class HistoryRepositoryImpl @Inject constructor(
         mealRecipeItemDao.insertAll(mealRecipeItems)
     }
 
-    override suspend fun saveAsRecipe(
-        meal: MealEntity,
-        recipeName: String,
-        recipeDescription: String
-    ) {
-        TODO("Not yet implemented")
-    }
     override suspend fun getDailyMacros() {
 
     }
-
 }
