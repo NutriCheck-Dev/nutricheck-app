@@ -3,6 +3,7 @@ import android.content.Context
 import android.net.Uri
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
+import com.frontend.nutricheck.client.model.data_sources.remote.RemoteRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealEvent
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealViewModel
@@ -25,7 +26,7 @@ import kotlinx.coroutines.test.setMain
 class AddAiMealViewModelTest {
 
     @Mock
-    private lateinit var remoteApi: RemoteApi
+    private lateinit var remoteRepository: RemoteRepository
 
     @Mock
     private lateinit var context: Context
@@ -37,7 +38,7 @@ class AddAiMealViewModelTest {
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        viewModel = AddAiMealViewModel(context, remoteApi)
+        viewModel = AddAiMealViewModel(context, remoteRepository)
         Dispatchers.setMain(testDispatcher)
     }
 
@@ -55,7 +56,4 @@ class AddAiMealViewModelTest {
 //        if (uiState is BaseViewModel.UiState.Error) {
 //            assertTrue(uiState.message == context.getString(R.string.error_encoding_image))
 //        }
-//    }
-
-
-}
+    }

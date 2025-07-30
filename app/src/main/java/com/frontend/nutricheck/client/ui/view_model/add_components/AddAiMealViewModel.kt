@@ -17,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
+import com.frontend.nutricheck.client.model.data_sources.remote.RemoteRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -52,12 +53,12 @@ sealed interface AddAiMealEvent {
  * - Emits UI events for navigation and error handling.
  *
  * @property appContext Application context for accessing resources and content resolver.
- * @property remoteApi Remote API interface for backend communication.
+ * @property remoteRepository Remote repository for API interactions.
  */
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
-    private val remoteApi: RemoteApi
+    private val remoteRepository: RemoteRepository
 ) : BaseViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest.asStateFlow()
@@ -146,7 +147,7 @@ class AddAiMealViewModel @Inject constructor(
                 if (base64Image == null) {
                     setError(appContext.getString(R.string.error_encoding_image))
                 } else {
-                    val response = remoteApi.estimateMeal(base64Image)
+                    val response = remoteRepository.estimateMeal(base64Image)
                     if (response.isSuccessful && response.body() != null) {
                         //TODO: handle MealDTO
                         emitEvent(AddAiMealEvent.ShowMealOverview)
