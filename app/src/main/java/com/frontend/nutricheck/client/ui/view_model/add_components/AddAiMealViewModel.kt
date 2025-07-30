@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.add_components
 
+import android.util.Base64
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+
 sealed interface AddAiMealEvent {
     object OnRetakePhoto : AddAiMealEvent
     object OnSubmitPhoto : AddAiMealEvent
@@ -40,7 +43,8 @@ sealed interface AddAiMealEvent {
 
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
-    @ApplicationContext private val appContext: Context
+    @ApplicationContext private val appContext: Context,
+    private val remoteApi: RemoteApi
 ) : BaseAddAiMealViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest.asStateFlow()
@@ -50,6 +54,9 @@ class AddAiMealViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<AddAiMealEvent>()
     val events: SharedFlow<AddAiMealEvent> = _events.asSharedFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
@@ -64,7 +71,6 @@ class AddAiMealViewModel @Inject constructor(
             is AddAiMealEvent.OnRetakePhoto -> retakePhoto()
             is AddAiMealEvent.OnSubmitPhoto -> submitPhoto()
             is AddAiMealEvent.OnTakePhoto -> takePhoto()
-
             else -> { /* other events are for Navigation or UI updates, handled in the UI layer */ }
         }
     }
@@ -78,7 +84,6 @@ class AddAiMealViewModel @Inject constructor(
             cameraPreviewUseCase,
             imageCaptureUseCase
         )
-
         try { awaitCancellation() } finally { processCameraProvider.unbindAll() }
     }
 
@@ -106,7 +111,7 @@ class AddAiMealViewModel @Inject constructor(
                 }
                 override fun onError (exception: ImageCaptureException) {
                     _photoUri.value = null
-                    emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_taking_photo))
+                    emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_encoding_image))
                 }
             }
         )
@@ -115,15 +120,30 @@ class AddAiMealViewModel @Inject constructor(
     override fun submitPhoto() {
         val uri = _photoUri.value
         viewModelScope.launch {
-            
-            //TODO: Implement the logic to submit the photo URI to the AI meal recognition service
+            _isLoading.value = true
+            uri?.let {
+                val base64Image = uriToBase64(appContext, it)
+                if (base64Image == null) {
+                    emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_encoding_image))
+                } else {
+                    val response = remoteApi.estimateMeal(base64Image)
+                    if (response.isSuccessful && response.body() != null) {
+                        emitEvent(AddAiMealEvent.ShowMealOverview)
+                    } else {
+                        emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_encoding_image))
+                    }
+                }
+            } ?: emitEvent(AddAiMealEvent.ErrorTakingPhoto(R.string.error_no_photo_taken))
             _photoUri.value = null
+            _isLoading.value = false
         }
+    }
 
-
-
-
-        emitEvent(AddAiMealEvent.ShowMealOverview)
+    fun uriToBase64(context: Context, uri: Uri): String? {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val bytes = inputStream.readBytes()
+        inputStream.close()
+        return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
     override fun retakePhoto() {

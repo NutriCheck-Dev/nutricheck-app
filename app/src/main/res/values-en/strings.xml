@@ -66,4 +66,9 @@
     <string name="userData_error_activity_level_required">Please choose your activitylevel.</string>
     <string name="profile_menu_item_personal_data">Personal data &amp; goal</string>
     <string name="add_weight_entry_description">add new weight button</string>
+    <string name="retake_photo">retake photo</string>
+    <string name="submit_photo">submit photo</string>
+    <string name="take_photo">take photo</string>
+    <string name="label_ok">OK</string>
+    <string name="camera_permission_required">camera permission required</string>
 </resources>

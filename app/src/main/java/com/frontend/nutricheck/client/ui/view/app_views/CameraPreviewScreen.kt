@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -48,6 +49,7 @@ fun CameraPreviewScreen(
     val context = LocalContext.current
     val surfaceRequest by addAiMealViewModel.surfaceRequest.collectAsState()
     val photoUri by addAiMealViewModel.photoUri.collectAsState()
+    val isLoading by addAiMealViewModel.isLoading.collectAsState()
 
     val error = remember { mutableStateOf<Int?>(null) }
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
@@ -107,6 +109,15 @@ fun CameraPreviewScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
         if (photoUri == null) {
             surfaceRequest?.let { request ->
                 CameraXViewfinder(

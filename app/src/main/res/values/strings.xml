@@ -77,10 +77,11 @@
     <string name="retake_photo">neues Foto</string>
     <string name="submit_photo">Foto verwenden</string>
     <string name="take_photo">Foto aufnehmen</string>
-    <string name="error_taking_photo">Leider gab es Probleme mit dem Bild, bitte mache ein neues Foto</string>
     <string name="label_ok">OK</string>
     <string name="camera_permission_required">Kamera-Zugriff benötigt</string>
     <string name="camera_permission_explanation">Um ein Foto aufzunehmen, benötigt die App die Erlaubnis für die Kamera</string>
     <string name="grant_permission">Erlauben</string>
+    <string name="error_encoding_image">Fehler beim Verarbeiten des Bildes, bitte nimm ein neues Bild auf</string>
+    <string name="error_no_photo_taken">Es wurde kein Foto aufgenommen, bitte nimm ein neues Foto auf</string>
 
 </resources>
