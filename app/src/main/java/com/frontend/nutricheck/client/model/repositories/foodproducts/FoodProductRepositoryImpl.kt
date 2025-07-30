@@ -25,7 +25,7 @@ class FoodProductRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                val foodProducts: List<FoodProduct> = body.map { FoodProductMapper.toEntity(it) }
+                val foodProducts: List<FoodProduct> = body.map { FoodProductMapper.toData(it) }
                 Result.Success(foodProducts)
             } else if (errorBody != null) {
                 val gson = Gson()

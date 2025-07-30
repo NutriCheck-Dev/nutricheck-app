@@ -121,11 +121,11 @@ class EditRecipeViewModel @Inject constructor(
         _editRecipeDraft.value =
             RecipeDraft(
                 id = recipeId,
-                title = _editRecipeDraft.value!!.recipe.name,
-                description = _editRecipeDraft.value!!.recipe.instructions,
-                ingredients = _editRecipeDraft.value!!.recipe.ingredients,
+                title = _editRecipeDraft.value!!.recipe!!.name,
+                description = _editRecipeDraft.value!!.recipe!!.instructions,
+                ingredients = _editRecipeDraft.value!!.recipe!!.ingredients,
                 addedIngredient = emptyList(),
-                viewIngredients = _editRecipeDraft.value!!.recipe.ingredients.map { it.foodProduct },
+                viewIngredients = _editRecipeDraft.value!!.recipe!!.ingredients.map { it.foodProduct },
                 recipe = _editRecipeDraft.value!!.recipe
             )
 
@@ -153,7 +153,7 @@ class EditRecipeViewModel @Inject constructor(
             servings = draft.ingredients.sumOf { it.quantity.toInt() },
             ingredients = draft.ingredients,
             instructions = draft.description,
-            visibility = draft.recipe.visibility
+            visibility = draft.recipe!!.visibility
         )
         viewModelScope.launch {
             recipeRepository.updateRecipe(recipe)

@@ -1,10 +1,12 @@
 package com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros
 
+import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class DailyMacrosState(
@@ -25,6 +27,10 @@ class DailyMacrosViewModel @Inject constructor(
     val dailyMacrosState = _dailyMacrosState.asStateFlow()
 
     override fun displayDailyMacros() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+
+
+
+        }
     }
 }

@@ -12,10 +12,10 @@ object IngredientMapper {
             quantity = ingredients.quantity
     )
 
-    fun toEntities(ingredientDTO: IngredientDTO): Ingredient =
+    fun toData(ingredientDTO: IngredientDTO): Ingredient =
         Ingredient(
             recipeId = ingredientDTO.recipeId,
-            foodProduct = FoodProductMapper.toEntity(ingredientDTO.foodProduct),
+            foodProduct = FoodProductMapper.toData(ingredientDTO.foodProduct),
             quantity = ingredientDTO.quantity
         )
 }

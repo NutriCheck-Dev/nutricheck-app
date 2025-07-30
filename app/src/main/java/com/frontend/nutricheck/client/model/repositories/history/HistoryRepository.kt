@@ -5,9 +5,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
-import com.forntend.nutrichek.client.model.dat_sources.persistenc.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import java.util.Date
 
@@ -21,4 +19,5 @@ interface HistoryRepository {
     suspend fun removeFoodFromMeal(name: String, foodId: String = "")
     suspend fun addMeal(meal: MealEntity, mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?, mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?)
     suspend fun saveAsRecipe(meal: MealEntity, recipeName: String = "", recipeDescription: String = "")
+    suspend fun getDailyMacros()
 }

@@ -33,16 +33,7 @@ fun WeightHistoryDiagram(
     selectedRange: String,
     onPeriodSelected: (String) -> Unit
 ) {
-    //val fullData = weightHistoryState.weightData
-    val fullData = listOf(86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,
-        86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f, 39f, 82f,90f,86f, 80f, 85f, 80f,)
+    val fullData = weightHistoryState.weightData
 
     val displayedData = when (selectedRange) {
         "1M" -> fullData.takeLast(30)
@@ -96,14 +87,19 @@ fun WeightHistoryDiagram(
 }
 
 @Composable
-fun WeightLineChart(data: List<Float>, selectedRange: String, modifier: Modifier = Modifier) {
-    val maxValue = data.maxOrNull() ?: 1f
-    val minValue = data.minOrNull() ?: 0f
+fun WeightLineChart(
+    data: List<Double>,                // <-- Double passt!
+    selectedRange: String,
+    modifier: Modifier = Modifier
+) {
+    val maxValue = data.maxOrNull() ?: 1.0
+    val minValue = data.minOrNull() ?: 0.0
 
-    val steps = 3 // Wie viele horizontale Linien (Abstände)
+    val steps = 3
     val yStep = (maxValue - minValue) / steps
 
     val yLabels = (0..steps).map { i -> minValue + i * yStep }
+
     val labelMap = when (selectedRange) {
         "1M" -> mapOf(14 to "15T", data.size - 1 to "1M")
         "6M" -> mapOf(
@@ -119,6 +115,7 @@ fun WeightLineChart(data: List<Float>, selectedRange: String, modifier: Modifier
         )
         else -> emptyMap()
     }
+
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -127,42 +124,38 @@ fun WeightLineChart(data: List<Float>, selectedRange: String, modifier: Modifier
             modifier = modifier
                 .fillMaxWidth()
                 .height(70.dp)
-                .padding(horizontal = 30.dp) // <- exakt das hier
-
+                .padding(horizontal = 30.dp)
         ) {
             val widthStep = size.width / (data.size - 1).coerceAtLeast(1)
-            val heightRatio = size.height / (maxValue - minValue)
+            val heightRatio = size.height / (maxValue - minValue).coerceAtLeast(1.0)
 
-            // Hilfslinien & Y-Achse
+            // Y-Achse Hilfslinien und Labels
             yLabels.forEach { yValue ->
                 val y = size.height - (yValue - minValue) * heightRatio
                 drawLine(
                     color = Color.Gray,
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
+                    start = Offset(0f, y.toFloat()),
+                    end = Offset(size.width, y.toFloat()),
                     strokeWidth = 2f
                 )
-
-                drawContext.canvas.nativeCanvas.apply {
-                    drawText(
-                        "%.0f".format(yValue),
-                        -4.5f, // leicht nach links verschoben
-                        y + 12f,
-                        android.graphics.Paint().apply {
-                            color = android.graphics.Color.WHITE
-                            textSize = 30f
-                            isAntiAlias = true
-                            textAlign = android.graphics.Paint.Align.RIGHT
-                        }
-                    )
-                }
+                drawContext.canvas.nativeCanvas.drawText(
+                    "%.0f".format(yValue),
+                    -4.5f,
+                    y.toFloat() + 12f,
+                    android.graphics.Paint().apply {
+                        color = android.graphics.Color.WHITE
+                        textSize = 30f
+                        isAntiAlias = true
+                        textAlign = android.graphics.Paint.Align.RIGHT
+                    }
+                )
             }
 
-            // Linie zeichnen
+            // Datenpunkte verbinden
             val points = data.mapIndexed { index, value ->
                 val x = index * widthStep
                 val y = size.height - (value - minValue) * heightRatio
-                Offset(x, y)
+                Offset(x.toFloat(), y.toFloat())
             }
 
             for (i in 0 until points.size - 1) {
@@ -174,6 +167,7 @@ fun WeightLineChart(data: List<Float>, selectedRange: String, modifier: Modifier
                 )
             }
 
+            // X-Achsen-Labels
             labelMap.forEach { (index, label) ->
                 val x = points.getOrNull(index)?.x ?: return@forEach
                 drawContext.canvas.nativeCanvas.drawText(
@@ -188,7 +182,6 @@ fun WeightLineChart(data: List<Float>, selectedRange: String, modifier: Modifier
                     }
                 )
             }
-
         }
     }
 }

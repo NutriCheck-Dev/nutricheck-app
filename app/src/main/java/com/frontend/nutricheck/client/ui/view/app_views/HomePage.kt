@@ -44,8 +44,14 @@ fun HomePage(
     val scrollState = rememberScrollState()
     var selectedCalorieRange by remember { mutableStateOf("7T") }
     var selectedWeightRange by remember { mutableStateOf("1M") }
+    val calorieInterval = when(selectedCalorieRange) {
+        "7T" -> 7
+        "30T" -> 30
+        "60T" -> 60
+        else -> 7
+    }
     LaunchedEffect(selectedCalorieRange, selectedWeightRange) {
-        calorieHistoryViewModel.displayCalorieHistory(selectedCalorieRange)
+        calorieHistoryViewModel.displayCalorieHistory(calorieInterval)
         weightHistoryViewModel.displayWeightHistory(selectedWeightRange)
     }
     val calorieHistoryState by calorieHistoryViewModel.calorieHistoryState.collectAsState()

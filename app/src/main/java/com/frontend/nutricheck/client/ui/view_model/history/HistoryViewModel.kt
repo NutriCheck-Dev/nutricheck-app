@@ -30,9 +30,9 @@ sealed interface HistoryEvent {
     data class AddEntryClick(val day: Date, val dayTime: DayTime) : HistoryEvent
     data class DisplayNutritionOfDay(val day: Date) : HistoryEvent
     data class FoodClicked(val foodId: String) : HistoryEvent
+    data class RecipeClicked(val recipeId: String) : HistoryEvent
     data class DetailsClick(val detailsId: String) : HistoryEvent
-    data class TotalCaloriesClick(val totalCalories: Int) : HistoryEvent
-    data class SwitchClick(val switched: Boolean) : HistoryEvent
+    data class SelectDate(val day: Date) : HistoryEvent
 }
 
 @HiltViewModel
@@ -51,9 +51,9 @@ class HistoryViewModel @Inject constructor(
             is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day, event.dayTime)
             is HistoryEvent.DisplayNutritionOfDay -> displayNutritionOfDay(event.day)
             is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
+            is HistoryEvent.RecipeClicked -> onDetailsClick(event.recipeId)
             is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
-            is HistoryEvent.TotalCaloriesClick -> onTotalCaloriesClick(event.totalCalories)
-            is HistoryEvent.SwitchClick -> onSwitchClick(event.switched)
+            is HistoryEvent.SelectDate -> selectDate(event.day)
         }
     }
     // Die benötigten Parameter sollten über den State bereitgestellt werden, siehe beispiel Profile,
@@ -104,11 +104,15 @@ class HistoryViewModel @Inject constructor(
     }
 
     override fun onFoodClicked(foodId: String) {}
+    override fun onRecipeClicked(recipeId: String) {
+        viewModelScope.launch {
+            _events.emit(HistoryEvent.RecipeClicked(recipeId))
+        }
+    }
     override fun onDetailsClick(detailsId: String) {
         viewModelScope.launch {
             _events.emit(HistoryEvent.DetailsClick(detailsId))
         }
     }
-    override fun onTotalCaloriesClick(totalCalories: Int) {}
-    override fun onSwitchClick(switched: Boolean) {}
+    //override fun onTotalCaloriesClick(totalCalories: Int) {} TODO
 }

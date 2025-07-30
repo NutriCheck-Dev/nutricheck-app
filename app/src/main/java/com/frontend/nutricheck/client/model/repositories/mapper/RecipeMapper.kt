@@ -27,7 +27,7 @@ object RecipeMapper {
             carbohydrates = recipeDto.carbohydrates,
             protein = recipeDto.protein,
             fat = recipeDto.fat,
-            ingredients = recipeDto.ingredients.map { IngredientMapper.toEntities(it) },
+            ingredients = recipeDto.ingredients.map { IngredientMapper.toData(it) },
             instructions = recipeDto.instructions,
             servings = recipeDto.servings,
             visibility = RecipeVisibility.PUBLIC

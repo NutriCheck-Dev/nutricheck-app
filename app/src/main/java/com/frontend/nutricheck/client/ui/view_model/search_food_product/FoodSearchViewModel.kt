@@ -32,6 +32,7 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.UUID
 
+
 data class SearchState(
     val language: String = "de",
     val date: Date? = null,
@@ -116,10 +117,10 @@ class FoodSearchViewModel @Inject constructor(
                 )
                 val recipes = (recipeRepository.searchRecipe(query)
                         as? Result.Success)?.data.orEmpty()
-                val mixed = (foodProducts + recipes)
+                /**val mixed = (foodProducts + recipes)
                     .sortedBy { it.name }
-
-                _searchState.update { it.copy(results = mixed) }
+*/
+                //_searchState.update { it.copy(results = mixed) }
                 setReady()
             } catch (io: IOException) {
                 setError("Netzwerkfehler: Bitte überprüfen Sie Ihre Internetverbindung.")

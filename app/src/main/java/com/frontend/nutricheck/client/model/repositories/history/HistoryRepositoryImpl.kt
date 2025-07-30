@@ -3,15 +3,11 @@ package com.frontend.nutricheck.client.model.repositories.history
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
-import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
-import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
@@ -22,8 +18,6 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
-import java.util.UUID
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import java.io.IOException
 import java.util.Date
@@ -51,11 +45,8 @@ class HistoryRepositoryImpl @Inject constructor(
         }.toInt()
     }
 
-    override suspend fun getDailyHistory(date: Date): HistoryDay {
-        TODO("Not yet implemented")
-    }
 
-  
+
   override suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal> {
         return try {
             val response = api.estimateMeal(file)
@@ -63,7 +54,7 @@ class HistoryRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(MealMapper.toEntity(body))
+                Result.Success(MealMapper.toData(body))
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
@@ -138,4 +129,8 @@ class HistoryRepositoryImpl @Inject constructor(
     ) {
         TODO("Not yet implemented")
     }
+    override suspend fun getDailyMacros() {
+
+    }
+
 }
