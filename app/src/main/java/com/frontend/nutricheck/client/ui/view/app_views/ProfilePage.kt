@@ -154,7 +154,7 @@ fun ProfilePage(
                             stringResource(id = R.string.profile_menu_item_personal_data),
                         text = stringResource(id = R.string.profile_menu_item_personal_data),
                         onClick = {
-                            onEvent(ProfileEvent.DisplayPersonalData)
+                            onEvent(ProfileEvent.OnPersonalDataClick)
                         })
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
@@ -192,7 +192,7 @@ fun ProfilePage(
                             stringResource(id = R.string.profile_menu_item_language),
                         text = stringResource(id = R.string.profile_menu_item_language),
                         onClick = {
-                            onEvent(ProfileEvent.SelectLanguage)
+                            onEvent(ProfileEvent.OnSelectLanguageClick)
                         })
                 }
             }

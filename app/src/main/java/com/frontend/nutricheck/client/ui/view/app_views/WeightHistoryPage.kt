@@ -44,7 +44,7 @@ fun WeightHistoryPage(
                 },
                 actions = {
                     CustomAddButton(
-                        onClick = { onEvent(ProfileEvent.AddNewWeight) }
+                        onClick = { onEvent(ProfileEvent.OnAddNewWeightClick) }
                     )
                 }
             )

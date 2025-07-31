@@ -50,8 +50,8 @@ fun ProfilePageNavGraph() {
                 }
                 is ProfileEvent.NavigateToPersonalData -> {
                     profileNavController.navigate(ProfileScreens.PersonalDataPage.route) {
-                    launchSingleTop = true
-                        }
+                        launchSingleTop = true
+                    }
                 }
                 is ProfileEvent.NavigateToLanguage -> {
                     profileNavController.navigate(ProfileScreens.ChooseLanguageDialog.route) {

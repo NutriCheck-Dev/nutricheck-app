@@ -46,7 +46,7 @@ class CalorieHistoryViewModel @Inject constructor(
 
    override fun displayCalorieHistory(days: Int) {
        viewModelScope.launch {
-           val calorieGoal = userDataRepository.getCalorieGoal()
+           val calorieGoal = userDataRepository.getDailyCalorieGoal()
            val dateRange = getDateRange(days)
            val calorieHistory: List<Int> = dateRange.map { date ->
                historyRepository.getCaloriesOfDay(date)
