@@ -159,7 +159,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-    val _events = MutableSharedFlow<FoodProductOverviewEvent>()
+    private val _events = MutableSharedFlow<FoodProductOverviewEvent>()
     val events: SharedFlow<FoodProductOverviewEvent> = _events.asSharedFlow()
 
     fun onEvent(event: FoodProductOverviewEvent) {
