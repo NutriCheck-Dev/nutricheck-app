@@ -1,7 +1,10 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
 import android.Manifest
+import android.net.Uri
 import androidx.camera.compose.CameraXViewfinder
+import androidx.camera.core.SurfaceRequest
+import androidx.compose.ui.zIndex
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,14 +23,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view.widgets.ExitButton
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealEvent
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealViewModel
@@ -35,12 +43,15 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraPreviewScreen(
     addAiMealViewModel: AddAiMealViewModel,
-    onNavigateToFoodProductOverview: (String) -> Unit
+    onNavigateToFoodProductOverview: (String) -> Unit,
+    onExit: () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -66,7 +77,7 @@ fun CameraPreviewScreen(
         addAiMealViewModel.events.collect { event ->
             when (event) {
                 is AddAiMealEvent.ShowMealOverview -> {
-                    onNavigateToFoodProductOverview()
+                    //onNavigateToFoodProductOverview()
                 }
                 else -> { /* other events */ }
             }
@@ -105,6 +116,10 @@ fun CameraPreviewScreen(
         if (uiState is BaseViewModel.UiState.Loading) {
             CircularProgressIndicator()
         }
+        ExitButton(
+            onBack = { onExit() },
+            modifier = Modifier.align(Alignment.TopStart).padding(16.dp).zIndex(2f)
+        )
         if (photoUri == null) {
             surfaceRequest?.let { request ->
                 CameraXViewfinder(

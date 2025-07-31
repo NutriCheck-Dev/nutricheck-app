@@ -78,9 +78,9 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             CameraPreviewScreen(
                 addAiMealViewModel = hiltViewModel(),
                 onNavigateToFoodProductOverview = { mealId ->
-                    addNavController.navigate(AddScreens.FoodOverview.createRoute(mealId)) })
+                    addNavController.navigate(AddScreens.FoodOverview.createRoute(mealId))},
+                onExit = { mainNavController.popBackStack() })
         }
-
 
         composable(
             route = AddScreens.AddMeal.route,
