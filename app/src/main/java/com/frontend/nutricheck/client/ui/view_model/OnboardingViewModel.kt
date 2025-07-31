@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.onboarding
+package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
@@ -10,8 +10,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow

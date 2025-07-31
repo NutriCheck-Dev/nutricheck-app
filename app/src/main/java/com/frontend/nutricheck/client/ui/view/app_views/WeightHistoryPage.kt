@@ -22,7 +22,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

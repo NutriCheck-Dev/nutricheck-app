@@ -44,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 
 @Composable
 fun ProfilePage(

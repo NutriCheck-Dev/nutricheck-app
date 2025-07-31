@@ -18,8 +18,8 @@ import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingSpo
 import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingTargetWeight
 import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingWeight
 import com.frontend.nutricheck.client.ui.view.app_views.onboarding.OnboardingWelcome
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
+import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
+import com.frontend.nutricheck.client.ui.view_model.OnboardingViewModel
 
 
 sealed class OnboardingScreen(val route: String) {

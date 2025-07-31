@@ -33,10 +33,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
+import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
+import com.frontend.nutricheck.client.ui.view_model.OnboardingState
 
 @Composable
 fun OnboardingWeight(

@@ -9,8 +9,8 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingViewModel
+import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
+import com.frontend.nutricheck.client.ui.view_model.OnboardingViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

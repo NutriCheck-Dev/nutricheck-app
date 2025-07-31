@@ -22,7 +22,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -42,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
