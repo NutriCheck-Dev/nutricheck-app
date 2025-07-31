@@ -44,19 +44,29 @@ fun ProfilePageNavGraph() {
         profileViewModel.events.collect { event ->
             when (event) {
                 is ProfileEvent.DisplayWeightHistory -> {
-                    profileNavController.navigate(ProfileScreens.WeightHistoryPage.route)
+                    profileNavController.navigate(ProfileScreens.WeightHistoryPage.route) {
+                    launchSingleTop = true
+                    }
                 }
                 is ProfileEvent.NavigateToPersonalData -> {
-                    profileNavController.navigate(ProfileScreens.PersonalDataPage.route)
+                    profileNavController.navigate(ProfileScreens.PersonalDataPage.route) {
+                    launchSingleTop = true
+                        }
                 }
                 is ProfileEvent.NavigateToLanguage -> {
-                    profileNavController.navigate(ProfileScreens.ChooseLanguageDialog.route)
+                    profileNavController.navigate(ProfileScreens.ChooseLanguageDialog.route) {
+                    launchSingleTop = true
+                }
                 }
                 is ProfileEvent.NavigateToProfileOverview -> {
-                    profileNavController.navigate(ProfileScreens.ProfilePage.route)
+                    profileNavController.navigate(ProfileScreens.ProfilePage.route) {
+                    launchSingleTop = true
+        }
                 }
                 is  ProfileEvent.NavigateToAddNewWeight -> {
-                    profileNavController.navigate(ProfileScreens.AddWeightDialog.route)
+                    profileNavController.navigate(ProfileScreens.AddWeightDialog.route) {
+                    launchSingleTop = true
+    }
                 }
                 is ProfileEvent.RestartApp -> {
                     (context as? Activity)?.recreate()

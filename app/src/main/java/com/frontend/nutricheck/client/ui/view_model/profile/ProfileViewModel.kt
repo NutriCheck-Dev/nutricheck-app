@@ -141,6 +141,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _data.value = userDataRepository.getUserData()
             _dataDraft.value = _data.value
+            _weightData.value = userDataRepository.getWeightHistory()
         }
     }
 
@@ -214,6 +215,7 @@ class ProfileViewModel @Inject constructor(
         }
         viewModelScope.launch {
             userDataRepository.addWeight(Weight(value = weightValue.toDouble(), date = date))
+            _weightData.value = userDataRepository.getWeightHistory()
         }
     }
     private fun onSaveLanguageClick(language: Language) {
@@ -251,6 +253,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userDataRepository.updateUserData(userDataWithCalories)
         }
+        _data.value = userDataWithCalories
         emitEvent(ProfileEvent.NavigateToProfileOverview)
     }
     private fun emitEvent(event: ProfileEvent) = viewModelScope.launch { _events.emit(event) }
