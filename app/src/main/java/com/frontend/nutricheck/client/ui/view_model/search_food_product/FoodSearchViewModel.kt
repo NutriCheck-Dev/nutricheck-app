@@ -155,7 +155,7 @@ class FoodSearchViewModel @Inject constructor(
                 is SearchMode.IngredientsForRecipe -> {
                     foodProductRepository
                         .searchFoodProducts(query, language)
-                        .map { result -> result.mapData { list -> list.map { it as FoodProduct }}}
+                        .map { result -> result.mapData { list -> list.map { it }}}
                 }
 
                 else -> {
@@ -243,9 +243,9 @@ class FoodSearchViewModel @Inject constructor(
 
     }
 
-    private fun submitComponentsToRecipe() : List<Ingredient> {
+    private fun submitComponentsToRecipe() {
         val state = _searchState.value
-        return when (state) {
+        when (state) {
             is SearchUiState.AddIngredientState -> state.parameters.addedComponents.map {
                 Ingredient(state.recipeId, it.second as FoodProduct, quantity = it.first) }
             else -> emptyList()
