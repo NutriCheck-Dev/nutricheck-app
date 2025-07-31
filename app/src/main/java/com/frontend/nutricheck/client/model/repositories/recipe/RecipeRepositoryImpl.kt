@@ -6,10 +6,12 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.RecipeSearchDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.RecipeSearchEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbIngredientMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
@@ -30,6 +32,7 @@ class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
     private val recipeSearchDao: RecipeSearchDao,
     private val ingredientDao: IngredientDao,
+    private val foodDao: FoodDao
 ) : RecipeRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
     private val timeToLive = TimeUnit.MINUTES.toMillis(30)
@@ -68,8 +71,10 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun insertRecipe(recipe: Recipe) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
         recipeDao.insert(recipeEntity)
+
         recipe.ingredients.forEach { ingredient ->
             val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+            checkForFoodProducts(ingredient)
             ingredientDao.insert(ingredientEntity)
         }
     }
@@ -94,10 +99,14 @@ class RecipeRepositoryImpl @Inject constructor(
 
     override suspend fun updateRecipe(recipe: Recipe) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
-        val ingredientsEntity = recipe.ingredients.map { DbIngredientMapper.toIngredientEntity(it) }
         recipeDao.update(recipeEntity)
+
         ingredientDao.deleteIngredientsOfRecipe(recipeEntity.id)
-        ingredientsEntity.forEach { ingredientDao.insert(it) }
+        recipe.ingredients.forEach { ingredient ->
+            val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+            checkForFoodProducts(ingredient)
+            ingredientDao.insert(ingredientEntity)
+        }
     }
 
     override suspend fun uploadRecipe(recipe: Recipe): Result<Recipe> {
@@ -131,7 +140,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(data = TODO()) //toEntity method
+                Result.Success(data = TODO()) //toData method
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
@@ -163,4 +172,10 @@ class RecipeRepositoryImpl @Inject constructor(
 
     private fun isExpired(lastUpdate: Long?): Boolean =
         lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive
+
+    private suspend fun checkForFoodProducts(ingredient: Ingredient) {
+        if (!foodDao.exists(ingredient.foodProduct.id)) {
+            foodDao.insert(DbFoodProductMapper.toFoodProductEntity(ingredient.foodProduct))
+        }
+    }
 }

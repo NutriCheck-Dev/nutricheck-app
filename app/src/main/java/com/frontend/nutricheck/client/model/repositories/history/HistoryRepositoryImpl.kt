@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
@@ -18,7 +17,6 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.first
 import okhttp3.MultipartBody
 import java.io.IOException
 import java.util.Date
@@ -79,6 +77,7 @@ class HistoryRepositoryImpl @Inject constructor(
 
         mealDao.update(DbMealMapper.toMealEntity(meal))
 
+        checkForFoodProducts(meal.mealFoodItems)
         val mealFoodItemsEntities = meal.mealFoodItems.map { DbMealFoodItemMapper.toMealFoodItemEntity(it) }
         mealFoodItemDao.deleteMealFoodItemsOfMeal(meal.id)
         mealFoodItemDao.insertAll(mealFoodItemsEntities)
@@ -95,21 +94,14 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun addMeal(meal: Meal) {
         //check if meal exists
         val mealEntities = mealDao.getMealsWithAllForDay(meal.date)
-        mealEntities.forEach { mealEntity -> if (mealEntity.meal.id.equals(meal.id)) throw Exception() }//error duplicate meal
+        mealEntities.forEach { mealEntity -> if (mealEntity.meal.id.equals(meal.id)) throw Exception() }//error duplicate meal//TODO
 
-        //check if foodProduct exists
-        val foodProducts : List<FoodProduct> = meal.mealFoodItems.map { it.foodProduct }
-        for (foodProduct in foodProducts) {
-            if (!foodDao.exists(foodProduct.id)) {
-                foodDao.insert(DbFoodProductMapper.toFoodProductEntity(foodProduct))
-            }
-        }
 
         val mealEntity = DbMealMapper.toMealEntity(meal)
         mealDao.insert(mealEntity)
 
-        val mealFoodItemsEntities = meal.mealFoodItems.map { DbMealFoodItemMapper.toMealFoodItemEntity(it) }
-        mealFoodItemDao.insertAll(mealFoodItemsEntities)
+        checkForFoodProducts(meal.mealFoodItems)
+        mealFoodItemDao.insertAll(meal.mealFoodItems.map { DbMealFoodItemMapper.toMealFoodItemEntity(it) })
 
         val mealRecipeItemEntities = meal.mealRecipeItem.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
@@ -140,4 +132,12 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem) =
         mealRecipeItemDao.update(DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem))
+
+    private suspend fun checkForFoodProducts(mealFoodItems: List<MealFoodItem>) {
+        for (mealFoodItem in mealFoodItems) {
+            if (foodDao.exists(mealFoodItem.foodProduct.id)) {
+                foodDao.insert(DbFoodProductMapper.toFoodProductEntity(mealFoodItem.foodProduct))
+            }
+        }
+    }
 }
