@@ -37,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.Gender
@@ -47,6 +46,7 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -54,7 +54,7 @@ import java.util.Locale
 @Composable
 fun PersonalDataPage(
     state: UserData,
-    errorMessage: Int? = null,
+    errorState : BaseViewModel.UiState,
     onEvent: (ProfileEvent) -> Unit,
     onBack: () -> Unit = {}
 
@@ -84,9 +84,9 @@ fun PersonalDataPage(
             }
         )
         item {
-            errorMessage?.let { errorResId ->
+            if (errorState is BaseViewModel.UiState.Error) {
                 Text(
-                    text = stringResource(id = errorResId),
+                    text = errorState.message,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -320,28 +320,4 @@ private fun EditableDropdownRow(
             }
         }
     }
-}
-
-@Preview (showBackground = true)
-@Composable
-fun PersonalDataPreview() {
-    PersonalDataPage(
-        state = (UserData(
-            username = "Peter",
-            birthdate = Date(),
-            gender = Gender.MALE,
-            height = 195.0,
-            weight = 95.0,
-            targetWeight = 95.0,
-            activityLevel = ActivityLevel.REGULARLY,
-            weightGoal = WeightGoal.LOSE_WEIGHT,
-            age = 25,
-            dailyCaloriesGoal = 2500,
-            proteinGoal = 80,
-            carbsGoal = 90,
-            fatsGoal = 20
-        )),
-        onEvent = {},
-        onBack = {}
-    )
 }

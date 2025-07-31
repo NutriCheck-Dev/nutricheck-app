@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.profile
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
@@ -12,8 +13,10 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,8 +54,9 @@ sealed interface ProfileEvent {
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val appSettingsRepository: AppSettingsRepository
-) : BaseProfileViewModel() {
+    private val appSettingsRepository: AppSettingsRepository,
+    @ApplicationContext private val appContext: Context
+) : BaseViewModel() {
 
     private val _events = MutableSharedFlow<ProfileEvent>()
     val events: SharedFlow<ProfileEvent> = _events.asSharedFlow()
@@ -94,9 +98,6 @@ class ProfileViewModel @Inject constructor(
     private val _weightData = MutableStateFlow<List<Weight>>(emptyList())
     val weightData: StateFlow<List<Weight>> = _weightData.asStateFlow()
 
-    private val _errorMessage = MutableStateFlow<Int?>(null)
-    val errorMessage: StateFlow<Int?> = _errorMessage.asStateFlow()
-
     val currentLanguage: StateFlow<Language> = appSettingsRepository.language.stateIn(
         viewModelScope,
         initialValue = Language.GERMAN,
@@ -137,45 +138,45 @@ class ProfileViewModel @Inject constructor(
 
     private fun updateUserNameDraft(username: String) {
         if (username.isBlank()) {
-            _errorMessage.value = R.string.userData_error_name_required
+            setError(appContext.getString(R.string.userData_error_name_required))
             return
         }
-        _errorMessage.value = null
+        setReady()
         _dataDraft.value = _dataDraft.value.copy(username = username)
     }
     private fun updateUserBirthdateDraft(birthdate: Date) {
         if (Utils.birthdateInvalid(birthdate)) {
-            _errorMessage.value = R.string.userData_error_birthdate_required
+            setError(appContext.getString(R.string.userData_error_birthdate_required))
             return
         }
-        _errorMessage.value = null
+        setReady()
         _dataDraft.value = _dataDraft.value.copy(birthdate = birthdate)
     }
     private fun updateUserHeightDraft(height: String) {
         val heightValue = height.toDoubleOrNull()
         if (heightValue == null || heightValue <= 0.0) {
-            _errorMessage.value = R.string.userData_error_height_required
+            setError(appContext.getString(R.string.userData_error_height_required))
             return
         }
-        _errorMessage.value = null
+        setReady()
         _dataDraft.value = _dataDraft.value.copy(height = heightValue)
     }
     private fun updateUserWeightDraft(weight: String) {
         val weightValue = weight.toDoubleOrNull()
         if (weightValue == null || weightValue <= 0.0) {
-            _errorMessage.value = R.string.userData_error_weight_required
+            setError(appContext.getString(R.string.userData_error_weight_required))
             return
         }
-        _errorMessage.value = null
+        setReady()
         _dataDraft.value = _dataDraft.value.copy(weight = weightValue)
     }
     private fun updateUserTargetWeightDraft(targetWeight: String) {
         val targetWeightValue = targetWeight.toDoubleOrNull()
         if (targetWeightValue == null || targetWeightValue <= 0.0) {
-            _errorMessage.value = R.string.userData_error_target_weight_required
+            setError(appContext.getString(R.string.userData_error_target_weight_required))
             return
         }
-        _errorMessage.value = null
+        setReady()
         _dataDraft.value = _dataDraft.value.copy(targetWeight = targetWeightValue)
     }
     private fun updateUserActivityLevelDraft(activityLevel: ActivityLevel) {
@@ -196,9 +197,10 @@ class ProfileViewModel @Inject constructor(
     private fun saveNewWeight(weight: String, date: Date) {
         val weightValue = weight.toDoubleOrNull()
         if (weightValue == null || weightValue <= 0) {
-            _errorMessage.value = R.string.userData_error_weight_required
+            setError(appContext.getString(R.string.userData_error_weight_required))
             return
         }
+        setReady()
         viewModelScope.launch {
             userDataRepository.addWeight(Weight(value = weightValue.toDouble(), enterDate = date))
         }

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -47,10 +48,10 @@ import java.util.Locale
 fun OnboardingBirthdate(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
+    errorState : BaseViewModel.UiState
     ) {
     var selectedDate by remember { mutableStateOf(state.birthdate) }
     var showDatePicker by remember { mutableStateOf(true) }
-    val error = state.errorState
 
     val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
     val displayDate = selectedDate?.let { dateFormat.format(it) } ?: ""
@@ -113,15 +114,15 @@ fun OnboardingBirthdate(
                     Text(stringResource(id = R.string.userData_label_birthdate))
                 },
                 readOnly = true,
-                isError = error != null,
+                isError = errorState is BaseViewModel.UiState.Error,
                 singleLine = true,
                 textStyle = TextStyle( color = Color(0xFFFFFFFF))
             )
-            error?.let { resId ->
+            if (errorState is BaseViewModel.UiState.Error) {
                 Text(
                     modifier = Modifier
                         .padding(top = 16.dp),
-                    text = stringResource(id = resId),
+                    text = errorState.message,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
                 )

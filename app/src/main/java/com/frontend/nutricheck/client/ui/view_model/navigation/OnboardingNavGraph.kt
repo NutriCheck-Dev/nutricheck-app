@@ -42,6 +42,7 @@ fun OnboardingNavGraph(
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val onboardingNavController = rememberNavController()
     val state by onboardingViewModel.data.collectAsState()
+    val uiState by onboardingViewModel.uiState.collectAsState()
     LaunchedEffect(key1 = Unit) {
         onboardingViewModel.events.collect { event ->
             when (event) {
@@ -79,28 +80,46 @@ fun OnboardingNavGraph(
             OnboardingWelcome(onEvent = onboardingViewModel::onEvent)
         }
         composable(OnboardingScreen.Name.route) {
-            OnboardingName(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingName(
+                state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState
+                )
         }
         composable(OnboardingScreen.Birthdate.route) {
-            OnboardingBirthdate(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingBirthdate(state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState)
         }
         composable(OnboardingScreen.Gender.route) {
-            OnboardingGender(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingGender(state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState)
         }
         composable(OnboardingScreen.Height.route) {
-            OnboardingHeight(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingHeight(state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState)
         }
         composable(OnboardingScreen.Weight.route) {
-            OnboardingWeight(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingWeight(state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState)
         }
         composable(OnboardingScreen.SportFrequency.route) {
-            OnboardingSport(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingSport(state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState)
         }
         composable(OnboardingScreen.WeightGoal.route) {
-            OnboardingGoal(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingGoal(state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState)
         }
         composable(OnboardingScreen.TargetWeight.route) {
-            OnboardingTargetWeight(state = state, onEvent = onboardingViewModel::onEvent)
+            OnboardingTargetWeight(state = state,
+                onEvent = onboardingViewModel::onEvent,
+                errorState = uiState)
         }
     }
 }
