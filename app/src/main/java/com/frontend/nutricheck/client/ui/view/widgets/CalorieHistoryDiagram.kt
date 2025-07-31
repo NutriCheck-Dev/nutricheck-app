@@ -30,19 +30,11 @@ import com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history.Ca
 fun CalorieHistoryDiagram(
     modifier: Modifier = Modifier,
     calorieHistoryState: CalorieHistoryState,
-    calorieData: List<Float> = listOf(
-        2100f, 1850f, 1930f, 0f, 2400f, 1820f, 2010f, 2200f, 1900f, 2300f,
-        0f, 2500f, 1800f, 2100f, 0f, 2300f, 1900f, 1750f, 2000f, 1980f,
-        0f, 2400f, 1860f, 2230f, 2100f, 0f, 1950f, 1780f, 2350f, 2010f,
-        2100f, 1850f, 1930f, 0f, 2400f, 1820f, 2010f, 2200f, 1900f, 2300f,
-        0f, 2500f, 1800f, 2100f, 0f, 2300f, 1900f, 1750f, 2000f, 1980f,
-        0f, 2400f, 1860f, 2230f, 2100f, 0f, 1950f, 1780f, 2350f, 2010f,
-
-    ),
     selectedRange : String,
     onPeriodSelected: (String) -> Unit = {},
 ) {
     val calorieGoal = calorieHistoryState.calorieGoal
+    val calorieData = calorieHistoryState.calorieHistory
     Column(
         modifier = modifier
             .height(184.dp)
@@ -71,24 +63,20 @@ fun CalorieHistoryDiagram(
         }
 
         Spacer(modifier = Modifier.height(25.dp))
-        val calorieData = when (selectedRange) {
-            "7T" -> calorieData.takeLast(7)
-            "30T" -> calorieData.takeLast(30)
-            "60T" -> calorieData
-            else -> emptyList()
-        }
         CalorieBarChart(calorieData, selectedRange, 2000)
     }
 }
 
 @Composable
-fun CalorieBarChart(data: List<Float>, selectedRange: String, calorieGoal: Int, modifier: Modifier = Modifier) {
-    val maxValue = data.maxOrNull() ?: 1f
-    val minValue = data.minOrNull() ?: 0f
-
-    val steps = 3
-    val yStep = (maxValue - minValue) / steps
-
+fun CalorieBarChart(
+    data: List<Int>,
+    selectedRange: String,
+    calorieGoal: Int,
+    modifier: Modifier = Modifier
+) {
+    val rawMin = data.minOrNull() ?: 0
+    val rawMax = data.maxOrNull() ?: 1
+    val range = rawMax - rawMin
 
     val days = listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
     val startIndex = 0 // z.B. wenn Daten bei Montag starten
@@ -121,23 +109,15 @@ fun CalorieBarChart(data: List<Float>, selectedRange: String, calorieGoal: Int, 
         ) {
             val barWidth = 12.dp.toPx()
 
-            val rawMin = data.minOrNull() ?: 0f
-            val rawMax = data.maxOrNull() ?: 1f
-            val range = rawMax - rawMin
-
-            // Dynamische untere Y-Achsenbegrenzung
-            val visualMin = if (range < 400f) {
-                (rawMin - 100f).coerceAtLeast(0f)
+            // Dynamische untere Y-Achsenbegrenzung, alles mit Int!
+            val visualMin = if (range < 400) {
+                (rawMin - 100).coerceAtLeast(0)
             } else {
-                (rawMin * 0.9f).coerceAtLeast(0f)
+                (rawMin * 90 / 100).coerceAtLeast(0) // 0.9 als Int-Operation
             }
 
-            val heightRatio = size.height / (rawMax - visualMin)
-            val visualMax = maxOf(rawMax, calorieGoal.toFloat())
-            val steps = 3
-            val yStep = (rawMax - visualMin) / steps
-            val yLabels = (0..steps).map { i -> visualMin + i * yStep }
-
+            val visualMax = maxOf(rawMax, calorieGoal)
+            val heightRatio = if (visualMax - visualMin == 0) 1f else size.height / (visualMax - visualMin).toFloat()
 
             // Balken
             val totalSpacing = size.width - (data.size * barWidth)
@@ -153,7 +133,7 @@ fun CalorieBarChart(data: List<Float>, selectedRange: String, calorieGoal: Int, 
                 )
             }
             // Ziel-Linie
-            val goalY = size.height - ((calorieGoal - visualMin) / (visualMax - visualMin)) * size.height
+            val goalY = size.height - ((calorieGoal - visualMin).toFloat() / (visualMax - visualMin).toFloat()) * size.height
             drawLine(
                 color = Color.Green,
                 start = Offset(0f, goalY),

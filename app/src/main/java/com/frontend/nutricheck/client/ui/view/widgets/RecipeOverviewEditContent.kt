@@ -30,18 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.view.dialogs.ActionConfirmationDialog
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeDraft
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverviewEditContent(
     draft: RecipeDraft,
-    ingredients: List<FoodComponent>,
-    onItemClick: (FoodComponent) -> Unit,
-    onEvent: (EditRecipeEvent) -> Unit,
+    ingredients: List<Ingredient>,
+    onItemClick: (Ingredient) -> Unit,
+    onEvent: (RecipeEditorEvent) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit
 ) {
@@ -56,7 +56,7 @@ fun RecipeOverviewEditContent(
                 title = {
                     TextField(
                         value = draft.title,
-                        onValueChange = { onEvent(EditRecipeEvent.TitleChanged(it)) },
+                        onValueChange = { onEvent(RecipeEditorEvent.TitleChanged(it)) },
                         singleLine = true,
                         textStyle = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.fillMaxWidth(),
@@ -91,7 +91,7 @@ fun RecipeOverviewEditContent(
                 RecipeNutrientChartsWidget(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    recipe = draft.recipe!!,
+                    recipe = draft.original!!,
                     totalCalories = 0.0,
                     totalCarbs = 0.0,
                     totalProtein = 0.0,
@@ -107,10 +107,10 @@ fun RecipeOverviewEditContent(
                 )
                 Spacer(Modifier.height(10.dp))
 
-                DishItemList(
+                IngredientList(
                     editing = true,
-                    foodComponents = ingredients,
-                    onItemClick = onItemClick,
+                    ingredients = ingredients,
+                    onItemClick = { ingredient -> onItemClick(ingredient) },
                     modifier = Modifier
                         .fillMaxWidth()
                 )
@@ -128,7 +128,7 @@ fun RecipeOverviewEditContent(
                 ) {
                     TextField(
                         value = draft.description,
-                        onValueChange = { onEvent(EditRecipeEvent.DescriptionChanged(it)) },
+                        onValueChange = { onEvent(RecipeEditorEvent.DescriptionChanged(it)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

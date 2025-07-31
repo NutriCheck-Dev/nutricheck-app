@@ -18,7 +18,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.CameraPreviewScreen
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
-import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
@@ -42,7 +42,7 @@ sealed class AddScreens(val route: String) {
 @Composable
 fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     val addNavController = rememberNavController()
-    val createRecipeViewModel: CreateRecipeViewModel = hiltViewModel()
+    val createRecipeViewModel: RecipeEditorViewModel = hiltViewModel()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
         if (foodComponent is FoodProduct) {
@@ -60,7 +60,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     ) {
         composable(AddScreens.AddMainPage.route) {
             AddDialog(
-                onAddMealClick = { addNavController.navigate(AddScreens.AddMeal.createRoute(false)) },
+                onAddMealClick = { addNavController.navigate(AddScreens.AddMeal.route) },
                 onAddRecipeClick = { addNavController.navigate(AddScreens.AddRecipe.route) },
                 onScanFoodClick = { addNavController.navigate(AddScreens.AddAiMeal.route) },
                 onDismissRequest = { mainNavController.popBackStack() }
@@ -69,7 +69,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         composable(AddScreens.AddRecipe.route) {
             CreateRecipePage(
                 createRecipeViewModel = createRecipeViewModel,
-                onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
+                //onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { addNavController.popBackStack() }
             )
         }

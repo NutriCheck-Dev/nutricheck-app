@@ -1,13 +1,13 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence
 
 import androidx.room.TypeConverter
-import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
-import com.frontend.nutricheck.client.model.data_sources.data.DayTime
-import com.frontend.nutricheck.client.model.data_sources.data.Gender
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
-import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
-import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
+import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.squareup.moshi.Moshi
 import java.util.Calendar
 import java.util.Date

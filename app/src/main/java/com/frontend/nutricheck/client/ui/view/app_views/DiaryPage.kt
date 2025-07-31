@@ -56,10 +56,7 @@ fun DiaryPage(
                 .padding(top = 14.dp)
                 .fillMaxSize()
         ) {
-            when (selectedTab) {
-                DiaryTab.HISTORY -> HistoryPage(historyViewModel = historyViewModel)
-                DiaryTab.RECIPES -> RecipePage(recipePageViewModel = recipePageViewModel)
-            }
+
         }
     }
 }

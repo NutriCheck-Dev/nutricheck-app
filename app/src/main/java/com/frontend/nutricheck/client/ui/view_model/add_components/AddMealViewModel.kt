@@ -2,10 +2,9 @@ package com.frontend.nutricheck.client.ui.view_model.add_components
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.model.data_sources.data.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.HistoryDay
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +20,9 @@ import java.util.Date
 
 data class AddMealState(
     val foodComponents: List<FoodComponent> = emptyList(),
-    val historyDay: HistoryDay? = null,
     val mealTime: DayTime? = null,
     val currentSegment: String = "All",
-    val selectedMeal: Meal? = null
+    val selectedMeal: MealEntity? = null
 )
 
 sealed interface AddMealEvent {
@@ -48,17 +46,7 @@ class AddMealViewModel @Inject constructor(
     val createRecipeState = _addMealState.asStateFlow()
 
     init {
-        historyDate?.let { date ->
-            viewModelScope.launch {
-                historyRepository
-                    .getHistoryByDate(date)
-                    .collect { historyDay ->
-                        _addMealState.update {
-                            it.copy(historyDay = historyDay)
-                        }
-                    }
-            }
-        }
+
     }
 
     private val _events = MutableSharedFlow<AddMealEvent>()

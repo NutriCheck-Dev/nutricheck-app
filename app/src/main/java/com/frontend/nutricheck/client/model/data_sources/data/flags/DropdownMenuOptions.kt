@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.model.data_sources.data
+package com.frontend.nutricheck.client.model.data_sources.data.flags
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudUpload

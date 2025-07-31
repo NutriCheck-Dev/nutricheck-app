@@ -14,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.frontend.nutricheck.client.model.data_sources.data.DropdownMenuOptions
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 
 @Composable
 fun CustomDetailsButton(

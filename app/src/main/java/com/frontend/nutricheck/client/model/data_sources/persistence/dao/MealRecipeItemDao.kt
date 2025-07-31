@@ -4,22 +4,40 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealRecipeItemWithRecipe
+import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface MealRecipeItemDao : BaseDao<MealRecipeItem> {
+interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
 
     @Insert
-    override suspend fun insert(obj: MealRecipeItem)
+    override suspend fun insert(obj: MealRecipeItemEntity)
 
     @Update
-    override suspend fun update(obj: MealRecipeItem)
+    override suspend fun update(obj: MealRecipeItemEntity)
 
     @Delete
-    override suspend fun delete(obj: MealRecipeItem)
+    override suspend fun delete(obj: MealRecipeItemEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(mealFoodItems: List<MealRecipeItem>)
+    suspend fun insertAll(mealFoodItems: List<MealRecipeItemEntity>)
 
+    @Query("SELECT * FROM meal_recipe_items WHERE recipeId = :recipeId")
+    fun getById(recipeId: String): List<MealRecipeItemEntity>?
+
+    @Query("DELETE FROM meal_recipe_items WHERE mealId = :mealId")
+    suspend fun deleteMealRecipeItemsOfMeal(mealId: String)
+    @Transaction
+    @Query("""
+        SELECT *
+        FROM meal_recipe_items
+        WHERE mealId = :mealId
+    """)
+    suspend fun getItemOfMealById(
+        mealId: String
+    ): MealRecipeItemWithRecipe
 }
