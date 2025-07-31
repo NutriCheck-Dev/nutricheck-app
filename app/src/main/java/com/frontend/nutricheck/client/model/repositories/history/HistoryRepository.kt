@@ -2,6 +2,8 @@ package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
@@ -17,4 +19,8 @@ interface HistoryRepository {
     suspend fun getMealsForDay(date: Date): List<Meal>
     suspend fun addMeal(meal: Meal)
     suspend fun getDailyMacros()
+    suspend fun getMealRecipeItemById(mealId: String, recipeId: String): MealRecipeItem
+    suspend fun updateMealFoodItem(mealFoodItem: MealFoodItem)
+    suspend fun getMealFoodItemById(mealId: String, foodProductId: String): MealFoodItem
+    suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem)
 }

@@ -135,7 +135,7 @@ fun RecipeOverviewBaseContent(
                 )
                 Spacer(Modifier.height(10.dp))
 
-                DishItemList(
+                IngredientList(
                     editing = false,
                     ingredients = ingredients,
                     onItemClick = { ingredient ->

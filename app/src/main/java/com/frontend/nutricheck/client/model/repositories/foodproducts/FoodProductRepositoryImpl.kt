@@ -18,8 +18,7 @@ import javax.inject.Inject
 
 class FoodProductRepositoryImpl @Inject constructor(
     val foodDao: FoodDao,
-    val foodSearchDao: FoodSearchDao,
-    var remoteFoodProducts: List<FoodProduct>
+    val foodSearchDao: FoodSearchDao
 ) : FoodProductRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
     private val timeToLive = TimeUnit.MINUTES.toMillis(30)
@@ -57,15 +56,8 @@ class FoodProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFoodProductById(foodProductId: String): FoodProduct {
-        for (remoteFoodProduct in remoteFoodProducts) {
-            if (remoteFoodProduct.id == foodProductId) {
-                return remoteFoodProduct
-            }
-        }
-        val foodProductEntity = foodDao.getById(foodProductId).first()
-        return DbFoodProductMapper.toFoodProduct(foodProductEntity)
-    }
+    override suspend fun getFoodProductById(foodProductId: String): FoodProduct =
+        DbFoodProductMapper.toFoodProduct(foodDao.getById(foodProductId))
 
     private fun isExpired(lastUpdate: Long?): Boolean =
         lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive

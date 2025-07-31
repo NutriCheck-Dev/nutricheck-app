@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.dao.search
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -8,6 +9,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.sear
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.RecipeWithIngredients
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface RecipeSearchDao {
 
     @Transaction

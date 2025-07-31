@@ -22,7 +22,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 
 @Composable
-fun DishItemList(
+fun FoodComponentList(
     modifier: Modifier = Modifier,
     foodComponents: List<FoodComponent> = emptyList(),
     trailingContent: @Composable ((item: FoodComponent) -> Unit)? = null,
@@ -69,7 +69,7 @@ fun DishItemList(
 }
 
 @Composable
-fun DishItemList(
+fun IngredientList(
     modifier: Modifier = Modifier,
     ingredients: List<Ingredient> = emptyList(),
     trailingContent: @Composable ((item: Ingredient) -> Unit)? = null,

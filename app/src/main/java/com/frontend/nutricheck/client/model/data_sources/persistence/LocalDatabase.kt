@@ -19,6 +19,10 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRec
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDataDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.FoodSearchDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.RecipeSearchDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.FoodSearchEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.RecipeSearchEntity
 
 @Database(
     entities = [
@@ -29,9 +33,11 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightD
         FoodProductEntity::class,
         RecipeEntity::class,
         UserData::class,
-        Weight::class
+        Weight::class,
+        FoodSearchEntity::class,
+        RecipeSearchEntity::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -44,4 +50,6 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun mealDao(): MealDao
     abstract fun mealFoodItemDao(): MealFoodItemDao
     abstract fun mealRecipeItemDao(): MealRecipeItemDao
+    abstract fun recipeSearchDao(): RecipeSearchDao
+    abstract fun foodSearchDao(): FoodSearchDao
 }

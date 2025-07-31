@@ -31,7 +31,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
+import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
@@ -130,7 +130,7 @@ fun SearchPage(
                         selectedOption = searchState.parameters.selectedTab
                     )
 
-                    DishItemList(
+                    FoodComponentList(
                         foodComponents = searchState.parameters.results,
                         trailingContent = { item ->
                             CustomAddButton(onClick = {

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
+import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
@@ -66,7 +66,7 @@ fun AddedComponentsSummary(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            DishItemList(
+            FoodComponentList(
                 foodComponents = emptyList(),//searchState.parameters.addedComponents, TODO: Fix this
                 trailingContent = { item ->
                     CustomCloseButton(onClick = {

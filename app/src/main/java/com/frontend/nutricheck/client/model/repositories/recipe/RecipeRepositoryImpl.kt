@@ -152,8 +152,13 @@ class RecipeRepositoryImpl @Inject constructor(
         recipeId: String,
         foodProductId: String
     ): Ingredient {
-        val ingredientWithFoodProduct = ingredientDao.getIngredientById(recipeId, foodProductId).first()
+        val ingredientWithFoodProduct = ingredientDao.getIngredientById(recipeId, foodProductId)
         return DbIngredientMapper.toIngredient(ingredientWithFoodProduct!!)
+    }
+
+    override suspend fun updateIngredient(ingredient: Ingredient) {
+        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+        ingredientDao.update(ingredientEntity)
     }
 
     private fun isExpired(lastUpdate: Long?): Boolean =

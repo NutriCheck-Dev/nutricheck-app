@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
+import com.frontend.nutricheck.client.ui.view.widgets.IngredientList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
@@ -110,7 +110,7 @@ fun CreateRecipePage(
                     style = styles.titleMedium,
                 )
                 Spacer(Modifier.height(10.dp))
-                DishItemList(
+                IngredientList(
                     ingredients = draft.ingredients,
                     onItemClick = { ingredient ->
                         onItemClick(ingredient)

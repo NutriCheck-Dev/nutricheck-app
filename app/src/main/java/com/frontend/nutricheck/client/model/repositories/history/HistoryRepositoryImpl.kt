@@ -3,6 +3,8 @@ package com.frontend.nutricheck.client.model.repositories.history
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
@@ -16,6 +18,7 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.first
 import okhttp3.MultipartBody
 import java.io.IOException
 import java.util.Date
@@ -115,4 +118,26 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getDailyMacros() {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getMealFoodItemById(
+        mealId: String,
+        foodProductId: String
+    ): MealFoodItem {
+        val mealFoodItemWithProduct = mealFoodItemDao.getItemOfMealById(mealId, foodProductId)
+        return DbMealFoodItemMapper.toMealFoodItem(mealFoodItemWithProduct)
+    }
+
+    override suspend fun updateMealFoodItem(mealFoodItem: MealFoodItem) =
+        mealFoodItemDao.update(DbMealFoodItemMapper.toMealFoodItemEntity(mealFoodItem))
+
+    override suspend fun getMealRecipeItemById(
+        mealId: String,
+        recipeId: String
+    ): MealRecipeItem {
+        val mealRecipeItemWithRecipe = mealRecipeItemDao.getItemOfMealById(mealId)
+        return DbMealRecipeItemMapper.toMealRecipeItem(mealRecipeItemWithRecipe)
+    }
+
+    override suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem) =
+        mealRecipeItemDao.update(DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem))
 }

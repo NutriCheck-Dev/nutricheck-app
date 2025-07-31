@@ -71,7 +71,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         composable(AddScreens.AddRecipe.route) {
             CreateRecipePage(
                 createRecipeViewModel = createRecipeViewModel,
-                onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
+                //onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { addNavController.popBackStack() }
             )
         }
