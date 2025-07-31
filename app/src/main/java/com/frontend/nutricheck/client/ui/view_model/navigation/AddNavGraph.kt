@@ -22,14 +22,14 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorView
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
-    object AddAiMeal : AddScreens("add_ai_meal")
+    object AddAiMeal : AddScreens("add_ai_meal/{mealId}")
     object AddMeal : AddScreens("add_meal?fromAddIngredient={fromAddIngredient}") {
         fun createRoute(fromAddIngredient: Boolean): String {
             return "add_meal?fromAddIngredient=$fromAddIngredient"
         }
     }
     object AddRecipe : AddScreens("add_recipe")
-    object MealOverview : AddScreens("meal_overview")
+    object SearchFoodComponentSummary : AddScreens("search_food_component_summary")
     object HistoryPage : AddScreens("history_page")
     object FoodOverview : AddScreens("food_product_overview/{foodId}") {
         fun createRoute(foodId: String) = "food_product_overview/$foodId"
@@ -74,6 +74,13 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             )
         }
 
+        composable(AddScreens.AddAiMeal.route) {
+            CameraPreviewScreen(
+                addAiMealViewModel = hiltViewModel(),
+                onNavigateToFoodProductOverview = { mealId ->
+                    addNavController.navigate(AddScreens.FoodOverview.createRoute(mealId)) })
+        }
+
 
         composable(
             route = AddScreens.AddMeal.route,
@@ -89,32 +96,21 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             }
             SearchPage(
                 searchViewModel = hiltViewModel(parentEntry),
-                onConfirm = { addNavController.navigate(AddScreens.MealOverview.route)},
+                onConfirm = { addNavController.navigate(AddScreens.SearchFoodComponentSummary.route)},
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { addNavController.popBackStack() }
             )
         }
-        composable(AddScreens.MealOverview.route) { backStackEntry ->
+        composable(AddScreens.SearchFoodComponentSummary.route) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 addNavController.getBackStackEntry(AddScreens.AddMeal.route)
             }
             AddedComponentsSummary(
                 searchViewModel = hiltViewModel(parentEntry),
-                editRecipeViewModel = hiltViewModel(),
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onSave = { addNavController.navigate(AddScreens.HistoryPage.route) },
                 onBack = { addNavController.popBackStack() }
             )
-        }
-
-        composable(AddScreens.AddAiMeal.route) { backStackEntry ->
-            val parentEntry = remember(backStackEntry) {
-                addNavController.getBackStackEntry(AddScreens.AddMeal.route)
-            }
-            CameraPreviewScreen(
-                addAiMealViewModel = hiltViewModel(parentEntry),
-                onNavigateToMealOverview = {
-                    addNavController.navigate(AddScreens.MealOverview.route) })
         }
 
         composable (AddScreens.FoodOverview.route) { backStack ->

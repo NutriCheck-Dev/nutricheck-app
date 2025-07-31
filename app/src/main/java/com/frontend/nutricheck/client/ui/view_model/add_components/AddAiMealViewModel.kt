@@ -140,32 +140,16 @@ class AddAiMealViewModel @Inject constructor(
         val uri = _photoUri.value
         viewModelScope.launch {
             setLoading()
-            uri?.let {
-                val base64Image = uriToBase64(appContext, it)
-                if (base64Image == null) {
-                    setError(appContext.getString(R.string.error_encoding_image))
-                } else {
-
-
-//                    val response = remoteRepository.estimateMeal(base64Image)
-//                    if (response.isSuccessful && response.body() != null) {
-//                        //TODO: handle MealDTO
-//                        emitEvent(AddAiMealEvent.ShowMealOverview)
-//                    } else {
-//                        setError(appContext.getString(R.string.error_encoding_image))
-//                    }
-                }
-            } ?: setError(appContext.getString(R.string.error_encoding_image))
+            // convert the image to
+            // request from server
+            // parse the response
+            // copy from meal and parse daytime
+            // copy to DB
+            // aufruf von foodproductoverview mit mealID
+            // view zerstören sonst wieder camera
             _photoUri.value = null
             setReady()
         }
-    }
-
-    private fun uriToBase64(context: Context, uri: Uri): String? {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-        val bytes = inputStream.readBytes()
-        inputStream.close()
-        return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
     private fun retakePhoto() {

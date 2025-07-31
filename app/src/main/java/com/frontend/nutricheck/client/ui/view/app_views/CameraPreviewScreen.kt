@@ -40,7 +40,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 @Composable
 fun CameraPreviewScreen(
     addAiMealViewModel: AddAiMealViewModel,
-    onNavigateToMealOverview: () -> Unit
+    onNavigateToFoodProductOverview: (String) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -66,7 +66,7 @@ fun CameraPreviewScreen(
         addAiMealViewModel.events.collect { event ->
             when (event) {
                 is AddAiMealEvent.ShowMealOverview -> {
-                    onNavigateToMealOverview()
+                    onNavigateToFoodProductOverview()
                 }
                 else -> { /* other events */ }
             }
