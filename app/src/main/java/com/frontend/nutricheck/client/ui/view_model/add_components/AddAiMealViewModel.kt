@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
@@ -38,6 +39,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.InputStream
+import java.util.Calendar
+import java.util.Date
 
 
 sealed interface AddAiMealEvent {
@@ -155,15 +158,18 @@ class AddAiMealViewModel @Inject constructor(
                 return@launch
             }
             val response = historyRepository.requestAiMeal(multipartBody)
-
+            val dayTime = DayTime.dateToDayTime(Date())
             // parse the response
-            // copy from meal and parse daytime
+            // copy from meal
             // copy to DB
             // aufruf von foodproductoverview mit mealID
-            // view zerstören sonst wieder camera
+
             _photoUri.value = null
             setReady()
         }
+    }
+    private fun retakePhoto() {
+        _photoUri.value = null
     }
     private fun uriToMultipart(uri: Uri?): MultipartBody.Part? {
         if (uri == null) return null
@@ -197,10 +203,6 @@ class AddAiMealViewModel @Inject constructor(
             Log.e("UriToMultipart", "Unexpected error processing URI: $uri", e)
             null
         }
-    }
-
-    private fun retakePhoto() {
-        _photoUri.value = null
     }
     private fun emitEvent(event: AddAiMealEvent) = viewModelScope.launch { _events.emit(event) }
 }
