@@ -3,7 +3,6 @@ import android.content.Context
 import android.net.Uri
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.data_sources.remote.RemoteRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealEvent
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealViewModel
@@ -25,8 +24,6 @@ import kotlinx.coroutines.test.setMain
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddAiMealViewModelTest {
 
-    @Mock
-    private lateinit var remoteRepository: RemoteRepository
 
     @Mock
     private lateinit var context: Context
@@ -38,7 +35,7 @@ class AddAiMealViewModelTest {
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        viewModel = AddAiMealViewModel(context, remoteRepository)
+        viewModel = AddAiMealViewModel(context)
         Dispatchers.setMain(testDispatcher)
     }
 

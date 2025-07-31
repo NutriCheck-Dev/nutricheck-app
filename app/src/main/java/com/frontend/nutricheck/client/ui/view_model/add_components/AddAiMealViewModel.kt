@@ -17,7 +17,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.data_sources.remote.RemoteRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -57,8 +56,7 @@ sealed interface AddAiMealEvent {
  */
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
-    @ApplicationContext private val appContext: Context,
-    private val remoteRepository: RemoteRepository
+    @ApplicationContext private val appContext: Context
 ) : BaseViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest.asStateFlow()
@@ -147,13 +145,15 @@ class AddAiMealViewModel @Inject constructor(
                 if (base64Image == null) {
                     setError(appContext.getString(R.string.error_encoding_image))
                 } else {
-                    val response = remoteRepository.estimateMeal(base64Image)
-                    if (response.isSuccessful && response.body() != null) {
-                        //TODO: handle MealDTO
-                        emitEvent(AddAiMealEvent.ShowMealOverview)
-                    } else {
-                        setError(appContext.getString(R.string.error_encoding_image))
-                    }
+
+
+//                    val response = remoteRepository.estimateMeal(base64Image)
+//                    if (response.isSuccessful && response.body() != null) {
+//                        //TODO: handle MealDTO
+//                        emitEvent(AddAiMealEvent.ShowMealOverview)
+//                    } else {
+//                        setError(appContext.getString(R.string.error_encoding_image))
+//                    }
                 }
             } ?: setError(appContext.getString(R.string.error_encoding_image))
             _photoUri.value = null
