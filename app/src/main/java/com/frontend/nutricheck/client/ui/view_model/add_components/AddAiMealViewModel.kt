@@ -5,6 +5,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -17,6 +19,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,6 +33,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okio.BufferedSink
+import java.io.InputStream
 
 
 sealed interface AddAiMealEvent {
@@ -56,6 +64,7 @@ sealed interface AddAiMealEvent {
  */
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
+    private val historyRepository: HistoryRepositoryImpl,
     @ApplicationContext private val appContext: Context
 ) : BaseViewModel() {
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
@@ -137,11 +146,16 @@ class AddAiMealViewModel @Inject constructor(
     }
 
     private fun submitPhoto() {
-        val uri = _photoUri.value
         viewModelScope.launch {
             setLoading()
-            // convert the image to
-            // request from server
+            val multipartBody = uriToMultipart(_photoUri.value)
+            if (multipartBody == null) {
+                setError(appContext.getString(R.string.error_encoding_image))
+                _photoUri.value = null
+                return@launch
+            }
+            val response = historyRepository.requestAiMeal(multipartBody)
+
             // parse the response
             // copy from meal and parse daytime
             // copy to DB
@@ -149,6 +163,39 @@ class AddAiMealViewModel @Inject constructor(
             // view zerstören sonst wieder camera
             _photoUri.value = null
             setReady()
+        }
+    }
+    private fun uriToMultipart(uri: Uri?): MultipartBody.Part? {
+        if (uri == null) return null
+        val partName = "photo"
+        val defaultFileName = "upload.jpg"
+        val contentResolver = appContext.contentResolver
+        return try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                val mimeType = contentResolver.getType(uri) ?: "application/octet-stream"
+                val fileName = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    cursor.moveToFirst()
+                    if (nameIndex != -1) cursor.getString(nameIndex) else defaultFileName
+                } ?: defaultFileName
+                val requestBody = object : RequestBody() {
+                    override fun contentType() = mimeType.toMediaTypeOrNull()
+                    override fun contentLength(): Long = contentResolver.query(uri, null, null, null, null)
+                        ?.use { cursor ->
+                            val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                            cursor.moveToFirst()
+                            if (sizeIndex != -1) cursor.getLong(sizeIndex) else -1
+                        } ?: -1
+                    override fun writeTo(sink: BufferedSink) {
+                        inputStream.copyTo(sink.outputStream())
+                    }
+                }
+
+                MultipartBody.Part.createFormData(partName, fileName, requestBody)
+            }
+        } catch (e: Exception) {
+            Log.e("UriToMultipart", "Unexpected error processing URI: $uri", e)
+            null
         }
     }
 
