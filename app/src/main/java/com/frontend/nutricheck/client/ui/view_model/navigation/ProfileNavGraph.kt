@@ -33,7 +33,7 @@ fun ProfilePageNavGraph() {
     val profileViewModel : ProfileViewModel = hiltViewModel()
     val profileNavController = rememberNavController()
     val state by profileViewModel.data.collectAsState()
-    val errorMessage by profileViewModel.errorMessage.collectAsState()
+    val uiState by profileViewModel.uiState.collectAsState()
     val userDataDraft by profileViewModel.dataDraft.collectAsState()
     val weightState by profileViewModel.weightData.collectAsState()
     val language by profileViewModel.currentLanguage.collectAsState()
@@ -95,7 +95,7 @@ fun ProfilePageNavGraph() {
         composable(ProfileScreens.PersonalDataPage.route) {
             PersonalDataPage(
                 state = userDataDraft,
-                errorMessage = errorMessage,
+                errorState = uiState,
                 onEvent = profileViewModel::onEvent,
                 onBack = { profileNavController.popBackStack() })
         }
@@ -107,7 +107,7 @@ fun ProfilePageNavGraph() {
         }
         dialog(ProfileScreens.AddWeightDialog.route) {
             AddWeightDialog(
-                errorMessage = errorMessage,
+                errorState = uiState,
                 onEvent = profileViewModel::onEvent,
                 onDismissRequest = { profileNavController.popBackStack() }
             )

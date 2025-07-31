@@ -36,16 +36,17 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view.widgets.SelectOption
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
 
 @Composable
 fun OnboardingGoal(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
+    errorState : BaseViewModel.UiState
 ) {
     val context = LocalContext.current
     var selectedGoal by remember { mutableStateOf<WeightGoal?>(null) }
-    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -108,11 +109,11 @@ fun OnboardingGoal(
                     selected = selectedGoal == goal
                 )
             }
-            error?.let { resId ->
+            if (errorState is BaseViewModel.UiState.Error) {
                 Text(
                     modifier = Modifier
                         .padding(top = 16.dp),
-                    text = stringResource(id = resId),
+                    text = errorState.message,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
                 )

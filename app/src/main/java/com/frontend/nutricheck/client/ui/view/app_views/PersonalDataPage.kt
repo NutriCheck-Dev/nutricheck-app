@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
@@ -48,6 +47,7 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,7 +55,7 @@ import java.util.Locale
 @Composable
 fun PersonalDataPage(
     state: UserData,
-    errorMessage: Int? = null,
+    errorState : BaseViewModel.UiState,
     onEvent: (ProfileEvent) -> Unit,
     onBack: () -> Unit = {}
 
@@ -68,73 +68,72 @@ fun PersonalDataPage(
             title = { Text(stringResource(id = R.string.profile_menu_item_personal_data),) }
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
-        ) {
-            item {
-                Spacer (modifier = Modifier.height(50.dp))
-            }
-
-            personalDataFormItems(
-                userData = state,
-                onEvent = onEvent,
-                onBirthdateClick = {
-                    showDatePicker = true
-                }
-            )
-            item {
-                errorMessage?.let { errorResId ->
-                    Text(
-                        text = stringResource(id = errorResId),
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = {
-                        onEvent(ProfileEvent.OnSaveClick)
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(id = R.string.save))
-                }
-            }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp)
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
         }
-        if (showDatePicker) {
-            val datePickerState =
-                rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
-            DatePickerDialog(
-                onDismissRequest = { showDatePicker = false },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            datePickerState.selectedDateMillis?.let {
-                                selectedDate = Date(it)
-                            }
-                            onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
-                            showDatePicker = false
-                        }
-                    ) {
-                        Text(stringResource(id = R.string.save))
-                    }
+        personalDataFormItems(
+            userData = state,
+            onEvent = onEvent,
+            onBirthdateClick = {
+                showDatePicker = true
+            }
+        )
+        item {
+            if (errorState is BaseViewModel.UiState.Error) {
+                Text(
+                    text = errorState.message,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = {
+                    onEvent(ProfileEvent.OnSaveClick)
                 },
-                dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) {
-                        Text(stringResource(id = R.string.cancel))
-                    }
-                }
+                modifier = Modifier.fillMaxWidth()
             ) {
-                DatePicker(state = datePickerState)
+                Text(stringResource(id = R.string.save))
             }
         }
     }
+    if (showDatePicker) {
+        val datePickerState =
+            rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            selectedDate = Date(it)
+                        }
+                        onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
+                        showDatePicker = false
+                    }
+                ) {
+                    Text(stringResource(id = R.string.save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
 
 
 private fun LazyListScope.personalDataFormItems(
@@ -326,26 +325,3 @@ private fun EditableDropdownRow(
     }
 }
 
-@Preview (showBackground = true)
-@Composable
-fun PersonalDataPreview() {
-    PersonalDataPage(
-        state = (UserData(
-            username = "Peter",
-            birthdate = Date(),
-            gender = Gender.MALE,
-            height = 195.0,
-            weight = 95.0,
-            targetWeight = 95.0,
-            activityLevel = ActivityLevel.REGULARLY,
-            weightGoal = WeightGoal.LOSE_WEIGHT,
-            age = 25,
-            dailyCaloriesGoal = 2500,
-            proteinGoal = 80,
-            carbsGoal = 90,
-            fatsGoal = 20
-        )),
-        onEvent = {},
-        onBack = {}
-    )
-}
