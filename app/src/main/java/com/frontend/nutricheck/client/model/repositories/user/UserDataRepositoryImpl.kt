@@ -28,16 +28,7 @@ class UserDataRepositoryImpl @Inject constructor(
      * Adds a new weight entry or updates an existing one if the date matches.
      * @param newWeight The Weight object to add or update.
      */
-    override suspend fun addWeight(newWeight: Weight) {
-        weightDao.getAllWeights().first()
-        for (weight in weightDao.getAllWeights().first()) {
-            if (weight.date == newWeight.date) {
-                weightDao.update(weight)
-                return
-            }
-        }
-        weightDao.insert(newWeight)
-    }
+    override suspend fun addWeight(newWeight: Weight) { weightDao.insert(newWeight) }
     /**
      * Inserts new user data into the database.
      * @param userData The UserData object to insert.
