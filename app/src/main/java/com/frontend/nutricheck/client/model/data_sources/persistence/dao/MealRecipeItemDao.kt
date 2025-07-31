@@ -38,7 +38,6 @@ interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
         WHERE mealId = :mealId
     """)
     suspend fun getItemOfMealById(
-        mealId: String,
-        recipeId: String
-    ): Flow<MealRecipeItemWithRecipe>
+        mealId: String
+    ): MealRecipeItemWithRecipe
 }

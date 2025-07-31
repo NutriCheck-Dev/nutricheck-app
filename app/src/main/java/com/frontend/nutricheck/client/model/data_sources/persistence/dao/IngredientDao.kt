@@ -46,6 +46,5 @@ interface IngredientDao {
     suspend fun getIngredientById(
         recipeId: String,
         foodProductId: String
-    ): Flow<IngredientWithFoodProduct?>
-
+    ): IngredientWithFoodProduct?
 }
