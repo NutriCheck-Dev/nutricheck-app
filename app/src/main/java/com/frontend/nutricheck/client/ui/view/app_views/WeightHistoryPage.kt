@@ -76,7 +76,7 @@ private fun WeightHistoryItem(weightEntry: Weight) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text =  dateFormat.format(weightEntry.enterDate),
+            text =  dateFormat.format(weightEntry.date),
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
@@ -90,9 +90,9 @@ private fun WeightHistoryItem(weightEntry: Weight) {
 @Composable
 fun WeightHistoryPagePreview() {
     val sampleWeights = listOf(
-        Weight(enterDate = Date(), value = 70.0),
-        Weight(enterDate = Date(), value = 69.5),
-        Weight(enterDate = Date(), value = 69.0)
+        Weight(date = Date(), value = 70.0),
+        Weight(date = Date(), value = 69.5),
+        Weight(date = Date(), value = 69.0)
     )
     WeightHistoryPage(
         weightState = sampleWeights,

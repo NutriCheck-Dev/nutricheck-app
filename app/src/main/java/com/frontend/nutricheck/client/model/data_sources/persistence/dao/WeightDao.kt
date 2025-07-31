@@ -20,6 +20,6 @@ interface WeightDao : BaseDao<Weight> {
     @Delete
     override suspend fun delete(obj: Weight)
 
-    @Query("SELECT * FROM weights ORDER BY enterDate DESC")
+    @Query("SELECT * FROM weights ORDER BY date DESC")
     fun getAllWeights(): Flow<List<Weight>>
 }

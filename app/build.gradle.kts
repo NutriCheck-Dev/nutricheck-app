@@ -99,10 +99,11 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.core.testing)
-    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.inline)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation (libs.mockito.kotlin)
+    testImplementation (libs.androidx.datastore.preferences)
+    testImplementation(libs.mockito.inline)
 
 }

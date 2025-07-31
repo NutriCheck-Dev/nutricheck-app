@@ -10,5 +10,6 @@ interface UserDataRepository {
     suspend fun addUserData(userData: UserData)
     suspend fun updateUserData(userData: UserData)
     suspend fun getTargetWeight(): Double
-    suspend fun getCalorieGoal(): Int
+    suspend fun getDailyCalorieGoal(): Int
+    suspend fun getNutrientGoal(): List<Int>
 }

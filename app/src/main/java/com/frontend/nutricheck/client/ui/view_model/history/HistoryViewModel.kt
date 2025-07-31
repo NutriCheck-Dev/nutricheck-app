@@ -79,7 +79,7 @@ class HistoryViewModel @Inject constructor(
     override fun displayCalorieGoal(day: Date) {
         viewModelScope.launch {
             val totalCalories = historyRepository.getCaloriesOfDay(day)
-            val goalCalories = userDataRepository.getCalorieGoal()
+            val goalCalories = userDataRepository.getDailyCalorieGoal()
             _historyState.update {
                 it.copy(
                     totalCalories = totalCalories,

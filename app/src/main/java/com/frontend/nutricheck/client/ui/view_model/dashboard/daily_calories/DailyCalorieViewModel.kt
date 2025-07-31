@@ -23,7 +23,7 @@ class DailyCalorieViewModel @Inject constructor(
     private val historyRepository : HistoryRepository
 ) : BaseDailyCalorieViewModel() {
 
-    val _dailyCalorieState = MutableStateFlow(DailyCalorieState())
+    private val _dailyCalorieState = MutableStateFlow(DailyCalorieState())
     val dailyCalorieState = _dailyCalorieState.asStateFlow()
     init {
         displayDailyCalories()
@@ -32,8 +32,8 @@ class DailyCalorieViewModel @Inject constructor(
      override fun displayDailyCalories() {
          val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
          viewModelScope.launch {
-             val calories = historyRepository.getCaloriesOfDay(currentDate)
-             val goal = userDataRepository.getCalorieGoal()
+             val calories = historyRepository.getCaloriesOfDay(currentDate) // z.B. 850
+             val goal = userDataRepository.getDailyCalorieGoal()
              _dailyCalorieState.value = DailyCalorieState(
                  dailyCalories = calories,
                  calorieGoal = goal
