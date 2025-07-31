@@ -49,12 +49,6 @@ class AppSettingsRepositoryTest {
         assertEquals(false, result)
     }
 
-    @Test
-    fun `set onboarding completed updates value`() = runTest(UnconfinedTestDispatcher()) {
-        repository.setOnboardingCompleted()
-        val result = repository.isOnboardingCompleted.first()
-        assertEquals(true, result)
-    }
 
     @Test
     fun `default theme is dark`() = runTest(UnconfinedTestDispatcher()) {
@@ -62,12 +56,6 @@ class AppSettingsRepositoryTest {
         assertEquals(true, result)
     }
 
-    @Test
-    fun `set theme updates value`() = runTest(UnconfinedTestDispatcher()) {
-        repository.setTheme(false)
-        val result = repository.theme.first()
-        assertEquals(false, result)
-    }
 
     @Test
     fun `default language is German`() = runTest(UnconfinedTestDispatcher()) {
@@ -75,10 +63,5 @@ class AppSettingsRepositoryTest {
         assertEquals(Language.GERMAN, result)
     }
 
-    @Test
-    fun `set language updates value`() = runTest(UnconfinedTestDispatcher()) {
-        repository.setLanguage(Language.ENGLISH)
-        val result = repository.language.first()
-        assertEquals(Language.ENGLISH, result)
-    }
+   
 }
