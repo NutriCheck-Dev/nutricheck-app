@@ -14,7 +14,7 @@ interface HistoryRepository {
     suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal>
     suspend fun deleteMeal(meal: Meal)
     suspend fun updateMeal(meal: Meal)
-    suspend fun getMealsForDay(date: Date): List<MealWithAll>
-    suspend fun addMeal(meal: MealEntity, mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?, mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?)
+    suspend fun getMealsForDay(date: Date): List<Meal>
+    suspend fun addMeal(meal: Meal)
     suspend fun getDailyMacros()
 }

@@ -1,19 +1,17 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealFoodItemMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
-import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealRecipeItemMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
@@ -45,7 +43,8 @@ class HistoryRepositoryImpl @Inject constructor(
         }.toInt()
     }
 
-  override suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal> {
+
+    override suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal> {
         return try {
             val response = api.estimateMeal(file)
             val body = response.body()
@@ -70,50 +69,50 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteMeal(meal: Meal) {
-        mealDao.deleteById(meal.id)
+        mealDao.delete(DbMealMapper.toMealEntity(meal))
     }
 
     override suspend fun updateMeal(meal: Meal) {
-        val entity = DbMealMapper.toMealEntity(meal)
-        mealDao.update(entity)
+
+        mealDao.update(DbMealMapper.toMealEntity(meal))
+
+        val mealFoodItemsEntities = meal.mealFoodItems.map { DbMealFoodItemMapper.toMealFoodItemEntity(it) }
+        mealFoodItemDao.deleteMealFoodItemsOfMeal(meal.id)
+        mealFoodItemDao.insertAll(mealFoodItemsEntities)
+
+        val mealRecipeItemEntities = meal.mealRecipeItem.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+        mealRecipeItemDao.deleteMealRecipeItemsOfMeal(meal.id)
+        mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
 
-    override suspend fun getMealsForDay(date: Date): List<MealWithAll> {
-        return mealDao.getMealsWithAllForDay(date)
+    override suspend fun getMealsForDay(date: Date): List<Meal> {
+        return mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
     }
 
+    override suspend fun addMeal(meal: Meal) {
+        //check if meal exists
+        val mealEntities = mealDao.getMealsWithAllForDay(meal.date)
+        mealEntities.forEach { mealEntity -> if (mealEntity.meal.id.equals(meal.id)) throw Exception() }//error duplicate meal
 
-    override suspend fun addMeal(
-        meal: MealEntity,
-        mealFoodItemsWithProduct: List<Pair<Double, FoodProductEntity>>?,
-        mealRecipeItemsWithRecipeEntity: List<Pair<Double, RecipeEntity>>?
-    ) {
-        mealDao.insert(meal)
-        val mealId = meal.id
+        //check if foodProduct exists
+        val foodProducts : List<FoodProduct> = meal.mealFoodItems.map { it.foodProduct }
+        for (foodProduct in foodProducts) {
+            if (!foodDao.exists(foodProduct.id)) {
+                foodDao.insert(DbFoodProductMapper.toFoodProductEntity(foodProduct))
+            }
+        }
 
-        val mealFoodItems = mealFoodItemsWithProduct?.map { (quantity, foodProduct) ->
-            MealFoodItemEntity(
-                mealId = mealId,
-                foodProductId = foodProduct.id,
-                quantity = quantity
-            )
-        } ?: emptyList()
+        val mealEntity = DbMealMapper.toMealEntity(meal)
+        mealDao.insert(mealEntity)
 
-        val mealRecipeItems = mealRecipeItemsWithRecipeEntity?.map { (quantity, recipe) ->
-            MealRecipeItemEntity(
-                mealId = mealId,
-                recipeId = recipe.id,
-                quantity = quantity
-            )
-        } ?: emptyList()
+        val mealFoodItemsEntities = meal.mealFoodItems.map { DbMealFoodItemMapper.toMealFoodItemEntity(it) }
+        mealFoodItemDao.insertAll(mealFoodItemsEntities)
 
-        foodDao.insertAll(mealFoodItemsWithProduct?.map { it.second } ?: emptyList())
-
-        mealFoodItemDao.insertAll(mealFoodItems)
-        mealRecipeItemDao.insertAll(mealRecipeItems)
+        val mealRecipeItemEntities = meal.mealRecipeItem.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+        mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
 
     override suspend fun getDailyMacros() {
-
+        TODO("Not yet implemented")
     }
 }

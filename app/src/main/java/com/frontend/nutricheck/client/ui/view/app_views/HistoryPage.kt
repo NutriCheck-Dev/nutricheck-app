@@ -49,11 +49,12 @@ fun HistoryPage(
     val scrollState = rememberScrollState()
 
     val mealsGrouped = state.mealsGrouped
+    /**
     val breakfastItems = buildDisplayMealItems(mealsGrouped[DayTime.BREAKFAST] ?: emptyList())
     val lunchItems = buildDisplayMealItems(mealsGrouped[DayTime.LUNCH] ?: emptyList())
     val dinnerItems = buildDisplayMealItems(mealsGrouped[DayTime.DINNER] ?: emptyList())
     val snackItems = buildDisplayMealItems(mealsGrouped[DayTime.SNACK] ?: emptyList())
-
+    */
     LaunchedEffect(key1 = Unit) {
         historyViewModel.events.collect { event ->
             when (event) {
@@ -121,13 +122,13 @@ fun HistoryPage(
             state = state
         )
         Spacer(modifier = Modifier.height(20.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", breakfastItems.sumOf { it.quantity * it.calories }, items = breakfastItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.BREAKFAST))})
+        //MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", breakfastItems.sumOf { it.quantity * it.calories }, items = breakfastItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.BREAKFAST))})
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Mittagessen", lunchItems.sumOf { it.quantity * it.calories }, items= lunchItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.LUNCH))})
+        //MealBlock(modifier = Modifier.padding(7.dp), "Mittagessen", lunchItems.sumOf { it.quantity * it.calories }, items= lunchItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.LUNCH))})
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Abendessen", dinnerItems.sumOf { it.quantity * it.calories }, items = dinnerItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.DINNER))})
+        //MealBlock(modifier = Modifier.padding(7.dp), "Abendessen", dinnerItems.sumOf { it.quantity * it.calories }, items = dinnerItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.DINNER))})
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Snack", snackItems.sumOf { it.quantity * it.calories }, items = snackItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.SNACK))})
+        //MealBlock(modifier = Modifier.padding(7.dp), "Snack", snackItems.sumOf { it.quantity * it.calories }, items = snackItems, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.SNACK))})
     }
 }
 

@@ -2,18 +2,13 @@ package com.frontend.nutricheck.client.model.repositories.recipe
 
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.dto.ReportDTO
-import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbIngredientMapper
-import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealFoodItemMapper
-import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
@@ -28,71 +23,8 @@ import kotlin.jvm.java
 class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
     private val ingredientDao: IngredientDao,
-    private val mealDao: MealDao,
-    private val mealRecipeItemDao: MealRecipeItemDao,
-    private val mealFoodItemDao: MealFoodItemDao,
 ) : RecipeRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
-    private var remoteRecipes: List<Recipe> = emptyList()
-
-    override suspend fun insertRecipe(recipe: Recipe) {
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
-        recipeDao.insert(recipeEntity)
-        recipe.ingredients.forEach { ingredient ->
-            val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
-            ingredientDao.insert(ingredientEntity)
-        }
-    }
-
-    override suspend fun getMyRecipes(): List<Recipe> {
-        val recipesWithIngredients = recipeDao.getAllRecipesWithIngredients()
-        val list = recipesWithIngredients.first()
-        return list.map { recipeWithIngredients ->
-            DbRecipeMapper.toRecipe(recipeWithIngredients)
-        }
-    }
-
-    override suspend fun getRecipeById(recipeId: String): Recipe {
-        for (recipe in remoteRecipes) {
-            if (recipe.id == recipeId) {
-                return recipe
-            }
-        }
-        val recipeWithIngredients = recipeDao.getRecipeWithIngredientsById(recipeId).first()
-        return DbRecipeMapper.toRecipe(recipeWithIngredients)
-    }
-
-    override suspend fun deleteRecipe(recipe: Recipe) {
-
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
-        val mealIdsWithRecipe = mealRecipeItemDao.getById(recipe.id)?.map { it.mealId }
-
-        recipeDao.delete(recipeEntity) //deletes ingredients and mealRecipeItems
-
-        //check if recipe in mealRecipeItem
-        if (mealIdsWithRecipe != null) {
-            for (mealId in mealIdsWithRecipe) {
-                val meal = DbMealMapper.toMeal(mealDao.getById(mealId))
-                val mealFoodItemsFromIngredients = recipe.ingredients.map { MealFoodItem(
-                    mealId = mealId,
-                    foodProduct = it.foodProduct,
-                    quantity = it.quantity
-                ) }
-                val totalMealFoodItems = meal.mealFoodItems + mealFoodItemsFromIngredients
-                //check for same foodProduct?/ How to handle different quantity of foodProduct to recipe??
-                totalMealFoodItems.map {mealFoodItemDao.insert(DbMealFoodItemMapper.toMealFoodItemEntity(it))}
-            }
-        }
-    }
-
-    override suspend fun updateRecipe(recipe: Recipe) {
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
-        val ingredientsEntity = recipe.ingredients.map { DbIngredientMapper.toIngredientEntity(it) }
-        recipeDao.update(recipeEntity)
-        ingredientDao.deleteIngredientsOfRecipe(recipeEntity.id)
-        ingredientsEntity.forEach { ingredientDao.insert(it) }
-    }
-
     override suspend fun searchRecipe(recipeName: String): Result<List<Recipe>> {
         return try {
             val response = api.searchRecipes(recipeName)
@@ -101,7 +33,6 @@ class RecipeRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful && body != null) {
                 val recipes: List<Recipe> = body.map { RecipeMapper.toData(it) }
-                this.remoteRecipes = recipes
                 Result.Success(recipes)
             } else if (errorBody != null) {
                 val gson = Gson()
@@ -117,6 +48,54 @@ class RecipeRepositoryImpl @Inject constructor(
         } catch (e: IOException) {
             Result.Error(message = "Connection issue>")
         }
+    }
+
+    override suspend fun insertRecipe(recipe: Recipe) {
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
+        recipeDao.insert(recipeEntity)
+        recipe.ingredients.forEach { ingredient ->
+            val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+            ingredientDao.insert(ingredientEntity)
+        }
+    }
+
+    override suspend fun getMyRecipes(): List<Recipe> {
+        val recipesWithIngredient = recipeDao.getAllRecipesWithIngredients()
+        val list = recipesWithIngredient.first()
+        return list.map { recipeWithIngredients ->
+            DbRecipeMapper.toRecipe(recipeWithIngredients)
+        }
+    }
+
+    override suspend fun getRecipeById(recipeId: String): Recipe {
+        val recipeWithIngredient = recipeDao.getRecipeWithIngredientsById(recipeId).first()
+        return DbRecipeMapper.toRecipe(recipeWithIngredient)
+    }
+
+    override suspend fun deleteRecipe(recipe: Recipe) {
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
+        recipeDao.delete(recipeEntity)
+        ingredientDao.deleteIngredientsOfRecipe(recipe.id)
+    }
+
+    override suspend fun updateRecipe(recipe: Recipe) {
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
+        recipeDao.update(recipeEntity)
+    }
+
+    override suspend fun addIngredient(ingredient: Ingredient) {
+        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+        ingredientDao.insert(ingredientEntity)
+    }
+
+    override suspend fun updateIngredient(ingredient: Ingredient) {
+        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+        ingredientDao.update(ingredientEntity)
+    }
+
+    override suspend fun removeIngredient(ingredient: Ingredient) {
+        val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+        ingredientDao.delete(ingredientEntity)
     }
 
     override suspend fun uploadRecipe(recipe: Recipe): Result<Recipe> {
@@ -140,6 +119,24 @@ class RecipeRepositoryImpl @Inject constructor(
             }
         } catch (io: IOException) {
             Result.Error(message = "Connection issue")
+        }
+    }
+
+    override suspend fun downloadRecipe(recipeId: String): Result<Recipe> {
+        val response = api.downloadRecipe(recipeId)
+        return try {
+            if (response.isSuccessful) {
+                val recipeDto = response.body()
+                if (recipeDto != null) {
+                    Result.Success(RecipeMapper.toData(recipeDto))
+                } else {
+                    Result.Error(message = "Leeres Rezept erhalten.")
+                }
+            } else {
+                Result.Error(code = response.code(), message = response.errorBody()?.string())
+            }
+        }  catch (io: IOException) {
+            Result.Error(message = "Bitte überprüfen Sie Ihre Internetverbindung.")
         }
     }
 

@@ -11,6 +11,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
@@ -184,14 +185,13 @@ class FoodSearchViewModel @Inject constructor(
         mealFoodItemsWithProduct = mealFoodItemsWithProduct?.takeIf { it.isNotEmpty() }
         mealRecipeItemsWithRecipeEntity = mealRecipeItemsWithRecipeEntity?.takeIf { it.isNotEmpty() }
 
-        viewModelScope.launch {
+        /**viewModelScope.launch {
             historyRepository.addMeal(
-                meal = meal,
-                mealFoodItemsWithProduct = mealFoodItemsWithProduct,
-                mealRecipeItemsWithRecipeEntity = mealRecipeItemsWithRecipeEntity
+                meal = DbMealMapper.toMeal(meal).meal,
             )
             _searchState.update { SearchState() }
-        }
+        }*/
+        //Marcs version fix
     }
 
 }

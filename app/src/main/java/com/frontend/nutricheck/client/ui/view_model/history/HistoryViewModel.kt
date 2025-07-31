@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.history
 
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
@@ -19,7 +20,7 @@ import javax.inject.Inject
 data class HistoryState(
     val selectedDate: Date = Date(),
     val nutritionOfDay: Map<String, Int> = emptyMap(),
-    val mealsGrouped: Map<DayTime, List<MealWithAll>> = emptyMap(),
+    val mealsGrouped: Map<DayTime, List<Meal>> = emptyMap(),
     val foodId: String = "",
     val totalCalories: Int = 0,
     val goalCalories: Int = 0,
@@ -91,8 +92,8 @@ class HistoryViewModel @Inject constructor(
     //override fun displayNutritionOfDay(day: Date) {}
     override fun displayMealsOfDay(day: Date) {
         viewModelScope.launch {
-            val mealsWithAll = historyRepository.getMealsForDay(day)
-            val groupedMeals = mealsWithAll.groupBy { it.meal.dayTime }
+            val meals = historyRepository.getMealsForDay(day)
+            val groupedMeals = meals.groupBy { it.dayTime }
             _historyState.update {
                 it.copy(
                     mealsGrouped = groupedMeals
