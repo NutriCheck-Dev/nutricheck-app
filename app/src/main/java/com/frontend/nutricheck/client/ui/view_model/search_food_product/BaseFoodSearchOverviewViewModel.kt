@@ -5,7 +5,7 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 
 abstract class BaseFoodSearchOverviewViewModel : BaseViewModel () {
     abstract fun onClickSearchFoodComponent()
-    abstract fun onClickAddFoodComponent(foodComponent: FoodComponent)
     abstract fun onClickRemoveFoodComponent(foodComponent: FoodComponent)
 
+    abstract fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>)
 }

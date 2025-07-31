@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.model.data_sources.data
+package com.frontend.nutricheck.client.model.data_sources.data.flags
 
 enum class ServingSize(private val amount: Int) {
     ONEGRAM(1),

@@ -6,32 +6,59 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFo
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.FoodProductMapper
+import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.FoodSearchDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.FoodSearchEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class FoodProductRepositoryImpl @Inject constructor(
-    val foodDao: FoodDao
+    val foodDao: FoodDao,
+    val foodSearchDao: FoodSearchDao
 ) : FoodProductRepository {
     private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
+    private val timeToLive = TimeUnit.MINUTES.toMillis(30)
 
-    override suspend fun searchFoodProduct(foodProductName: String, language: String): List<FoodProduct> {
-        val response = api.searchFoodProduct(foodProductName, language)
-        if (response.isSuccessful) {
-            return response.body()?.map { FoodProductMapper.toEntity(it) } ?: emptyList()
-        } else {
-            val msg = when (response.code()) {
-                400 -> "Ungültige Anfrage (400)"
-                401 -> "Nicht autorisiert (401)"
-                404 -> "Nicht gefunden (404)"
-                500 -> "Serverfehler (500)"
-                else -> "Unbekannter Fehler (${response.code()})"
+    override suspend fun searchFoodProducts(foodProductName: String, language: String): Flow<Result<List<FoodProduct>>> = flow {
+        val cached = foodSearchDao.resultsFor(foodProductName)
+            .firstOrNull()
+            ?.map { DbFoodProductMapper.toFoodProduct(it) }
+            ?: emptyList()
+        emit(Result.Success(cached))
+
+        val lastUpdate = foodSearchDao.getLatestUpdatedFor(foodProductName)
+        if (isExpired(lastUpdate)) {
+            val networkResult = try {
+                val response = api.searchFoodProduct(foodProductName, language)
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    val now = System.currentTimeMillis()
+                    val foodProducts = body.map { FoodProductMapper.toData(it) }
+                    val foodProductEntities = foodProducts.map { DbFoodProductMapper.toFoodProductEntity(it) }
+                    foodDao.insertAll(foodProductEntities)
+                    foodSearchDao.clearQuery(foodProductName)
+                    foodSearchDao.upsertEntities(foodProductEntities.map {
+                        FoodSearchEntity(foodProductName, it.id, now)
+                    })
+                    Result.Success(foodProducts)
+                } else {
+                    val message = response.errorBody()!!.string()
+                    Result.Error(code = response.code(), message = message)
+                }
+            } catch (io: okio.IOException) {
+                Result.Error(message = "Oops, an error has occurred. Please check your internet connection.")
             }
-            throw Exception(msg)
+            emit(networkResult)
         }
     }
 
-    override suspend fun getFoodProductById(foodProductId: String): FoodProduct {
-        val foodProductEntity = foodDao.getById(foodProductId).first()
-        return DbFoodProductMapper.toFoodProduct(foodProductEntity)
-    }
+    override suspend fun getFoodProductById(foodProductId: String): FoodProduct =
+        DbFoodProductMapper.toFoodProduct(foodDao.getById(foodProductId))
+
+    private fun isExpired(lastUpdate: Long?): Boolean =
+        lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive
 }

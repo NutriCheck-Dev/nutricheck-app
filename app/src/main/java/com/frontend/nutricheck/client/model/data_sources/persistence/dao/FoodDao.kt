@@ -21,12 +21,11 @@ interface FoodDao : BaseDao<FoodProductEntity> {
     @Delete
     override suspend fun delete(obj: FoodProductEntity)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(mealFoodItems: List<FoodProductEntity>)
+    suspend fun insertAll(foodProductEntities: List<FoodProductEntity>)
 
     @Query("SELECT * FROM foods WHERE id = :id")
-    fun getById(id: String): Flow<FoodProductEntity>
+    fun getById(id: String): FoodProductEntity
 
-    @Query("SELECT * FROM foods")
-    fun getAll(): Flow<List<FoodProductEntity>>
-
+    @Query("SELECT EXISTS(SELECT 1 FROM foods WHERE id = :id)")
+    suspend fun exists(id: String): Boolean
 }

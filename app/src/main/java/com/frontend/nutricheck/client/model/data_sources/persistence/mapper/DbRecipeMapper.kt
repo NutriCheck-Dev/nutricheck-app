@@ -20,22 +20,22 @@ object DbRecipeMapper {
         )
 
     fun toRecipe(recipeWithIngredients: RecipeWithIngredients) : Recipe {
-        val recipeEntity = recipeWithIngredients.recipeEntity
+        val recipeEntity = recipeWithIngredients.recipe
         val ingredientEntities = recipeWithIngredients.ingredients
-        val ingredients = ingredientEntities.map { ingredientWithFoodProduct ->
-            DbIngredientMapper.toIngredient(ingredientWithFoodProduct)
-        }
-        return Recipe(
+        val recipe = Recipe(
             id = recipeEntity.id,
             name = recipeEntity.name,
             calories = recipeEntity.calories,
             carbohydrates = recipeEntity.carbohydrates,
             protein = recipeEntity.protein,
             fat = recipeEntity.fat,
-            ingredients = ingredients,
             servings = recipeEntity.servings.toInt(),
             instructions = recipeEntity.instructions,
             visibility = recipeEntity.visibility,
+            ingredients = ingredientEntities.map { ingredientWithFoodProduct ->
+                DbIngredientMapper.toIngredient(ingredientWithFoodProduct)
+            }
         )
+        return recipe
     }
 }

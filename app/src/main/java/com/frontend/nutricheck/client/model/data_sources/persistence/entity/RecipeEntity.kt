@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 
 @Entity(tableName = "recipes")
 data class RecipeEntity(

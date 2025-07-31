@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.model.data_sources.data
+package com.frontend.nutricheck.client.model.data_sources.data.flags
 
 import android.content.Context
 import com.frontend.nutricheck.client.R

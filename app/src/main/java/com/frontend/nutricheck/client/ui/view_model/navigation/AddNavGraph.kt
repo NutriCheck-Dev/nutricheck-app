@@ -18,8 +18,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.create.CreateRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
@@ -46,7 +45,7 @@ sealed class AddScreens(val route: String) {
 @Composable
 fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     val addNavController = rememberNavController()
-    val createRecipeViewModel: CreateRecipeViewModel = hiltViewModel()
+    val createRecipeViewModel: RecipeEditorViewModel = hiltViewModel()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
         if (foodComponent is FoodProduct) { addNavController.navigate(AddScreens.FoodOverview.createRoute(foodComponent.id))
@@ -72,7 +71,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         composable(AddScreens.AddRecipe.route) {
             CreateRecipePage(
                 createRecipeViewModel = createRecipeViewModel,
-                onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
+                //onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { addNavController.popBackStack() }
             )
         }
@@ -105,7 +104,6 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
             AddedComponentsSummary(
                 searchViewModel = searchViewModel,
-                editRecipeViewModel = hiltViewModel(),
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onSave = { addNavController.navigate(AddScreens.HistoryPage.route) },
                 onBack = { addNavController.popBackStack() }
@@ -135,7 +133,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 )
             }
             val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(graphEntry)
-            val editRecipeViewModel: EditRecipeViewModel = hiltViewModel(graphEntry)
+            val editRecipeViewModel: RecipeEditorViewModel = hiltViewModel(graphEntry)
             val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(graphEntry)
             RecipeOverview(
                 recipeOverviewViewModel = recipeOverviewViewModel,

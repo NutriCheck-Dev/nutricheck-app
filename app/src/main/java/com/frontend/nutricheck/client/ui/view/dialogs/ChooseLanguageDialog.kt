@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.Language
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Language
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 
 @Composable
