@@ -1,5 +1,7 @@
 package com.nutricheck.frontend.viewmodels
 
+
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
@@ -11,6 +13,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.User
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileViewModel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.google.common.truth.Truth.assertThat
@@ -30,6 +33,7 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -58,11 +62,16 @@ class ProfileViewModelTest {
     @Mock
     private lateinit var appSettingsRepository: AppSettingsRepository
 
+    @Mock
+    private lateinit var appContext: Context
+
     private lateinit var profileViewModel: ProfileViewModel
+
 
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
+        whenever(appContext.getString(any())).thenReturn("error message")
     }
     @Test
     fun `init loads user data from repository and updates data and dataDraft`() = runTest {
@@ -84,10 +93,10 @@ class ProfileViewModelTest {
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
         // When
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         // Wait for the ViewModel to initialize and load data
-        profileViewModel.data.first() { it == userData }
-        profileViewModel.dataDraft.first() { it == userData }
+        profileViewModel.data.first { it == userData }
+        profileViewModel.dataDraft.first { it == userData }
         // Then
         assertThat(profileViewModel.data.value).isEqualTo(userData)
         assertThat(profileViewModel.dataDraft.value).isEqualTo(userData)
@@ -112,13 +121,14 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         // When
         profileViewModel.onEvent(ProfileEvent.UpdateUserNameDraft("TestUser"))
 
         // Then
-        assertThat(profileViewModel.errorMessage.value).isNull()
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Ready::class.java)
         assertThat(profileViewModel.dataDraft.value.username).isEqualTo("TestUser")
     }
     @Test
@@ -140,13 +150,13 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         // When
         profileViewModel.onEvent(ProfileEvent.UpdateUserNameDraft(""))
 
         // Then
-        assertThat(profileViewModel.errorMessage.value)
-            .isEqualTo(R.string.userData_error_name_required)
+        assertThat(profileViewModel.uiState.value)
+                   .isInstanceOf(BaseViewModel.UiState.Error::class.java)
         assertThat(profileViewModel.dataDraft.value.username).isEmpty()
     }
 
@@ -168,14 +178,15 @@ class ProfileViewModelTest {
                 carbsGoal = 0,
                 fatsGoal = 0
             ))
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         // When
         val newBirthdate = Date(946684800000L) // 2000-01-01
         profileViewModel.onEvent(ProfileEvent.UpdateUserBirthdateDraft(birthdate = newBirthdate))
 
         // Then
-        assertThat(profileViewModel.errorMessage.value).isNull()
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Ready::class.java)
         assertThat(profileViewModel.dataDraft.value.birthdate).isEqualTo(newBirthdate)
 
     }
@@ -199,7 +210,7 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(initialUserData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         // Ensure initial data is loaded
         profileViewModel.data.first { it == initialUserData }
         profileViewModel.dataDraft.first { it == initialUserData }
@@ -210,8 +221,8 @@ class ProfileViewModelTest {
         UpdateUserBirthdateDraft(birthdate = invalidBirthdate))
 
         // Then
-        assertThat(profileViewModel.errorMessage.value)
-            .isEqualTo(R.string.userData_error_birthdate_required)
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Error::class.java)
         assertThat(profileViewModel.dataDraft.value.birthdate).isEqualTo(initialBirthdate)
     }
     @Test
@@ -233,13 +244,13 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.height == 0.0 }
         profileViewModel.dataDraft.first { it.height == 0.0 }
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserHeightDraft("180"))
-
-        assertThat(profileViewModel.errorMessage.value).isNull()
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Ready::class.java)
         assertThat(profileViewModel.dataDraft.value.height).isEqualTo(180.0)
     }
     @Test
@@ -261,14 +272,13 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.height == 180.0 }
         profileViewModel.dataDraft.first { it.height == 180.0 }
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserHeightDraft("-10"))
-
-        assertThat(profileViewModel.errorMessage.value)
-            .isEqualTo(R.string.userData_error_height_required)
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Error::class.java)
         assertThat(profileViewModel.dataDraft.value.height).isEqualTo(180.0)
     }
 
@@ -291,13 +301,13 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.weight == 0.0 }
         profileViewModel.dataDraft.first { it.weight == 0.0 }
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserWeightDraft("75"))
-
-        assertThat(profileViewModel.errorMessage.value).isNull()
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Ready::class.java)
         assertThat(profileViewModel.dataDraft.value.weight).isEqualTo(75.0)
     }
 
@@ -320,14 +330,13 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.weight == 80.0 }
         profileViewModel.dataDraft.first { it.weight == 80.0 }
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserWeightDraft("-10")) // Invalid weight
-
-        assertThat(profileViewModel.errorMessage.value)
-            .isEqualTo(R.string.userData_error_weight_required)
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Error::class.java)
         assertThat(profileViewModel.dataDraft.value.weight).isEqualTo(80.0)
     }
     @Test
@@ -349,13 +358,13 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.targetWeight == 0.0 }
         profileViewModel.dataDraft.first { it.targetWeight == 0.0 }
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserTargetWeightDraft("70"))
-
-        assertThat(profileViewModel.errorMessage.value).isNull()
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Ready::class.java)
         assertThat(profileViewModel.dataDraft.value.targetWeight).isEqualTo(70.0)
     }
     @Test
@@ -377,14 +386,13 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.targetWeight == 80.0 }
         profileViewModel.dataDraft.first { it.targetWeight == 80.0 }
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserTargetWeightDraft("-5"))
-
-        assertThat(profileViewModel.errorMessage.value)
-            .isEqualTo(R.string.userData_error_target_weight_required)
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Error::class.java)
         assertThat(profileViewModel.dataDraft.value.targetWeight).isEqualTo(80.0)
     }
 
@@ -407,7 +415,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserActivityLevelDraft(ActivityLevel.REGULARLY))
 
@@ -433,7 +441,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserWeightGoalDraft(WeightGoal.MAINTAIN_WEIGHT))
 
@@ -458,7 +466,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserGenderDraft(Gender.FEMALE))
 
@@ -482,7 +490,7 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.dataDraft.first { it == userData }
         profileViewModel.onEvent(ProfileEvent.UpdateUserNameDraft("NewTestUser"))
         profileViewModel.onEvent(ProfileEvent.UpdateUserHeightDraft("185"))
@@ -520,7 +528,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it == userData }
         profileViewModel.dataDraft.first { it == userData }
 
@@ -552,16 +560,15 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it == userData }
         profileViewModel.dataDraft.first { it == userData }
 
         val date = Date(1577836800000L) // 2020-01-01
         profileViewModel.onEvent(ProfileEvent.SaveNewWeight("-5", date))
         advanceUntilIdle()
-
-        assertThat(profileViewModel.errorMessage.value).
-        isEqualTo(R.string.userData_error_weight_required)
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Error::class.java)
         verify(userDataRepository, org.mockito.kotlin.never()).addWeight(org.mockito.kotlin.any())
     }
 
@@ -584,14 +591,13 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         val invalidDate = Date(915148800000L) // 1999-01-01, which is before the birthdate
         profileViewModel.onEvent(ProfileEvent.SaveNewWeight("80", invalidDate))
         advanceUntilIdle()
-
-        assertThat(profileViewModel.errorMessage.value)
-            .isEqualTo(R.string.userData_error_invalid_date)
+        assertThat(profileViewModel.uiState.value)
+            .isInstanceOf(BaseViewModel.UiState.Error::class.java)
         verify(userDataRepository, org.mockito.kotlin.never()).addWeight(org.mockito.kotlin.any())
     }
     @Test
@@ -613,7 +619,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         val event = async { profileViewModel.events.first() }
         profileViewModel.onEvent(ProfileEvent.SaveLanguage(Language.ENGLISH))
         advanceUntilIdle()
@@ -641,7 +647,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.ChangeTheme(ThemeSetting.DARK))
         advanceUntilIdle()
@@ -670,7 +676,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.ChangeTheme(ThemeSetting.LIGHT))
         advanceUntilIdle()
