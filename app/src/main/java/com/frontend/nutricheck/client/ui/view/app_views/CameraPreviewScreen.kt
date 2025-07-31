@@ -1,14 +1,13 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
 import android.Manifest
-import android.net.Uri
 import androidx.camera.compose.CameraXViewfinder
-import androidx.camera.core.SurfaceRequest
 import androidx.compose.ui.zIndex
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,23 +17,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.theme.extended
 import com.frontend.nutricheck.client.ui.view.widgets.ExitButton
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealEvent
@@ -43,8 +40,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -67,9 +62,11 @@ fun CameraPreviewScreen(
             cameraPermissionState.status.isGranted -> {
                 addAiMealViewModel.bindToCamera(context, lifecycleOwner)
             }
+
             cameraPermissionState.status.shouldShowRationale -> {
                 showCameraDialog = true
             }
+
             else -> {
                 cameraPermissionState.launchPermissionRequest()
             }
@@ -79,7 +76,9 @@ fun CameraPreviewScreen(
                 is AddAiMealEvent.ShowMealOverview -> {
                     //onNavigateToFoodProductOverview()
                 }
-                else -> { /* other events */ }
+
+                else -> { /* other events */
+                }
             }
         }
     }
@@ -111,34 +110,36 @@ fun CameraPreviewScreen(
                 addAiMealViewModel.onEvent(AddAiMealEvent.OnRetakePhoto)
             })
     }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (uiState is BaseViewModel.UiState.Loading) {
-            CircularProgressIndicator()
-        }
-        ExitButton(
-            onBack = { onExit() },
-            modifier = Modifier.align(Alignment.TopStart).padding(16.dp).zIndex(2f)
-        )
-        if (photoUri == null) {
-            surfaceRequest?.let { request ->
-                CameraXViewfinder(
-                    surfaceRequest = request,
-                    modifier = Modifier.fillMaxSize()
-                )
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (uiState is BaseViewModel.UiState.Loading) {
+                CircularProgressIndicator()
             }
-            IconButton(
-                onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnTakePhoto) },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.RadioButtonChecked,
-                    contentDescription = stringResource(R.string.take_photo),
-                )
-            }
-        } else {
+            ExitButton(
+                onBack = { onExit() },
+                modifier = Modifier.align(Alignment.TopStart).padding(16.dp).zIndex(2f)
+            )
+            if (photoUri == null) {
+                surfaceRequest?.let { request ->
+                    CameraXViewfinder(
+                        surfaceRequest = request,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                IconButton(
+                    onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnTakePhoto) },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(24.dp)
+                        .size(80.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.RadioButtonChecked,
+                        contentDescription = stringResource(R.string.take_photo),
+                        modifier = Modifier.size(80.dp),
+                        tint = MaterialTheme.extended.chartBlue.color
+                    )
+                }
+            } else {
                 Image(
                     painter = rememberAsyncImagePainter(photoUri),
                     contentDescription = null,
@@ -161,7 +162,8 @@ fun CameraPreviewScreen(
                 }
             }
         }
-}
+    }
+
 
 @Composable
 private fun ShowErrorMessage(
