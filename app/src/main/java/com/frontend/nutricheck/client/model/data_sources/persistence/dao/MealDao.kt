@@ -21,6 +21,8 @@ interface MealDao : BaseDao<MealEntity> {
 
     @Delete
     override suspend fun delete(obj: MealEntity)
+    @Query("DELETE FROM meals WHERE id = :mealId")
+    suspend fun deleteById(mealId: String)
 
     @Transaction
     @Query("SELECT * FROM meals WHERE historyDayDate = :date")
