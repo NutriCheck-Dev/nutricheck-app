@@ -3,16 +3,16 @@ package com.nutricheck.frontend.viewmodels
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.ActivityLevel
-import com.frontend.nutricheck.client.model.data_sources.data.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.Language
-import com.frontend.nutricheck.client.model.data_sources.data.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Language
+import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.profile.ProfileViewModel
-import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -530,7 +530,7 @@ class ProfileViewModelTest {
 
         verify(userDataRepository).addWeight(org.mockito.kotlin.check {
             assertThat(it.value).isEqualTo(80.0)
-            assertThat(it.enterDate).isEqualTo(date)
+            assertThat(it.date).isEqualTo(date)
         })
     }
     @Test
