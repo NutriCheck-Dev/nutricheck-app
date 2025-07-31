@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
@@ -15,7 +16,7 @@ interface UserDataDao : BaseDao<UserData> {
      * Inserts a new UserData entity into the database.
      * @param obj The UserData object to insert.
      */
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun insert(obj: UserData)
     /**
      * Updates an existing UserData entity in the database.

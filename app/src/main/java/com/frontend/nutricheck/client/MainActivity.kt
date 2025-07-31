@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.BottomNavigationBar
@@ -22,8 +24,8 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.RootNavGraph
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -54,10 +56,10 @@ fun MainScreen(
             Screen.Onboarding.route
         }
     }
-    startDestination?.let { destination ->
+    startDestination?.let {
         Scaffold(
             bottomBar = {
-                if (destination != Screen.Onboarding.route) {
+                if (currentDestination != Screen.Onboarding.route) {
                     BottomNavigationBar(
                         currentDestination = currentDestination,
                         onClickAdd = { mainNavController.navigate(Screen.Add.route) },
@@ -69,10 +71,11 @@ fun MainScreen(
             }
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
-                RootNavGraph(mainNavController, destination)
+                RootNavGraph(mainNavController, startDestination!!)
             }
         }
     }
+
 
 }
 @HiltViewModel

@@ -202,9 +202,10 @@ class OnboardingViewModel @Inject constructor(
         )
         Utils.calculateNutrition(newUserData)
         viewModelScope.launch {
+            appSettingsRepository.setOnboardingCompleted()
             userDataRepository.addUserData(newUserData)
             userDataRepository.addWeight(Weight(_data.value.weight, Date()))
-            appSettingsRepository.setOnboardingCompleted()
+
         }
         emitEvent(OnboardingEvent.NavigateToDashboard)
     }
