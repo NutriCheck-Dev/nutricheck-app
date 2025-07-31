@@ -45,7 +45,7 @@ class RecipeRepositoryImpl @Inject constructor(
 
         val lastUpdate = recipeSearchDao.getLatestUpdatedFor(recipeName)
         if (isExpired(lastUpdate)) {
-            val networkResult = try {
+            try {
                 val response = api.searchRecipes(recipeName)
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
@@ -64,7 +64,6 @@ class RecipeRepositoryImpl @Inject constructor(
             } catch (io: okio.IOException) {
                 Result.Error(message = "Oops, an error has occurred. Please check your internet connection.")
             }
-            emit(networkResult)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.search_food_product
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
@@ -22,7 +23,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -151,52 +154,79 @@ class FoodSearchViewModel @Inject constructor(
         }
         viewModelScope.launch {
             val language = _searchState.value.parameters.language
-            val flow: Flow<Result<List<FoodComponent>>> = when (mode) {
+            when (mode) {
                 is SearchMode.IngredientsForRecipe -> {
-                    foodProductRepository
+                    val foodProducts = foodProductRepository
                         .searchFoodProducts(query, language)
                         .map { result -> result.mapData { list -> list.map { it }}}
-                }
-
-                else -> {
-                    combine(
-                        foodProductRepository.searchFoodProducts(query, language),
-                        recipeRepository.searchRecipes(query)
-                    ) { foodProductResults, recipeResults ->
-                        when {
-                            foodProductResults is Result.Error -> foodProductResults.toError<List<FoodComponent>>()
-                            recipeResults is Result.Error -> recipeResults.toError<List<FoodComponent>>()
-                            foodProductResults is Result.Success && recipeResults is Result.Success -> {
-                                val mixedResults = (foodProductResults.data + recipeResults.data)
-                                    .sortedBy { it.name }
-                                Result.Success(mixedResults)
+                    foodProducts
+                        .onStart { setLoading() }
+                        .catch { setError(it.message!!) }
+                        .collect { result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    _searchState.update { state ->
+                                        state.updateParams(
+                                            state.parameters.copy(
+                                                results = result.data
+                                            )
+                                        )
+                                    }
+                                }
+                                is Result.Error -> {
+                                    setError(result.message!!)
+                                }
                             }
-                            else -> Result.Success(emptyList())
                         }
-                    }
+                }
+                else -> {
+                    val foodProductFlow = foodProductRepository
+                        .searchFoodProducts(query, language)
+                        .map { resultProducts -> resultProducts.mapData { foodProducts -> foodProducts.map { it } } }
+
+                    val recipeFlow = recipeRepository
+                        .searchRecipes(query)
+                        .map { resultRecipe -> resultRecipe.mapData { recipes -> recipes.map { it } } }
+
+                    val merged: Flow<Result<List<FoodComponent>>> =
+                        merge(foodProductFlow, recipeFlow)
+                            .scan(emptyList<FoodComponent>()) { acc, search ->
+                                Log.d("FoodSearchVM", "raw search emission → $search")
+                                when (search) {
+                                    is Result.Success -> {
+                                        val newAcc = acc + search.data
+                                        Log.d("FoodSearchVM", "raw search emission → $newAcc")
+                                        newAcc
+                                    }
+                                    is Result.Error -> {
+                                        Log.d("FoodSearchVM", "raw search emission → $acc")
+                                        acc
+                                    }
+                                }
+                            }
+                            .map { Result.Success(it) }
+                    merged
+                        .onStart { setLoading() }
+                        .catch { setError(it.message!!) }
+                        .collect { result ->
+                            when (result) {
+                                is Result.Success -> {
+                                    _searchState.update { state ->
+                                        state.updateParams(
+                                            state.parameters.copy(
+                                                results = result.data
+                                            )
+                                        )
+                                    }
+                                    setReady()
+                                }
+                                is Result.Error -> {
+                                    setError(result.message!!)
+                                }
+                            }
+                        }
                 }
             }
-            flow
-                .onStart { setLoading() }
-                .catch { setError(it.message!!) }
-                .collect { result ->
-                    when (result) {
-                        is Result.Success -> {
-                            _searchState.update { state ->
-                                state.updateParams(
-                                    state.parameters.copy(
-                                        query = query,
-                                        results = result.data
-                                    )
-                                )
-                            }
-                        }
-                        is Result.Error -> {
-                            setError(result.message!!)
-                        }
-                    }
-                }
-
 
         }
     }

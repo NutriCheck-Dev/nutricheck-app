@@ -62,7 +62,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     ) {
         composable(AddScreens.AddMainPage.route) {
             AddDialog(
-                onAddMealClick = { addNavController.navigate(AddScreens.AddMeal.createRoute(false)) },
+                onAddMealClick = { addNavController.navigate(AddScreens.AddMeal.route) },
                 onAddRecipeClick = { addNavController.navigate(AddScreens.AddRecipe.route) },
                 onScanFoodClick = { addNavController.navigate(AddScreens.AddAiMeal.route) },
                 onDismissRequest = { mainNavController.popBackStack() }

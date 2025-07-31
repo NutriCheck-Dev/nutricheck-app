@@ -10,7 +10,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.FoodSearchDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.FoodSearchEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import java.util.concurrent.TimeUnit
@@ -32,7 +31,7 @@ class FoodProductRepositoryImpl @Inject constructor(
 
         val lastUpdate = foodSearchDao.getLatestUpdatedFor(foodProductName)
         if (isExpired(lastUpdate)) {
-            val networkResult = try {
+            try {
                 val response = api.searchFoodProduct(foodProductName, language)
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
@@ -52,7 +51,6 @@ class FoodProductRepositoryImpl @Inject constructor(
             } catch (io: okio.IOException) {
                 Result.Error(message = "Oops, an error has occurred. Please check your internet connection.")
             }
-            emit(networkResult)
         }
     }
 
