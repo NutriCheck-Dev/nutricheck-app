@@ -24,10 +24,9 @@ class WeightHistoryViewModel @Inject constructor(
 
     override fun displayWeightHistory(timePeriod: String) {
         viewModelScope.launch {
-
             val weightEntries: List<Weight> = userDataRepository.getWeightHistory()
 
-            val weightList = weightEntries.map { it.value.toDouble() }
+            val weightList = weightEntries.map { it.value }
             val weightGoal = userDataRepository.getTargetWeight()
 
             _weightHistoryState.value = WeightHistoryState(
