@@ -4,7 +4,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLeve
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.frontend.nutricheck.client.ui.view_model.Utils
+import com.frontend.nutricheck.client.ui.view_model.UserDataUtilsLogic
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.Date
@@ -15,7 +15,7 @@ class UtilsTest {
         // Given
             val validBirthdate = Date(631152000000L) // 1990-01-01
             // When
-            val result = Utils.isBirthdateInvalid(validBirthdate)
+            val result = UserDataUtilsLogic.isBirthdateInvalid(validBirthdate)
             // Then
             assertThat(result).isFalse()
 
@@ -25,7 +25,7 @@ class UtilsTest {
         // Given
             val invalidBirthdate = Date(1893456000000L) // 2030-01-01
             // When
-            val result = Utils.isBirthdateInvalid(invalidBirthdate)
+            val result = UserDataUtilsLogic.isBirthdateInvalid(invalidBirthdate)
             // Then
             assertThat(result).isTrue()
     }
@@ -34,7 +34,7 @@ class UtilsTest {
         // Given
             val invalidBirthdate = Date(-4417632000000L) // 1830-01-01
             // When
-            val result = Utils.isBirthdateInvalid(invalidBirthdate)
+            val result = UserDataUtilsLogic.isBirthdateInvalid(invalidBirthdate)
             // Then
             assertThat(result).isTrue()
     }
@@ -44,7 +44,7 @@ class UtilsTest {
         // Given
         val birthdate = Date(631152000000L) // 1990-01-01
         // When
-        val age = Utils.calculateAge(birthdate)
+        val age = UserDataUtilsLogic.calculateAge(birthdate)
         // Then
         assertThat(age).isEqualTo(35) // 2025 - 1990
     }
@@ -53,7 +53,7 @@ class UtilsTest {
         // Given
         val birthdate = Date(1753737600000L) // 2025-07-29
         // When
-        val age = Utils.calculateAge(birthdate)
+        val age = UserDataUtilsLogic.calculateAge(birthdate)
         // Then
         assertThat(age).isEqualTo(0)
     }
@@ -75,7 +75,7 @@ class UtilsTest {
                 carbsGoal = 0,
                 fatsGoal = 0
             )
-            val result = Utils.calculateNutrition(userData)
+            val result = UserDataUtilsLogic.calculateNutrition(userData)
             // Expected values based on the formula
             assertThat(result.dailyCaloriesGoal).isEqualTo(2633)
             assertThat(result.proteinGoal).isEqualTo(126)
@@ -100,7 +100,7 @@ class UtilsTest {
                 carbsGoal = 0,
                 fatsGoal = 0
             )
-            val result = Utils.calculateNutrition(userData)
+            val result = UserDataUtilsLogic.calculateNutrition(userData)
             // Expected values based on the formula
             assertThat(result.dailyCaloriesGoal).isEqualTo(1749)
             assertThat(result.proteinGoal).isEqualTo(108)
@@ -124,7 +124,7 @@ class UtilsTest {
             carbsGoal = 0,
             fatsGoal = 0
         )
-        val result = Utils.calculateNutrition(userData)
+        val result = UserDataUtilsLogic.calculateNutrition(userData)
         // Expected values based on the formula
         assertThat(result.dailyCaloriesGoal).isEqualTo(1930)
         assertThat(result.proteinGoal).isEqualTo(99)

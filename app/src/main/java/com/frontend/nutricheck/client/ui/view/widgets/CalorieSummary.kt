@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.ui.view_model.history.HistoryState
+import com.frontend.nutricheck.client.ui.view_model.HistoryState
 
 // This file defines a composable function for displaying a calorie summary widget.
 @Composable

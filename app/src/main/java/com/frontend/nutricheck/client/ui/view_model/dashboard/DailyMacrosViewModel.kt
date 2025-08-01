@@ -1,8 +1,9 @@
-package com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,12 +23,12 @@ data class DailyMacrosState(
 class DailyMacrosViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val userDataRepository: UserDataRepository
-) : BaseDailyMacrosViewModel() {
+) : BaseViewModel() {
 
-    val _dailyMacrosState = MutableStateFlow(DailyMacrosState())
+    private val _dailyMacrosState = MutableStateFlow(DailyMacrosState())
     val dailyMacrosState = _dailyMacrosState.asStateFlow()
 
-    override fun displayDailyMacros() {
+     fun displayDailyMacros() {
         viewModelScope.launch {
             val macroGoals = userDataRepository.getNutrientGoal()
             val dailyMacros = historyRepository.getDailyMacros()

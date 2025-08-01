@@ -11,7 +11,7 @@ import java.time.ZoneId
 import java.util.Date
 import kotlin.math.roundToInt
 
-object Utils {
+object UserDataUtilsLogic {
 
 fun isBirthdateInvalid(birthdate: Date): Boolean {
     val localBirthdate = Instant.ofEpochMilli(birthdate.time)

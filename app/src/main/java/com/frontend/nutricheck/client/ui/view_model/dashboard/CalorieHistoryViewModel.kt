@@ -1,8 +1,9 @@
-package com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Date
 
 data class CalorieHistoryState(
@@ -28,7 +30,7 @@ sealed interface CalorieHistoryEvent {
 class CalorieHistoryViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val userDataRepository: UserDataRepository
-) : BaseCalorieHistoryViewModel() {
+) : BaseViewModel() {
 
     private val _calorieHistoryState = MutableStateFlow(CalorieHistoryState())
     val calorieHistoryState = _calorieHistoryState.asStateFlow()
@@ -44,7 +46,7 @@ class CalorieHistoryViewModel @Inject constructor(
         }
     }
 
-   override fun displayCalorieHistory(days: Int) {
+   private fun displayCalorieHistory(days: Int) {
        viewModelScope.launch {
            val calorieGoal = userDataRepository.getDailyCalorieGoal()
            val dateRange = getDateRange(days)
@@ -52,19 +54,20 @@ class CalorieHistoryViewModel @Inject constructor(
                historyRepository.getCaloriesOfDay(date)
            }
 
-           _calorieHistoryState.update { it.copy(calorieHistory = calorieHistory, calorieGoal = calorieGoal) }
+           _calorieHistoryState.update { it.copy(calorieHistory = calorieHistory,
+               calorieGoal = calorieGoal) }
        }
    }
 
-    // Gibt eine Liste von Datumsobjekten zurück, beginnend bei heute rückwärts
+    // returns a list of dates for the last 'days' days
     private fun getDateRange(days: Int): List<Date> {
-        val today = java.util.Calendar.getInstance()
+        val today = Calendar.getInstance()
         return (0 until days).map { i ->
-            java.util.Calendar.getInstance().apply {
+            Calendar.getInstance().apply {
                 time = today.time
-                add(java.util.Calendar.DAY_OF_YEAR, -i)
+                add(Calendar.DAY_OF_YEAR, -i)
             }.time
-        }.reversed() // Optional: Ältestes Datum zuerst, falls du das willst
+        }.reversed()
     }
 
 }

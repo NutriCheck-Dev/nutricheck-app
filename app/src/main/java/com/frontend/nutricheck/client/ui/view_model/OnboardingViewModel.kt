@@ -104,7 +104,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun enterBirthdate(birthdate: Date?) {
-        if (birthdate == null || Utils.isBirthdateInvalid(birthdate)) {
+        if (birthdate == null || UserDataUtilsLogic.isBirthdateInvalid(birthdate)) {
             setError(appContext.getString(R.string.userData_error_birthdate_required))
             return
         }
@@ -185,13 +185,13 @@ class OnboardingViewModel @Inject constructor(
             activityLevel = _data.value.activityLevel!!,
             weightGoal = _data.value.weightGoal!!,
             targetWeight = _data.value.targetWeight,
-            age = Utils.calculateAge(_data.value.birthdate!!),
+            age = UserDataUtilsLogic.calculateAge(_data.value.birthdate!!),
             dailyCaloriesGoal = 0,
             proteinGoal = 0,
             carbsGoal = 0,
             fatsGoal = 0
         )
-        Utils.calculateNutrition(newUserData)
+        UserDataUtilsLogic.calculateNutrition(newUserData)
         viewModelScope.launch {
             appSettingsRepository.setOnboardingCompleted()
             userDataRepository.addWeight(Weight(_data.value.weight, Date()))

@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros.DailyMacrosState
+import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyMacrosState
 
 @Composable
 fun NutrientBreakdown(

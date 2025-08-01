@@ -29,10 +29,10 @@ import com.frontend.nutricheck.client.ui.view.widgets.CalorieHistoryDiagram
 import com.frontend.nutricheck.client.ui.view.widgets.CaloriesToday
 import com.frontend.nutricheck.client.ui.view.widgets.NutrientBreakdown
 import com.frontend.nutricheck.client.ui.view.widgets.WeightHistoryDiagram
-import com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history.CalorieHistoryViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros.DailyMacrosViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history.WeightHistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyMacrosViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryViewModel
 
 @Composable
 fun HomePage(

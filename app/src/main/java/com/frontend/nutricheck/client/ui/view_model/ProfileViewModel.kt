@@ -6,7 +6,6 @@ import com.frontend.nutricheck.client.AppThemeState
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.flags.Language
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
@@ -19,11 +18,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 /**
@@ -144,7 +141,7 @@ class ProfileViewModel @Inject constructor(
         _dataDraft.value = _dataDraft.value.copy(username = username)
     }
     private fun updateUserBirthdateDraft(birthdate: Date) {
-        if (Utils.isBirthdateInvalid(birthdate)) {
+        if (UserDataUtilsLogic.isBirthdateInvalid(birthdate)) {
             setError(appContext.getString(R.string.userData_error_birthdate_required))
             return
         }
@@ -222,7 +219,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
     private fun persistDataWithCalculation () {
-        val userDataWithCalories = Utils.calculateNutrition(userData = UserData(
+        val userDataWithCalories = UserDataUtilsLogic.calculateNutrition(userData = UserData(
             username = _dataDraft.value.username,
             birthdate = _dataDraft.value.birthdate,
             gender = _dataDraft.value.gender,
@@ -231,7 +228,7 @@ class ProfileViewModel @Inject constructor(
             targetWeight = _dataDraft.value.targetWeight,
             activityLevel = _dataDraft.value.activityLevel,
             weightGoal = _dataDraft.value.weightGoal,
-            age = Utils.calculateAge(_dataDraft.value.birthdate),
+            age = UserDataUtilsLogic.calculateAge(_dataDraft.value.birthdate),
             dailyCaloriesGoal = _dataDraft.value.dailyCaloriesGoal,
             proteinGoal = _dataDraft.value.proteinGoal,
             carbsGoal = _dataDraft.value.carbsGoal,
