@@ -12,9 +12,7 @@ object DbFoodProductMapper {
             calories = foodProduct.calories,
             carbohydrates = foodProduct.carbohydrates,
             protein = foodProduct.protein,
-            fat = foodProduct.fat,
-            servings = foodProduct.servings.toDouble(),
-            servingSize = foodProduct.servingSize,
+            fat = foodProduct.fat
         )
 
     fun toFoodProduct(foodProductEntity: FoodProductEntity): FoodProduct =
@@ -24,8 +22,6 @@ object DbFoodProductMapper {
             calories = foodProductEntity.calories,
             carbohydrates = foodProductEntity.carbohydrates,
             protein = foodProductEntity.protein,
-            fat = foodProductEntity.fat,
-            servings = foodProductEntity.servings.toInt(),
-            servingSize = foodProductEntity.servingSize
+            fat = foodProductEntity.fat
         )
 }

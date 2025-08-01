@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.ServingSize
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 
 @Composable
 fun ServingSizeDropdown(

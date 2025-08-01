@@ -1,7 +1,5 @@
 package com.frontend.nutricheck.client.dto
 
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeVisibility
-
 data class RecipeDTO(
     val id: String,
     val name: String,
@@ -12,5 +10,4 @@ data class RecipeDTO(
     val protein: Double,
     val fat: Double,
     val ingredients: List<IngredientDTO>,
-    val visibility: RecipeVisibility
 )

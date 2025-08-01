@@ -16,23 +16,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
+import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.EditRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchUiState
 
 @Composable
 fun AddedComponentsSummary(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel,
-    editRecipeViewModel: EditRecipeViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
     onSave: () -> Unit = {},
     onBack: () -> Unit = {}
@@ -41,13 +38,11 @@ fun AddedComponentsSummary(
     val styles = MaterialTheme.typography
     val scrollState = rememberScrollState()
     val searchState by searchViewModel.searchState.collectAsState()
-    val editRecipeState by editRecipeViewModel.editRecipeDraft.collectAsState()
-    val isFromAddIngredient = searchState.fromAddIngredient
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            if (isFromAddIngredient) {
+            if (searchState is SearchUiState.AddIngredientState) {
                 ViewsTopBar(
                     navigationIcon = { NavigateBackButton(onBack = onBack) },
                     title = {
@@ -71,21 +66,11 @@ fun AddedComponentsSummary(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            DishItemList(
-                foodComponents = if (isFromAddIngredient) {
-                    editRecipeState!!.viewIngredients
-                } else {
-                    searchState.addedComponents
-                       },
+            FoodComponentList(
+                foodComponents = emptyList(),//searchState.parameters.addedComponents, TODO: Fix this
                 trailingContent = { item ->
                     CustomCloseButton(onClick = {
-                        if (isFromAddIngredient) {
-                            editRecipeViewModel.onEvent(
-                                EditRecipeEvent.IngredientRemovedInSummary(item as FoodProduct)
-                            )
-                        } else {
                             searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(item))
-                        }
                     })
                 },
                 onItemClick = onItemClick

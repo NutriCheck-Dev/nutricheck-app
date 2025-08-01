@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
-import com.frontend.nutricheck.client.ui.view.widgets.DishItemList
+import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageEvent
@@ -106,7 +106,7 @@ fun RecipePage(
                             .verticalScroll(scrollState)
                     ) {
                         when (recipePageState.selectedTab) {
-                            0 -> DishItemList(
+                            0 -> FoodComponentList(
                                 foodComponents = recipes,
                                 onItemClick = { recipe ->
                                     onItemClick(recipe as Recipe)
@@ -125,7 +125,7 @@ fun RecipePage(
                                         modifier = Modifier.align(Alignment.Center)
                                     )
                                 } else {
-                                    DishItemList(
+                                    FoodComponentList(
                                         foodComponents = recipePageState.onlineRecipes,
                                         onItemClick = { recipe ->
                                             onItemClick(recipe as Recipe)

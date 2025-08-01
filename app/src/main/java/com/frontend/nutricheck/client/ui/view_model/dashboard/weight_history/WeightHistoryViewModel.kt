@@ -10,8 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class WeightHistoryState(
-    //val selectedTimePeriod: String = "",
-    val weightData: List<Weight> = emptyList(),
+    val weightData: List<Double> = emptyList(),
     val weightGoal : Double = 0.0,
 )
 
@@ -23,11 +22,17 @@ class WeightHistoryViewModel @Inject constructor(
     private val _weightHistoryState = MutableStateFlow(WeightHistoryState())
     val weightHistoryState = _weightHistoryState.asStateFlow()
 
-   override fun displayWeightHistory(timePeriod: String) {
-       viewModelScope.launch {
-           _weightHistoryState.value = WeightHistoryState(
-               userDataRepository.getWeightHistory(),
-               userDataRepository.getTargetWeight())
-       }
-   }
+    override fun displayWeightHistory(timePeriod: String) {
+        viewModelScope.launch {
+            val weightEntries: List<Weight> = userDataRepository.getWeightHistory()
+
+            val weightList = weightEntries.map { it.value }
+            val weightGoal = userDataRepository.getTargetWeight()
+
+            _weightHistoryState.value = WeightHistoryState(
+                weightData = weightList,
+                weightGoal = weightGoal
+            )
+        }
+    }
 }

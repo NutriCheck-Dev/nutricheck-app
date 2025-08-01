@@ -19,7 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.ui.view_model.history.DisplayMealItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 
 @Composable
 fun MealHeader(
@@ -82,7 +84,7 @@ fun MealBlock(
     modifier: Modifier = Modifier,
     mealName: String,
     totalCalories: Double,
-    items: List<DisplayMealItem>,
+    items: List<MealItem>,
     onAddClick: () -> Unit = {},
     optionsOnClick: () -> Unit = {}
 ) {
@@ -98,11 +100,23 @@ fun MealBlock(
             thickness = 1.dp
         )
         items.forEach { item ->
-            DishItemMealButton(
-                title = item.name,
-                quantity = item.quantity,
-                calories = item.quantity * item.calories
-            )
+            when (item) {
+                is MealFoodItem -> {
+                    DishItemMealButton(
+                        title = item.foodProduct.name,
+                        quantity = item.quantity,
+                        calories = item.quantity * item.foodProduct.calories
+                    )
+                }
+                is MealRecipeItem -> {
+                    DishItemMealButton(
+                        title = item.recipe.name,
+                        quantity = item.quantity,
+                        calories = item.quantity * item.recipe.calories
+                    )
+                }
+            }
+
             HorizontalDivider(color = Color(0xFFFFFFFF), thickness = 1.dp)
         }
         MealFooter(onAddClick = onAddClick)

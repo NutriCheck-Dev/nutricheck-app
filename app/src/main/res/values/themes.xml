@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <style name="Theme.NutriCheck.Launch" parent="Theme.NutriCheck">
+        <item name="android:windowBackground">@color/black</item>
+    </style>
     <style name="Theme.NutriCheck" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

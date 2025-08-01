@@ -42,9 +42,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.tooling.preview.Preview
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
-import com.frontend.nutricheck.client.model.data_sources.data.ThemeSetting
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 
 @Composable
 fun ProfilePage(
@@ -154,7 +154,7 @@ fun ProfilePage(
                             stringResource(id = R.string.profile_menu_item_personal_data),
                         text = stringResource(id = R.string.profile_menu_item_personal_data),
                         onClick = {
-                            onEvent(ProfileEvent.DisplayPersonalData)
+                            onEvent(ProfileEvent.OnPersonalDataClick)
                         })
                     HorizontalDivider(color = Color.Gray,
                         modifier = Modifier
@@ -182,18 +182,6 @@ fun ProfilePage(
                         onCheckedChange = { onEvent(ProfileEvent.ChangeTheme(
                             if (it) ThemeSetting.DARK else ThemeSetting.LIGHT)) },
                     )
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
-                        thickness = 2.dp)
-                    MenuItem(
-                        icon = Icons.Filled.Language,
-                        contentDescription =
-                            stringResource(id = R.string.profile_menu_item_language),
-                        text = stringResource(id = R.string.profile_menu_item_language),
-                        onClick = {
-                            onEvent(ProfileEvent.SelectLanguage)
-                        })
                 }
             }
         }

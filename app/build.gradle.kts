@@ -68,7 +68,6 @@ dependencies {
     implementation(libs.androidx.camera.view)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -97,5 +96,14 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation (libs.mockito.kotlin)
+    testImplementation (libs.androidx.datastore.preferences)
+    testImplementation(libs.mockito.inline)
 
 }

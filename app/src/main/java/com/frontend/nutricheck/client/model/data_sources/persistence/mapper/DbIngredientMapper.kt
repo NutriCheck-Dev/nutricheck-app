@@ -8,20 +8,16 @@ object DbIngredientMapper {
 
     fun toIngredientEntity(ingredient: Ingredient) : IngredientEntity =
         IngredientEntity(
-            id = ingredient.id,
             recipeId = ingredient.recipeId,
             foodProductId = ingredient.foodProduct.id,
             quantity = ingredient.quantity
         )
 
-    fun toIngredient(ingredientWithFoodProduct: IngredientWithFoodProduct) : Ingredient {
-        val ingredientEntity = ingredientWithFoodProduct.ingredientEntity
-        val foodProduct = DbFoodProductMapper.toFoodProduct(ingredientWithFoodProduct.foodProductEntity)
-        return Ingredient(
-            id = ingredientEntity.id,
-            recipeId = ingredientEntity.recipeId,
-            foodProduct = foodProduct,
-            quantity = ingredientEntity.quantity
+      fun toIngredient(
+        ingredientWithFoodProduct: IngredientWithFoodProduct
+      ) : Ingredient = Ingredient(
+            recipeId = ingredientWithFoodProduct.ingredient.recipeId,
+            foodProduct = DbFoodProductMapper.toFoodProduct(ingredientWithFoodProduct.foodProduct),
+            quantity =  ingredientWithFoodProduct.ingredient.quantity
         )
-    }
 }

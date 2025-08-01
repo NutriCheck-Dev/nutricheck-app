@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IngredientDao {
@@ -35,4 +36,15 @@ interface IngredientDao {
     @Query("DELETE FROM ingredients WHERE recipeId = :recipeId")
     suspend fun deleteIngredientsOfRecipe(recipeId: String)
 
+    @Transaction
+    @Query("""
+        SELECT *
+        FROM ingredients
+        WHERE recipeId = :recipeId 
+        AND foodProductId = :foodProductId
+    """)
+    suspend fun getIngredientById(
+        recipeId: String,
+        foodProductId: String
+    ): IngredientWithFoodProduct?
 }

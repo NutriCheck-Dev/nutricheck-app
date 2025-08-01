@@ -3,41 +3,72 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.relations
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItem
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 
 data class MealWithAll(
-    @Embedded val meal: Meal,
+    @Embedded val meal: MealEntity,
     @Relation(
-        entity = MealFoodItem::class,
         parentColumn = "id",
-        entityColumn = "mealId"
+        entityColumn = "mealId",
+        entity = MealFoodItemEntity::class
     )
     val mealFoodItems: List<MealFoodItemWithProduct>,
+
     @Relation(
-        entity = MealRecipeItem::class,
         parentColumn = "id",
-        entityColumn = "mealId"
+        entityColumn = "mealId",
+        entity = MealRecipeItemEntity::class
     )
     val mealRecipeItems: List<MealRecipeItemWithRecipe>
 )
 
+// 1. FoodItem + Product
 data class MealFoodItemWithProduct(
-    @Embedded val mealFoodItem: MealFoodItem,
+    @Embedded val mealFoodItem: MealFoodItemEntity,
+
     @Relation(
         parentColumn = "foodProductId",
         entityColumn = "id"
     )
-    val foodProductEntity: FoodProductEntity
+    val foodProduct: FoodProductEntity
 )
 
+// 2. RecipeItem + Recipe (+ Ingredients + FoodProducts)
 data class MealRecipeItemWithRecipe(
-    @Embedded val mealRecipeItem: MealRecipeItem,
+    @Embedded val mealRecipeItem: MealRecipeItemEntity,
+
     @Relation(
         parentColumn = "recipeId",
+        entityColumn = "id",
+        entity = RecipeEntity::class
+    )
+    val recipeWithIngredients: RecipeWithIngredients
+)
+
+// 3. Rezept + alle Ingredients (mit ihren FoodProducts)
+data class RecipeWithIngredients(
+    @Embedded val recipe: RecipeEntity,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "recipeId",
+        entity = IngredientEntity::class
+    )
+    val ingredients: List<IngredientWithFoodProduct>
+)
+
+// 4. Ingredient + zugehöriges FoodProduct
+data class IngredientWithFoodProduct(
+    @Embedded val ingredient: IngredientEntity,
+
+    @Relation(
+        parentColumn = "foodProductId",
         entityColumn = "id"
     )
-    val recipeEntity: RecipeEntity
+    val foodProduct: FoodProductEntity
 )
+

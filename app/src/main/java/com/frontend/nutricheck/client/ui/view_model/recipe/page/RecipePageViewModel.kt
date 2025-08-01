@@ -2,9 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.page
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.data.Result
-import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -14,9 +12,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 data class RecipePageState(
     val myRecipes: List<Recipe> = emptyList(),
@@ -41,7 +40,6 @@ class RecipePageViewModel @Inject constructor(
 
     private val _recipePageState = MutableStateFlow(RecipePageState())
     val recipePageState: StateFlow<RecipePageState> = _recipePageState.asStateFlow()
-    private val _onlineResults = MutableStateFlow<List<RecipeEntity>>(emptyList())
 
     init {
         viewModelScope.launch {
@@ -94,32 +92,35 @@ class RecipePageViewModel @Inject constructor(
     private fun emitEvent(event: RecipePageEvent) = viewModelScope.launch { _events.emit(event) }
 
     private fun performOnlineSearch() {
+        val query = _recipePageState.value.query.trim()
+        if (query.isBlank()) {
+            _recipePageState.update { it.copy(onlineRecipes = emptyList()) }
+            setReady()
+            return
+        }
         viewModelScope.launch {
-            setLoading()
-
-            val query = _recipePageState.value.query.trim()
-            if (query.isBlank()) {
-                _onlineResults.value = emptyList()
-                setReady()
-                return@launch
-            }
-            try {
-                when (val result = recipeRepository.searchRecipe(query)) {
-                    is Result.Success -> {
-                        _onlineResults.value = result.data.map { recipe -> DbRecipeMapper.toRecipeEntity(recipe) }
-                        setReady()}
-                    is Result.Error -> {
-                        _onlineResults.value = emptyList()
-                        setError("Server-Fehler beim Abrufen der Rezepte: ${result.message}")
+            recipeRepository
+                .searchRecipes(query)
+                .onStart {
+                    setLoading()
+                    _recipePageState.update { it.copy(onlineRecipes = emptyList()) }
+                }
+                .catch { it ->
+                    _recipePageState.update { it.copy(onlineRecipes = emptyList()) }
+                    setError(it.message!!)
+                }
+                .collect { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            _recipePageState.update { it.copy(onlineRecipes = result.data) }
+                            setReady()
+                        }
+                        is Result.Error -> {
+                            _recipePageState.update { it.copy(onlineRecipes = emptyList()) }
+                            setError(result.message!!)
+                        }
                     }
                 }
-            } catch (io: IOException) {
-                _onlineResults.value = emptyList()
-                setError("Netzwerkfehler: ${io.message ?: "Unbekannter Fehler"}")
-            } catch (e: Exception) {
-                _onlineResults.value = emptyList()
-                setError("Unerwarteter Fehler: ${e.message ?: ""}")
-            }
         }
     }
 }
