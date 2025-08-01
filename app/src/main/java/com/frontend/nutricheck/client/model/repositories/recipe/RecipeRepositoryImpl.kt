@@ -15,7 +15,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFo
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbIngredientMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.RecipeMapper
 import com.frontend.nutricheck.client.model.repositories.mapper.ReportMapper
 import com.google.gson.Gson
@@ -35,9 +34,9 @@ class RecipeRepositoryImpl @Inject constructor(
     private val recipeDao: RecipeDao,
     private val recipeSearchDao: RecipeSearchDao,
     private val ingredientDao: IngredientDao,
-    private val foodDao: FoodDao
+    private val foodDao: FoodDao,
+    private val api: RemoteApi
 ) : RecipeRepository {
-    private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
     private val timeToLive = TimeUnit.MINUTES.toMillis(30)
     override suspend fun searchRecipes(recipeName: String): Flow<Result<List<Recipe>>> = flow {
         val cached = recipeSearchDao.resultsFor(recipeName)
@@ -53,6 +52,8 @@ class RecipeRepositoryImpl @Inject constructor(
             try {
                 val response = api.searchRecipes(recipeName)
                 val body = response.body()
+                val errorBody = response.errorBody()
+
                 if (response.isSuccessful && body != null) {
                     val now = System.currentTimeMillis()
                     val recipes = body.map { RecipeMapper.toData(it) }
@@ -62,9 +63,16 @@ class RecipeRepositoryImpl @Inject constructor(
                         RecipeSearchEntity(recipeName, it.id, now)
                     })
                     emit(Result.Success(recipes))
+                } else if (errorBody != null) {
+                    val gson = Gson()
+                    val errorResponse = gson.fromJson(
+                        String(errorBody.bytes()),
+                        ErrorResponseDTO::class.java
+                    )
+                    val message = errorResponse.title + ": " + errorResponse.detail
+                    emit(Result.Error(errorResponse.status, message))
                 } else {
-                    val message = response.errorBody()!!.string()
-                    emit(Result.Error(code = response.code(), message = message))
+                    emit(Result.Error(message = "Unknown error"))
                 }
             } catch (io: okio.IOException) {
                 emit(Result.Error(message = "Oops, an error has occurred. Please check your internet connection."))
@@ -146,7 +154,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(data = TODO()) //toData method
+                Result.Success(body) //toData method
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(

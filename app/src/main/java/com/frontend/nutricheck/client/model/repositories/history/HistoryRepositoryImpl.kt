@@ -14,7 +14,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMe
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealRecipeItemMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -29,8 +28,8 @@ class HistoryRepositoryImpl @Inject constructor(
     private val mealFoodItemDao: MealFoodItemDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val foodDao: FoodDao,
+    private val api: RemoteApi
 ) : HistoryRepository {
-    private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
     override suspend fun getCaloriesOfDay(date: Date): Int = withContext(Dispatchers.IO) {
         val meals = mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
