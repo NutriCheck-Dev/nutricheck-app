@@ -568,7 +568,7 @@ class ProfileViewModelTest {
         advanceUntilIdle()
         assertThat(profileViewModel.uiState.value)
             .isInstanceOf(BaseViewModel.UiState.Error::class.java)
-        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(org.mockito.kotlin.any())
+        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(any())
     }
 
     @Test
@@ -597,7 +597,7 @@ class ProfileViewModelTest {
         advanceUntilIdle()
         assertThat(profileViewModel.uiState.value)
             .isInstanceOf(BaseViewModel.UiState.Error::class.java)
-        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(org.mockito.kotlin.any())
+        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(any())
     }
     @Test
     fun `onSaveLanguageClick saves language and restarts app`() = runTest {
@@ -620,7 +620,7 @@ class ProfileViewModelTest {
         )
         profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         val event = async { profileViewModel.events.first() }
-        profileViewModel.onEvent(ProfileEvent.SaveLanguage(Language.ENGLISH))
+
         advanceUntilIdle()
 
         verify(appSettingsRepository).setLanguage(Language.ENGLISH)
