@@ -116,7 +116,16 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 searchViewModel = searchViewModel,
                 onConfirm = { addNavController.navigate(AddScreens.MealOverview.route)},
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                onBack = { addNavController.popBackStack() }
+                onBack = {
+                    if (origin == AddDialogOrigin.HISTORY_PAGE) {
+                        mainNavController.popBackStack(
+                            route = Screen.DiaryPage.route, // ← zurück zum Host des History-NavGraphs
+                            inclusive = false
+                        )
+                    } else {
+                        addNavController.popBackStack()
+                    }
+                }
             )
         }
 
@@ -132,7 +141,9 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                     searchViewModel.onEvent(SearchEvent.SubmitComponents)
                     addNavController.navigate(AddScreens.HistoryPage.route)
                          },
-                onBack = { addNavController.popBackStack() }
+                onBack = {
+                    addNavController.popBackStack()
+                }
             )
         }
 
