@@ -12,5 +12,5 @@ data class Meal(
     val date: Date,
     val dayTime: DayTime,
     val mealFoodItems: List<MealFoodItem>,
-    val mealRecipeItem: List<MealRecipeItem>
+    val mealRecipeItems: List<MealRecipeItem>
 )

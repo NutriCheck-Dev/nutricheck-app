@@ -20,10 +20,6 @@ interface RemoteApi {
     @POST("/user/recipes")
     suspend fun uploadRecipe(@Body recipe: RecipeDTO): Response<RecipeDTO>
 
-    //Needed?
-    @GET("/user/recipes/{recipeId}")
-    suspend fun downloadRecipe(@Path("recipeId") recipeId: String): Response<RecipeDTO>
-
     @POST("/user/recipes/report")
     suspend fun reportRecipe(@Body recipeReport: ReportDTO): Response<ReportDTO>
 

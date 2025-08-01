@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
@@ -32,7 +33,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import java.util.UUID
+import kotlin.collections.map
 
 sealed class SearchMode {
     data class ComponentsForMeal(val mealId: String) : SearchMode()
@@ -59,6 +62,12 @@ sealed class SearchUiState {
         override fun updateParams(params: CommonSearchParameters): SearchUiState =
             copy(parameters = params)
 
+        fun submitComponentsToRecipe() : List<Ingredient> {
+            val ingredients: List<Ingredient> = parameters.addedComponents.map {
+                        Ingredient(recipeId, it.second as FoodProduct, quantity = it.first)
+                    }
+            return ingredients
+        }
     }
     data class AddComponentsToMealState(
         val mealId: String,
@@ -78,7 +87,7 @@ sealed interface  SearchEvent {
     object Search : SearchEvent
     object Retry : SearchEvent
     object Clear : SearchEvent
-    object SubmitComponents : SearchEvent
+    object SubmitComponentsToMeal : SearchEvent
     object MealSelectorClick: SearchEvent
 }
 
@@ -90,10 +99,13 @@ class FoodSearchViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
-    private val mode: SearchMode =
-        savedStateHandle.get<String>("recipeId")?.let { SearchMode.IngredientsForRecipe(it) }
-            ?: savedStateHandle.get<String>("mealId")?.let { SearchMode.ComponentsForMeal(it) }
-            ?: SearchMode.LogNewMeal
+        private val mode: SearchMode = when {
+            savedStateHandle.get<String>("recipeId")?.isNotBlank() == true ->
+                SearchMode.IngredientsForRecipe(savedStateHandle.get<String>("recipeId")!!)
+            savedStateHandle.get<String>("mealId")?.isNotBlank() == true ->
+                SearchMode.ComponentsForMeal(savedStateHandle.get<String>("mealId")!!)
+            else -> SearchMode.LogNewMeal
+        }
 
     private val newMealId = UUID.randomUUID().toString()
     private val initialCommonParams = CommonSearchParameters()
@@ -142,8 +154,8 @@ class FoodSearchViewModel @Inject constructor(
     private val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
 
-    private val _addComponent = MutableSharedFlow<Pair<Double, FoodComponent>>()
-    val addComponent: SharedFlow<Pair<Double, FoodComponent>> = _addComponent.asSharedFlow()
+    /**private val _addComponent = MutableSharedFlow<Pair<Double, FoodComponent>>()
+    val addComponent: SharedFlow<Pair<Double, FoodComponent>> = _addComponent.asSharedFlow()**/
 
     fun onEvent(event: SearchEvent) {
         when (event) {
@@ -159,7 +171,7 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.Search -> onClickSearchFoodComponent()
             is SearchEvent.Retry -> onClickSearchFoodComponent()
             is SearchEvent.Clear -> cancelSearch()
-            is SearchEvent.SubmitComponents -> submitComponents()
+            is SearchEvent.SubmitComponentsToMeal -> submitComponentsToMeal()
             is SearchEvent.MealSelectorClick -> onClickMealSelector()
         }
     }
@@ -197,6 +209,7 @@ class FoodSearchViewModel @Inject constructor(
                                 }
                             }
                         }
+                    setReady()
                 }
 
                 else -> {
@@ -305,9 +318,6 @@ class FoodSearchViewModel @Inject constructor(
                 else -> state
             }
         }
-    private fun submitComponents() {
-
-    }
 
     private fun submitComponentsToMeal() {
         val state = _searchState.value
@@ -332,22 +342,46 @@ class FoodSearchViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            val originalMeal = historyRepository.getMealById(state.mealId)
-            val newMeal = originalMeal.copy(
-                mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
-                mealRecipeItem = originalMeal.mealRecipeItem + mealRecipeItems
-            )
-            historyRepository.updateMeal(newMeal)
+            if (mode is SearchMode.ComponentsForMeal) {
+                val originalMeal = historyRepository.getMealById(state.mealId)
+                originalMeal.copy(
+                    mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
+                    mealRecipeItems = originalMeal.mealRecipeItems + mealRecipeItems
+                )
+                historyRepository.updateMeal(originalMeal)
+            } else {
+                val newMeal = Meal(
+                    id = state.mealId,
+                    calories = (mealFoodItems).sumOf { it.foodProduct.calories * it.quantity}
+                    + (mealRecipeItems).sumOf { it.recipe.calories * it.quantity },
+                    carbohydrates = (mealFoodItems).sumOf { it.foodProduct.carbohydrates * it.quantity }
+                    + (mealRecipeItems).sumOf { it.recipe.carbohydrates * it.quantity },
+                    protein = (mealFoodItems).sumOf { it.foodProduct.protein * it.quantity }
+                    + (mealRecipeItems).sumOf { it.recipe.protein * it.quantity },
+                    fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
+                    + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
+                    date = Date(),
+                    dayTime = state.dayTime!!,
+                    mealFoodItems = mealFoodItems,
+                    mealRecipeItems = mealRecipeItems
+
+                )
+                historyRepository.addMeal(newMeal)
+            }
         }
     }
 
-    private fun submitComponentsToRecipe() {
+    private fun submitComponentsToRecipe() : List<Ingredient> {
         val state = _searchState.value
-        when (state) {
-            is SearchUiState.AddIngredientState -> state.parameters.addedComponents.map {
-                Ingredient(state.recipeId, it.second as FoodProduct, quantity = it.first) }
+        val ingredients: List<Ingredient> = when (mode) {
+            is SearchMode.IngredientsForRecipe -> {
+                state.parameters.addedComponents.map {
+                    Ingredient(mode.recipeId, it.second as FoodProduct, quantity = it.first)
+                }
+            }
             else -> emptyList()
         }
+        return ingredients
     }
 
     private inline fun <T, R> Result<T>.mapData(transform: (T)->R): Result<R> =

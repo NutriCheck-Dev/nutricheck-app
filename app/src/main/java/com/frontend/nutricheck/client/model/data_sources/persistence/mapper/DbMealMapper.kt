@@ -27,7 +27,7 @@ object DbMealMapper {
             dayTime = mealWithContents.meal.dayTime,
             mealFoodItems = mealWithContents.mealFoodItems.map
             { DbMealFoodItemMapper.toMealFoodItem(it) },
-            mealRecipeItem = mealWithContents.mealRecipeItems.map
+            mealRecipeItems = mealWithContents.mealRecipeItems.map
             { DbMealRecipeItemMapper.toMealRecipeItem(it) },
         )
 }

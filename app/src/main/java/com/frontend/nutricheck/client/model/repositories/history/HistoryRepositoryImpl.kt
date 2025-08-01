@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
-import android.util.Log
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
@@ -15,7 +14,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMe
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealRecipeItemMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -25,14 +23,13 @@ import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
 
-
 class HistoryRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
     private val mealFoodItemDao: MealFoodItemDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val foodDao: FoodDao,
+    private val api: RemoteApi
 ) : HistoryRepository {
-    private val api = RetrofitInstance.getInstance().create(RemoteApi::class.java)
 
     override suspend fun getCaloriesOfDay(date: Date): Int = withContext(Dispatchers.IO) {
         val meals = mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
@@ -41,7 +38,7 @@ class HistoryRepositoryImpl @Inject constructor(
                 ingredient.quantity * ingredient.foodProduct.calories
             }
 
-            val recipeItemsCalories = meal.mealRecipeItem.sumOf { recipe ->
+            val recipeItemsCalories = meal.mealRecipeItems.sumOf { recipe ->
                 recipe.quantity * recipe.recipe.calories
             }
             foodItemsCalories + recipeItemsCalories
@@ -71,7 +68,6 @@ class HistoryRepositoryImpl @Inject constructor(
                 Result.Error(message = "Unknown error")
             }
         } catch (e: IOException) {
-            Log.e("HistoryRepository", "Error requesting AI meal: ${e.message}")
             Result.Error(message = "Connection issue>")
         }
     }
@@ -99,6 +95,7 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getMealsForDay(date: Date): List<Meal> = withContext(Dispatchers.IO) {
         mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
     }
+
     override suspend fun getMealById(mealId: String): Meal = withContext(Dispatchers.IO) {
         DbMealMapper.toMeal(mealDao.getById(mealId))
     }
@@ -164,4 +161,6 @@ class HistoryRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    //TODO: Implement checkForRecipes
 }
