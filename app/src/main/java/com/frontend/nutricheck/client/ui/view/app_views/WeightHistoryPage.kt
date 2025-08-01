@@ -22,7 +22,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,12 +39,12 @@ fun WeightHistoryPage(
                 title = { Text(stringResource(id = R.string.profile_menu_item_weight_history)) },
                 navigationIcon = {
                     NavigateBackButton(
-                        onBack = { onBack }
+                        onBack = { onBack() }
                     )
                 },
                 actions = {
                     CustomAddButton(
-                        onClick = { onEvent(ProfileEvent.AddNewWeight) }
+                        onClick = { onEvent(ProfileEvent.OnAddNewWeightClick) }
                     )
                 }
             )
@@ -76,7 +76,7 @@ private fun WeightHistoryItem(weightEntry: Weight) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text =  dateFormat.format(weightEntry.enterDate),
+            text =  dateFormat.format(weightEntry.date),
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
@@ -90,9 +90,9 @@ private fun WeightHistoryItem(weightEntry: Weight) {
 @Composable
 fun WeightHistoryPagePreview() {
     val sampleWeights = listOf(
-        Weight(enterDate = Date(), value = 70.0),
-        Weight(enterDate = Date(), value = 69.5),
-        Weight(enterDate = Date(), value = 69.0)
+        Weight(date = Date(), value = 70.0),
+        Weight(date = Date(), value = 69.5),
+        Weight(date = Date(), value = 69.0)
     )
     WeightHistoryPage(
         weightState = sampleWeights,

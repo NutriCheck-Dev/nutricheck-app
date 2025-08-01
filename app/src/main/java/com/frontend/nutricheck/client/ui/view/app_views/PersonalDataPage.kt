@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,7 +21,9 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -37,16 +39,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -54,7 +56,7 @@ import java.util.Locale
 @Composable
 fun PersonalDataPage(
     state: UserData,
-    errorMessage: Int? = null,
+    errorState : BaseViewModel.UiState,
     onEvent: (ProfileEvent) -> Unit,
     onBack: () -> Unit = {}
 
@@ -62,10 +64,10 @@ fun PersonalDataPage(
     var selectedDate by remember { mutableStateOf(state.birthdate) }
     var showDatePicker by remember { mutableStateOf(false) }
 
-    ViewsTopBar(
-        navigationIcon = { NavigateBackButton(onBack = onBack) },
-        title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
-    )
+        ViewsTopBar(
+            navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
+            title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
+        )
 
     LazyColumn(
         modifier = Modifier
@@ -84,9 +86,9 @@ fun PersonalDataPage(
             }
         )
         item {
-            errorMessage?.let { errorResId ->
+            if (errorState is BaseViewModel.UiState.Error) {
                 Text(
-                    text = stringResource(id = errorResId),
+                    text = errorState.message,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -116,6 +118,7 @@ fun PersonalDataPage(
                         datePickerState.selectedDateMillis?.let {
                             selectedDate = Date(it)
                         }
+                        onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
                         showDatePicker = false
                     }
                 ) {
@@ -133,6 +136,7 @@ fun PersonalDataPage(
     }
 }
 
+
 private fun LazyListScope.personalDataFormItems(
     userData: UserData,
     onEvent: (ProfileEvent) -> Unit,
@@ -148,16 +152,14 @@ private fun LazyListScope.personalDataFormItems(
     }
     item {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY)
-        Row(modifier = Modifier.clickable { onBirthdateClick() }) {
             EditableDataRow(
                 label = stringResource(id = R.string.userData_label_birthdate),
                 value = dateFormat.format(userData.birthdate),
-                onValueChange = { /* Bleibt leer wegen DatePicker */ },
+                onValueChange = { /* empty because of datepicker */ },
                 keyboardType = KeyboardType.Text,
-                readOnly = true
+                readOnly = true,
+                textFieldModifier = Modifier.clickable { onBirthdateClick() }
             )
-        }
-
     }
     item {
         val genderOptions = Gender.entries.map { gender ->
@@ -177,7 +179,7 @@ private fun LazyListScope.personalDataFormItems(
     }
     item {
         EditableDataRow(
-            label = stringResource(id = R.string.profile_menu_height),
+            label = stringResource(id = R.string.userData_label_height),
             value = userData.height.toString(),
             onValueChange = { onEvent(ProfileEvent.UpdateUserHeightDraft(it)) },
             keyboardType = KeyboardType.Number
@@ -185,7 +187,7 @@ private fun LazyListScope.personalDataFormItems(
     }
     item {
         EditableDataRow(
-            label = stringResource(id = R.string.profile_menu_weight),
+            label = stringResource(id = R.string.userData_label_weight),
             value = userData.weight.toString(),
             onValueChange = { onEvent(ProfileEvent.UpdateUserWeightDraft(it)) },
             keyboardType = KeyboardType.Number
@@ -248,7 +250,8 @@ private fun EditableDataRow(
     value: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
-    readOnly: Boolean = false
+    readOnly: Boolean = false,
+    textFieldModifier: Modifier = Modifier
 ) {
     Row(
         modifier = Modifier
@@ -265,9 +268,25 @@ private fun EditableDataRow(
             value = value,
             onValueChange = onValueChange,
             readOnly = readOnly,
+            enabled = !readOnly,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             singleLine = true,
-            modifier = Modifier.weight(1f)
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledBorderColor = MaterialTheme.colorScheme.onSecondary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSecondary,
+                focusedBorderColor = MaterialTheme.colorScheme.onSecondary,
+                disabledTextColor = MaterialTheme.colorScheme.onSecondary,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                focusedTextColor = MaterialTheme.colorScheme.onSecondary
+
+            ),
+            modifier = Modifier
+                .weight(1f)
+                .then(
+                    if (readOnly && textFieldModifier != Modifier)
+                        textFieldModifier
+                    else Modifier)
+
         )
     }
 }
@@ -290,12 +309,12 @@ private fun EditableDropdownRow(
     ) {
         Text(
             text = label,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(2f)
         )
         ExposedDropdownMenuBox(
             expanded = isExpanded,
             onExpandedChange = { isExpanded = it },
-            modifier = Modifier.width(IntrinsicSize.Min)
+            modifier = Modifier.weight(1f).requiredWidth(IntrinsicSize.Min)
         ) {
             TextField(
                 value = selectedValue,
@@ -303,10 +322,11 @@ private fun EditableDropdownRow(
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
             )
             ExposedDropdownMenu(
                 expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
+                onDismissRequest = { isExpanded = false},
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
@@ -322,26 +342,3 @@ private fun EditableDropdownRow(
     }
 }
 
-@Preview (showBackground = true)
-@Composable
-fun PersonalDataPreview() {
-    PersonalDataPage(
-        state = (UserData(
-            username = "Peter",
-            birthdate = Date(),
-            gender = Gender.MALE,
-            height = 195.0,
-            weight = 95.0,
-            targetWeight = 95.0,
-            activityLevel = ActivityLevel.REGULARLY,
-            weightGoal = WeightGoal.LOSE_WEIGHT,
-            age = 25,
-            dailyCaloriesGoal = 2500,
-            proteinGoal = 80,
-            carbsGoal = 90,
-            fatsGoal = 20
-        )),
-        onEvent = {},
-        onBack = {}
-    )
-}

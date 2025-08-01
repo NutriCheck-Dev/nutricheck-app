@@ -6,10 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.app_views.HomePage
-import com.frontend.nutricheck.client.ui.view_model.dashboard.calorie_history.CalorieHistoryViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_macros.DailyMacrosViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history.WeightHistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyMacrosViewModel
+import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryViewModel
 
 
 sealed class HomeScreens(val route: String) {

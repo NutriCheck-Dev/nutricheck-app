@@ -33,17 +33,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
+import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
+import com.frontend.nutricheck.client.ui.view.widgets.SelectOption
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.OnboardingState
 
 @Composable
 fun OnboardingSport(
     state : OnboardingState,
-    onEvent : (OnboardingEvent) -> Unit
+    onEvent : (OnboardingEvent) -> Unit,
+    errorState : BaseViewModel.UiState
 ) {
     var selectedActivity by remember { mutableStateOf(state.activityLevel) }
-    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -106,11 +108,11 @@ fun OnboardingSport(
                     selected = selectedActivity == level
                 )
             }
-            error?.let { resId ->
+            if (errorState is BaseViewModel.UiState.Error) {
                 Text(
                     modifier = Modifier
                         .padding(top = 16.dp),
-                    text = stringResource(id = resId),
+                    text = errorState.message,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
                 )

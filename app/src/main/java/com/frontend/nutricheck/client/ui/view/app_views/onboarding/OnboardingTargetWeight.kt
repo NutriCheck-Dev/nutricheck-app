@@ -33,21 +33,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
+import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.OnboardingState
 
 
 @Composable
 fun OnboardingTargetWeight(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
+    errorState : BaseViewModel.UiState
 
     ){
     var textState: String by remember {
-        mutableStateOf (if (state.targetWeight > 0.0) state.targetWeight.toString() else (""))
+        mutableStateOf(if (state.targetWeight > 0.0) state.targetWeight.toString() else (""))
     }
-    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -103,15 +104,15 @@ fun OnboardingTargetWeight(
                 onValueChange = { textState  =  it },
                 label = { Text(stringResource(id = R.string.userData_label_target_weight)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError = error != null,
+                isError = errorState is BaseViewModel.UiState.Error,
                 singleLine = true,
                 textStyle = TextStyle( color = Color(0xFFFFFFFF))
             )
-            error?.let { resId ->
+            if (errorState is BaseViewModel.UiState.Error) {
                 Text(
                     modifier = Modifier
                         .padding(top = 16.dp),
-                    text = stringResource(id = resId),
+                    text = errorState.message,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
                 )

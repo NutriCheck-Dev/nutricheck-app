@@ -28,8 +28,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieSummary
 import com.frontend.nutricheck.client.ui.view.widgets.DateSelectorBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
-import com.frontend.nutricheck.client.ui.view_model.history.HistoryEvent
-import com.frontend.nutricheck.client.ui.view_model.history.HistoryViewModel
+import com.frontend.nutricheck.client.ui.view_model.HistoryEvent
+import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.AddDialogOrigin
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 import java.util.Calendar

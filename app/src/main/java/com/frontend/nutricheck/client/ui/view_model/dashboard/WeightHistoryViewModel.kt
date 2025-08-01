@@ -1,8 +1,9 @@
-package com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,17 +18,16 @@ data class WeightHistoryState(
 @HiltViewModel
 class WeightHistoryViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository
-) : BaseWeightHistoryViewModel() {
+) : BaseViewModel() {
 
     private val _weightHistoryState = MutableStateFlow(WeightHistoryState())
     val weightHistoryState = _weightHistoryState.asStateFlow()
 
-    override fun displayWeightHistory(timePeriod: String) {
+    fun displayWeightHistory(timePeriod: String) {
         viewModelScope.launch {
-
             val weightEntries: List<Weight> = userDataRepository.getWeightHistory()
 
-            val weightList = weightEntries.map { it.value.toDouble() }
+            val weightList = weightEntries.map { it.value }
             val weightGoal = userDataRepository.getTargetWeight()
 
             _weightHistoryState.value = WeightHistoryState(

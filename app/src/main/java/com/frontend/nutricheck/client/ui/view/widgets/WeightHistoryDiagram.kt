@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.ui.view_model.dashboard.weight_history.WeightHistoryState
+import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
 
 
 @Composable

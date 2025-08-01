@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories.DailyCalorieState
+import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieState
 
 @Composable
 fun CaloriesToday(

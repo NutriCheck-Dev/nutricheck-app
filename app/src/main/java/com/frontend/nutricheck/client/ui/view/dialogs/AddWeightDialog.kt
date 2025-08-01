@@ -31,7 +31,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.ui.view_model.profile.ProfileEvent
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -41,7 +42,7 @@ import java.util.Locale
 fun AddWeightDialog(
     onEvent : (ProfileEvent) -> Unit,
     onDismissRequest: () -> Unit,
-    errorMessage : Int? = null
+    errorState : BaseViewModel.UiState,
 ) {
     var weightInput by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(Date()) }
@@ -86,11 +87,11 @@ fun AddWeightDialog(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
-                errorMessage?.let { resId ->
+                if (errorState is BaseViewModel.UiState.Error) {
                     Text(
                         modifier = Modifier
                             .padding(top = 16.dp),
-                        text = stringResource(id = resId),
+                        text = errorState.message,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center
                     )

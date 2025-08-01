@@ -31,17 +31,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingEvent
+import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.ui.view_model.onboarding.OnboardingState
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.OnboardingState
 
 @Composable
 fun OnboardingName(
     state : OnboardingState,
     onEvent : (OnboardingEvent) -> Unit,
+    errorState : BaseViewModel.UiState
     ) {
     var textState by remember { mutableStateOf(state.username) }
-    val error = state.errorState
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -95,16 +96,17 @@ fun OnboardingName(
                 value = textState,
                 onValueChange = { textState = it },
                 label = { Text(stringResource(id = R.string.userData_label_name)) },
-                isError = error != null,
+                isError = errorState is BaseViewModel.UiState.Error,
                 singleLine = true,
                 textStyle = TextStyle( color = Color(0xFFFFFFFF))
             )
-            error?.let { resId ->
+            if (errorState is BaseViewModel.UiState.Error) {
                 Text(
                     modifier = Modifier
                         .padding(top = 16.dp),
-                    text = stringResource(id = resId),
-                    color = MaterialTheme.colorScheme.error
+                    text = errorState.message,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
                 )
             }
         }

@@ -84,5 +84,6 @@
     <string name="error_encoding_image">Fehler beim Verarbeiten des Bildes, bitte nimm ein neues Bild auf</string>
     <string name="error_no_photo_taken">Es wurde kein Foto aufgenommen, bitte nimm ein neues Foto auf</string>
     <string name="error_searching_recipes">Server-Fehler beim Abrufen der Rezepte: %s</string>
+    <string name="userData_error_invalid_date">Ungültiges Datum</string>
 
 </resources>

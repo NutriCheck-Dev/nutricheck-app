@@ -1,8 +1,9 @@
-package com.frontend.nutricheck.client.ui.view_model.dashboard.daily_calories
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,19 +22,19 @@ data class DailyCalorieState(
 class DailyCalorieViewModel @Inject constructor(
     private val userDataRepository : UserDataRepository,
     private val historyRepository : HistoryRepository
-) : BaseDailyCalorieViewModel() {
+) : BaseViewModel() {
 
-    val _dailyCalorieState = MutableStateFlow(DailyCalorieState())
+    private val _dailyCalorieState = MutableStateFlow(DailyCalorieState())
     val dailyCalorieState = _dailyCalorieState.asStateFlow()
     init {
         displayDailyCalories()
     }
 
-     override fun displayDailyCalories() {
+     fun displayDailyCalories() {
          val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
          viewModelScope.launch {
              val calories = historyRepository.getCaloriesOfDay(currentDate)
-             val goal = userDataRepository.getCalorieGoal()
+             val goal = userDataRepository.getDailyCalorieGoal()
              _dailyCalorieState.value = DailyCalorieState(
                  dailyCalories = calories,
                  calorieGoal = goal

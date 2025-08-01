@@ -117,8 +117,12 @@ class HistoryRepositoryImpl @Inject constructor(
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
 
-    override suspend fun getDailyMacros() = withContext(Dispatchers.IO) {
-        TODO("Not yet implemented")
+    override suspend fun getDailyMacros() : List<Int> {
+        val meals = getMealsForDay(Date())
+        val dailyProtein = meals.sumOf { it.protein }.toInt()
+        val dailyCarbohydrates = meals.sumOf { it.carbohydrates }.toInt()
+        val dailyFat = meals.sumOf { it.fat }.toInt()
+        return listOf(dailyCarbohydrates, dailyProtein, dailyFat)
     }
 
     override suspend fun getMealFoodItemById(

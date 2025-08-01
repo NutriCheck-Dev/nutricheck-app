@@ -20,10 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.RootNavGraph
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
-import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -47,17 +47,17 @@ fun MainScreen(
     val currentDestination = backStackEntry?.destination?.route ?: Screen.HomePage.route
     val startDestination by produceState<String?>(initialValue = null, hiltWrapperViewModel) {
         val isOnboardingCompleted =
-            hiltWrapperViewModel.appSettingsRepository.isOnboardingCompleted.first()
+            hiltWrapperViewModel.appSettingRepository.isOnboardingCompleted.first()
         value = if (isOnboardingCompleted) {
             Screen.HomePage.route
         } else {
             Screen.Onboarding.route
         }
     }
-    startDestination?.let { destination ->
+    startDestination?.let {
         Scaffold(
             bottomBar = {
-                if (destination != Screen.Onboarding.route) {
+                if (currentDestination != Screen.Onboarding.route) {
                     BottomNavigationBar(
                         currentDestination = currentDestination,
                         onClickAdd = { mainNavController.navigate(Screen.Add.route) },
@@ -69,15 +69,16 @@ fun MainScreen(
             }
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
-                RootNavGraph(mainNavController, destination)
+                RootNavGraph(mainNavController, startDestination!!)
             }
         }
     }
 
+
 }
 @HiltViewModel
 class HiltWrapperViewModel @Inject constructor(
-    val appSettingsRepository: AppSettingsRepository
+    val appSettingRepository: AppSettingRepository
 ) : ViewModel()
 
 
