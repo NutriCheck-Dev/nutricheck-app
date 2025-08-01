@@ -8,8 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.ui.view.app_views.HistoryPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
