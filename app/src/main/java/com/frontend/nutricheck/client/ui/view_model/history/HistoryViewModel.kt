@@ -21,7 +21,9 @@ data class HistoryState(
     val selectedDate: Date = Date(),
     val nutritionOfDay: Map<String, Int> = emptyMap(),
     val mealsGrouped: Map<DayTime, List<Meal>> = emptyMap(),
+    val mealId: String = "",
     val foodId: String = "",
+    val recipeId: String = "",
     val totalCalories: Int = 0,
     val goalCalories: Int = 0,
     val switched: Boolean = false
@@ -29,8 +31,8 @@ data class HistoryState(
 
 sealed interface HistoryEvent {
     data class AddEntryClick(val day: Date, val dayTime: DayTime) : HistoryEvent
-    data class FoodClicked(val foodId: String) : HistoryEvent
-    data class RecipeClicked(val recipeId: String) : HistoryEvent
+    data class FoodClicked(val mealId: String, val foodId: String) : HistoryEvent
+    data class RecipeClicked(val mealId:String, val recipeId: String) : HistoryEvent
     data class DetailsClick(val detailsId: String) : HistoryEvent
     data class SelectDate(val day: Date) : HistoryEvent
 }
@@ -49,8 +51,8 @@ class HistoryViewModel @Inject constructor(
     fun onEvent(event: HistoryEvent) {
         when (event) {
             is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day, event.dayTime)
-            is HistoryEvent.FoodClicked -> onFoodClicked(event.foodId)
-            is HistoryEvent.RecipeClicked -> onRecipeClicked(event.recipeId)
+            is HistoryEvent.FoodClicked -> onFoodClicked(event.mealId, event.foodId)
+            is HistoryEvent.RecipeClicked -> onRecipeClicked(event.mealId, event.recipeId)
             is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
             is HistoryEvent.SelectDate -> selectDate(event.day)
         }
@@ -102,14 +104,14 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    override fun onFoodClicked(foodId: String) {
+    override fun onFoodClicked(mealId: String, foodId: String) {
         viewModelScope.launch {
-            _events.emit(HistoryEvent.FoodClicked(foodId))
+            _events.emit(HistoryEvent.FoodClicked(mealId, foodId))
         }
     }
-    override fun onRecipeClicked(recipeId: String) {
+    override fun onRecipeClicked(mealId: String, recipeId: String) {
         viewModelScope.launch {
-            _events.emit(HistoryEvent.RecipeClicked(recipeId))
+            _events.emit(HistoryEvent.RecipeClicked(mealId, recipeId))
         }
     }
     override fun onDetailsClick(detailsId: String) {

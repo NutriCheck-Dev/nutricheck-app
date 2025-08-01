@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
@@ -86,7 +87,7 @@ fun MealBlock(
     totalCalories: Double,
     items: List<MealItem>,
     onAddClick: () -> Unit = {},
-    optionsOnClick: () -> Unit = {}
+    onItemClick: (MealItem) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -105,14 +106,16 @@ fun MealBlock(
                     DishItemMealButton(
                         title = item.foodProduct.name,
                         quantity = item.quantity,
-                        calories = item.quantity * item.foodProduct.calories
+                        calories = item.quantity * item.foodProduct.calories,
+                        onClick = { onItemClick(item) }
                     )
                 }
                 is MealRecipeItem -> {
                     DishItemMealButton(
                         title = item.recipe.name,
                         quantity = item.quantity,
-                        calories = item.quantity * item.recipe.calories
+                        calories = item.quantity * item.recipe.calories,
+                        onClick = { onItemClick(item) }
                     )
                 }
             }
