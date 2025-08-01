@@ -95,8 +95,12 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun addMeal(meal: Meal) {
         //check if meal exists
         val mealEntities = mealDao.getMealsWithAllForDay(meal.date)
-        mealEntities.forEach { mealEntity -> if (mealEntity.meal.id.equals(meal.id)) throw Exception() }//error duplicate meal
-
+        for (mealEntity in mealEntities) {
+            val existingMealId = mealEntity.meal?.id
+            if (existingMealId != null && existingMealId == meal.id) {
+                throw IllegalArgumentException("Meal with ID ${meal.id} already exists")
+            }
+        }
         //check if foodProduct exists
         val foodProducts : List<FoodProduct> = meal.mealFoodItems.map { it.foodProduct }
         for (foodProduct in foodProducts) {

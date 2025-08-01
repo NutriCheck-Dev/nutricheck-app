@@ -20,9 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
 
 
@@ -56,7 +58,7 @@ fun WeightHistoryDiagram(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Gewichtsfortschritt",
+                text = stringResource(id = R.string.homepage_weight_progress),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold

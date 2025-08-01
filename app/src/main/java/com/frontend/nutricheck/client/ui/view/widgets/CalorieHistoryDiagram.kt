@@ -20,9 +20,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryState
 
 
@@ -48,7 +50,7 @@ fun CalorieHistoryDiagram(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Kalorienverlauf",
+                text = stringResource(id = R.string.homepage_calorie_history),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
@@ -63,7 +65,7 @@ fun CalorieHistoryDiagram(
         }
 
         Spacer(modifier = Modifier.height(25.dp))
-        CalorieBarChart(calorieData, selectedRange, 2000)
+        CalorieBarChart(calorieData, selectedRange, calorieGoal)
     }
 }
 

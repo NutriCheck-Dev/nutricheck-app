@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.BottomNavigationBar
@@ -20,12 +20,18 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.ui.view_model.navigation.RootNavGraph
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
+import java.util.Date
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -56,10 +62,42 @@ fun MainScreen(
             Screen.Onboarding.route
         }
     }
-    startDestination?.let {
+
+    val testFoodProduct = FoodProduct(
+        id = "tessss",
+        name = "Essen",
+        calories = 200.0
+    )
+    val testMealFoodItem = MealFoodItem(
+        mealId = "test123456",
+        foodProduct = testFoodProduct,
+        quantity = 1.0,
+    )
+    val testMeal = Meal(
+        id = "test123456",
+        calories = 300.0,
+        carbohydrates = 200.0,
+        protein = 100.0,
+        fat = 50.0,
+        date = Date(),
+        dayTime = DayTime.BREAKFAST,
+        mealFoodItems = listOf(testMealFoodItem),
+        mealRecipeItem = emptyList()
+    )
+
+    LaunchedEffect(Unit) {
+        // Erstmal Meal einfügen
+        hiltWrapperViewModel.historyRepository.addMeal(testMeal) // musst du noch anlegen
+
+        // Dann Meal abrufen
+        val meals = hiltWrapperViewModel.historyRepository.getMealsForDay(Date())
+        Log.v("TestMeals", "🧪 Test Meals: $meals")
+    }
+
+    startDestination?.let { destination ->
         Scaffold(
             bottomBar = {
-                if (currentDestination != Screen.Onboarding.route) {
+                if (destination != Screen.Onboarding.route) {
                     BottomNavigationBar(
                         currentDestination = currentDestination,
                         onClickAdd = { mainNavController.navigate(Screen.Add.route) },
@@ -71,17 +109,14 @@ fun MainScreen(
             }
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
-                RootNavGraph(mainNavController, startDestination!!)
+                RootNavGraph(mainNavController, destination)
             }
         }
     }
 
-
 }
 @HiltViewModel
 class HiltWrapperViewModel @Inject constructor(
-    val appSettingsRepository: AppSettingsRepository
+    val appSettingsRepository: AppSettingsRepository,
+    val historyRepository: HistoryRepository
 ) : ViewModel()
-
-
-
