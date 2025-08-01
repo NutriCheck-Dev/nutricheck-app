@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,7 +21,9 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -33,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -64,7 +67,7 @@ fun PersonalDataPage(
 
         ViewsTopBar(
             navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
-            title = { Text(stringResource(id = R.string.profile_menu_item_personal_data),) }
+            title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
         )
 
     LazyColumn(
@@ -150,16 +153,14 @@ private fun LazyListScope.personalDataFormItems(
     }
     item {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY)
-        Row(modifier = Modifier.clickable { onBirthdateClick() }) {
             EditableDataRow(
                 label = stringResource(id = R.string.userData_label_birthdate),
                 value = dateFormat.format(userData.birthdate),
-                onValueChange = { /* Bleibt leer wegen DatePicker */ },
+                onValueChange = { /* empty because of datepicker */ },
                 keyboardType = KeyboardType.Text,
-                readOnly = true
+                readOnly = true,
+                textFieldModifier = Modifier.clickable { onBirthdateClick() }
             )
-        }
-
     }
     item {
         val genderOptions = Gender.entries.map { gender ->
@@ -179,7 +180,7 @@ private fun LazyListScope.personalDataFormItems(
     }
     item {
         EditableDataRow(
-            label = stringResource(id = R.string.profile_menu_height),
+            label = stringResource(id = R.string.userData_label_height),
             value = userData.height.toString(),
             onValueChange = { onEvent(ProfileEvent.UpdateUserHeightDraft(it)) },
             keyboardType = KeyboardType.Number
@@ -187,7 +188,7 @@ private fun LazyListScope.personalDataFormItems(
     }
     item {
         EditableDataRow(
-            label = stringResource(id = R.string.profile_menu_weight),
+            label = stringResource(id = R.string.userData_label_weight),
             value = userData.weight.toString(),
             onValueChange = { onEvent(ProfileEvent.UpdateUserWeightDraft(it)) },
             keyboardType = KeyboardType.Number
@@ -250,7 +251,8 @@ private fun EditableDataRow(
     value: String,
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
-    readOnly: Boolean = false
+    readOnly: Boolean = false,
+    textFieldModifier: Modifier = Modifier
 ) {
     Row(
         modifier = Modifier
@@ -267,9 +269,24 @@ private fun EditableDataRow(
             value = value,
             onValueChange = onValueChange,
             readOnly = readOnly,
+            enabled = !readOnly,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             singleLine = true,
-            modifier = Modifier.weight(1f)
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledBorderColor = Color.White, // white outline, if disabled
+                unfocusedBorderColor = Color.White, // white outline, if not focused
+                focusedBorderColor = Color.White, // white outline, if focused
+                disabledTextColor = Color.White, // white text, if disabled
+                unfocusedTextColor = Color.White, // white text, if not focused
+                focusedTextColor = Color.White // white text, if focused
+            ),
+            modifier = Modifier
+                .weight(1f)
+                .then(
+                    if (readOnly && textFieldModifier != Modifier)
+                        textFieldModifier
+                    else Modifier)
+
         )
     }
 }
@@ -292,12 +309,12 @@ private fun EditableDropdownRow(
     ) {
         Text(
             text = label,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(2f)
         )
         ExposedDropdownMenuBox(
             expanded = isExpanded,
             onExpandedChange = { isExpanded = it },
-            modifier = Modifier.width(IntrinsicSize.Min)
+            modifier = Modifier.weight(1f).requiredWidth(IntrinsicSize.Min)
         ) {
             TextField(
                 value = selectedValue,
@@ -305,10 +322,11 @@ private fun EditableDropdownRow(
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
             )
             ExposedDropdownMenu(
                 expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
+                onDismissRequest = { isExpanded = false},
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
