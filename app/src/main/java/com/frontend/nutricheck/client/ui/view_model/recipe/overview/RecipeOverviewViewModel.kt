@@ -126,7 +126,7 @@ class RecipeOverviewViewModel @Inject constructor(
     override fun onEditClicked() {
         _recipeOverviewState.update { state ->
             state.copy(
-                parameters = state.parameters.copy(editing = true)
+                parameters = state.parameters.copy(editing = !state.parameters.editing)
             )
         }
     }

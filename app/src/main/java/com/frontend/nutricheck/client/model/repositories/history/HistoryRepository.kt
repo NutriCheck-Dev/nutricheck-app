@@ -17,6 +17,7 @@ interface HistoryRepository {
     suspend fun deleteMeal(meal: Meal)
     suspend fun updateMeal(meal: Meal)
     suspend fun getMealsForDay(date: Date): List<Meal>
+    suspend fun getMealById(mealId: String): Meal
     suspend fun addMeal(meal: Meal)
     suspend fun getDailyMacros() : List<Int>
     suspend fun getMealRecipeItemById(mealId: String, recipeId: String): MealRecipeItem

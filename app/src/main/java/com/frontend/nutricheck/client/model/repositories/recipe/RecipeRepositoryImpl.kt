@@ -19,10 +19,13 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RetrofitInstance
 import com.frontend.nutricheck.client.model.repositories.mapper.RecipeMapper
 import com.frontend.nutricheck.client.model.repositories.mapper.ReportMapper
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -41,7 +44,9 @@ class RecipeRepositoryImpl @Inject constructor(
             .firstOrNull()
             ?.map { DbRecipeMapper.toRecipe(it) }
             ?: emptyList()
-        emit(Result.Success(cached))
+        if (cached.isNotEmpty()) {
+            emit(Result.Success(cached))
+        }
 
         val lastUpdate = recipeSearchDao.getLatestUpdatedFor(recipeName)
         if (isExpired(lastUpdate)) {
@@ -56,18 +61,18 @@ class RecipeRepositoryImpl @Inject constructor(
                     recipeSearchDao.upsertEntities(recipes.map {
                         RecipeSearchEntity(recipeName, it.id, now)
                     })
-                    Result.Success(recipes)
+                    emit(Result.Success(recipes))
                 } else {
                     val message = response.errorBody()!!.string()
-                    Result.Error(code = response.code(), message = message)
+                    emit(Result.Error(code = response.code(), message = message))
                 }
             } catch (io: okio.IOException) {
-                Result.Error(message = "Oops, an error has occurred. Please check your internet connection.")
+                emit(Result.Error(message = "Oops, an error has occurred. Please check your internet connection."))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun insertRecipe(recipe: Recipe) {
+    override suspend fun insertRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
         recipeDao.insert(recipeEntity)
 
@@ -78,25 +83,26 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMyRecipes(): List<Recipe> {
+
+    override suspend fun getMyRecipes(): List<Recipe> = withContext(Dispatchers.IO) {
         val recipesWithIngredients = recipeDao.getAllRecipesWithIngredients()
         val list = recipesWithIngredients.first()
-        return list.map { recipeWithIngredients ->
+        list.map { recipeWithIngredients ->
             DbRecipeMapper.toRecipe(recipeWithIngredients)
         }
     }
 
-    override suspend fun getRecipeById(recipeId: String): Recipe {
+    override suspend fun getRecipeById(recipeId: String): Recipe = withContext(Dispatchers.IO) {
         val recipeWithIngredients = recipeDao.getRecipeWithIngredientsById(recipeId).first()
-        return DbRecipeMapper.toRecipe(recipeWithIngredients)
+        DbRecipeMapper.toRecipe(recipeWithIngredients)
     }
 
-    override suspend fun deleteRecipe(recipe: Recipe) {
+    override suspend fun deleteRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
         recipeDao.delete(recipeEntity)
     }
 
-    override suspend fun updateRecipe(recipe: Recipe) {
+    override suspend fun updateRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
         val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
         recipeDao.update(recipeEntity)
 
@@ -108,8 +114,8 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadRecipe(recipe: Recipe): Result<Recipe> {
-        return try {
+    override suspend fun uploadRecipe(recipe: Recipe): Result<Recipe> = withContext(Dispatchers.IO) {
+        try {
             val response = api.uploadRecipe(RecipeMapper.toDto(recipe))
             val body = response.body()
             val errorBody = response.errorBody()
@@ -132,8 +138,9 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun reportRecipe(recipeReport: RecipeReport): Result<ReportDTO> {
-        return try {
+
+    override suspend fun reportRecipe(recipeReport: RecipeReport): Result<ReportDTO> = withContext(Dispatchers.IO) {
+        try {
             val response = api.reportRecipe(ReportMapper.toDto(recipeReport))
             val body = response.body()
             val errorBody = response.errorBody()
@@ -159,12 +166,12 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun getIngredientById(
         recipeId: String,
         foodProductId: String
-    ): Ingredient {
+    ): Ingredient = withContext(Dispatchers.IO) {
         val ingredientWithFoodProduct = ingredientDao.getIngredientById(recipeId, foodProductId)
-        return DbIngredientMapper.toIngredient(ingredientWithFoodProduct!!)
+        DbIngredientMapper.toIngredient(ingredientWithFoodProduct!!)
     }
 
-    override suspend fun updateIngredient(ingredient: Ingredient) {
+    override suspend fun updateIngredient(ingredient: Ingredient) = withContext(Dispatchers.IO) {
         val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
         ingredientDao.update(ingredientEntity)
     }
@@ -172,7 +179,7 @@ class RecipeRepositoryImpl @Inject constructor(
     private fun isExpired(lastUpdate: Long?): Boolean =
         lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive
 
-    private suspend fun checkForFoodProducts(ingredient: Ingredient) {
+    private suspend fun checkForFoodProducts(ingredient: Ingredient) = withContext(Dispatchers.IO) {
         if (!foodDao.exists(ingredient.foodProduct.id)) {
             foodDao.insert(DbFoodProductMapper.toFoodProductEntity(ingredient.foodProduct))
         }

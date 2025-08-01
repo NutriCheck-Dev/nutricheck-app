@@ -24,6 +24,9 @@ sealed class HistoryPageScreens(val route: String) {
     object RecipeOverview : RecipePageScreens("recipe_overview/{recipeId}") {
         fun createRoute(recipeId: String) = "recipe_overview/$recipeId"
     }
+    object AddMeal : RecipePageScreens("add_meal/{mealId}") {
+        fun createRoute(mealId: String) = "add_meal/$mealId"
+    }
 }
 
 @Composable

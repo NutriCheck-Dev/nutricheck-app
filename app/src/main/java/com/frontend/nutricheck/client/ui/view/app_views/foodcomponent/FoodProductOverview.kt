@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view.app_views.foodcomponent
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,22 +27,25 @@ import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsW
 import com.frontend.nutricheck.client.ui.view.widgets.ServingSizeDropdown
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewState
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
 
 @Composable
 fun FoodProductOverview(
     foodProductOverviewViewModel: FoodProductOverviewViewModel,
+    foodSearchViewModel: FoodSearchViewModel? = null,
+    onPersist: () -> Unit = { },
     onBack: () -> Unit = { }
 ) {
-    val foodProductState by foodProductOverviewViewModel.foodProductOverviewState.collectAsState()
+    val foodProductState by foodProductOverviewViewModel.foodProductViewState.collectAsState()
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val onPersist = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
     val onCancel = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.GoBack)
-    val actions = if (foodProductState is FoodProductOverviewState.IngredientState)
-        CustomPersistButton { onPersist } else null
+    val uiState by foodProductOverviewViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -50,7 +55,7 @@ fun FoodProductOverview(
                         onCancel
                         onBack()
                     }
-                                 },
+                },
                 title = {
                     Text(
                         text = foodProductState.parameters.foodName,
@@ -60,67 +65,99 @@ fun FoodProductOverview(
                         color = colors.onSurfaceVariant
                     )
                 },
-                actions = { actions }
+                actions = {
+                    if (foodProductState.mode is FoodProductOverviewMode.FromSearch)
+                        CustomPersistButton { foodSearchViewModel!!.onEvent(
+                            SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                            onPersist()
+                        } else null
+                }
             )
         }
     ) { innerPadding ->
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-
-            FoodProductNutrientChartsWidget(
-                foodProduct = foodProductState.foodProduct,
-                modifier = Modifier.wrapContentHeight()
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = "Serving Size:",
-                    style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = colors.onSurfaceVariant,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                ServingSizeDropdown(
-                    currentServingSize = foodProductState.parameters.servingSize,
-                    expanded = foodProductState.parameters.servingSizeDropDownExpanded,
-                    onExpandedChange = { foodProductOverviewViewModel.onEvent(
-                        FoodProductOverviewEvent.ServingSizeDropDownClick
-                    ) },
-                    onSelect = { foodProductOverviewViewModel.onEvent(
-                        FoodProductOverviewEvent.ServingSizeChanged(it)
-                    )}
-                )
+        when (uiState) {
+            BaseViewModel.UiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = "Servings:",
-                    style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = colors.onSurfaceVariant,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                ServingsPicker(
-                    value = foodProductState.parameters.servings,
-                    range = 1..200,
-                    onValueChange = { foodProductOverviewViewModel.onEvent(
-                        FoodProductOverviewEvent.ServingsChanged(it)
-                    ) }
-                )
+            is BaseViewModel.UiState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Error loading food product",
+                        style = styles.bodyLarge,
+                        color = colors.error
+                    )
+                }
+            }
+            BaseViewModel.UiState.Ready -> {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+
+                    FoodProductNutrientChartsWidget(
+                        foodProduct = foodProductState.foodProduct,
+                        modifier = Modifier.wrapContentHeight()
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Text(
+                            text = "Serving Size:",
+                            style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = colors.onSurfaceVariant,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        ServingSizeDropdown(
+                            currentServingSize = foodProductState.parameters.servingSize,
+                            expanded = foodProductState.parameters.servingSizeDropDownExpanded,
+                            onExpandedChange = {
+                                foodProductOverviewViewModel.onEvent(
+                                    FoodProductOverviewEvent.ServingSizeDropDownClick
+                                )
+                            },
+                            onSelect = {
+                                foodProductOverviewViewModel.onEvent(
+                                    FoodProductOverviewEvent.ServingSizeChanged(it)
+                                )
+                            }
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Text(
+                            text = "Servings:",
+                            style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = colors.onSurfaceVariant,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        ServingsPicker(
+                            value = foodProductState.parameters.servings,
+                            range = 1..200,
+                            onValueChange = {
+                                foodProductOverviewViewModel.onEvent(
+                                    FoodProductOverviewEvent.ServingsChanged(it)
+                                )
+                            }
+                        )
+                    }
+                }
             }
         }
     }

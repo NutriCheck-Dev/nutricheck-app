@@ -51,8 +51,7 @@ data class RecipeDraft(
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
-    data class IngredientRemoved(val ingredient: FoodProduct) : RecipeEditorEvent
-    data class IngredientQuantityChanged(val ingredient: FoodProduct, val quantity: Double) : RecipeEditorEvent
+    data class IngredientRemoved(val ingredient: Ingredient) : RecipeEditorEvent
     object AddIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
     object Cancel : RecipeEditorEvent
@@ -103,7 +102,6 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.TitleChanged -> titleChanged(event.title)
             is RecipeEditorEvent.DescriptionChanged -> descriptionChanged(event.description)
             is RecipeEditorEvent.IngredientRemoved -> removeIngredient(event.ingredient)
-            is RecipeEditorEvent.IngredientQuantityChanged -> ingredientQuantityChanged(event.ingredient, event.quantity)
             is RecipeEditorEvent.AddIngredients -> addIngredients()
             is RecipeEditorEvent.SaveRecipe -> saveRecipe()
             is RecipeEditorEvent.Cancel -> cancel()
@@ -125,23 +123,10 @@ class RecipeEditorViewModel @Inject constructor(
 
     private fun addIngredients() = emitEvent(RecipeEditorEvent.AddIngredients)
 
-    private fun removeIngredient(ingredient: FoodProduct) {
+    private fun removeIngredient(ingredient: Ingredient) {
         _draft.update { it.copy(
             ingredients = it.ingredients.filterNot { ingredient -> ingredient.foodProduct.id == ingredient.foodProduct.id }
         ) }
-    }
-
-    private fun ingredientQuantityChanged(ingredient: FoodProduct, quantity: Double) {
-        _draft.update { draft ->
-            val updatedIngredients = draft.ingredients.map { existingIngredient ->
-                if (existingIngredient.foodProduct.id == ingredient.id) {
-                    existingIngredient.copy(quantity = quantity)
-                } else {
-                    existingIngredient
-                }
-            }
-            draft.copy(ingredients = updatedIngredients)
-        }
     }
 
     private fun saveRecipe() {

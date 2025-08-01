@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
+import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
@@ -45,7 +46,6 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchUi
 fun SearchPage(
     modifier: Modifier = Modifier,
     searchViewModel: FoodSearchViewModel,
-    onMealSelected: (DayTime) -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {},
     onConfirm: () -> Unit = {},
     onBack: () -> Unit = {}
@@ -72,21 +72,20 @@ fun SearchPage(
                             color = colors.onSurfaceVariant
                         ) },
                     actions = {
-                        IconButton(onConfirm) {
-                            Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
-                        }
+                        CustomPersistButton { onConfirm() }
                     })
             } else MealSelector(
                 dayTime = if (searchState is SearchUiState.AddComponentsToMealState)
                         (searchState as SearchUiState.AddComponentsToMealState).dayTime
                 else null,
+                expanded = searchState.parameters.expanded,
+                onExpandedChange = { searchViewModel.onEvent(SearchEvent.MealSelectorClick) },
                 trailingContent = {
-                    IconButton(onConfirm) {
-                        Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
-                    }
-                },
-                onBack = onBack,
-                onMealSelected = onMealSelected
+                    CustomPersistButton { onConfirm() } },
+                onBack = { onBack() },
+                onMealSelected = { daytime ->
+                    searchViewModel.onEvent(SearchEvent.DayTimeChanged(daytime))
+                }
             )
         }
     ) { paddingValues ->
@@ -134,10 +133,12 @@ fun SearchPage(
                         foodComponents = searchState.parameters.results,
                         trailingContent = { item ->
                             CustomAddButton(onClick = {
-                                //TODO: Implement addComponent logic
+                                searchViewModel.onEvent(SearchEvent.AddFoodComponent(Pair(1.0, item)))
                             })
                         },
-                        onItemClick = onItemClick
+                        onItemClick = { item ->
+                            onItemClick(item)
+                        }
                     )
                 }
             }
