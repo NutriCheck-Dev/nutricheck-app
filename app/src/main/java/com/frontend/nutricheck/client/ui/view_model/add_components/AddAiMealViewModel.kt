@@ -1,9 +1,10 @@
 package com.frontend.nutricheck.client.ui.view_model.add_components
 
 import android.content.ContentResolver
-import android.util.Base64
 import android.content.ContentValues
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -19,10 +20,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
-import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,10 +36,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
+import java.io.IOException
+import java.util.Date
 
 
 sealed interface AddAiMealEvent {
@@ -138,36 +140,69 @@ class AddAiMealViewModel @Inject constructor(
             ContextCompat.getMainExecutor(appContext),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(result: ImageCapture.OutputFileResults) {
-                    _photoUri.value = result.savedUri
-                    val inputStream = appContext.contentResolver.openInputStream(result.savedUri!!)
-                    val fileContent = inputStream?.readBytes()
-                    Log.d("HistoryRepository", "Requesting AI meal estimation with file: ${fileContent?.joinToString()}")
-
+                    val jpegUri = result.savedUri
+                    // JPEG in PNG konvertieren
+                    val pngUri = jpegUri?.let { convertJpegToPng(it, appContext.contentResolver) }
+                    _photoUri.value = pngUri ?: run {
+                        setError(appContext.getString(R.string.error_no_photo_taken))
+                        null
+                    }
                 }
-                override fun onError (exception: ImageCaptureException) {
+                override fun onError(exception: ImageCaptureException) {
                     _photoUri.value = null
                     setError(appContext.getString(R.string.error_no_photo_taken))
                 }
             }
         )
     }
+    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
+        return try {
+            // JPEG-Bild in Bitmap laden
+            val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            } ?: return null
 
+            // Neue Datei für PNG erstellen
+            val name = "${System.currentTimeMillis()}.png"
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
+            }
+
+            // PNG-Datei speichern
+            val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            pngUri?.let {
+                contentResolver.openOutputStream(it)?.use { outputStream ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                }
+                bitmap.recycle() // Speicher freigeben
+                return it
+            }
+            null
+        } catch (e: Exception) {
+            Log.e("ConvertJpegToPng", "Error converting JPEG to PNG: $uri", e)
+            null
+        }
+    }
     private fun submitPhoto() {
-
         viewModelScope.launch {
             setLoading()
-            val multipartBody = uriToMultipart(_photoUri.value)
+            val multipartBody = uriToMultipartBody(_photoUri.value, appContext.contentResolver, appContext)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
                 _photoUri.value = null
                 return@launch
             }
             val response = historyRepository.requestAiMeal(multipartBody)
-
+            val dayTime = DayTime.dateToDayTime(Date())
             if (response is Result.Success) {
-                 val meal = response.data
-                emitEvent(AddAiMealEvent.ShowMealOverview(meal.id, meal.mealFoodItems.first().foodProduct.id))
+                val meal = response.data
+                val mealCopy = meal.copy(dayTime = dayTime)
+                emitEvent(AddAiMealEvent.ShowMealOverview(
+                    mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id))
             } else if (response is Result.Error) {
+                Log.e("SubmitPhoto", "API error: ${response.message}")
                 setError(appContext.getString(R.string.error_encoding_image))
                 _photoUri.value = null
                 return@launch
@@ -175,53 +210,124 @@ class AddAiMealViewModel @Inject constructor(
             _photoUri.value = null
             setReady()
         }
-    }
-    private fun retakePhoto() {
+    }private fun retakePhoto() {
         _photoUri.value = null
     }
     // parse the image URI to a MultipartBody.Part for sending to the backend
-    private fun uriToMultipart(uri: Uri?): MultipartBody.Part? {
+    /**
+     * Konvertiert ein Bild von einer Uri in ein MultipartBody.Part für den API-Upload.
+     * Wenn das Bild im JPEG-Format vorliegt, wird es in PNG konvertiert, da der Server PNG erwartet.
+     *
+     * @param uri Die Uri des Bildes (z. B. aus der Kamera oder Galerie).
+     * @param contentResolver Der ContentResolver für den Zugriff auf die Uri.
+     * @param context Der Android-Kontext für den Zugriff auf Ressourcen.
+     * @return Ein MultipartBody.Part für den Upload oder null, wenn ein Fehler auftritt.
+     */
+    fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver, context: android.content.Context): MultipartBody.Part? {
         if (uri == null) return null
 
-        val partName = "photo"
+        val partName = "file"
         val defaultFileName = "upload.png"
-        val contentResolver = appContext.contentResolver
 
         return try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                val mimeType = "image/png"
-                val fileName = getFileNameFromUri(uri, contentResolver) ?: defaultFileName
-                val requestBody = object : RequestBody() {
-                    override fun contentType() = mimeType.toMediaTypeOrNull()
-                    override fun contentLength(): Long =
-                        contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                            val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-                            cursor.moveToFirst()
-                            if (sizeIndex != -1) cursor.getLong(sizeIndex) else -1
-                        } ?: -1
+            // Prüfen, ob das Bild bereits PNG ist
+            val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
+            val pngUri = if (mimeType != "image/png") {
+                // JPEG in PNG konvertieren
+                convertJpegToPng(uri, contentResolver, context)
+            } else {
+                uri
+            } ?: return null
 
-                    override fun writeTo(sink: BufferedSink) {
+            // Dateinamen ermitteln
+            val fileName = getFileNameFromUri(pngUri, contentResolver) ?: defaultFileName
+
+            // RequestBody erstellen
+            val requestBody = object : RequestBody() {
+                override fun contentType() = "image/png".toMediaTypeOrNull() ?: "application/octet-stream".toMediaType()
+                override fun contentLength(): Long =
+                    contentResolver.query(pngUri, null, null, null, null)?.use { cursor ->
+                        if (cursor.moveToFirst()) {
+                            val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                            if (sizeIndex != -1) cursor.getLong(sizeIndex) else -1
+                        } else -1
+                    } ?: -1
+
+                override fun writeTo(sink: BufferedSink) {
+                    contentResolver.openInputStream(pngUri)?.use { inputStream ->
                         inputStream.copyTo(sink.outputStream())
-                    }
+                    } ?: throw IOException("Failed to open InputStream for URI: $pngUri")
                 }
-                MultipartBody.Part.createFormData(partName, fileName, requestBody)
             }
+
+            // MultipartBody.Part erstellen
+            MultipartBody.Part.createFormData(partName, fileName, requestBody)
         } catch (e: Exception) {
-            Log.e("UriToMultipart", "Unexpected error processing URI: $uri", e)
+            Log.e("UriToMultipartBody", "Unexpected error processing URI: $uri", e)
             null
         }
     }
+
+    /**
+     * Konvertiert ein JPEG-Bild von einer Uri in ein PNG-Bild und gibt die neue Uri zurück.
+     *
+     * @param uri Die Uri des JPEG-Bildes.
+     * @param contentResolver Der ContentResolver für den Zugriff auf die Uri.
+     * @param context Der Android-Kontext für den Zugriff auf den MediaStore.
+     * @return Die Uri des neuen PNG-Bildes oder null, wenn ein Fehler auftritt.
+     */
+    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver, context: android.content.Context): Uri? {
+        return try {
+            // JPEG-Bild in Bitmap laden
+            val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            } ?: return null
+
+            // Neue Datei für PNG erstellen
+            val name = "${System.currentTimeMillis()}.png"
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
+            }
+
+            // PNG-Datei speichern
+            val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            pngUri?.let {
+                contentResolver.openOutputStream(it)?.use { outputStream ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                }
+                bitmap.recycle() // Speicher freigeben
+                return it
+            }
+            null
+        } catch (e: Exception) {
+            Log.e("ConvertJpegToPng", "Error converting JPEG to PNG: $uri", e)
+            null
+        }
+    }
+
+    /**
+     * Ermittelt den Dateinamen aus einer Uri und stellt sicher, dass er mit .png endet.
+     *
+     * @param uri Die Uri des Bildes.
+     * @param contentResolver Der ContentResolver für den Zugriff auf die Uri.
+     * @return Der Dateiname oder null, wenn er nicht ermittelt werden kann.
+     */
     private fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String? {
         return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            cursor.moveToFirst()
-            if (nameIndex != -1) {
-                cursor.getString(nameIndex).let {
-                    if (!it.endsWith(".png", ignoreCase = true)) {
-                        it.substringBeforeLast(".") + ".png"
-                    } else {
-                        it
+            if (cursor.moveToFirst()) {
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex != -1) {
+                    cursor.getString(nameIndex).let {
+                        if (!it.endsWith(".png", ignoreCase = true)) {
+                            it.substringBeforeLast(".", it) + ".png"
+                        } else {
+                            it
+                        }
                     }
+                } else {
+                    null
                 }
             } else {
                 null

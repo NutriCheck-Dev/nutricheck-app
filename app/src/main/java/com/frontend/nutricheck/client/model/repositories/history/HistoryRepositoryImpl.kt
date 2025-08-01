@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
+import retrofit2.http.Part
 import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
@@ -159,7 +160,7 @@ class HistoryRepositoryImpl @Inject constructor(
 
     private suspend fun checkForFoodProducts(mealFoodItems: List<MealFoodItem>) = withContext(Dispatchers.IO) {
         for (mealFoodItem in mealFoodItems) {
-            if (foodDao.exists(mealFoodItem.foodProduct.id)) {
+            if (!foodDao.exists(mealFoodItem.foodProduct.id)) {
                 foodDao.insert(DbFoodProductMapper.toFoodProductEntity(mealFoodItem.foodProduct))
             }
         }

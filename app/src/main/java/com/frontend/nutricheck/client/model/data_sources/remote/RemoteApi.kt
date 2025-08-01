@@ -8,7 +8,9 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -33,6 +35,7 @@ interface RemoteApi {
     @GET("/user/search/recipes/{name}")
     suspend fun searchRecipes(@Path("name") name: String): Response<List<RecipeDTO>>
 
+    @Multipart
     @POST("/user/meal")
-    suspend fun estimateMeal(@Body file: MultipartBody.Part): Response<MealDTO>
+    suspend fun estimateMeal(@Part file: MultipartBody.Part): Response<MealDTO>
 }
