@@ -7,7 +7,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,12 +24,12 @@ import javax.inject.Singleton
 @HiltAndroidApp
 class NutriCheckApplication : Application() {
     @Inject
-    lateinit var appSettingsRepository: AppSettingsRepository
+    lateinit var appSettingRepository: AppSettingRepository
 
     override fun onCreate() {
         super.onCreate()
         CoroutineScope(Dispatchers.Default).launch {
-            appSettingsRepository.theme.collect {isDarkMode ->
+            appSettingRepository.theme.collect {isDarkMode ->
                 AppThemeState.currentTheme.value =
                     if (isDarkMode) ThemeSetting.DARK else ThemeSetting.LIGHT
             }

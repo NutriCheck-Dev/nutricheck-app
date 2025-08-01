@@ -6,7 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
-import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
@@ -41,12 +41,12 @@ class OnboardingViewModelTest {
         MockitoAnnotations.openMocks(this)
         whenever(appContext.getString(any())).thenReturn("error message")
         onboardingViewModel = OnboardingViewModel(
-            appSettingsRepository, userDataRepository, appContext)
+            appSettingRepository, userDataRepository, appContext)
     }
     @Mock
     private lateinit var appContext: Context
     @Mock
-    private lateinit var appSettingsRepository: AppSettingsRepository
+    private lateinit var appSettingRepository: AppSettingRepository
     @Mock
     private lateinit var userDataRepository: UserDataRepository
     private lateinit var onboardingViewModel : OnboardingViewModel
@@ -192,6 +192,6 @@ class OnboardingViewModelTest {
 
         verify(userDataRepository).addUserData(any<UserData>())
         verify(userDataRepository).addWeight(any<Weight>())
-        verify(appSettingsRepository).setOnboardingCompleted()
+        verify(appSettingRepository).setOnboardingCompleted()
     }
 }

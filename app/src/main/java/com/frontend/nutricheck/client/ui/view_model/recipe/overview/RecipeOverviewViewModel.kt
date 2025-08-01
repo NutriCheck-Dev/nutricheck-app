@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
-import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,8 +45,8 @@ sealed interface RecipeOverviewEvent {
 
 @HiltViewModel
 class RecipeOverviewViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepositoryImpl,
-    private val historyRepository: HistoryRepositoryImpl,
+    private val recipeRepository: RecipeRepository,
+    private val historyRepository: HistoryRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseRecipeOverviewViewModel() {
     private val mode: RecipeOverviewMode = savedStateHandle.run {

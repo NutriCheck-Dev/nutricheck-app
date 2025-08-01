@@ -8,7 +8,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
-import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -61,7 +61,7 @@ data class OnboardingState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val appSettingsRepository: AppSettingsRepository,
+    private val appSettingRepository: AppSettingRepository,
     private val userDataRepository: UserDataRepository,
     @ApplicationContext private val appContext: Context
 ) : BaseViewModel() {
@@ -193,7 +193,7 @@ class OnboardingViewModel @Inject constructor(
         )
         UserDataUtilsLogic.calculateNutrition(newUserData)
         viewModelScope.launch {
-            appSettingsRepository.setOnboardingCompleted()
+            appSettingRepository.setOnboardingCompleted()
             userDataRepository.addWeight(Weight(_data.value.weight, Date()))
             userDataRepository.addUserData(newUserData)
         }

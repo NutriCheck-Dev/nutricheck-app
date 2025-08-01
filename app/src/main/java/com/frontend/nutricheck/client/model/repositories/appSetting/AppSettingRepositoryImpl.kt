@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.model.repositories.user
+package com.frontend.nutricheck.client.model.repositories.appSetting
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -15,41 +15,41 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppSettingsRepository @Inject constructor(
+class AppSettingRepositoryImpl @Inject constructor(
     private val dataStore : DataStore<Preferences>
-) {
+) : AppSettingRepository {
     private object PreferencesKeys {
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val THEME_DARK = booleanPreferencesKey("theme") // true for dark mode, false for light mode
         val LANGUAGE = stringPreferencesKey("language")
     }
 
-    val isOnboardingCompleted: Flow<Boolean> = dataStore.data
+    override val isOnboardingCompleted: Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.ONBOARDING_COMPLETED] == true
         }.flowOn(Dispatchers.IO)
-    val theme : Flow<Boolean> = dataStore.data
+    override val theme : Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.THEME_DARK] != false  // Default to dark mode if not set
         }.flowOn(Dispatchers.IO)
-    val language: Flow<Language> = dataStore.data
+    override val language: Flow<Language> = dataStore.data
         .map { preferences ->
             Language.entries.find { it.code == (preferences[PreferencesKeys.LANGUAGE] ?: "de") }
                 ?: Language.GERMAN // Default to German if not found
         }.flowOn(Dispatchers.IO)
 
-    suspend fun setLanguage(language: Language) = withContext(Dispatchers.IO) {
+    override suspend fun setLanguage(language: Language) : Unit = withContext(Dispatchers.IO) {
         dataStore.edit { settings ->
             settings[PreferencesKeys.LANGUAGE] = language.code
         }
     }
 
-    suspend fun setTheme(isDarkMode: Boolean) = withContext(Dispatchers.IO) {
+    override suspend fun setTheme(isDarkMode: Boolean) : Unit = withContext(Dispatchers.IO) {
         dataStore.edit { settings ->
             settings[PreferencesKeys.THEME_DARK] = isDarkMode
         }
     }
-    suspend fun setOnboardingCompleted() = withContext(Dispatchers.IO) {
+    override suspend fun setOnboardingCompleted() : Unit = withContext(Dispatchers.IO) {
         dataStore.edit { settings ->
             settings[PreferencesKeys.ONBOARDING_COMPLETED] = true
         }

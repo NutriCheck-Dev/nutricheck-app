@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories
 
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindHistoryRepository(
         historyRepositoryImpl: HistoryRepositoryImpl
     ): HistoryRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindAppSettingRepository(
+        appSettingRepositoryImpl: AppSettingRepositoryImpl
+    ): AppSettingRepository
 }

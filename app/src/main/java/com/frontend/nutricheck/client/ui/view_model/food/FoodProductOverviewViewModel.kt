@@ -6,9 +6,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
-import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
-import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
+import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,9 +81,9 @@ sealed interface FoodProductOverviewEvent {
 
 @HiltViewModel
 class FoodProductOverviewViewModel @Inject constructor(
-    private val foodProductRepository: FoodProductRepositoryImpl,
-    private val recipeRepository: RecipeRepositoryImpl,
-    private val historyRepository: HistoryRepositoryImpl,
+    private val foodProductRepository: FoodProductRepository,
+    private val recipeRepository: RecipeRepository,
+    private val historyRepository: HistoryRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodOverviewViewModel() {
 

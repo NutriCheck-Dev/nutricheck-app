@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.BottomNavigationBar
@@ -22,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.RootNavGraph
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
-import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -49,7 +47,7 @@ fun MainScreen(
     val currentDestination = backStackEntry?.destination?.route ?: Screen.HomePage.route
     val startDestination by produceState<String?>(initialValue = null, hiltWrapperViewModel) {
         val isOnboardingCompleted =
-            hiltWrapperViewModel.appSettingsRepository.isOnboardingCompleted.first()
+            hiltWrapperViewModel.appSettingRepository.isOnboardingCompleted.first()
         value = if (isOnboardingCompleted) {
             Screen.HomePage.route
         } else {
@@ -80,7 +78,7 @@ fun MainScreen(
 }
 @HiltViewModel
 class HiltWrapperViewModel @Inject constructor(
-    val appSettingsRepository: AppSettingsRepository
+    val appSettingRepository: AppSettingRepository
 ) : ViewModel()
 
 

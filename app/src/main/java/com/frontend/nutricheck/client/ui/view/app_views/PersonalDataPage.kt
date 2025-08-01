@@ -35,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -273,12 +272,13 @@ private fun EditableDataRow(
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                disabledBorderColor = Color.White, // white outline, if disabled
-                unfocusedBorderColor = Color.White, // white outline, if not focused
-                focusedBorderColor = Color.White, // white outline, if focused
-                disabledTextColor = Color.White, // white text, if disabled
-                unfocusedTextColor = Color.White, // white text, if not focused
-                focusedTextColor = Color.White // white text, if focused
+                disabledBorderColor = MaterialTheme.colorScheme.onSecondary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSecondary,
+                focusedBorderColor = MaterialTheme.colorScheme.onSecondary,
+                disabledTextColor = MaterialTheme.colorScheme.onSecondary,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                focusedTextColor = MaterialTheme.colorScheme.onSecondary
+
             ),
             modifier = Modifier
                 .weight(1f)

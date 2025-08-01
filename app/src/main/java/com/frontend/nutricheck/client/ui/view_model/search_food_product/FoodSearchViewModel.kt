@@ -7,9 +7,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
-import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
-import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
-import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
+import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
+import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -75,9 +75,9 @@ sealed interface  SearchEvent {
 
 @HiltViewModel
 class FoodSearchViewModel @Inject constructor(
-    private val appSettingsRepository : AppSettingsRepository,
-    private val recipeRepository: RecipeRepositoryImpl,
-    private val foodProductRepository: FoodProductRepositoryImpl,
+    private val appSettingRepository : AppSettingRepository,
+    private val recipeRepository: RecipeRepository,
+    private val foodProductRepository: FoodProductRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
     private val mode: SearchMode =
@@ -114,7 +114,7 @@ class FoodSearchViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            appSettingsRepository.language.collect { language ->
+            appSettingRepository.language.collect { language ->
                 _searchState.update { uiState ->
                     uiState.updateParams(uiState.parameters.copy(language = language.code))
                 }

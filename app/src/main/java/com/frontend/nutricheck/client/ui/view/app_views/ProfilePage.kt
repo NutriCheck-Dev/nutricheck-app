@@ -39,6 +39,7 @@ import com.frontend.nutricheck.client.R
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.tooling.preview.Preview
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
@@ -80,7 +81,7 @@ fun ProfilePage(
                     .shadow(elevation = 6.dp)
                     .height(104.dp)
                     .fillMaxWidth()
-                    .background(Color(0xFF121212), shape = RoundedCornerShape(sixteenDp))
+                    .background(MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(sixteenDp))
                     .padding(start = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
@@ -91,7 +92,7 @@ fun ProfilePage(
                         fontSize = 32.sp,
                         fontWeight = FontWeight(700),
                         letterSpacing = 0.1.sp,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onSecondary
                     ),
                     maxLines = 1
                 )
@@ -102,8 +103,8 @@ fun ProfilePage(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF121212),
-                    contentColor = Color.White)
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -143,8 +144,8 @@ fun ProfilePage(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF121212),
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
                 ),
             ) {
                 Column {
@@ -203,13 +204,13 @@ fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onCli
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = text,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             fontSize = 16.sp,)
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = Color.White
+            tint = MaterialTheme.colorScheme.onSecondary,
         )
         Spacer (modifier = Modifier.width(24.dp))
     }
@@ -228,7 +229,7 @@ fun MenuItemWithSwitch(
             .clickable { onCheckedChange(!checked) }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .background(shape = RoundedCornerShape(8.dp), color = Color(0xFF121212))
+            .background(shape = RoundedCornerShape(8.dp), color = MaterialTheme.colorScheme.secondary)
             .padding(top = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -237,7 +238,7 @@ fun MenuItemWithSwitch(
             contentDescription,
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text, color = Color.White, fontSize = 16.sp)
+        Text(text = text, color = MaterialTheme.colorScheme.onSecondary, fontSize = 16.sp)
         Spacer(modifier = Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Switch(
@@ -249,20 +250,6 @@ fun MenuItemWithSwitch(
         }
         Spacer (modifier = Modifier.width(8.dp))
     }
-}
-
-@Preview
-@Composable
-fun ProfilePagePreview() {
-    ProfilePage(
-        state = UserData(
-            username = "John Doe",
-            height = 180.0,
-            weight = 75.0,
-            age = 30
-        ),
-        onEvent = {}
-    )
 }
 
 

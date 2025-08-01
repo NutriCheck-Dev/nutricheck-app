@@ -10,7 +10,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
-import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,13 +56,13 @@ sealed interface ProfileEvent {
  * Manages user data, weight history and theme settings, and handles profile events.
  *
  * @property userDataRepository Repository for user data persistence.
- * @property appSettingsRepository Repository for app settings (theme).
+ * @property appSettingRepository Repository for app settings (theme).
  */
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val appSettingsRepository: AppSettingsRepository,
+    private val appSettingRepository: AppSettingRepository,
     @ApplicationContext private val appContext: Context
 ) : BaseViewModel() {
     private val defaultUserData = UserData(
@@ -215,7 +215,7 @@ class ProfileViewModel @Inject constructor(
             ThemeSetting.LIGHT -> false
         }
         viewModelScope.launch {
-            appSettingsRepository.setTheme(isDarkMode)
+            appSettingRepository.setTheme(isDarkMode)
         }
     }
     private fun persistDataWithCalculation () {
