@@ -19,6 +19,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.SearchPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.CameraPreviewScreen
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
+import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealEvent
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
@@ -64,6 +65,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 ingredient.recipeId,
                 ingredient.foodProduct.id))
     }
+
 
     NavHost(
         navController = addNavController,

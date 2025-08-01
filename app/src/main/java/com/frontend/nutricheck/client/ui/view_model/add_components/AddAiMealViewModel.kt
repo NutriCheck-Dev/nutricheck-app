@@ -199,6 +199,7 @@ class AddAiMealViewModel @Inject constructor(
             if (response is Result.Success) {
                 val meal = response.data
                 val mealCopy = meal.copy(dayTime = dayTime)
+                setReady()
                 emitEvent(AddAiMealEvent.ShowMealOverview(
                     mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id))
             } else if (response is Result.Error) {
@@ -207,8 +208,6 @@ class AddAiMealViewModel @Inject constructor(
                 _photoUri.value = null
                 return@launch
             }
-            _photoUri.value = null
-            setReady()
         }
     }private fun retakePhoto() {
         _photoUri.value = null
