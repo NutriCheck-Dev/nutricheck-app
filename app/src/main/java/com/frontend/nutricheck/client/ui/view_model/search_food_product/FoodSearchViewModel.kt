@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
@@ -117,6 +117,13 @@ class FoodSearchViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            savedStateHandle
+                .getStateFlow<Pair<Double, FoodComponent>?>("newComponent", null)
+                .filterNotNull()
+                .collect { component ->
+                    onEvent(SearchEvent.AddFoodComponent(component))
+                    savedStateHandle.remove<Pair<Double, FoodComponent>>("newComponent")
+                }
             appSettingsRepository.language.collect { language ->
                 _searchState.update { uiState ->
                     uiState.updateParams(uiState.parameters.copy(language = language.code))
@@ -231,13 +238,22 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    override fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) =
+    override fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) {
         _searchState.update { state ->
             val currentParams = state.parameters
+            val existing = currentParams.addedComponents.find { it.second.name == foodComponent.second.name }
+            val newAddedComponents = if (existing != null) {
+                currentParams.addedComponents
+                    .filterNot { it.second.name == foodComponent.second.name } +
+                        (existing.first + foodComponent.first to foodComponent.second)
+            } else {
+                currentParams.addedComponents + foodComponent
+            }
             val newParams =
-                currentParams.copy(addedComponents = currentParams.addedComponents + foodComponent)
+                currentParams.copy(addedComponents = newAddedComponents)
             state.updateParams(newParams)
         }
+    }
 
     override fun onClickRemoveFoodComponent(foodComponent: FoodComponent) =
         _searchState.update { state ->

@@ -32,7 +32,7 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
         composable(Screen.HomePage.route) { HomeNavGraph() }
         composable(Screen.DiaryPage.route) { DiaryNavGraph(mainNavController) }
         composable(Screen.ProfilePage.route) { ProfilePageNavGraph() }
-        dialog(Screen.Add.route) { backStackEntry ->
+        composable(Screen.Add.route) { backStackEntry ->
             val originArg = backStackEntry.arguments?.getString("origin")
             val effectiveOriginName: String = when (originArg) {
                 null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name

@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,13 +37,19 @@ data class CommonFoodProductOverviewParams(
 )
 
 sealed class FoodProductOverviewState {
-    abstract val foodProduct: FoodProduct
-    abstract val parameters: CommonFoodProductOverviewParams
+    object LoadingState : FoodProductOverviewState() {
+        override val foodProduct: FoodProduct? = null
+        override val parameters: CommonFoodProductOverviewParams? = null
+    }
+
+    abstract val foodProduct: FoodProduct?
+    abstract val parameters: CommonFoodProductOverviewParams?
     fun updateParams(params: CommonFoodProductOverviewParams): FoodProductOverviewState =
         when (this) {
             is IngredientState -> copy(parameters = params)
             is MealFoodItemState -> copy(parameters = params)
             is SearchState -> copy(parameters = params)
+            LoadingState -> this
         }
     data class IngredientState(
         val ingredient: Ingredient,
@@ -64,10 +69,10 @@ sealed class FoodProductOverviewState {
         override val foodProduct: FoodProduct,
         override val parameters: CommonFoodProductOverviewParams,
     ) : FoodProductOverviewState() {
-        /**fun submitFoodProduct(): Pair<Double, FoodProduct> =
+        fun submitFoodProduct(): Pair<Double, FoodProduct> =
             Pair(parameters.servings * (parameters.servingSize.getAmount()/100).toDouble(),
-                foodProduct!!
-            )**/
+                foodProduct
+            )
     }
 }
 
@@ -84,12 +89,11 @@ class FoodProductOverviewViewModel @Inject constructor(
     private val foodProductRepository: FoodProductRepositoryImpl,
     private val recipeRepository: RecipeRepositoryImpl,
     private val historyRepository: HistoryRepositoryImpl,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : BaseFoodOverviewViewModel() {
 
-    private lateinit var _state: MutableStateFlow<FoodProductOverviewState>
-    val foodProductOverviewState: StateFlow<FoodProductOverviewState> get() =
-        _state.asStateFlow()
+    private val _state: MutableStateFlow<FoodProductOverviewState> = MutableStateFlow(FoodProductOverviewState.LoadingState)
+    val foodProductOverviewState: StateFlow<FoodProductOverviewState> = _state
 
     private val mode: FoodProductOverviewMode = savedStateHandle.run {
         val recipeId = get<String>("recipeId")
@@ -125,7 +129,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                         carbohydrates = ingredient.foodProduct.carbohydrates,
                         fat = ingredient.foodProduct.fat
                     )
-                    FoodProductOverviewState.IngredientState(
+                    _state.value = FoodProductOverviewState.IngredientState(
                         ingredient = ingredient,
                         parameters = commonParams
                     )
@@ -139,7 +143,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                         carbohydrates = mealFoodItem.foodProduct.carbohydrates,
                         fat = mealFoodItem.foodProduct.fat
                     )
-                    FoodProductOverviewState.MealFoodItemState(
+                    _state.value = FoodProductOverviewState.MealFoodItemState(
                         mealFoodItem = mealFoodItem,
                         parameters = commonParams
                     )
@@ -153,7 +157,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                         carbohydrates = foodProduct.carbohydrates,
                         fat = foodProduct.fat,
                     )
-                    FoodProductOverviewState.SearchState(foodProduct = foodProduct, parameters = commonParams)
+                    _state.value = FoodProductOverviewState.SearchState(foodProduct = foodProduct, parameters = commonParams)
                 }
             }
         }
@@ -180,7 +184,7 @@ class FoodProductOverviewViewModel @Inject constructor(
             is FoodProductOverviewState.IngredientState -> {
                 recipeRepository.updateIngredient(
                     state.ingredient.copy(
-                        quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0)
+                        quantity = commonParams!!.servings * (commonParams.servingSize.getAmount() / 100.0)
                     ),
                 )
                 emitEvent(FoodProductOverviewEvent.GoBack)
@@ -188,15 +192,16 @@ class FoodProductOverviewViewModel @Inject constructor(
             is FoodProductOverviewState.MealFoodItemState -> {
                 historyRepository.updateMealFoodItem(
                     state.mealFoodItem.copy(
-                        quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0)
+                        quantity = commonParams!!.servings * (commonParams.servingSize.getAmount() / 100.0)
                     )
                 )
                 emitEvent(FoodProductOverviewEvent.GoBack)
             }
             is FoodProductOverviewState.SearchState -> {
-                // Submit the food product and get the updated values
+                savedStateHandle["newComponent"] = state.submitFoodProduct()
                 emitEvent(FoodProductOverviewEvent.SaveAndAddClick)
             }
+            else -> {}
         }
     }
 
@@ -205,27 +210,27 @@ class FoodProductOverviewViewModel @Inject constructor(
 
     override fun onServingsChanged(servings: Int) =
         _state.update { state ->
-            val newParams = state.parameters.copy(servings = servings)
+            val newParams = state.parameters!!.copy(servings = servings)
             state.updateParams(newParams)
         }
 
     override fun onServingSizeChanged(servingSize: ServingSize) =
         _state.update { state ->
-            val newParams = state.parameters.copy(servingSize = servingSize)
+            val newParams = state.parameters!!.copy(servingSize = servingSize)
             convertNutrients()
             state.updateParams(newParams)
         }
 
     private fun onServingSizeDropDownClick() =
         _state.update { state ->
-            val newParams = state.parameters.copy(servingSizeDropDownExpanded = !state.parameters.servingSizeDropDownExpanded)
+            val newParams = state.parameters!!.copy(servingSizeDropDownExpanded = !state.parameters!!.servingSizeDropDownExpanded)
             state.updateParams(newParams)
         }
 
     private fun convertNutrients() {
         _state.update { state ->
             val parameters = state.parameters
-            val servings = parameters.servings
+            val servings = parameters!!.servings
             val servingSize = parameters.servingSize
             val newParams = parameters.copy(
                 calories = servings * servingSize.getAmount() * (parameters.calories / 100),

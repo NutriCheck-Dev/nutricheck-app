@@ -85,8 +85,10 @@ fun SearchPage(
                         Icon(imageVector = Icons.AutoMirrored.Default.ArrowRight, contentDescription = "Weiter")
                     }
                 },
-                onBack = onBack,
-                onMealSelected = onMealSelected
+                onBack = { onBack() },
+                onMealSelected = { daytime ->
+                    searchViewModel.onEvent(SearchEvent.DayTimeChanged(daytime))
+                }
             )
         }
     ) { paddingValues ->
@@ -134,10 +136,12 @@ fun SearchPage(
                         foodComponents = searchState.parameters.results,
                         trailingContent = { item ->
                             CustomAddButton(onClick = {
-                                //TODO: Implement addComponent logic
+                                searchViewModel.onEvent(SearchEvent.AddFoodComponent(Pair(1.0, item)))
                             })
                         },
-                        onItemClick = onItemClick
+                        onItemClick = { item ->
+                            onItemClick(item)
+                        }
                     )
                 }
             }

@@ -1,7 +1,9 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,35 +50,52 @@ fun DishItemButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 64.dp)
-                .padding(horizontal = 4.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = foodComponent.name,
-                    style = styles.bodyLarge
+                    style = styles.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(0.4f)
                 )
 
                 VerticalDivider(
-                    modifier = Modifier.size(1.dp, 24.dp),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(4.dp)
+                        .padding(vertical = 4.dp),
                     color = colors.outline
                 )
 
                 Text(
-                    text = "${foodComponent.calories} cal, Portionsgröße ${foodComponent.id}", //TODO: Replace with actual portion size if available
+                    text = "${foodComponent.calories} cal, Portionsgröße ${foodComponent.fat}",
                     style = styles.bodyLarge,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .padding(start = 8.dp, end = 8.dp)
                 )
             }
 
-            trailingContent?.invoke()
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                trailingContent?.invoke()
             }
-
+        }
     }
 }
 
@@ -101,21 +120,29 @@ fun DishItemButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 64.dp)
-                .padding(horizontal = 4.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = ingredient.foodProduct.name,
-                    style = styles.bodyLarge
+                    style = styles.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(0.4f)
                 )
 
                 VerticalDivider(
-                    modifier = Modifier.size(1.dp, 24.dp),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .padding(vertical = 4.dp),
                     color = colors.outline
                 )
 
@@ -123,13 +150,22 @@ fun DishItemButton(
                     text = "${ingredient.foodProduct.calories} cal, Portionsgröße ${ingredient.quantity}",
                     style = styles.bodyLarge,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .padding(start = 8.dp)
                 )
             }
 
-            trailingContent?.invoke()
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                trailingContent?.invoke()
             }
-
+        }
     }
 }
 

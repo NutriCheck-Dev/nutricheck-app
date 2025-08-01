@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.foodproducts
 
+import android.util.Log
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
@@ -9,9 +10,12 @@ import com.frontend.nutricheck.client.model.repositories.mapper.FoodProductMappe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.FoodSearchDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.FoodSearchEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -29,33 +33,35 @@ class FoodProductRepositoryImpl @Inject constructor(
             ?: emptyList()
         emit(Result.Success(cached))
 
-        val lastUpdate = foodSearchDao.getLatestUpdatedFor(foodProductName)
-        if (isExpired(lastUpdate)) {
-            try {
-                val response = api.searchFoodProduct(foodProductName, language)
-                val body = response.body()
-                if (response.isSuccessful && body != null) {
-                    val now = System.currentTimeMillis()
-                    val foodProducts = body.map { FoodProductMapper.toData(it) }
-                    val foodProductEntities = foodProducts.map { DbFoodProductMapper.toFoodProductEntity(it) }
-                    foodDao.insertAll(foodProductEntities)
-                    foodSearchDao.clearQuery(foodProductName)
-                    foodSearchDao.upsertEntities(foodProductEntities.map {
-                        FoodSearchEntity(foodProductName, it.id, now)
-                    })
-                    Result.Success(foodProducts)
-                } else {
-                    val message = response.errorBody()!!.string()
-                    Result.Error(code = response.code(), message = message)
+            val lastUpdate = foodSearchDao.getLatestUpdatedFor(foodProductName)
+            if (isExpired(lastUpdate)) {
+                try {
+                    val response = api.searchFoodProduct(foodProductName, language)
+                    val body = response.body()
+                    if (response.isSuccessful && body != null) {
+                        val now = System.currentTimeMillis()
+                        val foodProducts = body.map { FoodProductMapper.toData(it) }
+                        val foodProductEntities =
+                            foodProducts.map { DbFoodProductMapper.toFoodProductEntity(it) }
+                        Log.d("Repo", "Inserting ${foodProductEntities.size} rows")
+                        foodDao.insertAll(foodProductEntities)
+                        foodSearchDao.clearQuery(foodProductName)
+                        foodSearchDao.upsertEntities(foodProductEntities.map {
+                            FoodSearchEntity(foodProductName, it.id, now)
+                        })
+                        emit(Result.Success(foodProducts))
+                    } else {
+                        val message = response.errorBody()!!.string()
+                        emit(Result.Error(code = response.code(), message = message))
+                    }
+                } catch (io: okio.IOException) {
+                    emit(Result.Error(message = "Oops, an error has occurred. Please check your internet connection."))
                 }
-            } catch (io: okio.IOException) {
-                Result.Error(message = "Oops, an error has occurred. Please check your internet connection.")
             }
-        }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun getFoodProductById(foodProductId: String): FoodProduct =
-        DbFoodProductMapper.toFoodProduct(foodDao.getById(foodProductId))
+    override suspend fun getFoodProductById(foodProductId: String): FoodProduct = withContext(Dispatchers.IO) {
+        DbFoodProductMapper.toFoodProduct(foodDao.getById(foodProductId)) }
 
     private fun isExpired(lastUpdate: Long?): Boolean =
         lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive

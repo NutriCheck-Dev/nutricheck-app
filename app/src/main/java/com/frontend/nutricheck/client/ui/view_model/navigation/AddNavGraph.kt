@@ -34,8 +34,8 @@ sealed class AddScreens(val route: String) {
     object AddRecipe : AddScreens("add_recipe")
     object MealOverview : AddScreens("meal_overview")
     object HistoryPage : AddScreens("history_page")
-    object FoodOverview : AddScreens("food_product_overview/{foodId}") {
-        fun createRoute(foodId: String) = "food_product_overview/$foodId"
+    object FoodOverview : AddScreens("food_product_overview/{foodProductId}") {
+        fun createRoute(foodProductId: String) = "food_product_overview/$foodProductId"
     }
     object RecipeOverview : AddScreens("recipe_overview/{recipeId}") {
         fun createRoute(recipeId: String) = "recipe_overview/$recipeId"
@@ -62,9 +62,15 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
     ) {
         composable(AddScreens.AddMainPage.route) {
             AddDialog(
-                onAddMealClick = { addNavController.navigate(AddScreens.AddMeal.route) },
-                onAddRecipeClick = { addNavController.navigate(AddScreens.AddRecipe.route) },
-                onScanFoodClick = { addNavController.navigate(AddScreens.AddAiMeal.route) },
+                onAddMealClick = {
+                    addNavController.navigate(AddScreens.AddMeal.route)
+                                 },
+                onAddRecipeClick = {
+                    addNavController.navigate(AddScreens.AddRecipe.route)
+                                   },
+                onScanFoodClick = {
+                    addNavController.navigate(AddScreens.AddAiMeal.route)
+                                  },
                 onDismissRequest = { mainNavController.popBackStack() }
             )
         }
@@ -97,6 +103,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 onBack = { addNavController.popBackStack() }
             )
         }
+
         composable(AddScreens.MealOverview.route) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 addNavController.getBackStackEntry(AddScreens.AddMeal.route)
@@ -112,11 +119,14 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
 
         composable(AddScreens.AddAiMeal.route) {  }
 
-        composable (AddScreens.FoodOverview.route) { backStack ->
-            val foodId = backStack.arguments!!.getString("foodId")!!
+        composable (
+            route = AddScreens.FoodOverview.route,
+            arguments = listOf(navArgument("foodProductId") { type = NavType.StringType })
+        ) { backStack ->
+            val foodProductId = backStack.arguments!!.getString("foodProductId")!!
             val graphEntry = remember(backStack) {
                 addNavController.getBackStackEntry(
-                    AddScreens.FoodOverview.createRoute(foodId)
+                    AddScreens.FoodOverview.createRoute(foodProductId)
                 )
             }
             val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
@@ -125,6 +135,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 onBack = { addNavController.popBackStack() }
             )
         }
+
         composable (AddScreens.RecipeOverview.route) { backStack ->
             val recipeId = backStack.arguments!!.getString("recipeId")!!
             val graphEntry = remember(backStack) {
