@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import java.util.UUID
 
 sealed class SearchMode {
@@ -142,8 +144,8 @@ class FoodSearchViewModel @Inject constructor(
     private val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
 
-    private val _addComponent = MutableSharedFlow<Pair<Double, FoodComponent>>()
-    val addComponent: SharedFlow<Pair<Double, FoodComponent>> = _addComponent.asSharedFlow()
+    /**private val _addComponent = MutableSharedFlow<Pair<Double, FoodComponent>>()
+    val addComponent: SharedFlow<Pair<Double, FoodComponent>> = _addComponent.asSharedFlow()**/
 
     fun onEvent(event: SearchEvent) {
         when (event) {
@@ -301,7 +303,14 @@ class FoodSearchViewModel @Inject constructor(
                 else -> state
             }
         }
+
     private fun submitComponents() {
+        when (mode) {
+            is SearchMode.IngredientsForRecipe -> {
+                submitComponentsToRecipe()
+            }
+            else -> submitComponentsToMeal()
+        }
 
     }
 
@@ -328,12 +337,32 @@ class FoodSearchViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            val originalMeal = historyRepository.getMealById(state.mealId)
-            val newMeal = originalMeal.copy(
-                mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
-                mealRecipeItem = originalMeal.mealRecipeItem + mealRecipeItems
-            )
-            historyRepository.updateMeal(newMeal)
+            if (mode is SearchMode.ComponentsForMeal) {
+                val originalMeal = historyRepository.getMealById(state.mealId)
+                originalMeal.copy(
+                    mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
+                    mealRecipeItems = originalMeal.mealRecipeItems + mealRecipeItems
+                )
+                historyRepository.updateMeal(originalMeal)
+            } else {
+                val newMeal = Meal(
+                    id = state.mealId,
+                    calories = (mealFoodItems).sumOf { it.foodProduct.calories * it.quantity}
+                    + (mealRecipeItems).sumOf { it.recipe.calories * it.quantity },
+                    carbohydrates = (mealFoodItems).sumOf { it.foodProduct.carbohydrates * it.quantity }
+                    + (mealRecipeItems).sumOf { it.recipe.carbohydrates * it.quantity },
+                    protein = (mealFoodItems).sumOf { it.foodProduct.protein * it.quantity }
+                    + (mealRecipeItems).sumOf { it.recipe.protein * it.quantity },
+                    fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
+                    + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
+                    date = Date(),
+                    dayTime = state.dayTime!!,
+                    mealFoodItems = mealFoodItems,
+                    mealRecipeItems = mealRecipeItems
+
+                )
+                historyRepository.addMeal(newMeal)
+            }
         }
     }
 

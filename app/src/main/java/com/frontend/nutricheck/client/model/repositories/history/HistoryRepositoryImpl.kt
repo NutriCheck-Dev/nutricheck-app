@@ -38,7 +38,7 @@ class HistoryRepositoryImpl @Inject constructor(
                 ingredient.quantity * ingredient.foodProduct.calories
             }
 
-            val recipeItemsCalories = meal.mealRecipeItem.sumOf { recipe ->
+            val recipeItemsCalories = meal.mealRecipeItems.sumOf { recipe ->
                 recipe.quantity * recipe.recipe.calories
             }
             foodItemsCalories + recipeItemsCalories
@@ -83,7 +83,7 @@ class HistoryRepositoryImpl @Inject constructor(
         mealFoodItemDao.deleteMealFoodItemsOfMeal(meal.id)
         mealFoodItemDao.insertAll(mealFoodItemsEntities)
 
-        val mealRecipeItemEntities = meal.mealRecipeItem.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+        val mealRecipeItemEntities = meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
         mealRecipeItemDao.deleteMealRecipeItemsOfMeal(meal.id)
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
@@ -108,7 +108,7 @@ class HistoryRepositoryImpl @Inject constructor(
         checkForFoodProducts(meal.mealFoodItems)
         mealFoodItemDao.insertAll(meal.mealFoodItems.map { DbMealFoodItemMapper.toMealFoodItemEntity(it) })
 
-        val mealRecipeItemEntities = meal.mealRecipeItem.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+        val mealRecipeItemEntities = meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
 
@@ -142,9 +142,11 @@ class HistoryRepositoryImpl @Inject constructor(
 
     private suspend fun checkForFoodProducts(mealFoodItems: List<MealFoodItem>) = withContext(Dispatchers.IO) {
         for (mealFoodItem in mealFoodItems) {
-            if (foodDao.exists(mealFoodItem.foodProduct.id)) {
+            if (!foodDao.exists(mealFoodItem.foodProduct.id)) {
                 foodDao.insert(DbFoodProductMapper.toFoodProductEntity(mealFoodItem.foodProduct))
             }
         }
     }
+
+    //TODO: Implement checkForRecipes
 }

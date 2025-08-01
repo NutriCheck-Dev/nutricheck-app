@@ -17,6 +17,6 @@ object MealMapper {
             date = Date(),
             dayTime = DayTime.BREAKFAST,
             mealFoodItems = mealDTO.items.map { MealItemMapper.toData(it) },
-            mealRecipeItem = listOf()
+            mealRecipeItems = listOf()
         )
 }
