@@ -141,7 +141,7 @@ class AddAiMealViewModel @Inject constructor(
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(result: ImageCapture.OutputFileResults) {
                     val jpegUri = result.savedUri
-                    // JPEG in PNG konvertieren
+                    // convert jpeg to png if necessary
                     val pngUri = jpegUri?.let { convertJpegToPng(it, appContext.contentResolver) }
                     _photoUri.value = pngUri ?: run {
                         setError(appContext.getString(R.string.error_no_photo_taken))
@@ -157,12 +157,12 @@ class AddAiMealViewModel @Inject constructor(
     }
     private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
         return try {
-            // JPEG-Bild in Bitmap laden
+            // load JPEG image into a Bitmap
             val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
             } ?: return null
 
-            // Neue Datei für PNG erstellen
+            // create a new file for PNG
             val name = "${System.currentTimeMillis()}.png"
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -170,13 +170,13 @@ class AddAiMealViewModel @Inject constructor(
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
             }
 
-            // PNG-Datei speichern
+            // save the PNG file
             val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             pngUri?.let {
                 contentResolver.openOutputStream(it)?.use { outputStream ->
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 }
-                bitmap.recycle() // Speicher freigeben
+                bitmap.recycle() // free memory
                 return it
             }
             null
@@ -213,35 +213,25 @@ class AddAiMealViewModel @Inject constructor(
         _photoUri.value = null
     }
     // parse the image URI to a MultipartBody.Part for sending to the backend
-    /**
-     * Konvertiert ein Bild von einer Uri in ein MultipartBody.Part für den API-Upload.
-     * Wenn das Bild im JPEG-Format vorliegt, wird es in PNG konvertiert, da der Server PNG erwartet.
-     *
-     * @param uri Die Uri des Bildes (z. B. aus der Kamera oder Galerie).
-     * @param contentResolver Der ContentResolver für den Zugriff auf die Uri.
-     * @param context Der Android-Kontext für den Zugriff auf Ressourcen.
-     * @return Ein MultipartBody.Part für den Upload oder null, wenn ein Fehler auftritt.
-     */
-    fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver, context: android.content.Context): MultipartBody.Part? {
+    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver, context: android.content.Context): MultipartBody.Part? {
         if (uri == null) return null
 
         val partName = "file"
         val defaultFileName = "upload.png"
 
         return try {
-            // Prüfen, ob das Bild bereits PNG ist
+            // test if the URI is a valid image
             val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
             val pngUri = if (mimeType != "image/png") {
-                // JPEG in PNG konvertieren
+                // convert JPEG to PNG
                 convertJpegToPng(uri, contentResolver, context)
             } else {
                 uri
             } ?: return null
 
-            // Dateinamen ermitteln
+            // create a file name for the multipart part
             val fileName = getFileNameFromUri(pngUri, contentResolver) ?: defaultFileName
 
-            // RequestBody erstellen
             val requestBody = object : RequestBody() {
                 override fun contentType() = "image/png".toMediaTypeOrNull() ?: "application/octet-stream".toMediaType()
                 override fun contentLength(): Long =
@@ -258,8 +248,7 @@ class AddAiMealViewModel @Inject constructor(
                     } ?: throw IOException("Failed to open InputStream for URI: $pngUri")
                 }
             }
-
-            // MultipartBody.Part erstellen
+            // create the MultipartBody.Part
             MultipartBody.Part.createFormData(partName, fileName, requestBody)
         } catch (e: Exception) {
             Log.e("UriToMultipartBody", "Unexpected error processing URI: $uri", e)
@@ -267,14 +256,6 @@ class AddAiMealViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Konvertiert ein JPEG-Bild von einer Uri in ein PNG-Bild und gibt die neue Uri zurück.
-     *
-     * @param uri Die Uri des JPEG-Bildes.
-     * @param contentResolver Der ContentResolver für den Zugriff auf die Uri.
-     * @param context Der Android-Kontext für den Zugriff auf den MediaStore.
-     * @return Die Uri des neuen PNG-Bildes oder null, wenn ein Fehler auftritt.
-     */
     private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver, context: android.content.Context): Uri? {
         return try {
             // JPEG-Bild in Bitmap laden
@@ -282,21 +263,18 @@ class AddAiMealViewModel @Inject constructor(
                 BitmapFactory.decodeStream(inputStream)
             } ?: return null
 
-            // Neue Datei für PNG erstellen
             val name = "${System.currentTimeMillis()}.png"
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, name)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
             }
-
-            // PNG-Datei speichern
             val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             pngUri?.let {
                 contentResolver.openOutputStream(it)?.use { outputStream ->
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 }
-                bitmap.recycle() // Speicher freigeben
+                bitmap.recycle() // free memory
                 return it
             }
             null
@@ -305,14 +283,6 @@ class AddAiMealViewModel @Inject constructor(
             null
         }
     }
-
-    /**
-     * Ermittelt den Dateinamen aus einer Uri und stellt sicher, dass er mit .png endet.
-     *
-     * @param uri Die Uri des Bildes.
-     * @param contentResolver Der ContentResolver für den Zugriff auf die Uri.
-     * @return Der Dateiname oder null, wenn er nicht ermittelt werden kann.
-     */
     private fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String? {
         return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             if (cursor.moveToFirst()) {

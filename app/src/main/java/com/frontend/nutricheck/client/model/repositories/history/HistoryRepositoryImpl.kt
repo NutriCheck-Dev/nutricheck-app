@@ -21,11 +21,10 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
-import retrofit2.http.Part
 import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
-import java.io.File
+
 
 class HistoryRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
