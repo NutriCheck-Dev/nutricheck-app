@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.add_components
 
+import android.content.ContentResolver
 import android.util.Base64
 import android.content.ContentValues
 import android.content.Context
@@ -18,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
@@ -38,9 +41,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
-import java.io.InputStream
-import java.util.Calendar
-import java.util.Date
 
 
 sealed interface AddAiMealEvent {
@@ -49,7 +49,7 @@ sealed interface AddAiMealEvent {
     object OnTakePhoto : AddAiMealEvent
     object ResetErrorState : AddAiMealEvent
 
-    object ShowMealOverview : AddAiMealEvent
+    data class ShowMealOverview(val mealId : String, val foodProductId: String) : AddAiMealEvent
 
 }
 /**
@@ -63,7 +63,7 @@ sealed interface AddAiMealEvent {
  * - Emits UI events for navigation and error handling.
  *
  * @property appContext Application context for accessing resources and content resolver.
- * @property remoteRepository Remote repository for API interactions.
+ * @property historyRepository Remote repository for API interactions.
  */
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
@@ -139,6 +139,10 @@ class AddAiMealViewModel @Inject constructor(
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(result: ImageCapture.OutputFileResults) {
                     _photoUri.value = result.savedUri
+                    val inputStream = appContext.contentResolver.openInputStream(result.savedUri!!)
+                    val fileContent = inputStream?.readBytes()
+                    Log.d("HistoryRepository", "Requesting AI meal estimation with file: ${fileContent?.joinToString()}")
+
                 }
                 override fun onError (exception: ImageCaptureException) {
                     _photoUri.value = null
@@ -149,6 +153,7 @@ class AddAiMealViewModel @Inject constructor(
     }
 
     private fun submitPhoto() {
+
         viewModelScope.launch {
             setLoading()
             val multipartBody = uriToMultipart(_photoUri.value)
@@ -158,12 +163,15 @@ class AddAiMealViewModel @Inject constructor(
                 return@launch
             }
             val response = historyRepository.requestAiMeal(multipartBody)
-            val dayTime = DayTime.dateToDayTime(Date())
-            // parse the response
-            // copy from meal
-            // copy to DB
-            // aufruf von foodproductoverview mit mealID
 
+            if (response is Result.Success) {
+                 val meal = response.data
+                emitEvent(AddAiMealEvent.ShowMealOverview(meal.id, meal.mealFoodItems.first().foodProduct.id))
+            } else if (response is Result.Error) {
+                setError(appContext.getString(R.string.error_encoding_image))
+                _photoUri.value = null
+                return@launch
+            }
             _photoUri.value = null
             setReady()
         }
@@ -171,37 +179,53 @@ class AddAiMealViewModel @Inject constructor(
     private fun retakePhoto() {
         _photoUri.value = null
     }
+    // parse the image URI to a MultipartBody.Part for sending to the backend
     private fun uriToMultipart(uri: Uri?): MultipartBody.Part? {
         if (uri == null) return null
+
         val partName = "photo"
-        val defaultFileName = "upload.jpg"
+        val defaultFileName = "upload.png"
         val contentResolver = appContext.contentResolver
+
         return try {
             contentResolver.openInputStream(uri)?.use { inputStream ->
-                val mimeType = contentResolver.getType(uri) ?: "application/octet-stream"
-                val fileName = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    cursor.moveToFirst()
-                    if (nameIndex != -1) cursor.getString(nameIndex) else defaultFileName
-                } ?: defaultFileName
+                val mimeType = "image/png"
+                val fileName = getFileNameFromUri(uri, contentResolver) ?: defaultFileName
                 val requestBody = object : RequestBody() {
                     override fun contentType() = mimeType.toMediaTypeOrNull()
-                    override fun contentLength(): Long = contentResolver.query(uri, null, null, null, null)
-                        ?.use { cursor ->
+                    override fun contentLength(): Long =
+                        contentResolver.query(uri, null, null, null, null)?.use { cursor ->
                             val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
                             cursor.moveToFirst()
                             if (sizeIndex != -1) cursor.getLong(sizeIndex) else -1
                         } ?: -1
+
                     override fun writeTo(sink: BufferedSink) {
                         inputStream.copyTo(sink.outputStream())
                     }
                 }
-
                 MultipartBody.Part.createFormData(partName, fileName, requestBody)
             }
         } catch (e: Exception) {
             Log.e("UriToMultipart", "Unexpected error processing URI: $uri", e)
             null
+        }
+    }
+    private fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String? {
+        return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            cursor.moveToFirst()
+            if (nameIndex != -1) {
+                cursor.getString(nameIndex).let {
+                    if (!it.endsWith(".png", ignoreCase = true)) {
+                        it.substringBeforeLast(".") + ".png"
+                    } else {
+                        it
+                    }
+                }
+            } else {
+                null
+            }
         }
     }
     private fun emitEvent(event: AddAiMealEvent) = viewModelScope.launch { _events.emit(event) }

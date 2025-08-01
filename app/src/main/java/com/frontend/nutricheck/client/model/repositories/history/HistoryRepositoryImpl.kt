@@ -24,6 +24,7 @@ import okhttp3.MultipartBody
 import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
+import java.io.File
 
 class HistoryRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
@@ -55,7 +56,9 @@ class HistoryRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
 
             if (response.isSuccessful && body != null) {
-                Result.Success(MealMapper.toData(body))
+                val meal = MealMapper.toData(body)
+                addMeal(meal)
+                Result.Success(meal)
             } else if (errorBody != null) {
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
@@ -96,7 +99,9 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getMealsForDay(date: Date): List<Meal> = withContext(Dispatchers.IO) {
         mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
     }
-
+    override suspend fun getMealById(mealId: String): Meal = withContext(Dispatchers.IO) {
+        DbMealMapper.toMeal(mealDao.getById(mealId))
+    }
 
     override suspend fun addMeal(meal: Meal) = withContext(Dispatchers.IO) {
         //check if meal exists

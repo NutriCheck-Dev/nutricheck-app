@@ -176,7 +176,7 @@ class FoodSearchViewModel @Inject constructor(
                 is SearchMode.IngredientsForRecipe -> {
                     val foodProducts = foodProductRepository
                         .searchFoodProducts(query, language)
-                        .map { result -> result.mapData { list -> list.map { it }}}
+                        .map { result -> result.mapData { list -> list.map { it } } }
                     foodProducts
                         .onStart { setLoading() }
                         .catch { setError(it.message!!) }
@@ -191,12 +191,14 @@ class FoodSearchViewModel @Inject constructor(
                                         )
                                     }
                                 }
+
                                 is Result.Error -> {
                                     setError(result.message!!)
                                 }
                             }
                         }
                 }
+
                 else -> {
                     val foodProductFlow = foodProductRepository
                         .searchFoodProducts(query, language)
@@ -216,6 +218,7 @@ class FoodSearchViewModel @Inject constructor(
                                         Log.d("FoodSearchVM", "raw search emission → $newAcc")
                                         newAcc
                                     }
+
                                     is Result.Error -> {
                                         Log.d("FoodSearchVM", "raw search emission → $acc")
                                         acc
@@ -238,6 +241,7 @@ class FoodSearchViewModel @Inject constructor(
                                     }
                                     setReady()
                                 }
+
                                 is Result.Error -> {
                                     setError(result.message!!)
                                 }
