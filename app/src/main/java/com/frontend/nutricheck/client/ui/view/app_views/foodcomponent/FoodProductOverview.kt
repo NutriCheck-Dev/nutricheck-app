@@ -29,23 +29,23 @@ import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewState
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
 
 @Composable
 fun FoodProductOverview(
     foodProductOverviewViewModel: FoodProductOverviewViewModel,
-    onSaveAndAdd: () -> Unit = { },
+    foodSearchViewModel: FoodSearchViewModel? = null,
+    onPersist: () -> Unit = { },
     onBack: () -> Unit = { }
 ) {
-    val foodProductState by foodProductOverviewViewModel.foodProductOverviewState.collectAsState()
+    val foodProductState by foodProductOverviewViewModel.foodProductViewState.collectAsState()
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val onPersist = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
     val onCancel = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.GoBack)
     val uiState by foodProductOverviewViewModel.uiState.collectAsState()
-    val actions = if (foodProductState is FoodProductOverviewState.IngredientState)
-        CustomPersistButton { onPersist } else null
 
     Scaffold(
         topBar = {
@@ -58,14 +58,20 @@ fun FoodProductOverview(
                 },
                 title = {
                     Text(
-                        text = foodProductState.parameters!!.foodName,
+                        text = foodProductState.parameters.foodName,
                         style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = colors.onSurfaceVariant
                     )
                 },
-                actions = { actions }
+                actions = {
+                    if (foodProductState.mode is FoodProductOverviewMode.FromSearch)
+                        CustomPersistButton { foodSearchViewModel!!.onEvent(
+                            SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                            onPersist()
+                        } else null
+                }
             )
         }
     ) { innerPadding ->
@@ -97,7 +103,7 @@ fun FoodProductOverview(
                 ) {
 
                     FoodProductNutrientChartsWidget(
-                        foodProduct = foodProductState.foodProduct!!,
+                        foodProduct = foodProductState.foodProduct,
                         modifier = Modifier.wrapContentHeight()
                     )
 
@@ -114,8 +120,8 @@ fun FoodProductOverview(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         ServingSizeDropdown(
-                            currentServingSize = foodProductState.parameters!!.servingSize,
-                            expanded = foodProductState.parameters!!.servingSizeDropDownExpanded,
+                            currentServingSize = foodProductState.parameters.servingSize,
+                            expanded = foodProductState.parameters.servingSizeDropDownExpanded,
                             onExpandedChange = {
                                 foodProductOverviewViewModel.onEvent(
                                     FoodProductOverviewEvent.ServingSizeDropDownClick
@@ -142,7 +148,7 @@ fun FoodProductOverview(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         ServingsPicker(
-                            value = foodProductState.parameters!!.servings,
+                            value = foodProductState.parameters.servings,
                             range = 1..200,
                             onValueChange = {
                                 foodProductOverviewViewModel.onEvent(

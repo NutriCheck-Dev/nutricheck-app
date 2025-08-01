@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,42 +37,17 @@ data class CommonFoodProductOverviewParams(
     val servingSizeDropDownExpanded: Boolean = false
 )
 
-sealed class FoodProductOverviewState {
-    object LoadingState : FoodProductOverviewState() {
-        override val foodProduct: FoodProduct? = null
-        override val parameters: CommonFoodProductOverviewParams? = null
-    }
-
-    abstract val foodProduct: FoodProduct?
-    abstract val parameters: CommonFoodProductOverviewParams?
-    fun updateParams(params: CommonFoodProductOverviewParams): FoodProductOverviewState =
-        when (this) {
-            is IngredientState -> copy(parameters = params)
-            is MealFoodItemState -> copy(parameters = params)
-            is SearchState -> copy(parameters = params)
-            LoadingState -> this
-        }
-    data class IngredientState(
-        val ingredient: Ingredient,
-        override val parameters: CommonFoodProductOverviewParams
-    ) : FoodProductOverviewState() {
-        override val foodProduct: FoodProduct get() = ingredient.foodProduct
-    }
-
-    data class MealFoodItemState(
-        val mealFoodItem: MealFoodItem,
-        override val parameters: CommonFoodProductOverviewParams
-    ) : FoodProductOverviewState() {
-        override val foodProduct: FoodProduct get() = mealFoodItem.foodProduct
-    }
-
-    data class SearchState(
-        override val foodProduct: FoodProduct,
-        override val parameters: CommonFoodProductOverviewParams,
-    ) : FoodProductOverviewState() {
-        fun submitFoodProduct(): Pair<Double, FoodProduct> =
-            Pair(parameters.servings * (parameters.servingSize.getAmount()/100).toDouble(),
-                foodProduct
+data class FoodProductOverviewState (
+    val mode: FoodProductOverviewMode,
+    val foodProduct: FoodProduct,
+    val mealId: String? = null,
+    val recipeId: String? = null,
+    val parameters: CommonFoodProductOverviewParams
+) {
+    fun submitFoodProduct(): Pair<Double, FoodProduct> {
+        return Pair(
+            parameters.servings * (parameters.servingSize.getAmount() / 100.0),
+            foodProduct
             )
     }
 }
@@ -92,11 +68,8 @@ class FoodProductOverviewViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : BaseFoodOverviewViewModel() {
 
-    private val _state: MutableStateFlow<FoodProductOverviewState> = MutableStateFlow(FoodProductOverviewState.LoadingState)
-    val foodProductOverviewState: StateFlow<FoodProductOverviewState> = _state
-
     private val mode: FoodProductOverviewMode = savedStateHandle.run {
-        val recipeId = get<String>("recipeId")
+        val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
         val mealId = get<String>("mealId")
         val foodProductId = get<String>("foodProductId")
 
@@ -117,49 +90,38 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
+    private val initialParams = CommonFoodProductOverviewParams()
+    private val initialFoodProduct = FoodProduct()
+    private val initialState = FoodProductOverviewState(
+        mode = mode,
+        foodProduct = initialFoodProduct,
+        parameters = initialParams
+    )
+
+    private var _state = MutableStateFlow(initialState)
+    val foodProductViewState: StateFlow<FoodProductOverviewState> = _state.asStateFlow()
+
     init {
         viewModelScope.launch {
-            when (mode) {
+            val foodProduct = when (mode) {
+                is FoodProductOverviewMode.FromSearch -> foodProductRepository.getFoodProductById(mode.foodProductId)
                 is FoodProductOverviewMode.FromIngredient -> {
                     val ingredient = recipeRepository.getIngredientById(mode.recipeId, mode.foodProductId)
-                    val commonParams = CommonFoodProductOverviewParams(
-                        foodName = ingredient.foodProduct.name,
-                        calories = ingredient.foodProduct.calories,
-                        protein = ingredient.foodProduct.protein,
-                        carbohydrates = ingredient.foodProduct.carbohydrates,
-                        fat = ingredient.foodProduct.fat
-                    )
-                    _state.value = FoodProductOverviewState.IngredientState(
-                        ingredient = ingredient,
-                        parameters = commonParams
-                    )
+                    ingredient.foodProduct
                 }
                 is FoodProductOverviewMode.FromMeal -> {
                     val mealFoodItem = historyRepository.getMealFoodItemById(mode.mealId, mode.foodProductId)
-                    val commonParams = CommonFoodProductOverviewParams(
-                        foodName = mealFoodItem.foodProduct.name,
-                        calories = mealFoodItem.foodProduct.calories,
-                        protein = mealFoodItem.foodProduct.protein,
-                        carbohydrates = mealFoodItem.foodProduct.carbohydrates,
-                        fat = mealFoodItem.foodProduct.fat
-                    )
-                    _state.value = FoodProductOverviewState.MealFoodItemState(
-                        mealFoodItem = mealFoodItem,
-                        parameters = commonParams
-                    )
-                }
-                is FoodProductOverviewMode.FromSearch -> {
-                    val foodProduct = foodProductRepository.getFoodProductById(mode.foodProductId)
-                    val commonParams = CommonFoodProductOverviewParams(
-                        foodName = foodProduct.name,
-                        calories = foodProduct.calories,
-                        protein = foodProduct.protein,
-                        carbohydrates = foodProduct.carbohydrates,
-                        fat = foodProduct.fat,
-                    )
-                    _state.value = FoodProductOverviewState.SearchState(foodProduct = foodProduct, parameters = commonParams)
+                    mealFoodItem.foodProduct
                 }
             }
+            val newParams = initialParams.copy(
+                foodName = foodProduct.name,
+                calories = foodProduct.calories,
+                protein = foodProduct.protein,
+                carbohydrates = foodProduct.carbohydrates,
+                fat = foodProduct.fat
+            )
+            _state.update { it.copy(foodProduct = foodProduct, parameters = newParams) }
         }
     }
 
@@ -180,65 +142,73 @@ class FoodProductOverviewViewModel @Inject constructor(
         val state = _state.value
         val commonParams = state.parameters
 
-        when (state) {
-            is FoodProductOverviewState.IngredientState -> {
-                recipeRepository.updateIngredient(
-                    state.ingredient.copy(
-                        quantity = commonParams!!.servings * (commonParams.servingSize.getAmount() / 100.0)
-                    ),
+        when (state.mode) {
+            is FoodProductOverviewMode.FromIngredient -> {
+                val ingredient = Ingredient(
+                    recipeId = state.recipeId!!,
+                    foodProduct = state.foodProduct,
+                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0)
                 )
+                recipeRepository.updateIngredient(ingredient)
                 emitEvent(FoodProductOverviewEvent.GoBack)
             }
-            is FoodProductOverviewState.MealFoodItemState -> {
-                historyRepository.updateMealFoodItem(
-                    state.mealFoodItem.copy(
-                        quantity = commonParams!!.servings * (commonParams.servingSize.getAmount() / 100.0)
-                    )
-                )
+            is FoodProductOverviewMode.FromMeal -> {
+                val mealFoodItem = MealFoodItem(
+                    mealId = state.mealId!!,
+                    foodProduct = state.foodProduct,
+                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0))
+                historyRepository.updateMealFoodItem(mealFoodItem)
                 emitEvent(FoodProductOverviewEvent.GoBack)
             }
-            is FoodProductOverviewState.SearchState -> {
-                savedStateHandle["newComponent"] = state.submitFoodProduct()
-                emitEvent(FoodProductOverviewEvent.SaveAndAddClick)
+            is FoodProductOverviewMode.FromSearch -> {
             }
-            else -> {}
         }
     }
 
     override fun onBackClick() =
         emitEvent(FoodProductOverviewEvent.GoBack)
 
-    override fun onServingsChanged(servings: Int) =
+    override fun onServingsChanged(servings: Int) {
         _state.update { state ->
-            val newParams = state.parameters!!.copy(servings = servings)
-            state.updateParams(newParams)
+            state.copy(
+                parameters = state.parameters.copy(servings = servings)
+            )
         }
+        convertNutrients()
+    }
 
-    override fun onServingSizeChanged(servingSize: ServingSize) =
+    override fun onServingSizeChanged(servingSize: ServingSize) {
         _state.update { state ->
-            val newParams = state.parameters!!.copy(servingSize = servingSize)
-            convertNutrients()
-            state.updateParams(newParams)
+            state.copy(
+                parameters = state.parameters.copy(servingSize = servingSize)
+            )
         }
+        convertNutrients()
+    }
 
     private fun onServingSizeDropDownClick() =
         _state.update { state ->
-            val newParams = state.parameters!!.copy(servingSizeDropDownExpanded = !state.parameters!!.servingSizeDropDownExpanded)
-            state.updateParams(newParams)
+            state.copy(
+                parameters = state.parameters.copy(
+                    servingSizeDropDownExpanded = !state.parameters.servingSizeDropDownExpanded
+                )
+            )
         }
 
     private fun convertNutrients() {
         _state.update { state ->
             val parameters = state.parameters
-            val servings = parameters!!.servings
-            val servingSize = parameters.servingSize
-            val newParams = parameters.copy(
-                calories = servings * servingSize.getAmount() * (parameters.calories / 100),
-                protein = servings * servingSize.getAmount() * (parameters.protein / 100),
-                carbohydrates = servings * servingSize.getAmount() * (parameters.carbohydrates / 100),
-                fat = servings * servingSize.getAmount() * (parameters.fat / 100)
+            if (parameters.servingSize == ServingSize.ONEHOUNDREDGRAMS) {
+                return@update state // No conversion needed for 100g serving size
+            }
+            val servings = parameters.servings
+            val servingSize = parameters.servingSize.getAmount()
+            state.copy(parameters = state.parameters.copy(
+                calories = servings * servingSize * (parameters.calories / 100),
+                protein = servings * servingSize * (parameters.protein / 100),
+                carbohydrates = servings * servingSize * (parameters.carbohydrates / 100),
+                fat = servings * servingSize * (parameters.fat / 100))
             )
-            state.updateParams(newParams)
         }
     }
 

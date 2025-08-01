@@ -25,7 +25,7 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
 
     NavHost(
         navController = mainNavController,
-        startDestination = startDestination,
+        startDestination = startDestination
     ) {
         composable(Screen.Onboarding.route) { OnboardingNavGraph(mainNavController) }
 

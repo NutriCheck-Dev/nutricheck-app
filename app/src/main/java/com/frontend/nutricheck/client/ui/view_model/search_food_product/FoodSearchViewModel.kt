@@ -6,9 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,7 +45,8 @@ data class CommonSearchParameters(
     val query: String = "",
     val selectedTab: Int = 0,
     val results: List<FoodComponent> = emptyList(),
-    val addedComponents: List<Pair<Double, FoodComponent>> = emptyList()
+    val addedComponents: List<Pair<Double, FoodComponent>> = emptyList(),
+    val expanded: Boolean = false,
 )
 
 sealed class SearchUiState {
@@ -74,6 +79,7 @@ sealed interface  SearchEvent {
     object Retry : SearchEvent
     object Clear : SearchEvent
     object SubmitComponents : SearchEvent
+    object MealSelectorClick: SearchEvent
 }
 
 @HiltViewModel
@@ -81,6 +87,7 @@ class FoodSearchViewModel @Inject constructor(
     private val appSettingsRepository : AppSettingsRepository,
     private val recipeRepository: RecipeRepositoryImpl,
     private val foodProductRepository: FoodProductRepositoryImpl,
+    private val historyRepository: HistoryRepositoryImpl,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
     private val mode: SearchMode =
@@ -135,6 +142,9 @@ class FoodSearchViewModel @Inject constructor(
     private val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
 
+    private val _addComponent = MutableSharedFlow<Pair<Double, FoodComponent>>()
+    val addComponent: SharedFlow<Pair<Double, FoodComponent>> = _addComponent.asSharedFlow()
+
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.QueryChanged -> {
@@ -149,7 +159,8 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.Search -> onClickSearchFoodComponent()
             is SearchEvent.Retry -> onClickSearchFoodComponent()
             is SearchEvent.Clear -> cancelSearch()
-            is SearchEvent.SubmitComponents -> addComponentsToMeal()
+            is SearchEvent.SubmitComponents -> submitComponents()
+            is SearchEvent.MealSelectorClick -> onClickMealSelector()
         }
     }
 
@@ -234,7 +245,6 @@ class FoodSearchViewModel @Inject constructor(
                         }
                 }
             }
-
         }
     }
 
@@ -276,6 +286,13 @@ class FoodSearchViewModel @Inject constructor(
             state.updateParams(newParams)
         }
 
+    private fun onClickMealSelector() {
+        _searchState.update { state ->
+            val newParams = state.parameters.copy(expanded = !state.parameters.expanded)
+            state.updateParams(newParams)
+        }
+    }
+
 
     private fun changeDayTime(dayTime: DayTime) =
         _searchState.update { state ->
@@ -284,9 +301,40 @@ class FoodSearchViewModel @Inject constructor(
                 else -> state
             }
         }
+    private fun submitComponents() {
 
-    private fun addComponentsToMeal() {
+    }
 
+    private fun submitComponentsToMeal() {
+        val state = _searchState.value
+        if (state !is SearchUiState.AddComponentsToMealState) return
+
+        val (foodPairs, recipePairs) = state.parameters.addedComponents
+            .partition { it.second is FoodProduct }
+
+        val mealFoodItems = foodPairs.map { (quantity, component) ->
+            MealFoodItem(
+                mealId = state.mealId,
+                foodProduct = component as FoodProduct,
+                quantity = quantity
+            )
+        }
+
+        val mealRecipeItems = recipePairs.map { (quantity, component) ->
+            MealRecipeItem(
+                mealId = state.mealId,
+                recipe = component as Recipe,
+                quantity = quantity
+            )
+        }
+        viewModelScope.launch {
+            val originalMeal = historyRepository.getMealById(state.mealId)
+            val newMeal = originalMeal.copy(
+                mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
+                mealRecipeItem = originalMeal.mealRecipeItem + mealRecipeItems
+            )
+            historyRepository.updateMeal(newMeal)
+        }
     }
 
     private fun submitComponentsToRecipe() {

@@ -44,7 +44,7 @@ fun AddedComponentsSummary(
         topBar = {
             if (searchState is SearchUiState.AddIngredientState) {
                 ViewsTopBar(
-                    navigationIcon = { NavigateBackButton(onBack = onBack) },
+                    navigationIcon = { NavigateBackButton { onBack() } },
                     title = {
                         Text(
                             text = "Zutaten Hinzufügen",
@@ -53,9 +53,17 @@ fun AddedComponentsSummary(
                             overflow = TextOverflow.Ellipsis,
                             color = colors.onSurfaceVariant
                         ) },
-                    actions = { CustomPersistButton(onSave) })
+                    actions = { CustomPersistButton { onSave() } })
             } else MealSelector(
-                trailingContent = { CustomPersistButton(onSave) }
+                dayTime = if (searchState is SearchUiState.AddComponentsToMealState)
+                    (searchState as SearchUiState.AddComponentsToMealState).dayTime
+                else null,
+                expanded = searchState.parameters.expanded,
+                onExpandedChange = { searchViewModel.onEvent(SearchEvent.MealSelectorClick) },
+                trailingContent = { CustomPersistButton { onSave() } },
+                onMealSelected = { dayTime ->
+                    searchViewModel.onEvent(SearchEvent.DayTimeChanged(dayTime))},
+                onBack = { onBack() }
             )
         }
     ) { paddingValues ->
@@ -67,7 +75,7 @@ fun AddedComponentsSummary(
                 .verticalScroll(scrollState)
         ) {
             FoodComponentList(
-                foodComponents = emptyList(),//searchState.parameters.addedComponents, TODO: Fix this
+                foodComponents = searchState.parameters.addedComponents.map { it.second },
                 trailingContent = { item ->
                     CustomCloseButton(onClick = {
                             searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(item))

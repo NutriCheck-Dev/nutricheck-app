@@ -33,18 +33,18 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 fun MealSelector(
     dayTime: DayTime? = null,
     mealOptions: List<DayTime> = DayTime.entries.toList(),
+    expanded: Boolean = false,
+    onExpandedChange: () -> Unit = {},
     onMealSelected: (DayTime) -> Unit = {},
     onBack : () -> Unit = {},
     trailingContent: @Composable (() -> Unit)? = null
 ) {
     val colors = MaterialTheme.colorScheme
-    var expanded by remember { mutableStateOf(false) }
 
-    //TODO: Implement actions for meal selection
     CenterAlignedTopAppBar(
         title = {
             Button(
-                onClick = { expanded = true },
+                onClick = { onExpandedChange() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = colors.onSurfaceVariant
@@ -76,14 +76,14 @@ fun MealSelector(
 
     DropdownMenu(
         expanded = expanded,
-        onDismissRequest = { expanded = false }
+        onDismissRequest = { onExpandedChange() }
     ) {
         mealOptions.forEach { meal ->
             DropdownMenuItem(
                 text = { Text(meal.toString()) },
                 onClick = {
                     onMealSelected(meal)
-                    expanded = false
+                    onExpandedChange()
                           },
                 )
             }
