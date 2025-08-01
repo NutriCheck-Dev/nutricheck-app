@@ -87,7 +87,7 @@ class HistoryRepositoryImpl @Inject constructor(
         mealFoodItemDao.insertAll(mealFoodItemsEntities)
 
         val mealRecipeItemEntities =
-            meal.mealRecipeItem.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+            meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
         mealRecipeItemDao.deleteMealRecipeItemsOfMeal(meal.id)
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
@@ -117,7 +117,7 @@ class HistoryRepositoryImpl @Inject constructor(
         })
 
         val mealRecipeItemEntities =
-            meal.mealRecipeItem.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+            meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
 
