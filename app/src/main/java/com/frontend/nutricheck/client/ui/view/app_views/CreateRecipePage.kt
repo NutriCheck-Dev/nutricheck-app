@@ -124,14 +124,6 @@ fun CreateRecipePage(
                 )
 
                 //TODO: Add error handling for ingredients
-                /**if (errorResourceId.value == R.string.create_recipe_error_ingredients) {
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(errorResourceId!!),
-                        color = colors.error,
-                        style = styles.bodySmall.copy(fontWeight = FontWeight.Bold)
-                    )
-                }**/
             }
 
             item {

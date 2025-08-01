@@ -70,7 +70,7 @@ class FoodProductOverviewViewModel @Inject constructor(
 
     private val mode: FoodProductOverviewMode = savedStateHandle.run {
         val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
-        val mealId = get<String>("mealId")
+        val mealId: String? = savedStateHandle.get<String>("mealId")?.takeIf { it.isNotBlank() }
         val foodProductId = get<String>("foodProductId")
 
         when {

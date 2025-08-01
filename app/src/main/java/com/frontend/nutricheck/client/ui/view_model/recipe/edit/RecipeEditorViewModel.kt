@@ -51,8 +51,8 @@ data class RecipeDraft(
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
+    data class IngredientAdded(val ingredients: List<Ingredient>) : RecipeEditorEvent
     data class IngredientRemoved(val ingredient: Ingredient) : RecipeEditorEvent
-    object AddIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
     object Cancel : RecipeEditorEvent
 }
@@ -101,8 +101,8 @@ class RecipeEditorViewModel @Inject constructor(
         when (event) {
             is RecipeEditorEvent.TitleChanged -> titleChanged(event.title)
             is RecipeEditorEvent.DescriptionChanged -> descriptionChanged(event.description)
+            is RecipeEditorEvent.IngredientAdded -> addIngredients(event.ingredients)
             is RecipeEditorEvent.IngredientRemoved -> removeIngredient(event.ingredient)
-            is RecipeEditorEvent.AddIngredients -> addIngredients()
             is RecipeEditorEvent.SaveRecipe -> saveRecipe()
             is RecipeEditorEvent.Cancel -> cancel()
         }
@@ -121,7 +121,22 @@ class RecipeEditorViewModel @Inject constructor(
         _draft.value = _draft.value.copy(description = description)
     }
 
-    private fun addIngredients() = emitEvent(RecipeEditorEvent.AddIngredients)
+    private fun addIngredients(ingredients: List<Ingredient>) {
+        _draft.update { draft ->
+            val current = draft.ingredients.toMutableList()
+            for (newIngredient in ingredients) {
+                val index = current.indexOfFirst { it.foodProduct.id == newIngredient.foodProduct.id }
+                if (index >= 0) {
+                    val existing = current[index]
+                    val combined = existing.copy(quantity = existing.quantity + newIngredient.quantity)
+                    current[index] = combined
+                } else {
+                    current.add(newIngredient)
+                }
+            }
+            draft.copy(ingredients = current)
+        }
+    }
 
     private fun removeIngredient(ingredient: Ingredient) {
         _draft.update { it.copy(

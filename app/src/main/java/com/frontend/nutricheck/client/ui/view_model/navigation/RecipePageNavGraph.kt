@@ -134,6 +134,7 @@ fun RecipePageNavGraph(
             val editRecipeViewModel: RecipeEditorViewModel = hiltViewModel(graphEntry)
             AddedComponentsSummary(
                 searchViewModel = hiltViewModel(),
+                recipeEditorViewModel = editRecipeViewModel,
                 onItemClick = { foodComponent ->
                     navigateToFoodComponent(foodComponent)
                 },

@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
+import kotlin.collections.map
 
 sealed class SearchMode {
     data class ComponentsForMeal(val mealId: String) : SearchMode()
@@ -61,6 +62,12 @@ sealed class SearchUiState {
         override fun updateParams(params: CommonSearchParameters): SearchUiState =
             copy(parameters = params)
 
+        fun submitComponentsToRecipe() : List<Ingredient> {
+            val ingredients: List<Ingredient> = parameters.addedComponents.map {
+                        Ingredient(recipeId, it.second as FoodProduct, quantity = it.first)
+                    }
+            return ingredients
+        }
     }
     data class AddComponentsToMealState(
         val mealId: String,
@@ -80,7 +87,7 @@ sealed interface  SearchEvent {
     object Search : SearchEvent
     object Retry : SearchEvent
     object Clear : SearchEvent
-    object SubmitComponents : SearchEvent
+    object SubmitComponentsToMeal : SearchEvent
     object MealSelectorClick: SearchEvent
 }
 
@@ -92,10 +99,13 @@ class FoodSearchViewModel @Inject constructor(
     private val historyRepository: HistoryRepositoryImpl,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
-    private val mode: SearchMode =
-        savedStateHandle.get<String>("recipeId")?.let { SearchMode.IngredientsForRecipe(it) }
-            ?: savedStateHandle.get<String>("mealId")?.let { SearchMode.ComponentsForMeal(it) }
-            ?: SearchMode.LogNewMeal
+        private val mode: SearchMode = when {
+            savedStateHandle.get<String>("recipeId")?.isNotBlank() == true ->
+                SearchMode.IngredientsForRecipe(savedStateHandle.get<String>("recipeId")!!)
+            savedStateHandle.get<String>("mealId")?.isNotBlank() == true ->
+                SearchMode.ComponentsForMeal(savedStateHandle.get<String>("mealId")!!)
+            else -> SearchMode.LogNewMeal
+        }
 
     private val newMealId = UUID.randomUUID().toString()
     private val initialCommonParams = CommonSearchParameters()
@@ -161,7 +171,7 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.Search -> onClickSearchFoodComponent()
             is SearchEvent.Retry -> onClickSearchFoodComponent()
             is SearchEvent.Clear -> cancelSearch()
-            is SearchEvent.SubmitComponents -> submitComponents()
+            is SearchEvent.SubmitComponentsToMeal -> submitComponentsToMeal()
             is SearchEvent.MealSelectorClick -> onClickMealSelector()
         }
     }
@@ -198,6 +208,7 @@ class FoodSearchViewModel @Inject constructor(
                                 }
                             }
                         }
+                    setReady()
                 }
                 else -> {
                     val foodProductFlow = foodProductRepository
@@ -304,16 +315,6 @@ class FoodSearchViewModel @Inject constructor(
             }
         }
 
-    private fun submitComponents() {
-        when (mode) {
-            is SearchMode.IngredientsForRecipe -> {
-                submitComponentsToRecipe()
-            }
-            else -> submitComponentsToMeal()
-        }
-
-    }
-
     private fun submitComponentsToMeal() {
         val state = _searchState.value
         if (state !is SearchUiState.AddComponentsToMealState) return
@@ -366,13 +367,17 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    private fun submitComponentsToRecipe() {
+    private fun submitComponentsToRecipe() : List<Ingredient> {
         val state = _searchState.value
-        when (state) {
-            is SearchUiState.AddIngredientState -> state.parameters.addedComponents.map {
-                Ingredient(state.recipeId, it.second as FoodProduct, quantity = it.first) }
+        val ingredients: List<Ingredient> = when (mode) {
+            is SearchMode.IngredientsForRecipe -> {
+                state.parameters.addedComponents.map {
+                    Ingredient(mode.recipeId, it.second as FoodProduct, quantity = it.first)
+                }
+            }
             else -> emptyList()
         }
+        return ingredients
     }
 
     private inline fun <T, R> Result<T>.mapData(transform: (T)->R): Result<R> =
