@@ -182,18 +182,6 @@ fun ProfilePage(
                         onCheckedChange = { onEvent(ProfileEvent.ChangeTheme(
                             if (it) ThemeSetting.DARK else ThemeSetting.LIGHT)) },
                     )
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
-                        thickness = 2.dp)
-                    MenuItem(
-                        icon = Icons.Filled.Language,
-                        contentDescription =
-                            stringResource(id = R.string.profile_menu_item_language),
-                        text = stringResource(id = R.string.profile_menu_item_language),
-                        onClick = {
-                            onEvent(ProfileEvent.OnSelectLanguageClick)
-                        })
                 }
             }
         }

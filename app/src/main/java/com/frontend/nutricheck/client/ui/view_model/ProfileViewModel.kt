@@ -32,20 +32,17 @@ import java.util.Date
 sealed interface ProfileEvent {
     // Navigation events
     object NavigateToPersonalData : ProfileEvent
-    object NavigateToLanguage : ProfileEvent
     object NavigateToAddNewWeight : ProfileEvent
     object NavigateToProfileOverview : ProfileEvent
     object RestartApp : ProfileEvent
     // collected events, which lead to navigation
     object OnPersonalDataClick : ProfileEvent
-    object OnSelectLanguageClick : ProfileEvent
     object OnAddNewWeightClick : ProfileEvent
     object OnDisplayProfileOverview : ProfileEvent
     object OnRestartApp : ProfileEvent
     // collected events, which handle data changes
     object DisplayWeightHistory : ProfileEvent
     object OnSaveClick : ProfileEvent
-    data class SaveLanguage(val language: Language) : ProfileEvent
     data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
     data class UpdateUserNameDraft(val username: String) : ProfileEvent
@@ -59,10 +56,10 @@ sealed interface ProfileEvent {
 }
 /**
  * ViewModel for the user profile screen.
- * Manages user data, weight history, language and theme settings, and handles profile events.
+ * Manages user data, weight history and theme settings, and handles profile events.
  *
  * @property userDataRepository Repository for user data persistence.
- * @property appSettingsRepository Repository for app settings (language, theme).
+ * @property appSettingsRepository Repository for app settings (theme).
  */
 
 @HiltViewModel
@@ -98,11 +95,6 @@ class ProfileViewModel @Inject constructor(
     private val _weightData = MutableStateFlow<List<Weight>>(emptyList())
     val weightData: StateFlow<List<Weight>> = _weightData.asStateFlow()
 
-    val currentLanguage: StateFlow<Language> = appSettingsRepository.language.stateIn(
-        viewModelScope,
-        initialValue = Language.GERMAN,
-        started = SharingStarted.WhileSubscribed(5000)
-    )
     /**
      * Handles profile events and updates the state accordingly.
      * @param event The profile event to handle.
@@ -112,7 +104,6 @@ class ProfileViewModel @Inject constructor(
             //handled events by the ViewModel
             is ProfileEvent.DisplayWeightHistory -> { displayWeightHistory() }
             is ProfileEvent.OnSaveClick -> { persistDataWithCalculation() }
-            is ProfileEvent.SaveLanguage -> { onSaveLanguageClick(event.language) }
             is ProfileEvent.ChangeTheme -> { onChangeThemeClick(event.theme) }
             is ProfileEvent.SaveNewWeight -> {saveNewWeight(event.weight, event.date)}
             is ProfileEvent.UpdateUserNameDraft -> {updateUserNameDraft(event.username)}
@@ -128,7 +119,6 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.UpdateUserGenderDraft -> {updateUserGenderDraft(event.gender)}
             //Ui Events, which are being handled by emitting a new event by the ViewModel
             is ProfileEvent.OnPersonalDataClick -> { emitEvent(ProfileEvent.NavigateToPersonalData) }
-            is ProfileEvent.OnSelectLanguageClick -> { emitEvent(ProfileEvent.NavigateToLanguage) }
             is ProfileEvent.OnAddNewWeightClick -> { emitEvent(ProfileEvent.NavigateToAddNewWeight) }
             is ProfileEvent.OnDisplayProfileOverview ->
             { emitEvent(ProfileEvent.NavigateToProfileOverview) }
@@ -220,12 +210,7 @@ class ProfileViewModel @Inject constructor(
             _weightData.value = userDataRepository.getWeightHistory()
         }
     }
-    private fun onSaveLanguageClick(language: Language) {
-        viewModelScope.launch {
-            appSettingsRepository.setLanguage(language)
-        }
-        emitEvent(ProfileEvent.RestartApp)
-    }
+
     private fun onChangeThemeClick(theme : ThemeSetting) {
         AppThemeState.currentTheme.value = theme
         val isDarkMode = when (theme) {

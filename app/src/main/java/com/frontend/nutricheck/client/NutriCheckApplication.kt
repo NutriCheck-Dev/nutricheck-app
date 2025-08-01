@@ -25,21 +25,6 @@ import javax.inject.Singleton
 class NutriCheckApplication : Application() {
     @Inject
     lateinit var appSettingsRepository: AppSettingsRepository
-//    override fun attachBaseContext(base: Context?) {
-//        val languageCode = runBlocking {
-//            try {
-//                appSettingsRepository.language.first().code
-//            } catch (_: NoSuchElementException) {
-//                Language.GERMAN.code
-//            }
-//        }
-//        val locale = Locale(languageCode)
-//        val config = Configuration()
-//        config.setLocale(locale)
-//        val context = base?.createConfigurationContext(config)
-//        super .attachBaseContext(context)
-//
-//    }
 
     override fun onCreate() {
         super.onCreate()
