@@ -99,13 +99,18 @@ class FoodSearchViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodSearchOverviewViewModel() {
-        private val mode: SearchMode = when {
-            savedStateHandle.get<String>("recipeId")?.isNotBlank() == true ->
-                SearchMode.IngredientsForRecipe(savedStateHandle.get<String>("recipeId")!!)
-            savedStateHandle.get<String>("mealId")?.isNotBlank() == true ->
-                SearchMode.ComponentsForMeal(savedStateHandle.get<String>("mealId")!!)
-            else -> SearchMode.LogNewMeal
-        }
+
+        private val mode: SearchMode =
+            savedStateHandle
+                .get<String>("recipeId")
+                ?.takeIf { it.isNotBlank() }
+                ?.let { SearchMode.IngredientsForRecipe(it) }
+                ?: savedStateHandle
+                    .get<String>("mealId")
+                    ?.takeIf { it.isNotBlank() }
+                    ?.let { SearchMode.ComponentsForMeal(it) }
+                ?: SearchMode.LogNewMeal
+
 
     private val newMealId = UUID.randomUUID().toString()
     private val initialCommonParams = CommonSearchParameters()

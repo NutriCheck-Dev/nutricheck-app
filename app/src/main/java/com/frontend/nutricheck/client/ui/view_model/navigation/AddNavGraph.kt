@@ -33,9 +33,10 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchUi
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
     object AddAiMeal : AddScreens("add_ai_meal/{mealId}")
-    object AddMeal : AddScreens("add_meal?fromAddIngredient={fromAddIngredient}") {
-        fun createRoute(fromAddIngredient: Boolean): String {
-            return "add_meal?fromAddIngredient=$fromAddIngredient"
+    object AddMeal : AddScreens("add_meal?recipeId={recipeId}") {
+        const val defaultRoute = "add_meal"
+        fun createRoute(recipeId: String): String {
+            return "add_meal?recipeId=$recipeId"
         }
     }
     object AddRecipe : AddScreens("add_recipe")
@@ -74,14 +75,14 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         startDestination = when(origin) {
             AddDialogOrigin.BOTTOM_NAV_BAR -> AddScreens.AddMainPage.route
             AddDialogOrigin.RECIPE_PAGE -> AddScreens.AddRecipe.route
-            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.createRoute(false)
+            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.defaultRoute
         },
         route = "add_graph"
     ) {
         composable(AddScreens.AddMainPage.route) {
             AddDialog(
                 onAddMealClick = {
-                    addNavController.navigate(AddScreens.AddMeal.route)
+                    addNavController.navigate(AddScreens.AddMeal.defaultRoute)
                                  },
                 onAddRecipeClick = {
                     addNavController.navigate(AddScreens.AddRecipe.route)
@@ -92,18 +93,18 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 onDismissRequest = { mainNavController.popBackStack() }
             )
         }
-        composable(AddScreens.AddRecipe.route) {
+        /**composable(AddScreens.AddRecipe.route) {
             val createRecipeViewModel: RecipeEditorViewModel = hiltViewModel()
             CreateRecipePage(
                 createRecipeViewModel = createRecipeViewModel,
                 onItemClick = { ingredient -> navigateToIngredient(ingredient) },
                 onAddButtonClick = {
-                    addNavController.navigate(AddScreens.AddMeal.createRoute(true))
+                    addNavController.navigate(AddScreens.AddMeal.createRoute(it))
                                  },
                 onSave = {}, //TODO: Implement save functionality
                 onBack = { addNavController.popBackStack() }
             )
-        }
+        }**/
 
         composable(AddScreens.AddAiMeal.route) {
             CameraPreviewScreen(
@@ -118,12 +119,10 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 navArgument("foodProductId") { type = NavType.StringType },
                 navArgument("mealId") {
                     type = NavType.StringType
-                    defaultValue = ""
                     nullable = true
                 }
             )
-        ) {
-            backStack ->
+        ) { backStack ->
             val foodProductId = backStack.arguments!!.getString("foodProductId")!!
             val graphEntry = remember(backStack) {
                 addNavController.getBackStackEntry(
@@ -143,19 +142,33 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             )
         }
 
+        composable(route = AddScreens.AddMeal.defaultRoute) { backStackEntry ->
+            val parenEntry = remember(backStackEntry) {
+                addNavController.getBackStackEntry("add_graph")
+            }
+            val searchViewModel: FoodSearchViewModel = hiltViewModel(parenEntry)
+            SearchPage(
+                searchViewModel = searchViewModel,
+                onConfirm = { addNavController.navigate(AddScreens.SearchFoodComponentSummary.route)},
+                onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
+                onBack = { addNavController.popBackStack() }
+            )
+        }
+
         composable(
             route = AddScreens.AddMeal.route,
             arguments = listOf(
-                navArgument("fromAddIngredient") {
-                    type = NavType.BoolType
-                    defaultValue = false
+                navArgument("recipeId") {
+                    type = NavType.StringType
+                    defaultValue = ""
                 }
             )
         ) { backStackEntry ->
-            val parentEntry = remember(backStackEntry) {
-                addNavController.getBackStackEntry("add_graph")
+            val recipeId = backStackEntry.arguments!!.getString("recipeId")!!
+            val searchGraphEntry = remember(backStackEntry) {
+                addNavController.getBackStackEntry(AddScreens.AddMeal.createRoute(recipeId))
             }
-            val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
+            val searchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
             SearchPage(
                 searchViewModel = searchViewModel,
                 onConfirm = { addNavController.navigate(AddScreens.SearchFoodComponentSummary.route)},
@@ -187,18 +200,48 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             )
         }
 
-        composable(AddScreens.AddRecipe.route) { backStack ->
+        composable(
+            route = AddScreens.AddRecipe.route,
+            arguments = listOf(
+                navArgument("recipeId") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStack ->
             val searchGraphEntry = remember(backStack) {
                 addNavController.getBackStackEntry("add_graph")
             }
             val createRecipeViewModel: RecipeEditorViewModel = hiltViewModel(searchGraphEntry)
-            val draft by createRecipeViewModel.draft.collectAsState()
             CreateRecipePage(
                 createRecipeViewModel = createRecipeViewModel,
                 onItemClick = { ingredient -> navigateToIngredient(ingredient) },
                 onAddButtonClick = {
+                    addNavController.navigate(AddScreens.AddMeal.createRoute(it))
                 },
                 onSave = {}, //TODO: Implement save functionality
+                onBack = { addNavController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = AddScreens.AddMeal.route,
+            arguments = listOf(
+                navArgument("recipeId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { backStackEntry ->
+            val recipeId = backStackEntry.arguments!!.getString("recipeId")!!
+            val searchGraphEntry = remember(backStackEntry) {
+                addNavController.getBackStackEntry(AddScreens.AddMeal.createRoute(recipeId))
+            }
+            val searchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
+            SearchPage(
+                searchViewModel = searchViewModel,
+                onConfirm = { addNavController.navigate(AddScreens.SearchFoodComponentSummary.route)},
+                onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { addNavController.popBackStack() }
             )
         }
@@ -213,7 +256,6 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 navArgument("foodProductId") { type = NavType.StringType },
                 navArgument("recipeId") {
                     type = NavType.StringType
-                    defaultValue = ""
                     nullable = true
                 }
             )
@@ -238,7 +280,12 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
             )
         }
 
-        composable (AddScreens.RecipeOverview.route) { backStack ->
+        composable (
+            route = AddScreens.RecipeOverview.route,
+            arguments = listOf(
+                navArgument("recipeId") { type = NavType.StringType }
+            )
+        ) { backStack ->
             val recipeId = backStack.arguments!!.getString("recipeId")!!
             val graphEntry = remember(backStack) {
                 addNavController.getBackStackEntry(

@@ -40,7 +40,7 @@ fun CreateRecipePage(
     modifier: Modifier = Modifier,
     createRecipeViewModel: RecipeEditorViewModel,
     onItemClick: (Ingredient) -> Unit = {},
-    onAddButtonClick: () -> Unit = {},
+    onAddButtonClick: (String) -> Unit = {},
     onSave: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
@@ -113,7 +113,7 @@ fun CreateRecipePage(
                 Spacer(Modifier.height(10.dp))
                 IngredientList(
                     ingredients = draft.ingredients,
-                    onAddButtonClick = { onAddButtonClick() },
+                    onAddButtonClick = { onAddButtonClick(draft.id) },
                     onItemClick = { ingredient ->
                         onItemClick(ingredient)
                                   },

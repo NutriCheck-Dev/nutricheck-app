@@ -64,7 +64,9 @@ class RecipeEditorViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val mode: RecipeMode =
-        savedStateHandle.get<String>("recipeId")?.let { RecipeMode.Edit(it) }
+        savedStateHandle.get<String>("recipeId")
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { RecipeMode.Edit(it) }
             ?: RecipeMode.Create
 
     private val _draft = MutableStateFlow(
