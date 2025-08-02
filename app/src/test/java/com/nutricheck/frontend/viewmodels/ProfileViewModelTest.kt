@@ -9,7 +9,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Language
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
+import com.frontend.nutricheck.client.model.repositories.user.AppSettingsRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
@@ -59,7 +59,7 @@ class ProfileViewModelTest {
     private lateinit var userDataRepository: UserDataRepository
 
     @Mock
-    private lateinit var appSettingRepository: AppSettingRepository
+    private lateinit var appSettingsRepository: AppSettingsRepository
 
     @Mock
     private lateinit var appContext: Context
@@ -92,7 +92,7 @@ class ProfileViewModelTest {
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
         // When
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         // Wait for the ViewModel to initialize and load data
         profileViewModel.data.first { it == userData }
         profileViewModel.dataDraft.first { it == userData }
@@ -120,7 +120,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         // When
         profileViewModel.onEvent(ProfileEvent.UpdateUserNameDraft("TestUser"))
@@ -149,7 +149,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         // When
         profileViewModel.onEvent(ProfileEvent.UpdateUserNameDraft(""))
 
@@ -177,7 +177,7 @@ class ProfileViewModelTest {
                 carbsGoal = 0,
                 fatsGoal = 0
             ))
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         // When
         val newBirthdate = Date(946684800000L) // 2000-01-01
@@ -209,7 +209,7 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(initialUserData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         // Ensure initial data is loaded
         profileViewModel.data.first { it == initialUserData }
         profileViewModel.dataDraft.first { it == initialUserData }
@@ -243,7 +243,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.height == 0.0 }
         profileViewModel.dataDraft.first { it.height == 0.0 }
 
@@ -271,7 +271,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.height == 180.0 }
         profileViewModel.dataDraft.first { it.height == 180.0 }
 
@@ -300,7 +300,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.weight == 0.0 }
         profileViewModel.dataDraft.first { it.weight == 0.0 }
 
@@ -329,7 +329,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.weight == 80.0 }
         profileViewModel.dataDraft.first { it.weight == 80.0 }
 
@@ -357,7 +357,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.targetWeight == 0.0 }
         profileViewModel.dataDraft.first { it.targetWeight == 0.0 }
 
@@ -385,7 +385,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it.targetWeight == 80.0 }
         profileViewModel.dataDraft.first { it.targetWeight == 80.0 }
 
@@ -414,7 +414,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserActivityLevelDraft(ActivityLevel.REGULARLY))
 
@@ -440,7 +440,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserWeightGoalDraft(WeightGoal.MAINTAIN_WEIGHT))
 
@@ -465,7 +465,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.UpdateUserGenderDraft(Gender.FEMALE))
 
@@ -489,7 +489,7 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.dataDraft.first { it == userData }
         profileViewModel.onEvent(ProfileEvent.UpdateUserNameDraft("NewTestUser"))
         profileViewModel.onEvent(ProfileEvent.UpdateUserHeightDraft("185"))
@@ -527,7 +527,7 @@ class ProfileViewModelTest {
                 fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it == userData }
         profileViewModel.dataDraft.first { it == userData }
 
@@ -559,7 +559,7 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
         profileViewModel.data.first { it == userData }
         profileViewModel.dataDraft.first { it == userData }
 
@@ -568,7 +568,7 @@ class ProfileViewModelTest {
         advanceUntilIdle()
         assertThat(profileViewModel.uiState.value)
             .isInstanceOf(BaseViewModel.UiState.Error::class.java)
-        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(org.mockito.kotlin.any())
+        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(any())
     }
 
     @Test
@@ -590,16 +590,43 @@ class ProfileViewModelTest {
             fatsGoal = 0
         )
         whenever(userDataRepository.getUserData()).thenReturn(userData)
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         val invalidDate = Date(915148800000L) // 1999-01-01, which is before the birthdate
         profileViewModel.onEvent(ProfileEvent.SaveNewWeight("80", invalidDate))
         advanceUntilIdle()
         assertThat(profileViewModel.uiState.value)
             .isInstanceOf(BaseViewModel.UiState.Error::class.java)
-        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(org.mockito.kotlin.any())
+        verify(userDataRepository, org.mockito.kotlin.never()).addWeight(any())
     }
+    @Test
+    fun `onSaveLanguageClick saves language and restarts app`() = runTest {
+        whenever(userDataRepository.getUserData()).thenReturn(
+            UserData(
+                username = "TestUser",
+                birthdate = Date(1234567890L),
+                gender = Gender.MALE,
+                height = 180.0,
+                weight = 80.0,
+                targetWeight = 75.0,
+                activityLevel = ActivityLevel.REGULARLY,
+                weightGoal = WeightGoal.LOSE_WEIGHT,
+                age = 25,
+                dailyCaloriesGoal = 0,
+                proteinGoal = 0,
+                carbsGoal = 0,
+                fatsGoal = 0
+            )
+        )
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
+        val event = async { profileViewModel.events.first() }
 
+        advanceUntilIdle()
+
+        verify(appSettingsRepository).setLanguage(Language.ENGLISH)
+
+        assertThat(event.await()).isEqualTo(ProfileEvent.RestartApp)
+    }
     @Test
     fun `onChangeThemeClick puts dark theme and saves in repository`() = runTest {
         whenever(userDataRepository.getUserData()).thenReturn(
@@ -619,12 +646,12 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.ChangeTheme(ThemeSetting.DARK))
         advanceUntilIdle()
 
-        verify(appSettingRepository).setTheme(true)
+        verify(appSettingsRepository).setTheme(true)
         assertThat(AppThemeState.currentTheme.value)
             .isEqualTo(ThemeSetting.DARK)
     }
@@ -648,12 +675,12 @@ class ProfileViewModelTest {
                 fatsGoal = 0
             )
         )
-        profileViewModel = ProfileViewModel(userDataRepository, appSettingRepository, appContext)
+        profileViewModel = ProfileViewModel(userDataRepository, appSettingsRepository, appContext)
 
         profileViewModel.onEvent(ProfileEvent.ChangeTheme(ThemeSetting.LIGHT))
         advanceUntilIdle()
 
-        verify(appSettingRepository).setTheme(false)
+        verify(appSettingsRepository).setTheme(false)
         assertThat(AppThemeState.currentTheme.value)
             .isEqualTo(ThemeSetting.LIGHT)
     }

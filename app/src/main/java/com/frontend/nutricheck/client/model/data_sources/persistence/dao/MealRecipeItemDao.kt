@@ -9,7 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealRecipeItemWithRecipe
-import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
@@ -27,7 +27,7 @@ interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
     suspend fun insertAll(mealFoodItems: List<MealRecipeItemEntity>)
 
     @Query("SELECT * FROM meal_recipe_items WHERE recipeId = :recipeId")
-    fun getById(recipeId: String): List<MealRecipeItemEntity>?
+    fun getById(recipeId: String): List<MealRecipeItemEntity>
 
     @Query("DELETE FROM meal_recipe_items WHERE mealId = :mealId")
     suspend fun deleteMealRecipeItemsOfMeal(mealId: String)

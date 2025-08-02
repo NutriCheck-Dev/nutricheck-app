@@ -24,9 +24,11 @@ class DailyMacrosViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val userDataRepository: UserDataRepository
 ) : BaseViewModel() {
-
     private val _dailyMacrosState = MutableStateFlow(DailyMacrosState())
     val dailyMacrosState = _dailyMacrosState.asStateFlow()
+    init {
+        displayDailyMacros()
+    }
 
      fun displayDailyMacros() {
         viewModelScope.launch {

@@ -24,6 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.compose.ui.res.stringResource
+import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieSummary
 import com.frontend.nutricheck.client.ui.view.widgets.DateSelectorBar
@@ -85,10 +89,14 @@ fun HistoryPage(
                     mainNavController.navigate(Screen.Add.createRoute(AddDialogOrigin.HISTORY_PAGE))
                 }
                 is HistoryEvent.FoodClicked -> {
-                    historyPageNavController.navigate("food_details/${event.foodId}")
+                    historyPageNavController.navigate(
+                        "food_details?mealId=${event.mealId}&foodProductId=${event.foodId}"
+                    )
                 }
                 is HistoryEvent.RecipeClicked -> {
-                    historyPageNavController.navigate("recipe_details/${event.recipeId}")
+                    historyPageNavController.navigate(
+                        "recipe_details?recipeId=${event.recipeId}&mealId=${event.mealId}"
+                    )
                 }
                 is HistoryEvent.SelectDate -> {
                     selectedDate = event.day
@@ -145,13 +153,60 @@ fun HistoryPage(
             state = state
         )
         Spacer(modifier = Modifier.height(20.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Frühstück", breakfastCalories, items = breakfastComponents, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.BREAKFAST))})
+        MealBlock(
+            modifier = Modifier.padding(7.dp),
+            stringResource(id = R.string.historypage_breakfast),
+            breakfastCalories,
+            items = breakfastComponents,
+            onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.BREAKFAST))},
+            onItemClick = { item ->
+                when (item) {
+                    is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
+                    is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
+                }
+            }
+        )
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Mittagessen", lunchCalories, items= lunchComponents, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.LUNCH))})
+        MealBlock(
+            modifier = Modifier.padding(7.dp),
+            stringResource(id = R.string.historypage_lunch),
+            lunchCalories,
+            items= lunchComponents,
+            onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.LUNCH))},
+            onItemClick = { item ->
+                when (item) {
+                    is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
+                    is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
+                }
+            }
+        )
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Abendessen", dinnerCalories, items = dinnerComponents, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.DINNER))})
+        MealBlock(
+            modifier = Modifier.padding(7.dp),
+            stringResource(id = R.string.historypage_dinner),
+            dinnerCalories,
+            items = dinnerComponents,
+            onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.DINNER))},
+            onItemClick = { item ->
+                when (item) {
+                    is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
+                    is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
+                }
+            }
+        )
         Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp), "Snack", snackCalories, items = snackComponents, onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.SNACK))})
+        MealBlock(modifier = Modifier.padding(7.dp),
+            stringResource(id = R.string.historypage_snack),
+            snackCalories,
+            items = snackComponents,
+            onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.SNACK))},
+            onItemClick = { item ->
+                when (item) {
+                    is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
+                    is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
+                }
+            }
+        )
     }
 }
 
