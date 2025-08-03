@@ -113,6 +113,11 @@ class FoodSearchViewModel @Inject constructor(
                     ?.let { SearchMode.ComponentsForMeal(it) }
                 ?: SearchMode.LogNewMeal
 
+    private val date: Date? =
+        savedStateHandle.get<String>("date")?.toLongOrNull()?.let { Date(it) }
+
+    private val dayTime: DayTime? =
+        savedStateHandle.get<String>("dayTime")?.let { DayTime.valueOf(it) }
 
     private val newMealId = UUID.randomUUID().toString()
     private val initialCommonParams = CommonSearchParameters()
@@ -143,6 +148,18 @@ class FoodSearchViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            savedStateHandle.get<String>("dayTime")
+                ?.let { runCatching { DayTime.valueOf(it) }.getOrNull() }
+                ?.let { dayTime ->
+                    _searchState.update { state ->
+                        when (state) {
+                            is SearchUiState.AddComponentsToMealState ->
+                                state.copy(dayTime = dayTime)
+                            else -> state
+                        }
+                    }
+                }
+            val date = savedStateHandle.get<String>("date")?.toLongOrNull()?.let { Date(it) }
             savedStateHandle
                 .getStateFlow<Pair<Double, FoodComponent>?>("newComponent", null)
                 .filterNotNull()

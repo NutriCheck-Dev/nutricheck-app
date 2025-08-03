@@ -40,16 +40,24 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
             val originArg = backStackEntry.arguments?.getString("origin")
             val dateArg = backStackEntry.arguments?.getString("date")
             val dayTimeArg = backStackEntry.arguments?.getString("dayTime")
-            //val date = dateArg?.toLongOrNull()?.let { Date(it) } ?: Date()
-            //val dayTime = DayTime.valueOf(dayTimeArg ?: DayTime.BREAKFAST.name)
             val effectiveOriginName: String = when (originArg) {
                 null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name
                 else -> originArg
             }
+            val effectiveDateLong = when (dateArg) {
+                null, "{date}" -> Date().time
+                else -> dateArg.toLongOrNull() ?: Date().time
+            }
+            val effectiveDayTimeName = when (dayTimeArg) {
+                null, "{dayTime}" -> DayTime.BREAKFAST.name
+                else -> dayTimeArg
+            }
             val origin = AddDialogOrigin.valueOf(effectiveOriginName)
             AddNavGraph(
                 mainNavController = mainNavController,
-                origin = origin
+                origin = origin,
+                date = effectiveDateLong,
+                dayTime = DayTime.valueOf(effectiveDayTimeName)
             )
         }
 

@@ -23,6 +23,7 @@ data class HistoryState(
     val mealId: String = "",
     val foodId: String = "",
     val recipeId: String = "",
+    val dayTime: DayTime = DayTime.BREAKFAST,
     val totalCalories: Int = 0,
     val goalCalories: Int = 0,
     val switched: Boolean = false
@@ -61,6 +62,12 @@ class HistoryViewModel @Inject constructor(
     }
     fun onAddEntryClick(day: Date, dayTime: DayTime) {
         viewModelScope.launch {
+            _historyState.update {
+                it.copy(
+                    selectedDate = day,
+                    dayTime = dayTime
+                )
+            }
             _events.emit(HistoryEvent.AddEntryClick(day, dayTime))
         }
     }

@@ -122,8 +122,10 @@ fun HistoryPage(
         Spacer(modifier = Modifier.height(7.dp))
         DateSelectorBar(
             selectedDate = selectedDate,
-            onPreviousDay = { selectedDate = Date(selectedDate.time - 24 * 60 * 60 * 1000) },
-            onNextDay = { selectedDate = Date(selectedDate.time + 24 * 60 * 60 * 1000) },
+            onPreviousDay = { selectedDate = Date(selectedDate.time - 24 * 60 * 60 * 1000)
+                historyViewModel.onEvent(HistoryEvent.SelectDate(selectedDate))},
+            onNextDay = { selectedDate = Date(selectedDate.time + 24 * 60 * 60 * 1000)
+                historyViewModel.onEvent(HistoryEvent.SelectDate(selectedDate))},
             onOpenCalendar = { showDatePicker = true }
         )
         if (showDatePicker) {
