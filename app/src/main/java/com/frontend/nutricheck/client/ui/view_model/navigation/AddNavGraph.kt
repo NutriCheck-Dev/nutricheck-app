@@ -112,36 +112,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                     addNavController.navigate(AddScreens.FoodOverview.fromAiMeal(mealId, foodProductId)) },
                 onExit = { mainNavController.popBackStack() })
         }
-        composable(
-            route = AddScreens.FoodOverview.route,
-            arguments = listOf(
-                navArgument("foodProductId") { type = NavType.StringType },
-                navArgument("mealId") {
-                    type = NavType.StringType
-                    defaultValue = ""
-                    nullable = true
-                }
-            )
-        ) {
-            backStack ->
-            val foodProductId = backStack.arguments!!.getString("foodProductId")!!
-            val graphEntry = remember(backStack) {
-                addNavController.getBackStackEntry(
-                    AddScreens.FoodOverview.fromSearch(foodProductId)
-                )
-            }
-            val searchGraphEntry = remember(backStack) {
-                addNavController.getBackStackEntry("add_graph")
-            }
-            val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
-            val foodSearchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
-            FoodProductOverview(
-                foodProductOverviewViewModel = foodProductOverviewViewModel,
-                foodSearchViewModel = foodSearchViewModel,
-                onPersist = { addNavController.popBackStack() },
-                onBack = { addNavController.popBackStack() }
-            )
-        }
+
 
         composable(
             route = AddScreens.AddMeal.route,
@@ -204,8 +175,6 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         }
 
         composable(AddScreens.HistoryPage.route) { DiaryNavGraph(mainNavController) }
-
-        composable(AddScreens.AddAiMeal.route) {  }
 
         composable (
             route = AddScreens.FoodOverview.route,
