@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieState
 
 @Composable
@@ -34,7 +35,8 @@ fun CaloriesToday(
     }
 
     val colors = MaterialTheme.colorScheme
-
+    val extendedColors = LocalExtendedColors.current
+    val progressColor = extendedColors.chartBlue.color
     Surface(
         color = colors.surfaceContainer,
         modifier = modifier
@@ -75,7 +77,7 @@ fun CaloriesToday(
 
                     // Fortschrittskreis
                     drawArc(
-                        color = colors.primary,
+                        color = progressColor,
                         startAngle = -90f,
                         sweepAngle = sweepAngle,
                         useCenter = false,

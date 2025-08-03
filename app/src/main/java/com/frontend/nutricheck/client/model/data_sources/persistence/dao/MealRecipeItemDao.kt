@@ -31,6 +31,8 @@ interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
 
     @Query("DELETE FROM meal_recipe_items WHERE mealId = :mealId")
     suspend fun deleteMealRecipeItemsOfMeal(mealId: String)
+    @Query("DELETE FROM meal_recipe_items WHERE mealId = :id")
+    suspend fun deleteById(id: String)
     @Transaction
     @Query("""
         SELECT *

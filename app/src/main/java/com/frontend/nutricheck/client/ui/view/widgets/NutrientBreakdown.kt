@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
+import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyMacrosState
 
 @Composable
@@ -92,6 +94,10 @@ fun MacroProgress(
     progress: Float,
 ) {
     val colors = MaterialTheme.colorScheme
+    val extendedColors = LocalExtendedColors.current
+
+    val backgroundBarColor = colors.surfaceVariant // oder z. B. colors.outlineVariant
+    val progressBarColor = extendedColors.chartBlue.color
 
     Column(
         modifier = Modifier.requiredWidth(150.dp)
@@ -115,21 +121,24 @@ fun MacroProgress(
 
         Spacer(modifier = Modifier.height(6.dp))
 
+        // Hintergrundbalken
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(2.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(colors.outlineVariant)
+                .height(6.dp)
+                .clip(RoundedCornerShape(50))
+                .background(backgroundBarColor)
         ) {
+            // Fortschrittsbalken
             Box(
                 modifier = Modifier
                     .fillMaxWidth(progress.coerceIn(0f, 1f))
-                    .height(2.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(colors.primary)
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(progressBarColor)
             )
         }
     }
 }
+
 

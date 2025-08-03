@@ -89,7 +89,8 @@ fun MealBlock(
     totalCalories: Double,
     items: List<MealItem>,
     onAddClick: () -> Unit = {},
-    onItemClick: (MealItem) -> Unit
+    onItemClick: (MealItem) -> Unit,
+    onRemoveClick: (MealItem) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -105,24 +106,39 @@ fun MealBlock(
             thickness = 1.dp
         )
         items.forEach { item ->
-            when (item) {
-                is MealFoodItem -> {
-                    DishItemMealButton(
-                        title = item.foodProduct.name,
-                        quantity = item.quantity,
-                        calories = item.quantity * item.foodProduct.calories,
-                        onClick = { onItemClick(item) }
-                    )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                when (item) {
+                    is MealFoodItem -> {
+                        DishItemMealButton(
+                            modifier = Modifier.weight(1f), // gibt Platz frei für die drei Punkte
+                            title = item.foodProduct.name,
+                            quantity = item.quantity,
+                            calories = item.quantity * item.foodProduct.calories,
+                            onClick = { onItemClick(item) }
+                        )
+                    }
+
+                    is MealRecipeItem -> {
+                        DishItemMealButton(
+                            modifier = Modifier.weight(1f),
+                            title = item.recipe.name,
+                            quantity = item.quantity,
+                            calories = item.quantity * item.recipe.calories,
+                            onClick = { onItemClick(item) }
+                        )
+                    }
                 }
-                is MealRecipeItem -> {
-                    DishItemMealButton(
-                        title = item.recipe.name,
-                        quantity = item.quantity,
-                        calories = item.quantity * item.recipe.calories,
-                        onClick = { onItemClick(item) }
-                    )
-                }
+
+                MealItemMenu(
+                    onRemove = { onRemoveClick(item) }
+                )
             }
+
             HorizontalDivider(
                 color = colors.onSurfaceVariant,
                 thickness = 1.dp

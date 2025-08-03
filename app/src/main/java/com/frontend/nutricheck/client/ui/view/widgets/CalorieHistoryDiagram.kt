@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,11 +21,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryState
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -46,11 +49,12 @@ fun CalorieHistoryDiagram(
     val calorieData = calorieHistoryState.calorieHistory
     val options = CalorieRange.entries
 
+    val colors = MaterialTheme.colorScheme
     Column(
         modifier = modifier
             .height(184.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF121212))
+            .background(colors.surfaceContainer)
             .padding(20.dp)
     ) {
         Row(
@@ -60,7 +64,7 @@ fun CalorieHistoryDiagram(
         ) {
             Text(
                 text = stringResource(id = R.string.homepage_calorie_history),
-                color = Color.White,
+                color = colors.onSurface,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -83,6 +87,9 @@ fun CalorieBarChart(
     calorieGoal: Int,
     modifier: Modifier = Modifier
 ) {
+    val colors = MaterialTheme.colorScheme
+    val extendedColors = LocalExtendedColors.current
+    val progressBarColor = extendedColors.chartBlue.color
     val rawMin = data.minOrNull() ?: 0
     val rawMax = data.maxOrNull() ?: 1
     val range = rawMax - rawMin
@@ -142,7 +149,7 @@ fun CalorieBarChart(
                 val x = index * (barWidth + spacingBar)
                 val barHeight = ((value - visualMin) * heightRatio).coerceAtLeast(1f)
                 drawRect(
-                    color = Color(0xFF42A5F5),
+                    color = progressBarColor,
                     topLeft = Offset(x, size.height - barHeight),
                     size = Size(barWidth, barHeight)
                 )
@@ -176,7 +183,7 @@ fun CalorieBarChart(
                     x,
                     size.height + 40f,
                     android.graphics.Paint().apply {
-                        color = android.graphics.Color.WHITE
+                        color = colors.onSurface.toArgb()
                         textSize = 26f
                         isAntiAlias = true
                         textAlign = android.graphics.Paint.Align.CENTER

@@ -167,6 +167,8 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -181,6 +183,8 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -195,6 +199,8 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -208,6 +214,8 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
     }
