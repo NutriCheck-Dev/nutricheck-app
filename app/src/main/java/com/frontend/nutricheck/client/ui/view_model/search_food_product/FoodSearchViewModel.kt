@@ -321,6 +321,11 @@ class FoodSearchViewModel @Inject constructor(
         val state = _searchState.value
         if (state !is SearchUiState.AddComponentsToMealState) return
 
+        if (state.dayTime == null) {
+            setError("Please select a day time for the meal.")
+            return
+        }
+
         val (foodPairs, recipePairs) = state.parameters.addedComponents
             .partition { it.second is FoodProduct }
 
