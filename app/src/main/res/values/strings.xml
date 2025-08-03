@@ -88,9 +88,9 @@
     <string name="calorie_range_7_days">7T</string>
     <string name="calorie_range_30_days">30T</string>
     <string name="calorie_range_60_days">60T</string>
-    <string name="weight_range_1_month">1M</string>
-    <string name="weight_range_3_months">3M</string>
-    <string name="weight_range_6_months">6M</string>
+    <string name="weight_range_1_month" translatable="false">1M</string>
+    <string name="weight_range_3_months" translatable="false">3M</string>
+    <string name="weight_range_6_months" translatable="false">6M</string>
     <string name="label_protein">Proteine</string>
     <string name="label_carbs">Kohlenhydrate</string>
     <string name="label_fat">Fette</string>
@@ -98,11 +98,11 @@
     <string name="label_weightHistory">Gewichtsverlauf</string>
     <string name="calorie_history">Kalorienverlauf</string>
     <string name="monday_short">Mo</string>
-    <string name="tuesday_short">DI</string>
-    <string name="wednesday_short">MI</string>
-    <string name="thursday_short">DO</string>
-    <string name="friday_short">FR</string>
-    <string name="saturday_short">SA</string>
+    <string name="tuesday_short">Di</string>
+    <string name="wednesday_short">Mi</string>
+    <string name="thursday_short">Do</string>
+    <string name="friday_short">Fr</string>
+    <string name="saturday_short">Sa</string>
     <string name="sunday_short">So</string>
     <string name="label_snack">Snacks</string>
     <string name="label_dinner">Abendessen</string>
