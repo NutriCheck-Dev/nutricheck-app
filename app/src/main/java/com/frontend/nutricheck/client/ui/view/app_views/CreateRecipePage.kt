@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 
@@ -44,6 +45,7 @@ fun CreateRecipePage(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
+    val uiState by createRecipeViewModel.uiState.collectAsState()
     val draft by createRecipeViewModel.draft.collectAsState()
     val currentTitle = draft.title
     val currentDescription = draft.description
@@ -146,7 +148,9 @@ fun CreateRecipePage(
                                 it
                             )
                         )
-                    }
+                    },
+                    showTabRow = false,
+                    isLoading = uiState == BaseViewModel.UiState.Loading
                 )
             }
 

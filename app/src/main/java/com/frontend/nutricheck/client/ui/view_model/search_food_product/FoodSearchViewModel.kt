@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model.search_food_product
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
@@ -39,7 +38,6 @@ import kotlin.collections.map
 
 sealed class SearchMode {
     data class ComponentsForMeal(val mealId: String) : SearchMode()
-    data class IngredientsForRecipe(val recipeId: String) : SearchMode()
     object LogNewMeal : SearchMode()
 }
 
@@ -88,6 +86,8 @@ sealed interface  SearchEvent {
     object Search : SearchEvent
     object Retry : SearchEvent
     object Clear : SearchEvent
+    object ClickSearchAll : SearchEvent
+    object ClickSearchMyRecipes : SearchEvent
     object SubmitComponentsToMeal : SearchEvent
     object MealSelectorClick: SearchEvent
     object ExpandBottomSheet : SearchEvent
@@ -104,10 +104,6 @@ class FoodSearchViewModel @Inject constructor(
 
         private val mode: SearchMode =
             savedStateHandle
-                .get<String>("recipeId")
-                ?.takeIf { it.isNotBlank() }
-                ?.let { SearchMode.IngredientsForRecipe(it) }
-                ?: savedStateHandle
                     .get<String>("mealId")
                     ?.takeIf { it.isNotBlank() }
                     ?.let { SearchMode.ComponentsForMeal(it) }
@@ -118,12 +114,6 @@ class FoodSearchViewModel @Inject constructor(
 
     private val initialState: SearchUiState =
         when (mode) {
-            is SearchMode.IngredientsForRecipe ->
-                SearchUiState.AddIngredientState(
-                    recipeId = mode.recipeId,
-                    parameters = initialCommonParams
-                )
-
             is SearchMode.ComponentsForMeal ->
                 SearchUiState.AddComponentsToMealState(
                     mealId = mode.mealId,
@@ -172,9 +162,6 @@ class FoodSearchViewModel @Inject constructor(
     private val _events = MutableSharedFlow<SearchEvent>()
     val events: SharedFlow<SearchEvent> = _events.asSharedFlow()
 
-    /**private val _addComponent = MutableSharedFlow<Pair<Double, FoodComponent>>()
-    val addComponent: SharedFlow<Pair<Double, FoodComponent>> = _addComponent.asSharedFlow()**/
-
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.QueryChanged -> {
@@ -197,6 +184,8 @@ class FoodSearchViewModel @Inject constructor(
                     state.updateParams(newParams)
                 }
             }
+            is SearchEvent.ClickSearchAll -> onSearchAllClick()
+            is SearchEvent.ClickSearchMyRecipes -> onSearchMyRecipesClick()
         }
     }
 
@@ -209,55 +198,40 @@ class FoodSearchViewModel @Inject constructor(
         viewModelScope.launch {
             val language = _searchState.value.parameters.language
             when (mode) {
-                is SearchMode.IngredientsForRecipe -> {
-                    val foodProducts = foodProductRepository
-                        .searchFoodProducts(query, language)
-                    foodProducts
-                        .onStart { setLoading() }
-                        .catch { setError(it.message!!) }
-                        .collect { result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    _searchState.update { state ->
-                                        state.updateParams(
-                                            state.parameters.copy(
-                                                results = result.data
-                                            )
-                                        )
-                                    }
-                                }
-
-                                is Result.Error -> {
-                                    setError(result.message!!)
-                                }
-                            }
-                        }
-                    setReady()
-                }
-
-                else -> {
+                is SearchMode.ComponentsForMeal,
+                     SearchMode.LogNewMeal -> {
+                         if (_searchState.value.parameters.selectedTab == 1) {
+                             recipeRepository.getRecipesByName(query).let { recipes ->
+                                 if (recipes.isEmpty()) {
+                                     setError("Keine Rezepte gefunden.")
+                                     setReady()
+                                     return@launch
+                                 } else {
+                                     _searchState.update { state ->
+                                         state.updateParams(state.parameters.copy(results = recipes))
+                                     }
+                                     setReady()
+                                     return@launch
+                                 }
+                             }
+                         } else {
                     val foodProductFlow = foodProductRepository
                         .searchFoodProducts(query, language)
-                        .map { resultProducts -> resultProducts.mapData { foodProducts -> foodProducts.map { it } } }
 
                     val recipeFlow = recipeRepository
                         .searchRecipes(query)
-                        .map { resultRecipe -> resultRecipe.mapData { recipes -> recipes.map { it } } }
 
                     val merged: Flow<Result<List<FoodComponent>>> =
                         merge(foodProductFlow, recipeFlow)
                             .onStart { setLoading() }
                             .scan(emptyList<FoodComponent>()) { acc, search ->
-                                Log.d("FoodSearchVM", "raw search emission → $search")
                                 when (search) {
                                     is Result.Success -> {
                                         val newAcc = acc + search.data
-                                        Log.d("FoodSearchVM", "raw search emission → $newAcc")
                                         newAcc
                                     }
 
                                     is Result.Error -> {
-                                        Log.d("FoodSearchVM", "raw search emission → $acc")
                                         acc
                                     }
                                 }
@@ -283,7 +257,7 @@ class FoodSearchViewModel @Inject constructor(
                                     setError(result.message!!)
                                 }
                             }
-                        }
+                        } }
                 }
             }
         }
@@ -395,29 +369,15 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    private fun submitComponentsToRecipe() : List<Ingredient> {
-        val state = _searchState.value
-        val ingredients: List<Ingredient> = when (mode) {
-            is SearchMode.IngredientsForRecipe -> {
-                state.parameters.addedComponents.map {
-                    Ingredient(mode.recipeId, it.second as FoodProduct, quantity = it.first)
-                }
-            }
-            else -> emptyList()
-        }
-        return ingredients
-    }
-
-    private inline fun <T, R> Result<T>.mapData(transform: (T)->R): Result<R> =
-        when (this) {
-            is Result.Success -> Result.Success(transform(data))
-            is Result.Error -> Result.Error(code, message)
+    private fun onSearchAllClick() =
+        _searchState.update { state ->
+            state.updateParams(state.parameters.copy(selectedTab = 0))
         }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T> Result<*>.toError(): Result<T> =
-        Result.Error(
-            code = (this as Result.Error).code,
-            message = this.message
-        )
+    private fun onSearchMyRecipesClick() =
+        _searchState.update { state ->
+            state.updateParams(state.parameters.copy(selectedTab = 1))
+        }
+
+
 }

@@ -26,6 +26,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchPage(
     modifier: Modifier = Modifier,
+    selectedTab: Int = 0,
+    onSelectTab: (Int) -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {},
     query: String,
     onSearchClick: () -> Unit,
@@ -34,7 +36,9 @@ fun SearchPage(
     removeFoodComponent: (FoodComponent) -> Unit,
     addedComponents: List<FoodComponent>,
     searchResults: List<FoodComponent>,
-    expand: Boolean = false
+    expand: Boolean = false,
+    showTabRow: Boolean = true,
+    isLoading: Boolean,
 ) {
     val styles = MaterialTheme.typography
     val scrollState = rememberScrollState()
@@ -87,7 +91,11 @@ fun SearchPage(
             onDismiss = {
                 showBottomSheet = false
                 scope.launch { sheetState.show() }
-            }
+            },
+            selectedTab = selectedTab,
+            onSelectTab = { onSelectTab(it) },
+            showTabRow = showTabRow,
+            isLoading = isLoading,
         )
     }
 }

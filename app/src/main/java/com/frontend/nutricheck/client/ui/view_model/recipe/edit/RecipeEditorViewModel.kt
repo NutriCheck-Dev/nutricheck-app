@@ -41,6 +41,7 @@ data class RecipeDraft(
     val language: String = "",
     val query: String = "",
     val results: List<FoodComponent> = emptyList(),
+    val confirmationDialog : Boolean = false
 )
 
 sealed interface RecipeEditorEvent {
@@ -49,6 +50,7 @@ sealed interface RecipeEditorEvent {
     data class IngredientAdded(val foodProduct: Pair<Double, FoodComponent>) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
+    object ShowConfirmationDialog : RecipeEditorEvent
     object SearchIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
     object Cancel : RecipeEditorEvent
@@ -121,16 +123,13 @@ class RecipeEditorViewModel @Inject constructor(
             }
             is RecipeEditorEvent.SearchIngredients -> onSearchIngredients()
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
+            is RecipeEditorEvent.ShowConfirmationDialog -> changeShowConfirmationDialog()
         }
     }
 
     private fun titleChanged(title: String) {
-        if (title.isBlank()) {
-            setError("Bitte geben sie ihrem Rezept einen Namen.")
-        } else {
-            setReady()
-            _draft.value = _draft.value.copy(title = title)
-        }
+        setReady()
+        _draft.value = _draft.value.copy(title = title)
     }
 
     private fun descriptionChanged(description: String) {
@@ -263,6 +262,11 @@ class RecipeEditorViewModel @Inject constructor(
             setReady()
         }
     }
+
+    private fun changeShowConfirmationDialog() =
+        _draft.update { draft ->
+            draft.copy(confirmationDialog = !_draft.value.confirmationDialog)
+        }
 
     private fun onQueryChanged(query: String) =
         _draft.update { draft ->
