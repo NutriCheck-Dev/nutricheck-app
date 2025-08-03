@@ -13,6 +13,9 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
+/**
+ * UI State for displaying daily calorie intake and goal.
+ */
 data class DailyCalorieState(
     val dailyCalories: Int = 0,
     val calorieGoal: Int = 0,
@@ -30,6 +33,9 @@ class DailyCalorieViewModel @Inject constructor(
         displayDailyCalories()
     }
 
+    /**
+     * Fetches and displays the daily calorie intake and goal.
+     */
      fun displayDailyCalories() {
          val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
          viewModelScope.launch {

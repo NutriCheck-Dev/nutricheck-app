@@ -160,7 +160,16 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
                 searchViewModel = searchViewModel,
                 onConfirm = { addNavController.navigate(AddScreens.SearchFoodComponentSummary.route)},
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                onBack = { addNavController.popBackStack() }
+                onBack = {
+                    if (origin == AddDialogOrigin.HISTORY_PAGE) {
+                        mainNavController.popBackStack(
+                            route = Screen.DiaryPage.route,
+                            inclusive = false
+                        )
+                    } else {
+                        addNavController.popBackStack()
+                    }
+                }
             )
         }
 

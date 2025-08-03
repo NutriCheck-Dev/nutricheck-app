@@ -32,7 +32,7 @@ sealed class DiaryScreens(val route: String) {
 fun DiaryNavGraph(
     mainNavController: NavHostController
 ) {
-    var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.RECIPES) }
+    var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.HISTORY) }
     val recipePageViewModel: RecipePageViewModel = hiltViewModel()
     Scaffold(
         topBar = {
