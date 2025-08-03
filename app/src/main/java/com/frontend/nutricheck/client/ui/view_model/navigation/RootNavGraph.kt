@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
+import java.util.Date
 
 sealed class Screen(val route: String) {
     data object Onboarding : Screen("onboarding")
@@ -16,8 +18,10 @@ sealed class Screen(val route: String) {
         fun createRoute(dishId: String) = "dish_item_overview/$dishId"
     }
 
-    data object Add : Screen("add/{origin}") {
-        fun createRoute(origin: AddDialogOrigin) = "add/${origin.name}"
+    data object Add : Screen("add/{origin}/{date}/{dayTime}") {
+        fun createRoute(origin: AddDialogOrigin, date: Date, dayTime: DayTime): String {
+            return "add/${origin.name}/${date.time}/${dayTime.name}"
+        }
     }
 }
     @Composable
@@ -34,6 +38,10 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
         composable(Screen.ProfilePage.route) { ProfilePageNavGraph() }
         composable(Screen.Add.route) { backStackEntry ->
             val originArg = backStackEntry.arguments?.getString("origin")
+            val dateArg = backStackEntry.arguments?.getString("date")
+            val dayTimeArg = backStackEntry.arguments?.getString("dayTime")
+            val date = dateArg?.toLongOrNull()?.let { Date(it) } ?: Date()
+            val dayTime = DayTime.valueOf(dayTimeArg ?: DayTime.BREAKFAST.name)
             val effectiveOriginName: String = when (originArg) {
                 null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name
                 else -> originArg

@@ -86,7 +86,9 @@ fun HistoryPage(
         historyViewModel.events.collect { event ->
             when (event) {
                 is HistoryEvent.AddEntryClick -> {
-                    mainNavController.navigate(Screen.Add.createRoute(AddDialogOrigin.HISTORY_PAGE))
+                    mainNavController.navigate(Screen.Add.createRoute(AddDialogOrigin.HISTORY_PAGE, event.day, event.dayTime)) {
+                        launchSingleTop = true
+                    }
                 }
                 is HistoryEvent.FoodClicked -> {
                     historyPageNavController.navigate(

@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * UI State for displaying daily macronutrient intake and goals.
+ */
 data class DailyMacrosState(
     val dailyProtein: Int = 0,
     val dailyProteinGoal: Int = 0,
@@ -30,6 +33,9 @@ class DailyMacrosViewModel @Inject constructor(
         displayDailyMacros()
     }
 
+    /**
+     * Fetches and displays the daily macronutrient intake and goals.
+     */
      fun displayDailyMacros() {
         viewModelScope.launch {
             val macroGoals = userDataRepository.getNutrientGoal()
@@ -37,10 +43,10 @@ class DailyMacrosViewModel @Inject constructor(
             _dailyMacrosState.update {
                 it.copy(
                     dailyCarbsGoal = macroGoals[0],
-                    dailyProtein = macroGoals[1],
+                    dailyProteinGoal = macroGoals[1],
                     dailyFatGoal = macroGoals[2],
                     dailyCarbs = dailyMacros[0],
-                    dailyProteinGoal = dailyMacros[1],
+                    dailyProtein = dailyMacros[1],
                     dailyFat = dailyMacros[2]
                 )
             }
