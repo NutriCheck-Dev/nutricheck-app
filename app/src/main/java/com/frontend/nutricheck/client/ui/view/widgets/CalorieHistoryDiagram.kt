@@ -26,17 +26,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryState
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
-
+enum class CalorieRange(val id: String, val labelResId: Int) {
+    LAST_7_DAYS("7d", R.string.range_7_days),
+    LAST_30_DAYS("30d", R.string.range_30_days),
+    LAST_60_DAYS("60d", R.string.range_60_days)
+}
 @Composable
 fun CalorieHistoryDiagram(
     modifier: Modifier = Modifier,
     calorieHistoryState: CalorieHistoryState,
-    selectedRange : String,
-    onPeriodSelected: (String) -> Unit = {},
+    selectedRange: CalorieRange,
+    onPeriodSelected: (CalorieRange) -> Unit = {},
 ) {
     val calorieGoal = calorieHistoryState.calorieGoal
     val calorieData = calorieHistoryState.calorieHistory
+    val options = CalorieRange.entries
+
     Column(
         modifier = modifier
             .height(184.dp)
@@ -56,11 +65,9 @@ fun CalorieHistoryDiagram(
                 fontWeight = FontWeight.SemiBold
             )
             ChartRangeSwitcher(
-                options = listOf("7T", "30T", "60T"),
-                selectedOption = listOf("7T", "30T", "60T").indexOf(selectedRange),
-                onSelect = { clicked ->
-                    onPeriodSelected(clicked)
-                }
+                options = options.map { stringResource(it.labelResId) },
+                selectedOption = options.indexOf(selectedRange),
+                onSelect = { index -> onPeriodSelected(options[index]) }
             )
         }
 
@@ -72,31 +79,37 @@ fun CalorieHistoryDiagram(
 @Composable
 fun CalorieBarChart(
     data: List<Int>,
-    selectedRange: String,
+    selectedRange: CalorieRange,
     calorieGoal: Int,
     modifier: Modifier = Modifier
 ) {
     val rawMin = data.minOrNull() ?: 0
     val rawMax = data.maxOrNull() ?: 1
     val range = rawMax - rawMin
+    val today = LocalDate.now()
+    val locale = Locale.GERMAN
 
-    val days = listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
-    val startIndex = 0 // z.B. wenn Daten bei Montag starten
     val labelMap = when (selectedRange) {
-        "7T" -> (0 until data.size).associateWith { i -> days[(startIndex + i) % 7] }
-        "30T" -> mapOf(
+        CalorieRange.LAST_7_DAYS -> data.indices.associateWith { i ->
+            val day = today.minusDays((data.size - 1 - i).toLong())
+            // z.B. "Mo", "Di", ...
+            day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale).take(2)
+        }
+
+        CalorieRange.LAST_30_DAYS -> mapOf(
             (data.size * 1 / 4) to "1W",
             (data.size * 2 / 4) to "2W",
             (data.size * 3 / 4) to "3W",
             (data.size - 1) to "1M"
         )
-        "60T" -> mapOf(
+
+        CalorieRange.LAST_60_DAYS -> mapOf(
             (data.size * 1 / 4) to "3W",
             (data.size * 2 / 4) to "6W",
             (data.size * 3 / 4) to "9W",
             (data.size - 1) to "3M"
         )
-        else -> emptyMap()
+
     }
 
     Box(

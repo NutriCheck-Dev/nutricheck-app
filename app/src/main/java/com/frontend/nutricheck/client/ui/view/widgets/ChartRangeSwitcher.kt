@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ChartRangeSwitcher(
     modifier: Modifier = Modifier,
-    options: List<String> = listOf("7T", "30T", "90T"),
+    options: List<String>,
     selectedOption: Int = 0,
-    onSelect: (String) -> Unit = {}
+    onSelect: (Int) -> Unit = {}
 ) {
     val outerBg = Color(0xFF000000)
     val selectedBg = Color.White
@@ -72,7 +72,7 @@ fun ChartRangeSwitcher(
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(7.dp))
                         .background(bgColor)
-                        .clickable { onSelect(label) },
+                        .clickable { onSelect(index) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -87,18 +87,4 @@ fun ChartRangeSwitcher(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun ChartRangePreview() {
-    var selected by remember { mutableStateOf(1) }
-
-    ChartRangeSwitcher(
-        options = listOf("7T", "30T", "90T"),
-        selectedOption = selected,
-        onSelect = { clicked ->
-            selected = listOf("7T", "30T", "90T").indexOf(clicked)
-        }
-    )
 }

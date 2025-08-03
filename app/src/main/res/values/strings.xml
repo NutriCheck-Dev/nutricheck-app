@@ -103,4 +103,24 @@
     <string name="label_remaining">Verbleibend</string>
     <string name="label_history_add">Hinzufügen</string>
     <string name="label_macronutrition">Macros</string>
+    <string name="range_7_days">7T</string>
+    <string name="range_30_days">30T</string>
+    <string name="range_60_days">60T</string>
+    <string name="label_1_week">1W</string>
+    <string name="label_2_weeks">2W</string>
+    <string name="label_3_weeks">3W</string>
+    <string name="label_6_weeks">6W</string>
+    <string name="label_9_weeks">9W</string>
+    <string name="label_1_month">1M</string>
+    <string name="label_3_months">3M</string>
+    <string name="range_1_month">1M</string>
+    <string name="range_6_months">6M</string>
+    <string name="range_12_months">12M</string>
+    <string name="range_15_days">15T</string>
+    <string name="range_2_months">2M</string>
+    <string name="range_3_months">3M</string>
+    <string name="range_4_months">4M</string>
+    <string name="range_9_months">9m</string>
+    <string name="label_history">Verlauf</string>
+    <string name="label_recipes">Rezepte</string>
 </resources>
