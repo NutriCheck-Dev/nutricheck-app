@@ -24,7 +24,7 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     suspend fun insertAll(recipes: List<RecipeEntity> )
 
     @Transaction
-    @Query("SELECT * FROM recipes ORDER BY name ASC")
+    @Query("SELECT * FROM recipes WHERE deleted = 0 ORDER BY name ASC")
     fun getAllRecipesWithIngredients(): Flow<List<RecipeWithIngredients>>
 
     @Transaction

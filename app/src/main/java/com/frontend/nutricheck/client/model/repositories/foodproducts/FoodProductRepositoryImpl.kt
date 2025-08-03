@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.model.repositories.foodproducts
 
-import android.util.Log
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
@@ -56,7 +55,6 @@ class FoodProductRepositoryImpl @Inject constructor(
                             errorBody.string(),
                             ErrorResponseDTO::class.java)
                         val message = errorResponse.body.title + ": " + errorResponse.body.detail
-                        Log.e("FoodProductRepository", "Error searching food products: $message")
                         emit(Result.Error(errorResponse.body.status, message))
                     } else {
                         emit(Result.Error(message = "Unknown error"))

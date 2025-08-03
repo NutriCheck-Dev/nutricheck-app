@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
-import com.frontend.nutricheck.client.dto.ErrorResponseBodyDTO
+import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
@@ -59,13 +59,11 @@ class HistoryRepositoryImpl @Inject constructor(
                 addMeal(meal)
                 Result.Success(meal)
             } else if (errorBody != null) {
-                val gson = Gson()
-                val errorResponse = gson.fromJson(
-                    String(errorBody.bytes()),
-                    ErrorResponseBodyDTO::class.java
-                )
-                val message = errorResponse.title + errorResponse.detail
-                Result.Error(errorResponse.status, message)
+                val errorResponse = Gson().fromJson(
+                    errorBody.string(),
+                    ErrorResponseDTO::class.java)
+                val message = errorResponse.body.title + errorResponse.body.detail
+                Result.Error(errorResponse.body.status, message)
             } else {
                 Result.Error(message = "Unknown error")
             }
@@ -133,6 +131,7 @@ class HistoryRepositoryImpl @Inject constructor(
         return listOf(dailyCarbohydrates, dailyProtein, dailyFat)
     }
 
+    //Necessary?
     override suspend fun getMealFoodItemById(
         mealId: String,
         foodProductId: String
