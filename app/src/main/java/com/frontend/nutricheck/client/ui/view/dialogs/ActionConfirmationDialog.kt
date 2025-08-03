@@ -47,7 +47,7 @@ fun ActionConfirmationDialog(
 @Preview
 @Composable
 fun ActionConfirmationPreview() {
-    AppTheme() {
+    AppTheme {
         ActionConfirmationDialog(
             title = "Aktion Bestätigen",
             description = "Sind Sie sicher, dass Sie diese Aktion ausführen möchten?",

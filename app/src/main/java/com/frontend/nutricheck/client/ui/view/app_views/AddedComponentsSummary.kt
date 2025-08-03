@@ -22,7 +22,6 @@ import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
@@ -58,8 +57,6 @@ fun AddedComponentsSummary(
                         ) },
                     actions = {
                         CustomPersistButton {
-                            recipeEditorViewModel.onEvent(RecipeEditorEvent.IngredientAdded(
-                                (searchState as SearchUiState.AddIngredientState).submitComponentsToRecipe()                            ))
                             onSave()
                         }
                     })

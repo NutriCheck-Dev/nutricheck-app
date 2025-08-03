@@ -50,6 +50,7 @@ data class CommonSearchParameters(
     val results: List<FoodComponent> = emptyList(),
     val addedComponents: List<Pair<Double, FoodComponent>> = emptyList(),
     val expanded: Boolean = false,
+    val bottomSheetExpanded: Boolean = false
 )
 
 sealed class SearchUiState {
@@ -89,6 +90,7 @@ sealed interface  SearchEvent {
     object Clear : SearchEvent
     object SubmitComponentsToMeal : SearchEvent
     object MealSelectorClick: SearchEvent
+    object ExpandBottomSheet : SearchEvent
 }
 
 @HiltViewModel
@@ -178,6 +180,12 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.Clear -> cancelSearch()
             is SearchEvent.SubmitComponentsToMeal -> submitComponentsToMeal()
             is SearchEvent.MealSelectorClick -> onClickMealSelector()
+            is SearchEvent.ExpandBottomSheet -> {
+                _searchState.update { state ->
+                    val newParams = state.parameters.copy(bottomSheetExpanded = !state.parameters.bottomSheetExpanded)
+                    state.updateParams(newParams)
+                }
+            }
         }
     }
 
@@ -193,7 +201,6 @@ class FoodSearchViewModel @Inject constructor(
                 is SearchMode.IngredientsForRecipe -> {
                     val foodProducts = foodProductRepository
                         .searchFoodProducts(query, language)
-                        .map { result -> result.mapData { list -> list.map { it } } }
                     foodProducts
                         .onStart { setLoading() }
                         .catch { setError(it.message!!) }
@@ -273,10 +280,10 @@ class FoodSearchViewModel @Inject constructor(
     override fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) {
         _searchState.update { state ->
             val currentParams = state.parameters
-            val existing = currentParams.addedComponents.find { it.second.name == foodComponent.second.name }
+            val existing = currentParams.addedComponents.find { it.second.id == foodComponent.second.id }
             val newAddedComponents = if (existing != null) {
                 currentParams.addedComponents
-                    .filterNot { it.second.name == foodComponent.second.name } +
+                    .filterNot { it.second.id == foodComponent.second.id } +
                         (existing.first + foodComponent.first to foodComponent.second)
             } else {
                 currentParams.addedComponents + foodComponent
@@ -291,7 +298,7 @@ class FoodSearchViewModel @Inject constructor(
         _searchState.update { state ->
             val currentParams = state.parameters
             val newParams =
-                state.parameters.copy(addedComponents = currentParams.addedComponents.filterNot { it.second == foodComponent })
+                state.parameters.copy(addedComponents = currentParams.addedComponents.filterNot { it.second.id == foodComponent.id })
             state.updateParams(newParams)
         }
 
