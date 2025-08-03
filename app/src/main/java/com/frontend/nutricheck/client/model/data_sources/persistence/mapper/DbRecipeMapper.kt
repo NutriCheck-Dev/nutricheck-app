@@ -6,7 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.relations.R
 
 object DbRecipeMapper {
 
-    fun toRecipeEntity(recipe: Recipe) : RecipeEntity =
+    fun toRecipeEntity(recipe: Recipe, delete: Boolean) : RecipeEntity =
         RecipeEntity(
             id = recipe.id,
             name = recipe.name,
@@ -16,7 +16,8 @@ object DbRecipeMapper {
             fat = recipe.fat,
             servings = recipe.servings.toDouble(),
             instructions = recipe.instructions,
-            visibility = recipe.visibility
+            visibility = recipe.visibility,
+            deleted = delete
         )
 
     fun toRecipe(recipeWithIngredients: RecipeWithIngredients) : Recipe {

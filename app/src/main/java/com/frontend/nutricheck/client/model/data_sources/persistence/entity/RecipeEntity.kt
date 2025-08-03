@@ -14,5 +14,6 @@ data class RecipeEntity(
     val fat: Double = 0.0,
     val servings: Double = 0.0,
     val instructions: String = "",
-    val visibility: RecipeVisibility = RecipeVisibility.PUBLIC
+    val visibility: RecipeVisibility = RecipeVisibility.PUBLIC,
+    val deleted: Boolean
 )
