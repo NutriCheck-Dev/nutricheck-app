@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.foodproducts
 
+import android.util.Log
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
@@ -30,41 +31,40 @@ class FoodProductRepositoryImpl @Inject constructor(
             .firstOrNull()
             ?.map { DbFoodProductMapper.toFoodProduct(it) }
             ?: emptyList()
-        if(cached.isNotEmpty()) {
+        if (cached.isNotEmpty()) {
             emit(Result.Success(cached))
         }
-        val lastUpdate = foodSearchDao.getLatestUpdatedFor(foodProductName)
-        if (isExpired(lastUpdate)) {
-            try {
-                val response = api.searchFoodProduct(foodProductName, language)
-                val body = response.body()
-                val errorBody = response.errorBody()
-                if (response.isSuccessful && body != null) {
-                    val now = System.currentTimeMillis()
-                    val foodProducts = body.map { FoodProductMapper.toData(it) }
-                    val foodProductEntities =
-                        foodProducts.map { DbFoodProductMapper.toFoodProductEntity(it) }
-                    foodDao.insertAll(foodProductEntities)
-                    foodSearchDao.clearQuery(foodProductName)
-                    foodSearchDao.upsertEntities(foodProductEntities.map {
-                        FoodSearchEntity(foodProductName, it.id, now)
-                    })
-                    emit(Result.Success(foodProducts))
-                } else if (errorBody != null) {
-                    val gson = Gson()
-                    val errorResponse = gson.fromJson(
-                        String(errorBody.bytes()),
-                        ErrorResponseDTO::class.java
-                    )
-                    val message = errorResponse.title + ": " + errorResponse.detail
-                    emit(Result.Error(errorResponse.status, message))
-                } else {
-                    emit(Result.Error(message = "Unknown error"))
+            val lastUpdate = foodSearchDao.getLatestUpdatedFor(foodProductName)
+            if (isExpired(lastUpdate)) {
+                try {
+                    val response = api.searchFoodProduct(foodProductName, language)
+                    val body = response.body()
+                    val errorBody = response.errorBody()
+                    if (response.isSuccessful && body != null) {
+                        val now = System.currentTimeMillis()
+                        val foodProducts = body.map { FoodProductMapper.toData(it) }
+                        val foodProductEntities =
+                            foodProducts.map { DbFoodProductMapper.toFoodProductEntity(it) }
+                        foodDao.insertAll(foodProductEntities)
+                        foodSearchDao.clearQuery(foodProductName)
+                        foodSearchDao.upsertEntities(foodProductEntities.map {
+                            FoodSearchEntity(foodProductName, it.id, now)
+                        })
+                        emit(Result.Success(foodProducts))
+                    } else if (errorBody != null) {
+                        val errorResponse = Gson().fromJson(
+                            errorBody.string(),
+                            ErrorResponseDTO::class.java)
+                        val message = errorResponse.body.title + ": " + errorResponse.body.detail
+                        Log.e("FoodProductRepository", "Error searching food products: $message")
+                        emit(Result.Error(errorResponse.body.status, message))
+                    } else {
+                        emit(Result.Error(message = "Unknown error"))
+                    }
+                } catch (io: okio.IOException) {
+                    emit(Result.Error(message = "Oops, an error has occurred. Please check your internet connection."))
                 }
-            } catch (io: okio.IOException) {
-                emit(Result.Error(message = "Oops, an error has occurred. Please check your internet connection."))
             }
-        }
     }.flowOn(Dispatchers.IO)
 
     override suspend fun getFoodProductById(foodProductId: String): FoodProduct = withContext(Dispatchers.IO) {

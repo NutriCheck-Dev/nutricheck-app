@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
-import com.frontend.nutricheck.client.dto.ErrorResponseDTO
+import com.frontend.nutricheck.client.dto.ErrorResponseBodyDTO
 import com.frontend.nutricheck.client.dto.ReportDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
@@ -67,7 +67,7 @@ class RecipeRepositoryImpl @Inject constructor(
                     val gson = Gson()
                     val errorResponse = gson.fromJson(
                         String(errorBody.bytes()),
-                        ErrorResponseDTO::class.java
+                        ErrorResponseBodyDTO::class.java
                     )
                     val message = errorResponse.title + ": " + errorResponse.detail
                     emit(Result.Error(errorResponse.status, message))
@@ -134,7 +134,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
                     String(errorBody.bytes()),
-                    ErrorResponseDTO::class.java
+                    ErrorResponseBodyDTO::class.java
                 )
                 val message = errorResponse.title + errorResponse.detail
                 Result.Error(errorResponse.status, message)
@@ -159,7 +159,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
                     String(errorBody.bytes()),
-                    ErrorResponseDTO::class.java
+                    ErrorResponseBodyDTO::class.java
                 )
                 val message = errorResponse.title + errorResponse.detail
                 Result.Error(errorResponse.status, message)

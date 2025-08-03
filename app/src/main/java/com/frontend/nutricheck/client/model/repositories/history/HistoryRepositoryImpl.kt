@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
-import com.frontend.nutricheck.client.dto.ErrorResponseDTO
+import com.frontend.nutricheck.client.dto.ErrorResponseBodyDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
@@ -9,6 +9,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealFoodItemMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
@@ -28,6 +29,7 @@ class HistoryRepositoryImpl @Inject constructor(
     private val mealFoodItemDao: MealFoodItemDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val foodDao: FoodDao,
+    private val recipeDao: RecipeDao,
     private val api: RemoteApi
 ) : HistoryRepository {
 
@@ -60,7 +62,7 @@ class HistoryRepositoryImpl @Inject constructor(
                 val gson = Gson()
                 val errorResponse = gson.fromJson(
                     String(errorBody.bytes()),
-                    ErrorResponseDTO::class.java
+                    ErrorResponseBodyDTO::class.java
                 )
                 val message = errorResponse.title + errorResponse.detail
                 Result.Error(errorResponse.status, message)
@@ -86,6 +88,7 @@ class HistoryRepositoryImpl @Inject constructor(
         mealFoodItemDao.deleteMealFoodItemsOfMeal(meal.id)
         mealFoodItemDao.insertAll(mealFoodItemsEntities)
 
+        checkForRecipes(meal.mealRecipeItems)
         val mealRecipeItemEntities =
             meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
         mealRecipeItemDao.deleteMealRecipeItemsOfMeal(meal.id)
@@ -116,6 +119,7 @@ class HistoryRepositoryImpl @Inject constructor(
             )
         })
 
+        checkForRecipes(meal.mealRecipeItems)
         val mealRecipeItemEntities =
             meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
@@ -162,5 +166,11 @@ class HistoryRepositoryImpl @Inject constructor(
         }
     }
 
-    //TODO: Implement checkForRecipes
+    private suspend fun checkForRecipes(mealRecipeItems: List<MealRecipeItem>) = withContext(Dispatchers.IO) {
+        for (mealRecipeItem in mealRecipeItems) {
+            if (!recipeDao.exists(mealRecipeItem.recipe.id)) {
+                mealRecipeItemDao.insert(DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem))
+            }
+        }
+    }
 }
