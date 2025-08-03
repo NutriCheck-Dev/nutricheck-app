@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
@@ -27,7 +28,9 @@ sealed class RecipeOverviewMode {
 
 data class CommonRecipeOverviewParams(
     val ingredients: List<Ingredient> = emptyList(),
-    val editing: Boolean = false
+    val editing: Boolean = false,
+    val showDetails: Boolean = false,
+    val showReportDialog: Boolean = false
 )
 
 data class RecipeOverviewState (
@@ -37,10 +40,9 @@ data class RecipeOverviewState (
     val parameters: CommonRecipeOverviewParams
 )
 sealed interface RecipeOverviewEvent {
-    data class ClickDownloadRecipe(val recipe: Recipe) : RecipeOverviewEvent
-    data class ClickDeleteRecipe(val recipe: Recipe) : RecipeOverviewEvent
-    data class ClickUploadRecipe(val recipe: Recipe) : RecipeOverviewEvent
+    data class ClickDetailsOption(val option: DropdownMenuOptions) : RecipeOverviewEvent
     data object ClickEditRecipe : RecipeOverviewEvent
+    data object ClickDetails : RecipeOverviewEvent
 }
 
 @HiltViewModel
@@ -97,30 +99,10 @@ class RecipeOverviewViewModel @Inject constructor(
 
     fun onEvent(event: RecipeOverviewEvent) {
         when (event) {
-            is RecipeOverviewEvent.ClickDownloadRecipe -> {
-                viewModelScope.launch {
-                    onDownloadRecipe(event.recipe)
-                    _events.emit(RecipeOverviewEvent.ClickDownloadRecipe(event.recipe))
-                }
-            }
+            is RecipeOverviewEvent.ClickDetailsOption -> onDetailsOptionClick(event.option)
             is RecipeOverviewEvent.ClickEditRecipe -> onEditClicked()
-            is RecipeOverviewEvent.ClickDeleteRecipe -> {
-                viewModelScope.launch {
-                    onDeleteRecipe(event.recipe)
-                    _events.emit(RecipeOverviewEvent.ClickDeleteRecipe(event.recipe))
-                }
-            }
-            is RecipeOverviewEvent.ClickUploadRecipe -> {
-                viewModelScope.launch {
-                    onShareRecipe(event.recipe)
-                    _events.emit(RecipeOverviewEvent.ClickUploadRecipe(event.recipe))
-                }
-            }
+            is RecipeOverviewEvent.ClickDetails -> onDetailsClicked()
         }
-    }
-
-    override suspend fun onDownloadRecipe(recipe: Recipe) {
-        recipeRepository.insertRecipe(recipe)
     }
 
     override fun onEditClicked() {
@@ -131,11 +113,23 @@ class RecipeOverviewViewModel @Inject constructor(
         }
     }
 
-    override suspend fun onDeleteRecipe(recipe: Recipe) {
-        recipeRepository.deleteRecipe(recipe)
+    private fun onDetailsClicked() {
+        _recipeOverviewState.update { state ->
+            state.copy(
+                parameters = state.parameters.copy(showDetails = !state.parameters.showDetails)
+            )
+        }
     }
 
-    override suspend fun onShareRecipe(recipe: Recipe) {
-        recipeRepository.uploadRecipe(recipe)
+    private fun onDetailsOptionClick(option: DropdownMenuOptions) {
+        viewModelScope.launch {
+            when (option) {
+                DropdownMenuOptions.DELETE -> recipeRepository.deleteRecipe(_recipeOverviewState.value.recipe)
+                DropdownMenuOptions.DOWNLOAD -> recipeRepository.insertRecipe(_recipeOverviewState.value.recipe)
+                DropdownMenuOptions.UPLOAD -> recipeRepository.uploadRecipe(_recipeOverviewState.value.recipe)
+                DropdownMenuOptions.REPORT -> _recipeOverviewState.update { it.copy(parameters = it.parameters.copy(showReportDialog = !it.parameters.showReportDialog)) }
+                DropdownMenuOptions.EDIT -> {}
+            }
+        }
     }
 }

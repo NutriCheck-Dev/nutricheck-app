@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,7 +24,9 @@ data class RecipePageState(
     val myRecipes: List<Recipe> = emptyList(),
     val onlineRecipes: List<Recipe> = emptyList(),
     val selectedTab: Int = 0,
-    val query: String = ""
+    val query: String = "",
+    val showReportDialog: Boolean = false,
+    val showDetailsMenu: Boolean = false,
 )
 
 sealed interface RecipePageEvent {
@@ -32,6 +35,8 @@ sealed interface RecipePageEvent {
     data class ClickSaveRecipe(val recipe: Recipe) : RecipePageEvent
     data class ClickDeleteRecipe(val recipe: Recipe) : RecipePageEvent
     data class QueryChanged(val query: String) : RecipePageEvent
+    data class ClickDetailsOption(val recipe: Recipe, val option: DropdownMenuOptions) : RecipePageEvent
+    object ShowDetailsMenu : RecipePageEvent
     object SearchOnline : RecipePageEvent
 }
 
@@ -69,7 +74,9 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.ClickSaveRecipe -> viewModelScope.launch { onSaveRecipeClick(event.recipe) }
             is RecipePageEvent.ClickDeleteRecipe -> viewModelScope.launch { onDeleteRecipeClick(event.recipe) }
             is RecipePageEvent.QueryChanged -> _recipePageState.update { it.copy(query = event.query) }
-            RecipePageEvent.SearchOnline -> viewModelScope.launch { performOnlineSearch() }
+            is RecipePageEvent.SearchOnline -> viewModelScope.launch { performOnlineSearch() }
+            is RecipePageEvent.ClickDetailsOption -> onDetailsOptionClick(event.recipe, event.option)
+            is RecipePageEvent.ShowDetailsMenu -> onDetailsClick()
         }
     }
 
@@ -124,6 +131,30 @@ class RecipePageViewModel @Inject constructor(
                         }
                     }
                 }
+        }
+    }
+
+    private fun onDetailsClick() {
+        _recipePageState.update { it.copy(showDetailsMenu = !_recipePageState.value.showDetailsMenu) }
+    }
+
+    private fun onDetailsOptionClick(recipe: Recipe, option: DropdownMenuOptions) {
+        viewModelScope.launch {
+            when (option) {
+                DropdownMenuOptions.DELETE -> {
+                    recipeRepository.deleteRecipe(recipe)
+                    val refreshedList = recipeRepository.getMyRecipes()
+                    _recipePageState.update { it.copy(myRecipes = refreshedList) }
+                }
+                DropdownMenuOptions.DOWNLOAD -> {
+                    recipeRepository.insertRecipe(recipe)
+                    val refreshedList = recipeRepository.getMyRecipes()
+                    _recipePageState.update { it.copy(myRecipes = refreshedList) }
+                }
+                DropdownMenuOptions.UPLOAD -> recipeRepository.uploadRecipe(recipe)
+                DropdownMenuOptions.REPORT -> _recipePageState.update { it.copy(showReportDialog = !_recipePageState.value.showReportDialog) }
+                DropdownMenuOptions.EDIT -> {}
+            }
         }
     }
 }

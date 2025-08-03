@@ -36,20 +36,11 @@ fun RecipeOverview(
     if (!isEditing) {
         RecipeOverviewBaseContent(
             recipe = recipeOverviewState.recipe,
+            recipeOverviewViewModel = recipeOverviewViewModel,
+            reportRecipeViewModel = reportRecipeViewModel,
             onItemClick = { ingredient -> onItemClick(ingredient) },
-            onDownLoad = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDownloadRecipe(it)) },
-            onEdit = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe) },
-            onDelete = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDeleteRecipe(it)) },
-            onUpload = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickUploadRecipe(it)) },
-            onSendReport = {
-                reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport)
-                       },
-            onDismiss = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
-            onReportClick = { reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked) },
             onBack = onBack,
-            showReportDialog = reportRecipeState.reporting,
             ingredients = recipeOverviewState.parameters.ingredients,
-            reportRecipeViewModel = reportRecipeViewModel
         )
     } else {
         draftState.let { draft ->
