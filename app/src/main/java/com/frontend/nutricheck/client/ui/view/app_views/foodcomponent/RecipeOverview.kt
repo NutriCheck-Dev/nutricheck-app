@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeOverviewBaseContent
@@ -57,7 +58,7 @@ fun RecipeOverview(
                 onEvent = editRecipeViewModel::onEvent,
                 onSave = { editRecipeViewModel.onEvent(RecipeEditorEvent.SaveRecipe) },
                 onCancel = { editRecipeViewModel.onEvent(RecipeEditorEvent.Cancel) },
-                ingredients = draft.ingredients,
+                ingredients = draft.ingredients.map { Ingredient(recipeId = draft.id, it.second as FoodProduct, it.first) },
                 onItemClick = onItemClick
             )
         }

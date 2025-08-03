@@ -2,7 +2,6 @@ package com.frontend.nutricheck.client.ui.view_model.recipe.page
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository

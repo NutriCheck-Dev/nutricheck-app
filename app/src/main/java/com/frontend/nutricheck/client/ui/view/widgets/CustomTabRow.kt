@@ -84,7 +84,7 @@ fun CustomTabRow(
 @Preview
 @Composable
 fun CustomTabRowPreview() {
-    AppTheme() {
+    AppTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             CustomTabRow(
                 options = listOf("Option 1", "Option 2"),

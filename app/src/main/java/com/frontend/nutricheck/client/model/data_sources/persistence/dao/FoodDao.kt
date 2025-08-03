@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FoodDao : BaseDao<FoodProductEntity> {
