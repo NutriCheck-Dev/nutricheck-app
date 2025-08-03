@@ -20,6 +20,7 @@ import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewView
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 
 sealed class RecipePageScreens(val route: String) {
@@ -65,14 +66,16 @@ fun RecipePageNavGraph(
     ) {
         composable(RecipePageScreens.RecipePage.route) {
             val recipePageViewModel : RecipePageViewModel = hiltViewModel()
+            val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel()
             RecipePage(
                 recipePageViewModel = recipePageViewModel,
+                reportRecipeViewModel = reportRecipeViewModel,
                 onAddRecipeClick = {
                     recipePageNavController.navigate(RecipePageScreens.CreateRecipePage.route)
                 },
                 onItemClick = { foodComponent ->
                     navigateToFoodComponent(foodComponent)
-                },
+                }
             )
         }
         composable(

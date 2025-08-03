@@ -21,7 +21,6 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeVi
 
 @Composable
 fun ReportRecipeDialog(
-    reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(),
     title: String = "Report",
     confirmText: String = "Send",
     cancelText: String = "Cancel",

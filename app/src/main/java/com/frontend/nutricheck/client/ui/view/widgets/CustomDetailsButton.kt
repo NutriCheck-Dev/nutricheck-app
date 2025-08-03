@@ -23,19 +23,18 @@ fun CustomDetailsButton(
     publicRecipe: Boolean = false,
     foodItem: Boolean = false,
     ingredientButton: Boolean = false,
-    onDownloadClick: () -> Unit = { },
-    onDeleteClick: () -> Unit = { },
-    onEditClick: () -> Unit = { },
-    onUploadClick: () -> Unit = { },
-    onReportClick: () -> Unit = { },
-    expanded: Boolean = false,
-    onExpandedChange: (Boolean) -> Unit = { }
+    onOptionClick: (DropdownMenuOptions) -> Unit,
+    onDetailsClick: () -> Unit = {},
+    onDismissClick: () -> Unit = {},
+    expanded: Boolean,
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     val optionsList = if (ownedRecipe) {
         DropdownMenuOptions.entries
-            .minus(DropdownMenuOptions.DOWNLOAD)
+            .minus(listOf(
+                DropdownMenuOptions.DOWNLOAD,
+                DropdownMenuOptions.REPORT))
             .sortedBy { it.name }
     } else if (publicRecipe) {
         DropdownMenuOptions.entries
@@ -58,7 +57,7 @@ fun CustomDetailsButton(
     Box {
         IconButton(
             modifier = Modifier.align(Alignment.Center),
-            onClick = { onExpandedChange(true) }
+            onClick = { onDetailsClick() }
         ) {
             if (dishItemButton) {
                 Icon(
@@ -74,7 +73,7 @@ fun CustomDetailsButton(
         }
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) }
+            onDismissRequest = { onDismissClick() }
         ) {
             optionsList.forEach { option ->
                 DropdownMenuItem(
@@ -90,14 +89,8 @@ fun CustomDetailsButton(
                             contentDescription = option.toString()
                         )},
                     onClick = {
-                        onExpandedChange(false)
-                        when (option) {
-                            DropdownMenuOptions.DOWNLOAD -> onDownloadClick()
-                            DropdownMenuOptions.DELETE -> onDeleteClick()
-                            DropdownMenuOptions.EDIT -> onEditClick()
-                            DropdownMenuOptions.UPLOAD -> onUploadClick()
-                            DropdownMenuOptions.REPORT -> onReportClick()
-                        }
+                        onDismissClick()
+                        onOptionClick(option)
                     }
                 )
                 if (optionsList.last() != option) {

@@ -32,7 +32,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
-    trailingContent: @Composable (() -> Unit)? = { CustomDetailsButton() },
+    trailingContent: @Composable (() -> Unit)?,
     foodComponent: FoodComponent,
     onClick: () -> Unit = {}
 ) {
@@ -102,7 +102,7 @@ fun DishItemButton(
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
-    trailingContent: @Composable (() -> Unit)? = { CustomDetailsButton() },
+    trailingContent: @Composable (() -> Unit)?,
     ingredient: Ingredient,
     onClick: () -> Unit = {}
 ) {

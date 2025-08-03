@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
+import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
@@ -33,17 +35,21 @@ import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @Composable
 fun RecipePage(
     modifier: Modifier = Modifier,
     recipePageViewModel: RecipePageViewModel,
+    reportRecipeViewModel: ReportRecipeViewModel,
     onAddRecipeClick: () -> Unit = {},
     onItemClick: (Recipe) -> Unit = {}
 ) {
     val recipePageState by recipePageViewModel.recipePageState.collectAsState()
     val uiState by recipePageViewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
+    val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
 
     Surface(
         modifier = modifier.fillMaxSize()
@@ -111,10 +117,20 @@ fun RecipePage(
                                 onItemClick = { recipe ->
                                     onItemClick(recipe as Recipe)
                                 },
-                                trailingContent = {
+                                trailingContent = { foodComponent ->
                                     CustomDetailsButton(
                                         dishItemButton = true,
                                         ownedRecipe = true,
+                                        onOptionClick = { option ->
+                                            recipePageViewModel.onEvent(
+                                            RecipePageEvent.ClickDetailsOption(foodComponent as Recipe, option)) },
+                                        expanded = recipePageState.showDetailsMenu,
+                                        onDetailsClick = { recipePageViewModel.onEvent(
+                                            RecipePageEvent.ShowDetailsMenu)
+                                        },
+                                        onDismissClick = { recipePageViewModel.onEvent(
+                                            RecipePageEvent.ShowDetailsMenu
+                                        )}
                                     )
                                 }
                             )
@@ -130,11 +146,23 @@ fun RecipePage(
                                         onItemClick = { recipe ->
                                             onItemClick(recipe as Recipe)
                                                       },
-                                        trailingContent = {
+                                        trailingContent = { foodComponent ->
                                             CustomDetailsButton(
                                                 dishItemButton = true,
-                                                publicRecipe = true
-                                            )
+                                                publicRecipe = true,
+                                                onOptionClick = { option ->
+                                                    if (option == DropdownMenuOptions.REPORT) {
+                                                        reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked(foodComponent as Recipe))
+                                                    }
+                                                    recipePageViewModel.onEvent(
+                                                        RecipePageEvent.ClickDetailsOption(foodComponent as Recipe, option)) },
+                                                expanded = recipePageState.showDetailsMenu,
+                                                onDetailsClick = {
+                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu)
+                                                },
+                                                onDismissClick = {
+                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu)
+                                                })
                                         }
                                     )
                                 }
@@ -152,6 +180,15 @@ fun RecipePage(
                                 text = "Rezept hinzufügen",
                                 modifier = Modifier.padding(2.dp),
                                 style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        if (reportRecipeState.reporting) {
+                            ReportRecipeDialog(
+                                onConfirm = { reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport) },
+                                onCancel = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
+                                onValueChange = { reportRecipeViewModel.onEvent(ReportRecipeEvent.InputTextChanged(it)) },
+                                reportText = reportRecipeState.inputText
                             )
                         }
                     }
