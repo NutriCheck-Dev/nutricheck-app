@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
@@ -37,7 +36,7 @@ fun CaloriesToday(
     val colors = MaterialTheme.colorScheme
 
     Surface(
-        color = colors.surfaceVariant,
+        color = colors.surfaceContainer,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .shadow(6.dp, RoundedCornerShape(16.dp))
@@ -46,7 +45,7 @@ fun CaloriesToday(
             // Text: "Heute"
             Text(
                 text = stringResource(id = R.string.homepage_day_description),
-                color = colors.onSurfaceVariant,
+                color = colors.onSurface,
                 lineHeight = 1.5.em,
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -87,7 +86,7 @@ fun CaloriesToday(
                 // Kalorienzahl
                 Text(
                     text = dailyCalories.toString(),
-                    color = colors.onSurfaceVariant,
+                    color = colors.onSurface,
                     lineHeight = 1.22.em,
                     modifier = Modifier.offset(y = (-4).dp),
                     fontSize = 36.sp
@@ -96,7 +95,7 @@ fun CaloriesToday(
                 // kcal-Text
                 Text(
                     text = "kcal",
-                    color = colors.onSurfaceVariant.copy(alpha = 0.8f),
+                    color = colors.onSurface.copy(alpha = 0.8f),
                     lineHeight = 1.43.em,
                     modifier = Modifier
                         .align(Alignment.TopStart)

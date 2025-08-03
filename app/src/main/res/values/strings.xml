@@ -102,4 +102,5 @@
     <string name="label_calories_consumed">Konsumiert</string>
     <string name="label_remaining">Verbleibend</string>
     <string name="label_history_add">Hinzufügen</string>
+    <string name="label_macronutrition">Macros</string>
 </resources>
