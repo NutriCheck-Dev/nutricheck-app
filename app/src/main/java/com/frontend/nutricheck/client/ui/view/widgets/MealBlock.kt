@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,62 +22,68 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
+import com.frontend.nutricheck.client.R
+
 @Composable
 fun MealHeader(
     titel: String,
     modifier: Modifier = Modifier,
     calorieCount: Double
 ) {
+    val colors = MaterialTheme.colorScheme
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(40.dp)
-            .background(Color(0xFF121212)),
+            .background(colors.surfaceContainer),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = titel,
-            color = Color(0xFFFFFFFF),
+            color = colors.onSurfaceVariant,
             lineHeight = 16.sp,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
-            )
+        )
         Text(
             text = "$calorieCount",
-            color = Color(0xFFFFFFFF),
+            color = colors.onSurfaceVariant,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
-            )
+        )
     }
 }
 
 @Composable
 fun MealFooter(
     modifier: Modifier = Modifier,
-    text: String = "+ Hinzufügen",
     onAddClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(40.dp)
+            .background(colors.surfaceContainer)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
-
     ) {
         Text(
-            text = text,
-            color = Color(0xFF4580FF),
+            text = stringResource(R.string.label_history_add),
+            color = colors.primary,
             lineHeight = 16.sp,
             fontSize = 12.sp,
             modifier = Modifier.clickable(onClick = onAddClick),
-            )
+        )
     }
 }
 
-//This file represents a meal block that is used in the History Page
 @Composable
 fun MealBlock(
     modifier: Modifier = Modifier,
@@ -86,40 +91,60 @@ fun MealBlock(
     totalCalories: Double,
     items: List<MealItem>,
     onAddClick: () -> Unit = {},
-    onItemClick: (MealItem) -> Unit
+    onItemClick: (MealItem) -> Unit,
+    onRemoveClick: (MealItem) -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF121212))
+            .background(colors.surfaceContainer)
     ) {
         MealHeader(mealName, calorieCount = totalCalories, modifier = Modifier.padding(horizontal = 16.dp))
         HorizontalDivider(
-            color = Color(0xFFFFFFFF),
+            color = colors.onSurfaceVariant,
             thickness = 1.dp
         )
         items.forEach { item ->
-            when (item) {
-                is MealFoodItem -> {
-                    DishItemMealButton(
-                        title = item.foodProduct.name,
-                        quantity = item.quantity,
-                        calories = item.quantity * item.foodProduct.calories,
-                        onClick = { onItemClick(item) }
-                    )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                when (item) {
+                    is MealFoodItem -> {
+                        DishItemMealButton(
+                            modifier = Modifier.weight(1f), // gibt Platz frei für die drei Punkte
+                            title = item.foodProduct.name,
+                            quantity = item.quantity,
+                            calories = item.quantity * item.foodProduct.calories,
+                            onClick = { onItemClick(item) }
+                        )
+                    }
+
+                    is MealRecipeItem -> {
+                        DishItemMealButton(
+                            modifier = Modifier.weight(1f),
+                            title = item.recipe.name,
+                            quantity = item.quantity,
+                            calories = item.quantity * item.recipe.calories,
+                            onClick = { onItemClick(item) }
+                        )
+                    }
                 }
-                is MealRecipeItem -> {
-                    DishItemMealButton(
-                        title = item.recipe.name,
-                        quantity = item.quantity,
-                        calories = item.quantity * item.recipe.calories,
-                        onClick = { onItemClick(item) }
-                    )
-                }
+
+                MealItemMenu(
+                    onRemove = { onRemoveClick(item) }
+                )
             }
 
-            HorizontalDivider(color = Color(0xFFFFFFFF), thickness = 1.dp)
+            HorizontalDivider(
+                color = colors.onSurfaceVariant,
+                thickness = 1.dp
+            )
         }
         MealFooter(onAddClick = onAddClick)
     }

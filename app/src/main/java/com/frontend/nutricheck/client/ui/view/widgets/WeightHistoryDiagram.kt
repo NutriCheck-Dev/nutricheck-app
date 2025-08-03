@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
@@ -20,36 +21,42 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
 
-
+enum class WeightRange(val id: String, val labelResId: Int) {
+    LAST_1_MONTH("1M", R.string.range_1_month),
+    LAST_6_MONTHS("6M", R.string.range_6_months),
+    LAST_12_MONTHS("12M", R.string.range_12_months)
+}
 @Composable
 fun WeightHistoryDiagram(
     modifier: Modifier = Modifier,
     weightHistoryState: WeightHistoryState,
-    selectedRange: String,
-    onPeriodSelected: (String) -> Unit
+    selectedRange: WeightRange,
+    onPeriodSelected: (WeightRange) -> Unit
 ) {
     val fullData = weightHistoryState.weightData
-
     val displayedData = when (selectedRange) {
-        "1M" -> fullData.takeLast(30)
-        "6M" -> fullData.takeLast(180)
-        "12M" -> fullData
-        else -> fullData
+        WeightRange.LAST_1_MONTH -> fullData.takeLast(30)
+        WeightRange.LAST_6_MONTHS -> fullData.takeLast(180)
+        WeightRange.LAST_12_MONTHS -> fullData
     }
     val currentWeight = fullData.lastOrNull()?.toString() ?: "–"
-
+    val colors = MaterialTheme.colorScheme
+    val extendedColors = LocalExtendedColors.current
+    val progressBarColor = extendedColors.chartBlue.color
     Column(
         modifier = modifier
             .height(184.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF121212))
+            .background(colors.surfaceContainer)
             .padding(20.dp)
     ) {
         Row(
@@ -59,16 +66,15 @@ fun WeightHistoryDiagram(
         ) {
             Text(
                 text = stringResource(id = R.string.homepage_weight_progress),
-                color = Color.White,
+                color = colors.onSurface,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
+            val options = WeightRange.entries
             ChartRangeSwitcher(
-                options = listOf("1M", "6M", "12M"),
-                selectedOption = listOf("1M", "6M", "12M").indexOf(selectedRange),
-                onSelect = { clicked ->
-                    onPeriodSelected(clicked)
-                }
+                options = options.map { stringResource(it.labelResId) },
+                selectedOption = options.indexOf(selectedRange),
+                onSelect = { index -> onPeriodSelected(options[index]) }
             )
         }
 
@@ -76,7 +82,7 @@ fun WeightHistoryDiagram(
 
         Text(
             text = "$currentWeight kg",
-            color = Color.White,
+            color = colors.onSurface,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.align(Alignment.End)
@@ -87,35 +93,41 @@ fun WeightHistoryDiagram(
         WeightLineChart(displayedData, selectedRange)
     }
 }
-
 @Composable
 fun WeightLineChart(
-    data: List<Double>,                // <-- Double passt!
-    selectedRange: String,
+    data: List<Double>,
+    selectedRange: WeightRange,
     modifier: Modifier = Modifier
 ) {
     val maxValue = data.maxOrNull() ?: 1.0
     val minValue = data.minOrNull() ?: 0.0
 
+    val colors = MaterialTheme.colorScheme
+    val extendedColors = LocalExtendedColors.current
+    val lineColor = extendedColors.chartBlue.color
+    val textColor = colors.onSurface.toArgb()
+    val gridColor = colors.outlineVariant
+
     val steps = 3
     val yStep = (maxValue - minValue) / steps
-
     val yLabels = (0..steps).map { i -> minValue + i * yStep }
 
     val labelMap = when (selectedRange) {
-        "1M" -> mapOf(14 to "15T", data.size - 1 to "1M")
-        "6M" -> mapOf(
-            (data.size * 1 / 3) to "2M",
-            (data.size * 2 / 3) to "4M",
-            data.size - 1 to "6M"
+        WeightRange.LAST_1_MONTH -> mapOf(
+            14 to stringResource(R.string.range_15_days),
+            data.size - 1 to stringResource(R.string.range_1_month)
         )
-        "12M" -> mapOf(
-            (data.size * 1 / 4) to "3M",
-            (data.size * 2 / 4) to "6M",
-            (data.size * 3 / 4) to "9M",
-            data.size - 1 to "12M"
+        WeightRange.LAST_6_MONTHS -> mapOf(
+            (data.size * 1 / 3) to stringResource(R.string.range_2_months),
+            (data.size * 2 / 3) to stringResource(R.string.range_4_months),
+            data.size - 1 to stringResource(R.string.range_6_months)
         )
-        else -> emptyMap()
+        WeightRange.LAST_12_MONTHS -> mapOf(
+            (data.size * 1 / 4) to stringResource(R.string.range_3_months),
+            (data.size * 2 / 4) to stringResource(R.string.range_6_months),
+            (data.size * 3 / 4) to stringResource(R.string.range_9_months),
+            data.size - 1 to stringResource(R.string.range_12_months)
+        )
     }
 
     Box(
@@ -131,11 +143,11 @@ fun WeightLineChart(
             val widthStep = size.width / (data.size - 1).coerceAtLeast(1)
             val heightRatio = size.height / (maxValue - minValue).coerceAtLeast(1.0)
 
-            // Y-Achse Hilfslinien und Labels
+            // Y-Achse mit Linien und Text
             yLabels.forEach { yValue ->
                 val y = size.height - (yValue - minValue) * heightRatio
                 drawLine(
-                    color = Color.Gray,
+                    color = gridColor,
                     start = Offset(0f, y.toFloat()),
                     end = Offset(size.width, y.toFloat()),
                     strokeWidth = 2f
@@ -145,7 +157,7 @@ fun WeightLineChart(
                     -4.5f,
                     y.toFloat() + 12f,
                     android.graphics.Paint().apply {
-                        color = android.graphics.Color.WHITE
+                        color = textColor
                         textSize = 30f
                         isAntiAlias = true
                         textAlign = android.graphics.Paint.Align.RIGHT
@@ -153,7 +165,7 @@ fun WeightLineChart(
                 )
             }
 
-            // Datenpunkte verbinden
+            // Datenlinie
             val points = data.mapIndexed { index, value ->
                 val x = index * widthStep
                 val y = size.height - (value - minValue) * heightRatio
@@ -162,14 +174,14 @@ fun WeightLineChart(
 
             for (i in 0 until points.size - 1) {
                 drawLine(
-                    color = Color(0xFF42A5F5),
+                    color = lineColor,
                     start = points[i],
                     end = points[i + 1],
                     strokeWidth = 4f
                 )
             }
 
-            // X-Achsen-Labels
+            // X-Achse Labels
             labelMap.forEach { (index, label) ->
                 val x = points.getOrNull(index)?.x ?: return@forEach
                 drawContext.canvas.nativeCanvas.drawText(
@@ -177,7 +189,7 @@ fun WeightLineChart(
                     x,
                     size.height + 50f,
                     android.graphics.Paint().apply {
-                        color = android.graphics.Color.WHITE
+                        color = textColor
                         textSize = 26f
                         textAlign = android.graphics.Paint.Align.CENTER
                         isAntiAlias = true

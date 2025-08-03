@@ -17,7 +17,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 
@@ -37,16 +39,9 @@ fun FoodComponentList(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        foodComponents.forEach { item ->
-            DishItemButton(
-                foodComponent = item,
-                trailingContent = { trailingContent?.invoke(item) },
-                onClick = { onItemClick(item) })
-        }
-
         if(editing) {
             IconButton(
-                onClick = onAddButtonClick,
+                onClick = { onAddButtonClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 64.dp)
@@ -61,9 +56,15 @@ fun FoodComponentList(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.AddCircle,
-                    contentDescription = "Hinzufügen"
+                    contentDescription = stringResource(R.string.label_history_add)
                 )
             }
+        }
+        foodComponents.forEach { item ->
+            DishItemButton(
+                foodComponent = item,
+                trailingContent = { trailingContent?.invoke(item) },
+                onClick = { onItemClick(item) })
         }
     }
 }
@@ -84,13 +85,6 @@ fun IngredientList(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        ingredients.forEach { item ->
-            DishItemButton(
-                ingredient = item,
-                trailingContent = { trailingContent?.invoke(item) },
-                onClick = { onItemClick(item) })
-        }
-
         if(editing) {
             IconButton(
                 onClick = { onAddButtonClick() },
@@ -111,6 +105,12 @@ fun IngredientList(
                     contentDescription = "Hinzufügen"
                 )
             }
+        }
+        ingredients.forEach { item ->
+            DishItemButton(
+                ingredient = item,
+                trailingContent = { trailingContent?.invoke(item) },
+                onClick = { onItemClick(item) })
         }
     }
 }

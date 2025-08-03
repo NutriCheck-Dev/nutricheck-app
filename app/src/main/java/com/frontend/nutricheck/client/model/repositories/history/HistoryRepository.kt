@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.model.repositories.history
 
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import okhttp3.MultipartBody
@@ -28,6 +29,7 @@ interface HistoryRepository {
      * Retrieves all the meals of a specified date.
      */
     suspend fun getMealsForDay(date: Date): List<Meal>
+    suspend fun removeMealItem(mealItem: MealItem)
     suspend fun getMealById(mealId: String): Meal
 
     /**

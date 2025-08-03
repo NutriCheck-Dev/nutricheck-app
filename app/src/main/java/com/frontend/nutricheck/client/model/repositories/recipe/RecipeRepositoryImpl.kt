@@ -180,6 +180,11 @@ class RecipeRepositoryImpl @Inject constructor(
         ingredientDao.update(ingredientEntity)
     }
 
+    override suspend fun getRecipesByName(recipeName: String): List<Recipe> = withContext(Dispatchers.IO) {
+        val recipeWithIngredients = recipeDao.getRecipesByName(recipeName).first()
+        recipeWithIngredients.map { DbRecipeMapper.toRecipe(it) }
+    }
+
     private fun isExpired(lastUpdate: Long?): Boolean =
         lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive
 
