@@ -235,6 +235,7 @@ class FoodSearchViewModel @Inject constructor(
 
                     val merged: Flow<Result<List<FoodComponent>>> =
                         merge(foodProductFlow, recipeFlow)
+                            .onStart { setLoading() }
                             .scan(emptyList<FoodComponent>()) { acc, search ->
                                 Log.d("FoodSearchVM", "raw search emission → $search")
                                 when (search) {
