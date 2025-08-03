@@ -93,8 +93,13 @@
     <string name="homepage_nutrition_carbs">Kohlenhydrate</string>
     <string name="homepage_nutrition_fats">Fette</string>
 
-    <string name="historypage_breakfast">Frühstück</string>
-    <string name="historypage_lunch">Mittagessen</string>
-    <string name="historypage_dinner">Abendessen</string>
-    <string name="historypage_snack">Snack</string>
+    <string name="label_breakfast">Frühstück</string>
+    <string name="label_lunch">Mittagessen</string>
+    <string name="label_dinner">Abendessen</string>
+    <string name="label_snack">Snack</string>
+    <string name="label_calories_remaining">Verbleibende Kalorien</string>
+    <string name="label_calorie_goal">Ziel</string>
+    <string name="label_calories_consumed">Konsumiert</string>
+    <string name="label_remaining">Verbleibend</string>
+    <string name="label_history_add">Hinzufügen</string>
 </resources>

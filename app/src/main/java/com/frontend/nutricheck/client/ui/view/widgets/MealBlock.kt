@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,33 +22,37 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 
+import androidx.compose.material3.MaterialTheme
+
 @Composable
 fun MealHeader(
     titel: String,
     modifier: Modifier = Modifier,
     calorieCount: Double
 ) {
+    val colors = MaterialTheme.colorScheme
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(40.dp)
-            .background(Color(0xFF121212)),
+            .background(colors.surfaceVariant),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = titel,
-            color = Color(0xFFFFFFFF),
+            color = colors.onSurfaceVariant,
             lineHeight = 16.sp,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
-            )
+        )
         Text(
             text = "$calorieCount",
-            color = Color(0xFFFFFFFF),
+            color = colors.onSurfaceVariant,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
-            )
+        )
     }
 }
 
@@ -59,6 +62,8 @@ fun MealFooter(
     text: String = "+ Hinzufügen",
     onAddClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -66,19 +71,17 @@ fun MealFooter(
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
-
     ) {
         Text(
             text = text,
-            color = Color(0xFF4580FF),
+            color = colors.primary,
             lineHeight = 16.sp,
             fontSize = 12.sp,
             modifier = Modifier.clickable(onClick = onAddClick),
-            )
+        )
     }
 }
 
-//This file represents a meal block that is used in the History Page
 @Composable
 fun MealBlock(
     modifier: Modifier = Modifier,
@@ -88,15 +91,17 @@ fun MealBlock(
     onAddClick: () -> Unit = {},
     onItemClick: (MealItem) -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF121212))
+            .background(colors.surfaceVariant)
     ) {
         MealHeader(mealName, calorieCount = totalCalories, modifier = Modifier.padding(horizontal = 16.dp))
         HorizontalDivider(
-            color = Color(0xFFFFFFFF),
+            color = colors.onSurfaceVariant,
             thickness = 1.dp
         )
         items.forEach { item ->
@@ -118,8 +123,10 @@ fun MealBlock(
                     )
                 }
             }
-
-            HorizontalDivider(color = Color(0xFFFFFFFF), thickness = 1.dp)
+            HorizontalDivider(
+                color = colors.onSurfaceVariant,
+                thickness = 1.dp
+            )
         }
         MealFooter(onAddClick = onAddClick)
     }

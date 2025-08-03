@@ -26,8 +26,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.ui.view_model.HistoryState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
+import com.frontend.nutricheck.client.R
 
-// This file defines a composable function for displaying a calorie summary widget.
 @Composable
 fun CalorieSummary(
     modifier: Modifier = Modifier,
@@ -36,24 +38,28 @@ fun CalorieSummary(
     val goalCalories = state.goalCalories
     val consumedCalories = state.totalCalories
     val remainingCalories = goalCalories - consumedCalories
+
+    val colors = MaterialTheme.colorScheme
+
     Surface(
-        color = Color(0xFF121212),
+        color = colors.surfaceVariant,
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
             .clip(RoundedCornerShape(8.dp))
             .shadow(elevation = 6.dp, shape = RoundedCornerShape(8.dp))
     ) {
-        Box(modifier = Modifier.fillMaxSize()
-        .background(Color(0xFF121212))) {
-
-            // Titel oben links
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colors.surfaceVariant)
+        ) {
             Text(
-                text = "Verbleibende Kalorien",
+                text = stringResource(R.string.label_calories_remaining),
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color(0xFFFFFFFF),
+                    color = colors.onSurfaceVariant,
                     letterSpacing = 0.5.sp,
                     textAlign = TextAlign.Start
                 ),
@@ -62,7 +68,6 @@ fun CalorieSummary(
                     .padding(start = 10.dp, top = 10.dp)
             )
 
-            // Drei Werte + Symbole zentriert mit je 46dp Abstand links/rechts
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -71,28 +76,24 @@ fun CalorieSummary(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CalorieInfo(value = goalCalories, label = "Ziel")
-
-                MinusEqualsSymbol("-")
-
-                CalorieInfo(value = consumedCalories, label = "Essen")
-
-                MinusEqualsSymbol("=")
-
-                CalorieInfo(value = remainingCalories, label = "Verbleibend")
+                CalorieInfo(value = goalCalories, label = stringResource(R.string.label_calorie_goal), textColor = colors.onSurfaceVariant)
+                MinusEqualsSymbol("-", color = colors.onSurfaceVariant)
+                CalorieInfo(value = consumedCalories, label = stringResource(R.string.label_calories_consumed), textColor = colors.onSurfaceVariant)
+                MinusEqualsSymbol("=", color = colors.onSurfaceVariant)
+                CalorieInfo(value = remainingCalories, label = stringResource(R.string.label_remaining), textColor = colors.onSurfaceVariant)
             }
         }
     }
 }
 
 @Composable
-fun CalorieInfo(value: Int, label: String) {
+fun CalorieInfo(value: Int, label: String, textColor: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value.toString(),
             style = TextStyle(
                 fontSize = 14.sp,
-                color = Color(0xFFFFFFFF),
+                color = textColor,
                 textAlign = TextAlign.Center,
                 letterSpacing = 0.5.sp
             )
@@ -102,7 +103,7 @@ fun CalorieInfo(value: Int, label: String) {
             text = label,
             style = TextStyle(
                 fontSize = 10.sp,
-                color = Color(0xFFFFFFFF),
+                color = textColor,
                 textAlign = TextAlign.Center,
                 letterSpacing = 0.5.sp
             )
@@ -111,30 +112,29 @@ fun CalorieInfo(value: Int, label: String) {
 }
 
 @Composable
-fun MinusEqualsSymbol(symbol: String) {
+fun MinusEqualsSymbol(symbol: String, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         if (symbol == "-") {
             Box(
                 modifier = Modifier
                     .width(7.dp)
                     .height(1.dp)
-                    .background(Color(0xFFFFFFFF))
+                    .background(color)
             )
         } else if (symbol == "=") {
             Box(
                 modifier = Modifier
                     .width(7.dp)
                     .height(1.dp)
-                    .background(Color(0xFFFFFFFF))
+                    .background(color)
             )
             Spacer(modifier = Modifier.height(2.dp))
             Box(
                 modifier = Modifier
                     .width(7.dp)
                     .height(1.dp)
-                    .background(Color(0xFFFFFFFF))
+                    .background(color)
             )
         }
     }
 }
-

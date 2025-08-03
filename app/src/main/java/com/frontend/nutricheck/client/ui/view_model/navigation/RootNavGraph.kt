@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import java.util.Date
 
@@ -40,8 +39,7 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
             val originArg = backStackEntry.arguments?.getString("origin")
             val dateArg = backStackEntry.arguments?.getString("date")
             val dayTimeArg = backStackEntry.arguments?.getString("dayTime")
-            val date = dateArg?.toLongOrNull()?.let { Date(it) } ?: Date()
-            val dayTime = DayTime.valueOf(dayTimeArg ?: DayTime.BREAKFAST.name)
+
             val effectiveOriginName: String = when (originArg) {
                 null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name
                 else -> originArg

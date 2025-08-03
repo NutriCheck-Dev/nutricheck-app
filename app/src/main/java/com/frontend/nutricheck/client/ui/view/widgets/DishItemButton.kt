@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
@@ -177,11 +176,12 @@ fun DishItemMealButton(
     quantity: Double,
     onClick: () -> Unit = {},
 ) {
+    val colors = MaterialTheme.colorScheme
     Surface(
         modifier = modifier
             .height(40.dp)
             .fillMaxWidth(),
-        color = Color(0xFF121212),
+        color = colors.surfaceVariant,
         tonalElevation = 0.dp,
         onClick = { onClick() }
     ) {
@@ -200,20 +200,20 @@ fun DishItemMealButton(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White
+                    color = colors.onSurfaceVariant
                 )
 
                 VerticalDivider(
                     modifier = Modifier
                         .height(30.dp)
                         .width(1.dp),
-                    color = Color(0xFF6E6E6E)
+                    color = colors.outline
                 )
 
                 Text(
                     text = "${calories.toInt()} kcal, ${quantity}g",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color(0xFFBDBDBD),
+                    color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
