@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 /**
  * Implementation of the UserDataRepository interface.
  * Handles user data and weight history operations using DAOs.
@@ -41,8 +42,9 @@ class UserDataRepositoryImpl @Inject constructor(
      * Inserts new user data into the database.
      * @param userData The UserData object to insert.
      */
-    override suspend fun addUserData(userData: UserData) = withContext(Dispatchers.IO)
-    { userDataDao.insert(userData) }
+    override suspend fun addUserData(userData: UserData) = withContext(Dispatchers.IO) {
+            userDataDao.insert(userData)
+    }
     /**
      * Updates existing user data in the database.
      * @param userData The UserData object to update.
@@ -87,10 +89,10 @@ class UserDataRepositoryImpl @Inject constructor(
      * @param userData The UserData object to add.
      * @param weight The Weight object to add.
      */
-    override suspend fun addUserDataAndAddWeight(userData: UserData, weight: Weight) =
+    override suspend fun addUserDataAndAddWeight(userData: UserData, weight: Weight) {
         withContext(Dispatchers.IO) {
-        userDataDao.insert(userData)
-        weightDao.insert(weight)
+            userDataDao.insert(userData)
+            weightDao.insert(weight)
+        }
     }
-
 }

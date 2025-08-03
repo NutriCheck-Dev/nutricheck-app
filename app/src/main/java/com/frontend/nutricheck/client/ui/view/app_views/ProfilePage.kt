@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,14 +19,12 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -38,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
@@ -150,9 +146,8 @@ fun ProfilePage(
                         onClick = {
                             onEvent(ProfileEvent.OnPersonalDataClick)
                         })
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 2.dp)
                     MenuItem(
                         icon = Icons.Default.BarChart,
@@ -162,9 +157,8 @@ fun ProfilePage(
                         onClick = {
                             onEvent(ProfileEvent.DisplayWeightHistory)
                         })
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 2.dp
                     )
                     MenuItemWithSwitch(
@@ -201,7 +195,6 @@ fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onCli
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary,
         )
         Spacer (modifier = Modifier.width(24.dp))
     }
