@@ -34,6 +34,7 @@ fun FoodComponentSearchBar(
     query: String = "",
     onQueryChange: (String) -> Unit = {},
     onSearch: (String) -> Unit = {},
+    //onSearchBarClicked: () -> Unit = {},
     placeholder: @Composable () -> Unit = { Text("Search") },
     trailingIcon: @Composable (() -> Unit)? = { Icon(Icons.Default.Search, contentDescription = "Search") },
 ) {
@@ -42,6 +43,12 @@ fun FoodComponentSearchBar(
     Box(
         modifier
             .fillMaxWidth()
+            /**.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                onSearchBarClicked()
+            }**/
             .padding(horizontal = 16.dp)
     ) {
         OutlinedTextField(
@@ -73,7 +80,7 @@ fun FoodComponentSearchBar(
 @Preview
 @Composable
 fun FoodComponentSearchBarPreview() {
-    AppTheme() {
+    AppTheme {
         Box(
             modifier = Modifier
                 .fillMaxSize()

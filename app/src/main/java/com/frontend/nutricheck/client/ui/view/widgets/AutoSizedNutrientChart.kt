@@ -51,7 +51,7 @@ fun AutoSizedNutrientChart(
 @Preview
 @Composable
 fun AutoSizedNutrienChartPreview() {
-    AppTheme() {
+    AppTheme {
         AutoSizedNutrientChart(
             nutrient = "Calories",
             subtitle = "kcal",

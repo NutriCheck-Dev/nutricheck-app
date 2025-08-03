@@ -9,7 +9,6 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IngredientDao {

@@ -2,13 +2,14 @@ package com.frontend.nutricheck.client.ui.view.app_views
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -27,9 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
-import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
-import com.frontend.nutricheck.client.ui.view.widgets.IngredientList
+import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
@@ -39,8 +38,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorView
 fun CreateRecipePage(
     modifier: Modifier = Modifier,
     createRecipeViewModel: RecipeEditorViewModel,
-    onItemClick: (Ingredient) -> Unit = {},
-    onAddButtonClick: () -> Unit = {},
+    onItemClick: (FoodComponent) -> Unit = {},
     onSave: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
@@ -49,6 +47,7 @@ fun CreateRecipePage(
     val draft by createRecipeViewModel.draft.collectAsState()
     val currentTitle = draft.title
     val currentDescription = draft.description
+    val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = modifier
@@ -98,56 +97,58 @@ fun CreateRecipePage(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            contentPadding = innerPadding,
+                .padding(innerPadding)
+                .padding(16.dp)
+                .scrollable(state = scrollState, orientation = Orientation.Vertical),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            item {
-                Text(
-                    text = "Ingredients",
-                    style = styles.titleMedium,
+            Text(
+                text = "Beschreibung",
+                style = styles.titleMedium,
                 )
-                Spacer(Modifier.height(10.dp))
-                IngredientList(
-                    ingredients = draft.ingredients,
-                    onAddButtonClick = { onAddButtonClick() },
-                    onItemClick = { ingredient ->
-                        onItemClick(ingredient)
-                                  },
-                    editing = true,
-                    trailingContent = { item ->
-                        CustomDetailsButton()
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(1.dp, colors.outline)
+            ) {
+                TextField(
+                    value = currentDescription,
+                    onValueChange = { newDescription ->
+                        createRecipeViewModel.onEvent(RecipeEditorEvent.DescriptionChanged(newDescription))
+                        },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+
+                SearchPage(
+                    onItemClick = { onItemClick(it) },
+                    expand = draft.expanded,
+                    addedComponents = draft.ingredients.map { it.second },
+                    query = draft.query,
+                    searchResults = draft.results,
+                    onSearchClick = { createRecipeViewModel.onEvent(RecipeEditorEvent.SearchIngredients) },
+                    onQueryChange = { createRecipeViewModel.onEvent(RecipeEditorEvent.QueryChanged(it)) },
+                    addFoodComponent = {
+                        createRecipeViewModel.onEvent(
+                            RecipeEditorEvent.IngredientAdded(
+                                Pair(1.0, it)
+                            )
+                        )
+                    },
+                    removeFoodComponent = {
+                        createRecipeViewModel.onEvent(
+                            RecipeEditorEvent.IngredientRemoved(
+                                it
+                            )
+                        )
                     }
                 )
-
-                //TODO: Add error handling for ingredients
             }
 
-            item {
-                Text(
-                    text = "Beschreibung",
-                    style = styles.titleMedium,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, colors.outline)
-                ) {
-                    TextField(
-                        value = currentDescription,
-                        onValueChange = { newDiscription ->
-                            createRecipeViewModel.onEvent(RecipeEditorEvent.DescriptionChanged(newDiscription))
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-            }
-        }
     }
 }

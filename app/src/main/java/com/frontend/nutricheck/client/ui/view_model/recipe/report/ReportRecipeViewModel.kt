@@ -22,7 +22,7 @@ data class ReportRecipeState(
 
 sealed interface ReportRecipeEvent {
     data class InputTextChanged(val inputText: String) : ReportRecipeEvent
-    data object ReportClicked : ReportRecipeEvent
+    data class ReportClicked(val recipe: Recipe) : ReportRecipeEvent
     data object DismissDialog : ReportRecipeEvent
     data object SendReport : ReportRecipeEvent
 }
@@ -39,21 +39,25 @@ class ReportRecipeViewModel @Inject constructor(
     fun onEvent(event: ReportRecipeEvent) {
         when (event) {
             is ReportRecipeEvent.InputTextChanged -> onInputTextChanged(event.inputText)
-            is ReportRecipeEvent.ReportClicked -> onReportClick()
+            is ReportRecipeEvent.ReportClicked -> onReportClick(event.recipe)
             is ReportRecipeEvent.DismissDialog -> onDismissDialog()
             is ReportRecipeEvent.SendReport -> viewModelScope.launch { onClickSendReport() }
         }
     }
 
-    private fun emitEvent(event: ReportRecipeEvent) = viewModelScope.launch { _events.emit(event) }
     override fun onInputTextChanged(text: String) =
         _reportRecipeState.update { it.copy(inputText = text) }
 
-    override fun onReportClick() =
+    override fun onReportClick(recipe: Recipe) {
+        _reportRecipeState.update { it.copy(recipe = recipe) }
         _reportRecipeState.update { it.copy(reporting = true) }
+    }
 
-    override fun onDismissDialog() =
-        _reportRecipeState.update { it.copy(reporting = false, inputText = "") }
+    override fun onDismissDialog() {
+        _reportRecipeState.update { it.copy(recipe = null, inputText = "") }
+        _reportRecipeState.update { it.copy(reporting = false) }
+    }
+
 
     override suspend fun onClickSendReport() {
         val recipeReport = RecipeReport(
@@ -62,9 +66,7 @@ class ReportRecipeViewModel @Inject constructor(
             recipeInstructions = _reportRecipeState.value.recipe!!.instructions,
             description = _reportRecipeState.value.inputText
         )
-        //TODO: Implement the actual report sending logic
-        recipeRepository.updateRecipe(_reportRecipeState.value.recipe!!)
+        recipeRepository.reportRecipe(recipeReport)
         _reportRecipeState.update { it.copy(reporting = false, inputText = "") }
-        emitEvent(ReportRecipeEvent.SendReport)
     }
 }

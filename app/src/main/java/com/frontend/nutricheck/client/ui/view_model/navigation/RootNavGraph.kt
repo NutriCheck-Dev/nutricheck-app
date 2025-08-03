@@ -39,7 +39,6 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
             val originArg = backStackEntry.arguments?.getString("origin")
             val dateArg = backStackEntry.arguments?.getString("date")
             val dayTimeArg = backStackEntry.arguments?.getString("dayTime")
-
             val effectiveOriginName: String = when (originArg) {
                 null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name
                 else -> originArg

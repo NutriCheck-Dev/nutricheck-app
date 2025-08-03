@@ -83,10 +83,10 @@ class ProfileViewModel @Inject constructor(
     private val _events = MutableSharedFlow<ProfileEvent>()
     val events: SharedFlow<ProfileEvent> = _events.asSharedFlow()
 
-    private val _dataDraft = MutableStateFlow<UserData>(defaultUserData)
+    private val _dataDraft = MutableStateFlow(defaultUserData)
     val dataDraft: StateFlow<UserData> = _dataDraft.asStateFlow()
 
-    private val _data = MutableStateFlow<UserData>(defaultUserData)
+    private val _data = MutableStateFlow(defaultUserData)
     val data: StateFlow<UserData> = _data.asStateFlow()
 
     private val _weightData = MutableStateFlow<List<Weight>>(emptyList())

@@ -9,7 +9,6 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealFoodItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealFoodItemWithProduct
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MealFoodItemDao : BaseDao<MealFoodItemEntity> {
