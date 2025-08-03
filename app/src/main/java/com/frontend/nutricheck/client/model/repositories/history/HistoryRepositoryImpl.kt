@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.model.repositories.history
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
+import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
@@ -95,6 +96,23 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getMealsForDay(date: Date): List<Meal> = withContext(Dispatchers.IO) {
         mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
     }
+
+    override suspend fun removeMealItem(mealItem: MealItem) = withContext(Dispatchers.IO) {
+        val mealId = mealItem.mealId
+        val mealWithAll = mealDao.getById(mealId)
+        val meal = DbMealMapper.toMeal(mealWithAll)
+        val itemCount = meal.mealFoodItems.size + meal.mealRecipeItems.size
+
+        if (itemCount <= 1) {
+            mealDao.deleteById(mealId)
+        } else {
+            when (mealItem) {
+                is MealFoodItem -> mealFoodItemDao.deleteById(mealItem.mealId)
+                is MealRecipeItem -> mealRecipeItemDao.deleteById(mealItem.mealId)
+            }
+        }
+    }
+
 
     override suspend fun getMealById(mealId: String): Meal = withContext(Dispatchers.IO) {
         DbMealMapper.toMeal(mealDao.getById(mealId))

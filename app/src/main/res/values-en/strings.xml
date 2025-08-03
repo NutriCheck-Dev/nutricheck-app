@@ -72,7 +72,15 @@
     <string name="homepage_nutrition_protein">Protein</string>
     <string name="homepage_nutrition_carbs">Carbs</string>
     <string name="homepage_nutrition_fats">Fat</string>
-    <string name="historypage_breakfast">Breakfast</string>
-    <string name="historypage_lunch">Lunch</string>
-    <string name="historypage_dinner">Dinner</string>
+    <string name="label_breakfast">Breakfast</string>
+    <string name="label_lunch">Lunch</string>
+    <string name="label_dinner">Dinner</string>
+    <string name="label_snack">Snack</string>
+    <string name="label_calories_remaining">Remaining Calories</string>
+    <string name="label_calorie_goal">Goal</string>
+    <string name="label_calories_consumed">Consumed</string>
+    <string name="label_remaining">Remaining</string>
+    <string name="label_history_add">Add</string>
+    <string name="label_history">History</string>
+    <string name="label_recipes">Recipes</string>
 </resources>

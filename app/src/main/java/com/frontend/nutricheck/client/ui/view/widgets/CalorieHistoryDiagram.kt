@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,28 +21,40 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryState
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
-
+enum class CalorieRange(val id: String, val labelResId: Int) {
+    LAST_7_DAYS("7d", R.string.range_7_days),
+    LAST_30_DAYS("30d", R.string.range_30_days),
+    LAST_60_DAYS("60d", R.string.range_60_days)
+}
 @Composable
 fun CalorieHistoryDiagram(
     modifier: Modifier = Modifier,
     calorieHistoryState: CalorieHistoryState,
-    selectedRange : String,
-    onPeriodSelected: (String) -> Unit = {},
+    selectedRange: CalorieRange,
+    onPeriodSelected: (CalorieRange) -> Unit = {},
 ) {
     val calorieGoal = calorieHistoryState.calorieGoal
     val calorieData = calorieHistoryState.calorieHistory
+    val options = CalorieRange.entries
+
+    val colors = MaterialTheme.colorScheme
     Column(
         modifier = modifier
             .height(184.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF121212))
+            .background(colors.surfaceContainer)
             .padding(20.dp)
     ) {
         Row(
@@ -51,16 +64,14 @@ fun CalorieHistoryDiagram(
         ) {
             Text(
                 text = stringResource(id = R.string.homepage_calorie_history),
-                color = Color.White,
+                color = colors.onSurface,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
             ChartRangeSwitcher(
-                options = listOf("7T", "30T", "60T"),
-                selectedOption = listOf("7T", "30T", "60T").indexOf(selectedRange),
-                onSelect = { clicked ->
-                    onPeriodSelected(clicked)
-                }
+                options = options.map { stringResource(it.labelResId) },
+                selectedOption = options.indexOf(selectedRange),
+                onSelect = { index -> onPeriodSelected(options[index]) }
             )
         }
 
@@ -72,31 +83,40 @@ fun CalorieHistoryDiagram(
 @Composable
 fun CalorieBarChart(
     data: List<Int>,
-    selectedRange: String,
+    selectedRange: CalorieRange,
     calorieGoal: Int,
     modifier: Modifier = Modifier
 ) {
+    val colors = MaterialTheme.colorScheme
+    val extendedColors = LocalExtendedColors.current
+    val progressBarColor = extendedColors.chartBlue.color
     val rawMin = data.minOrNull() ?: 0
     val rawMax = data.maxOrNull() ?: 1
     val range = rawMax - rawMin
+    val today = LocalDate.now()
+    val locale = Locale.GERMAN
 
-    val days = listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
-    val startIndex = 0 // z.B. wenn Daten bei Montag starten
     val labelMap = when (selectedRange) {
-        "7T" -> (0 until data.size).associateWith { i -> days[(startIndex + i) % 7] }
-        "30T" -> mapOf(
+        CalorieRange.LAST_7_DAYS -> data.indices.associateWith { i ->
+            val day = today.minusDays((data.size - 1 - i).toLong())
+            // z.B. "Mo", "Di", ...
+            day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale).take(2)
+        }
+
+        CalorieRange.LAST_30_DAYS -> mapOf(
             (data.size * 1 / 4) to "1W",
             (data.size * 2 / 4) to "2W",
             (data.size * 3 / 4) to "3W",
             (data.size - 1) to "1M"
         )
-        "60T" -> mapOf(
+
+        CalorieRange.LAST_60_DAYS -> mapOf(
             (data.size * 1 / 4) to "3W",
             (data.size * 2 / 4) to "6W",
             (data.size * 3 / 4) to "9W",
             (data.size - 1) to "3M"
         )
-        else -> emptyMap()
+
     }
 
     Box(
@@ -129,7 +149,7 @@ fun CalorieBarChart(
                 val x = index * (barWidth + spacingBar)
                 val barHeight = ((value - visualMin) * heightRatio).coerceAtLeast(1f)
                 drawRect(
-                    color = Color(0xFF42A5F5),
+                    color = progressBarColor,
                     topLeft = Offset(x, size.height - barHeight),
                     size = Size(barWidth, barHeight)
                 )
@@ -163,7 +183,7 @@ fun CalorieBarChart(
                     x,
                     size.height + 40f,
                     android.graphics.Paint().apply {
-                        color = android.graphics.Color.WHITE
+                        color = colors.onSurface.toArgb()
                         textSize = 26f
                         isAntiAlias = true
                         textAlign = android.graphics.Paint.Align.CENTER
