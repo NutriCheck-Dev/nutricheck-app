@@ -128,7 +128,6 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _data.value = userDataRepository.getUserData()
             _dataDraft.value = _data.value
-            _weightData.value = userDataRepository.getWeightHistory()
         }
     }
 

@@ -271,15 +271,6 @@ private fun EditableDataRow(
             enabled = !readOnly,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledBorderColor = MaterialTheme.colorScheme.onSecondary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onSecondary,
-                focusedBorderColor = MaterialTheme.colorScheme.onSecondary,
-                disabledTextColor = MaterialTheme.colorScheme.onSecondary,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
-                focusedTextColor = MaterialTheme.colorScheme.onSecondary
-
-            ),
             modifier = Modifier
                 .weight(1f)
                 .then(

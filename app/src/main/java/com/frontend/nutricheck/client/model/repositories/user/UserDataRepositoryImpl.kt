@@ -82,5 +82,15 @@ class UserDataRepositoryImpl @Inject constructor(
         }
         return@withContext listOf(0, 0, 0)
     }
+    /**
+     * Adds user data and a weight entry from the onboarding process.
+     * @param userData The UserData object to add.
+     * @param weight The Weight object to add.
+     */
+    override suspend fun addUserDataAndAddWeight(userData: UserData, weight: Weight) =
+        withContext(Dispatchers.IO) {
+        userDataDao.insert(userData)
+        weightDao.insert(weight)
+    }
 
 }
