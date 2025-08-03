@@ -1,25 +1,12 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
@@ -62,38 +49,27 @@ fun CreateMealPage(
             )
         }
     ) { paddingValues ->
-
-        when (uiState) {
-            BaseViewModel.UiState.Loading -> {
-            }
-            is BaseViewModel.UiState.Error -> {
-                val errorMessage = (uiState as BaseViewModel.UiState.Error).message
-            }
-            BaseViewModel.UiState.Ready -> {
-                SearchPage(
-                    modifier = modifier.padding(paddingValues),
-                    onItemClick = { onItemClick(it) },
-                    expand = searchState.parameters.expanded,
-                    addedComponents = searchState.parameters.addedComponents.map { it.second },
-                    query = searchState.parameters.query,
-                    searchResults = searchState.parameters.results,
-                    onSearchClick = { searchViewModel.onEvent(SearchEvent.Search) },
-                    onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
-                    addFoodComponent = {
-                        searchViewModel.onEvent(SearchEvent.AddFoodComponent(Pair(1.0, it)))
-                    },
-                    removeFoodComponent = { foodComponent ->
-                        searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(foodComponent))},
-                    selectedTab = searchState.parameters.selectedTab,
-                    onSelectTab = { index ->
-                        when (index) {
-                            0 -> searchViewModel.onEvent(SearchEvent.ClickSearchAll)
-                            1 -> searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
-                        }
-                    },
-                    isLoading = uiState == BaseViewModel.UiState.Loading
-                )
-            }
-        }
+        SearchPage(
+            modifier = modifier.padding(paddingValues),
+            onItemClick = { onItemClick(it) },
+            expand = searchState.parameters.expanded,
+            addedComponents = searchState.parameters.addedComponents.map { it.second },
+            query = searchState.parameters.query,
+            searchResults = searchState.parameters.results,
+            onSearchClick = { searchViewModel.onEvent(SearchEvent.Search) },
+            onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
+            addFoodComponent = {
+                searchViewModel.onEvent(SearchEvent.AddFoodComponent(Pair(1.0, it))) },
+            removeFoodComponent = { foodComponent ->
+                searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(foodComponent))},
+            selectedTab = searchState.parameters.selectedTab,
+            onSelectTab = { index ->
+                when (index) {
+                    0 -> searchViewModel.onEvent(SearchEvent.ClickSearchAll)
+                    1 -> searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
+                } },
+            isLoading = uiState == BaseViewModel.UiState.Loading
+        )
     }
 }
+

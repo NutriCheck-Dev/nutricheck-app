@@ -39,7 +39,7 @@ fun FoodComponentList(
     ) {
         if(editing) {
             IconButton(
-                onClick = onAddButtonClick,
+                onClick = { onAddButtonClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 64.dp)

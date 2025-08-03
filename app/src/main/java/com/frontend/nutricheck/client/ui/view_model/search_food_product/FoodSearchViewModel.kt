@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model.search_food_product
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
@@ -190,8 +189,7 @@ class FoodSearchViewModel @Inject constructor(
             when (mode) {
                 is SearchMode.ComponentsForMeal,
                      SearchMode.LogNewMeal -> {
-                         if (_searchState.value.parameters.selectedTab == 0) {
-                             setLoading()
+                         if (_searchState.value.parameters.selectedTab == 1) {
                              recipeRepository.getRecipesByName(query).let { recipes ->
                                  if (recipes.isEmpty()) {
                                      setError("Keine Rezepte gefunden.")
