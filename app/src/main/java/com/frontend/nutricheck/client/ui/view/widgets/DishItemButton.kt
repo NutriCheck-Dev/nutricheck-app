@@ -181,7 +181,7 @@ fun DishItemMealButton(
         modifier = modifier
             .height(40.dp)
             .fillMaxWidth(),
-        color = colors.surfaceVariant,
+        color = colors.surfaceContainer,
         tonalElevation = 0.dp,
         onClick = { onClick() }
     ) {

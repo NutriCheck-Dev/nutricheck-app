@@ -42,7 +42,7 @@ fun CalorieSummary(
     val colors = MaterialTheme.colorScheme
 
     Surface(
-        color = colors.surfaceVariant,
+        color = colors.surfaceContainer,
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
@@ -52,7 +52,7 @@ fun CalorieSummary(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colors.surfaceVariant)
+                .background(colors.surfaceContainer)
         ) {
             Text(
                 text = stringResource(R.string.label_calories_remaining),

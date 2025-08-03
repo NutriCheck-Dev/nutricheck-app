@@ -36,7 +36,7 @@ fun MealHeader(
         modifier = modifier
             .fillMaxWidth()
             .height(40.dp)
-            .background(colors.surfaceVariant),
+            .background(colors.surfaceContainer),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -68,6 +68,7 @@ fun MealFooter(
         modifier = modifier
             .fillMaxWidth()
             .height(40.dp)
+            .background(colors.surfaceContainer)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -98,7 +99,7 @@ fun MealBlock(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(colors.surfaceVariant)
+            .background(colors.surfaceContainer)
     ) {
         MealHeader(mealName, calorieCount = totalCalories, modifier = Modifier.padding(horizontal = 16.dp))
         HorizontalDivider(
