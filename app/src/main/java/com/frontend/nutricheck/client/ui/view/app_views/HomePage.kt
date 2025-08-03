@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view.widgets.CalorieHistoryDiagram
@@ -41,13 +42,17 @@ fun HomePage(
     dailyMacrosViewModel: DailyMacrosViewModel,
     weightHistoryViewModel: WeightHistoryViewModel,
 ) {
+    val calorieRangeSevenDays = stringResource(R.string.calorie_range_7_days)
+    val calorieRangeThirtyDays = stringResource(R.string.calorie_range_30_days)
+    val calorieRangeSixtyDays = stringResource(R.string.calorie_range_60_days)
+    val weightRangeOneMonth = stringResource(R.string.weight_range_1_month)
     val scrollState = rememberScrollState()
-    var selectedCalorieRange by remember { mutableStateOf("7T") }
-    var selectedWeightRange by remember { mutableStateOf("1M") }
+    var selectedCalorieRange by remember { mutableStateOf(calorieRangeSevenDays) }
+    var selectedWeightRange by remember { mutableStateOf(weightRangeOneMonth) }
     val calorieInterval = when(selectedCalorieRange) {
-        "7T" -> 7
-        "30T" -> 30
-        "60T" -> 60
+        calorieRangeSevenDays -> 7
+        calorieRangeThirtyDays -> 30
+        calorieRangeSixtyDays -> 60
         else -> 7
     }
     LaunchedEffect(selectedCalorieRange, selectedWeightRange) {

@@ -85,5 +85,37 @@
     <string name="error_no_photo_taken">Es wurde kein Foto aufgenommen, bitte nimm ein neues Foto auf</string>
     <string name="error_searching_recipes">Server-Fehler beim Abrufen der Rezepte: %s</string>
     <string name="userData_error_invalid_date">Ungültiges Datum</string>
+    <string name="calorie_range_7_days">7T</string>
+    <string name="calorie_range_30_days">30T</string>
+    <string name="calorie_range_60_days">60T</string>
+    <string name="weight_range_1_month">1M</string>
+    <string name="weight_range_3_months">3M</string>
+    <string name="weight_range_6_months">6M</string>
+    <string name="label_protein">Proteine</string>
+    <string name="label_carbs">Kohlenhydrate</string>
+    <string name="label_fat">Fette</string>
+    <string name="label_nutrients">Nährwerte</string>
+    <string name="label_weightHistory">Gewichtsverlauf</string>
+    <string name="calorie_history">Kalorienverlauf</string>
+    <string name="monday_short">Mo</string>
+    <string name="tuesday_short">DI</string>
+    <string name="wednesday_short">MI</string>
+    <string name="thursday_short">DO</string>
+    <string name="friday_short">FR</string>
+    <string name="saturday_short">SA</string>
+    <string name="sunday_short">So</string>
+    <string name="label_snack">Snacks</string>
+    <string name="label_dinner">Abendessen</string>
+    <string name="label_breakfast">Frühstück</string>
+    <string name="label_lunch">Mittagessen</string>
+    <string name="label_calories">Kalorien</string>
+    <string name="label_retry">Erneut versuchen</string>
+    <string name="label_search_recipe">Rezept suchen</string>
+    <string name="search_page_label_online_recipes">Online Rezepte</string>
+    <string name="label_enter_search_word">Bitte gebe einen Suchbegriff ein</string>
+    <string name="label_add_recipe">Rezept hinzufügen</string>
+    <string name="label_add_ingredient">Zutaten hinzufügen</string>
+    <string name="history">Verlauf</string>
+    <string name="recipes">Rezepte</string>
 
 </resources>

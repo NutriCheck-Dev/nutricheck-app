@@ -20,8 +20,10 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyMacrosState
 
 @Composable
@@ -47,7 +49,7 @@ fun NutrientBreakdown(
                 .requiredHeight(193.dp)
         ) {
             Text(
-                text = "MAKROS",
+                text = stringResource(R.string.label_nutrients),
                 color = Color.White,
                 lineHeight = 1.5.em,
                 modifier = Modifier
@@ -62,17 +64,17 @@ fun NutrientBreakdown(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 MacroProgress(
-                    label = "Protein",
+                    label = stringResource(R.string.label_protein),
                     value = "${protein}g",
                     progress = protein.toFloat() / proteinGoal.toFloat()
                 )
                 MacroProgress(
-                    label = "Carbs",
+                    label = stringResource(R.string.label_carbs),
                     value = "${carbs}g",
                     progress = carbs.toFloat() / carbsGoal.toFloat()
                 )
                 MacroProgress(
-                    label = "Fat",
+                    label = stringResource(R.string.label_fat),
                     value = "${fat}g",
                     progress = fat.toFloat() / fatGoal.toFloat()
                 )

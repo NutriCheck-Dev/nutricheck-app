@@ -20,9 +20,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryState
 
 
@@ -48,14 +50,20 @@ fun CalorieHistoryDiagram(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Kalorienverlauf",
+                text = stringResource(id = R.string.calorie_history),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
             ChartRangeSwitcher(
-                options = listOf("7T", "30T", "60T"),
-                selectedOption = listOf("7T", "30T", "60T").indexOf(selectedRange),
+                options = listOf(
+                    stringResource(R.string.calorie_range_7_days),
+                    stringResource(R.string.calorie_range_30_days),
+                    stringResource(R.string.calorie_range_60_days)),
+                selectedOption = listOf(
+                    stringResource(R.string.calorie_range_7_days),
+                    stringResource(R.string.calorie_range_30_days),
+                    stringResource(R.string.calorie_range_60_days)).indexOf(selectedRange),
                 onSelect = { clicked ->
                     onPeriodSelected(clicked)
                 }
@@ -78,8 +86,15 @@ fun CalorieBarChart(
     val rawMax = data.maxOrNull() ?: 1
     val range = rawMax - rawMin
 
-    val days = listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
-    val startIndex = 0 // z.B. wenn Daten bei Montag starten
+    val days = listOf(
+        stringResource(R.string.monday_short),
+        stringResource(R.string.tuesday_short),
+        stringResource(R.string.wednesday_short),
+        stringResource(R.string.thursday_short),
+        stringResource(R.string.friday_short),
+        stringResource(R.string.saturday_short),
+        stringResource(R.string.sunday_short))
+    val startIndex = 0 // if data starts on Monday
     val labelMap = when (selectedRange) {
         "7T" -> (0 until data.size).associateWith { i -> days[(startIndex + i) % 7] }
         "30T" -> mapOf(

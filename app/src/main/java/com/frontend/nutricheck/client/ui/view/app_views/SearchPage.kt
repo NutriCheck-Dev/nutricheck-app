@@ -10,12 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,10 +20,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
@@ -65,7 +62,7 @@ fun SearchPage(
                     navigationIcon = { NavigateBackButton(onBack = onBack) },
                     title = {
                         Text(
-                            text = "Zutaten Hinzufügen",
+                            text = stringResource(R.string.label_add_ingredient),
                             style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -102,7 +99,7 @@ fun SearchPage(
                     Text(errorMessage)
                     Spacer(Modifier.height(8.dp))
                     Button(onClick = { searchViewModel.onEvent(SearchEvent.Retry) }) {
-                        Text("Erneut versuchen")
+                        Text(stringResource(R.string.label_retry))
                     }
                 }
             }
@@ -125,7 +122,8 @@ fun SearchPage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
-                        options = listOf("Alle", "Meine Rezepte"),
+                        options = listOf(stringResource(R.string.search_page_label_all),
+                            stringResource(R.string.search_page_label_my_recipes)),
                         selectedOption = searchState.parameters.selectedTab
                     )
 

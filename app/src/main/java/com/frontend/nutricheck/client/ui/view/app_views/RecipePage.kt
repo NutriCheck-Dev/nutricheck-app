@@ -24,7 +24,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
@@ -65,7 +67,7 @@ fun RecipePage(
                             Text("Fehler: $message")
                             Spacer(Modifier.height(8.dp))
                             Button(onClick = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) }) {
-                                Text("Erneut versuchen")
+                                Text(stringResource(R.string.label_retry))
                             }
                         }
                     }
@@ -75,7 +77,7 @@ fun RecipePage(
                         query = recipePageState.query,
                         onQueryChange = { recipePageViewModel.onEvent(RecipePageEvent.QueryChanged(it))},
                         onSearch = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) },
-                        placeholder = { Text("Rezept suchen") }
+                        placeholder = { Text(stringResource(R.string.label_search_recipe)) }
                     )
 
 
@@ -83,7 +85,8 @@ fun RecipePage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
-                        options = listOf("Meine Rezepte", "Online Rezepte"),
+                        options = listOf(stringResource(R.string.search_page_label_my_recipes,
+                            stringResource(R.string.search_page_label_online_recipes))),
                         selectedOption = recipePageState.selectedTab,
                         onSelect = { index ->
                             when (index) {
@@ -121,7 +124,7 @@ fun RecipePage(
                             1 -> {
                                 if (recipePageState.query.isBlank()) {
                                     Text(
-                                        text = "Bitte geben Sie einen Suchbegriff ein",
+                                        text = stringResource(R.string.label_enter_search_word),
                                         modifier = Modifier.align(Alignment.Center)
                                     )
                                 } else {
@@ -149,7 +152,7 @@ fun RecipePage(
                         ) {
                             Icon(imageVector = Icons.Filled.Add, contentDescription = null)
                             Text(
-                                text = "Rezept hinzufügen",
+                                text = stringResource(R.string.label_add_recipe),
                                 modifier = Modifier.padding(2.dp),
                                 style = MaterialTheme.typography.labelLarge
                             )

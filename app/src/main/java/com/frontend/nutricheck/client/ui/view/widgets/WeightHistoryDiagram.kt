@@ -20,9 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
 
 
@@ -36,9 +38,9 @@ fun WeightHistoryDiagram(
     val fullData = weightHistoryState.weightData
 
     val displayedData = when (selectedRange) {
-        "1M" -> fullData.takeLast(30)
-        "6M" -> fullData.takeLast(180)
-        "12M" -> fullData
+        stringResource(R.string.weight_range_1_month) -> fullData.takeLast(30)
+        stringResource(R.string.weight_range_3_months) -> fullData.takeLast(180)
+        stringResource(R.string.weight_range_6_months) -> fullData
         else -> fullData
     }
     val currentWeight = fullData.lastOrNull()?.toString() ?: "–"
@@ -56,14 +58,18 @@ fun WeightHistoryDiagram(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Gewichtsfortschritt",
+                text = stringResource(R.string.label_weightHistory),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
             ChartRangeSwitcher(
-                options = listOf("1M", "6M", "12M"),
-                selectedOption = listOf("1M", "6M", "12M").indexOf(selectedRange),
+                options = listOf(stringResource(R.string.weight_range_1_month),
+                    stringResource(R.string.weight_range_3_months),
+                    stringResource(R.string.weight_range_6_months)),
+                selectedOption = listOf(stringResource(R.string.weight_range_1_month),
+                stringResource(R.string.weight_range_3_months),
+                stringResource(R.string.weight_range_6_months)).indexOf(selectedRange),
                 onSelect = { clicked ->
                     onPeriodSelected(clicked)
                 }
