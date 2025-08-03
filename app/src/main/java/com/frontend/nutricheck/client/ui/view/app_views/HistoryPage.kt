@@ -43,7 +43,6 @@ import java.util.Date
 @Composable
 fun HistoryPage(
     historyViewModel: HistoryViewModel,
-    historyPageNavController: NavHostController,
     mainNavController: NavHostController
 ) {
     val state by historyViewModel.historyState.collectAsState()
@@ -91,12 +90,12 @@ fun HistoryPage(
                     }
                 }
                 is HistoryEvent.FoodClicked -> {
-                    historyPageNavController.navigate(
+                    mainNavController.navigate(
                         "food_details?mealId=${event.mealId}&foodProductId=${event.foodId}"
                     )
                 }
                 is HistoryEvent.RecipeClicked -> {
-                    historyPageNavController.navigate(
+                    mainNavController.navigate(
                         "recipe_details?recipeId=${event.recipeId}&mealId=${event.mealId}"
                     )
                 }
@@ -142,10 +141,10 @@ fun HistoryPage(
                             }
                             showDatePicker = false
                         }
-                    ) { Text("OK") }
+                    ) { Text(stringResource(R.string.label_ok)) }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) { Text("Abbrechen") }
+                    TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.cancel)) }
                 }
             ) {
                 DatePicker(state = datePickerState)

@@ -14,26 +14,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.frontend.nutricheck.client.ui.view.app_views.DiaryTab
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
-import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 
-
-sealed class DiaryScreens(val route: String) {
-    object HistoryPage : DiaryScreens("history_page")
-    object RecipePage : DiaryScreens("recipe_page")
-    object DiaryPage : DiaryScreens("diary_page")
-
+enum class DiaryTab(val title: String) {
+    HISTORY("History"),
+    RECIPES("Recipes")
 }
-
 @Composable
 fun DiaryNavGraph(
     mainNavController: NavHostController
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.HISTORY) }
-    val recipePageViewModel: RecipePageViewModel = hiltViewModel()
     Scaffold(
         topBar = {
             Surface(
