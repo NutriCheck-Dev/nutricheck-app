@@ -68,7 +68,7 @@ class RecipeRepositoryImpl @Inject constructor(
                     val errorResponse = Gson().fromJson(
                     errorBody.string(),
                     ErrorResponseDTO::class.java)
-                    val message = errorResponse.body.title + errorResponse.body.detail
+                    val message = errorResponse.body.title + ": " + errorResponse.body.detail
                     Result.Error(errorResponse.body.status, message)
                 } else {
                     emit(Result.Error(message = "Unknown error"))
@@ -133,7 +133,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 val errorResponse = Gson().fromJson(
                     errorBody.string(),
                     ErrorResponseDTO::class.java)
-                val message = errorResponse.body.title + errorResponse.body.detail
+                val message = errorResponse.body.title + ": " + errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {
                 Result.Error(message = "Unknown error")
@@ -156,7 +156,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 val errorResponse = Gson().fromJson(
                     errorBody.string(),
                     ErrorResponseDTO::class.java)
-                val message = errorResponse.body.title + errorResponse.body.detail
+                val message = errorResponse.body.title + ": "+ errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {
                 Result.Error(message = "Unknown error")
