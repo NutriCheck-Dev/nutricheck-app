@@ -43,10 +43,20 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
                 null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name
                 else -> originArg
             }
+            val effectiveDateLong = when (dateArg) {
+                null, "{date}" -> Date().time
+                else -> dateArg.toLongOrNull() ?: Date().time
+            }
+            val effectiveDayTimeName = when (dayTimeArg) {
+                null, "{dayTime}" -> DayTime.BREAKFAST.name
+                else -> dayTimeArg
+            }
             val origin = AddDialogOrigin.valueOf(effectiveOriginName)
             AddNavGraph(
                 mainNavController = mainNavController,
-                origin = origin
+                origin = origin,
+                date = effectiveDateLong,
+                dayTime = DayTime.valueOf(effectiveDayTimeName)
             )
         }
 
