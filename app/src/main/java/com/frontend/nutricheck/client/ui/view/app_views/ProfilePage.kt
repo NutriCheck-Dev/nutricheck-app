@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,14 +19,12 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -38,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
@@ -74,35 +70,34 @@ fun ProfilePage(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Spacer(modifier = Modifier.height(thirtyTwoDp))
-            Row(
-                Modifier
-                    .shadow(elevation = 6.dp)
-                    .height(104.dp)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(sixteenDp))
-                    .padding(start = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically,
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(sixteenDp),
             ) {
-                Text(
-                    text = greetingText,
-                    style = TextStyle(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight(700),
-                        letterSpacing = 0.1.sp,
-                        color = MaterialTheme.colorScheme.onSecondary
-                    ),
-                    maxLines = 1
-                )
+                Row(
+                    Modifier
+                        .height(104.dp)
+                        .fillMaxWidth()
+                        .padding(start = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = greetingText,
+                        style = TextStyle(
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight(700),
+                            letterSpacing = 0.1.sp
+                        ),
+                        maxLines = 1
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(thirtyTwoDp))
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -140,11 +135,7 @@ fun ProfilePage(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                ),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Column {
                     MenuItem(
@@ -155,9 +146,8 @@ fun ProfilePage(
                         onClick = {
                             onEvent(ProfileEvent.OnPersonalDataClick)
                         })
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 2.dp)
                     MenuItem(
                         icon = Icons.Default.BarChart,
@@ -167,9 +157,8 @@ fun ProfilePage(
                         onClick = {
                             onEvent(ProfileEvent.DisplayWeightHistory)
                         })
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 2.dp
                     )
                     MenuItemWithSwitch(
@@ -201,14 +190,11 @@ fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onCli
             contentDescription,
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text,
-            color = MaterialTheme.colorScheme.onSecondary,
-            fontSize = 16.sp,)
+        Text(text = text, fontSize = 16.sp,)
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary,
         )
         Spacer (modifier = Modifier.width(24.dp))
     }
@@ -227,7 +213,6 @@ fun MenuItemWithSwitch(
             .clickable { onCheckedChange(!checked) }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .background(shape = RoundedCornerShape(8.dp), color = MaterialTheme.colorScheme.secondary)
             .padding(top = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -236,7 +221,7 @@ fun MenuItemWithSwitch(
             contentDescription,
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text, color = MaterialTheme.colorScheme.onSecondary, fontSize = 16.sp)
+        Text(text = text, fontSize = 16.sp)
         Spacer(modifier = Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Switch(

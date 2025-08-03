@@ -88,11 +88,6 @@ class OnboardingViewModel @Inject constructor(
             else -> { /* other navigation events are emitted in enter*functions */}
         }
     }
-
-    private fun startOnboarding() {
-        emitEvent(OnboardingEvent.NavigateToName)
-    }
-
     private fun enterName(name: String) {
         if (name.isBlank()) {
             setError(appContext.getString(R.string.userData_error_name_required))
@@ -191,11 +186,11 @@ class OnboardingViewModel @Inject constructor(
             carbsGoal = 0,
             fatsGoal = 0
         )
-        UserDataUtilsLogic.calculateNutrition(newUserData)
+        val userDataWithCalc = UserDataUtilsLogic.calculateNutrition(newUserData)
         viewModelScope.launch {
             appSettingRepository.setOnboardingCompleted()
-            userDataRepository.addWeight(Weight(_data.value.weight, Date()))
-            userDataRepository.addUserData(newUserData)
+            userDataRepository
+                .addUserDataAndAddWeight(userDataWithCalc, Weight(_data.value.weight, Date()))
         }
         emitEvent(OnboardingEvent.NavigateToDashboard)
     }
