@@ -80,7 +80,7 @@
     <string name="label_calorie_goal">Goal</string>
     <string name="label_calories_consumed">Consumed</string>
     <string name="label_remaining">Remaining</string>
-    <string name="label_history_add">Add</string>
+    <string name="label_history_add">+ Add</string>
     <string name="label_history">History</string>
     <string name="label_recipes">Recipes</string>
 </resources>

@@ -23,6 +23,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
+import com.frontend.nutricheck.client.R
 
 @Composable
 fun MealHeader(
@@ -59,7 +61,6 @@ fun MealHeader(
 @Composable
 fun MealFooter(
     modifier: Modifier = Modifier,
-    text: String = "+ Hinzufügen",
     onAddClick: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
@@ -74,7 +75,7 @@ fun MealFooter(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = text,
+            text = stringResource(R.string.label_history_add),
             color = colors.primary,
             lineHeight = 16.sp,
             fontSize = 12.sp,

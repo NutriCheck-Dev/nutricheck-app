@@ -77,7 +77,7 @@
     <string name="retake_photo">neues Foto</string>
     <string name="submit_photo">Foto verwenden</string>
     <string name="take_photo">Foto aufnehmen</string>
-    <string name="label_ok">OK</string>
+    <string name="label_ok" translatable="false">OK</string>
     <string name="camera_permission_required">Kamera-Zugriff benötigt</string>
     <string name="camera_permission_explanation">Um ein Foto aufzunehmen, benötigt die App die Erlaubnis für die Kamera</string>
     <string name="grant_permission">Erlauben</string>
@@ -101,26 +101,26 @@
     <string name="label_calorie_goal">Ziel</string>
     <string name="label_calories_consumed">Konsumiert</string>
     <string name="label_remaining">Verbleibend</string>
-    <string name="label_history_add">Hinzufügen</string>
+    <string name="label_history_add">+ Hinzufügen</string>
     <string name="label_macronutrition">Macros</string>
-    <string name="range_7_days">7T</string>
-    <string name="range_30_days">30T</string>
-    <string name="range_60_days">60T</string>
-    <string name="label_1_week">1W</string>
-    <string name="label_2_weeks">2W</string>
-    <string name="label_3_weeks">3W</string>
-    <string name="label_6_weeks">6W</string>
-    <string name="label_9_weeks">9W</string>
-    <string name="label_1_month">1M</string>
-    <string name="label_3_months">3M</string>
-    <string name="range_1_month">1M</string>
-    <string name="range_6_months">6M</string>
-    <string name="range_12_months">12M</string>
-    <string name="range_15_days">15T</string>
-    <string name="range_2_months">2M</string>
-    <string name="range_3_months">3M</string>
-    <string name="range_4_months">4M</string>
-    <string name="range_9_months">9m</string>
+    <string name="range_7_days" translatable="false">7T</string>
+    <string name="range_30_days" translatable="false">30T</string>
+    <string name="range_60_days" translatable="false">60T</string>
+    <string name="label_1_week" translatable="false">1W</string>
+    <string name="label_2_weeks" translatable="false">2W</string>
+    <string name="label_3_weeks" translatable="false">3W</string>
+    <string name="label_6_weeks" translatable="false">6W</string>
+    <string name="label_9_weeks" translatable="false">9W</string>
+    <string name="label_1_month" translatable="false">1M</string>
+    <string name="label_3_months" translatable="false">3M</string>
+    <string name="range_1_month" translatable="false">1M</string>
+    <string name="range_6_months" translatable="false">6M</string>
+    <string name="range_12_months" translatable="false">12M</string>
+    <string name="range_15_days" translatable="false">15T</string>
+    <string name="range_2_months" translatable="false">2M</string>
+    <string name="range_3_months" translatable="false">3M</string>
+    <string name="range_4_months" translatable="false">4M</string>
+    <string name="range_9_months" translatable="false">9m</string>
     <string name="label_history">Verlauf</string>
     <string name="label_recipes">Rezepte</string>
 </resources>
