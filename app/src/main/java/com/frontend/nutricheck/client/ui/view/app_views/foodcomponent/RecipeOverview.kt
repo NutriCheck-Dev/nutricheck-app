@@ -16,7 +16,6 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEven
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +29,6 @@ fun RecipeOverview(
 ) {
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
     val draftState by editRecipeViewModel.draft.collectAsState()
-    val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
     val isEditing = recipeOverviewState.parameters.editing
 
     if (!isEditing) {
@@ -50,7 +48,9 @@ fun RecipeOverview(
                 onSave = { editRecipeViewModel.onEvent(RecipeEditorEvent.SaveRecipe) },
                 onCancel = { editRecipeViewModel.onEvent(RecipeEditorEvent.Cancel) },
                 ingredients = draft.ingredients.map { Ingredient(recipeId = draft.id, it.second as FoodProduct, it.first) },
-                onItemClick = onItemClick
+                onItemClick = onItemClick,
+                confirmationDialog = editRecipeViewModel.draft.value.confirmationDialog,
+                showConfirmationDialog = { editRecipeViewModel.onEvent(RecipeEditorEvent.ShowConfirmationDialog) }
             )
         }
     }

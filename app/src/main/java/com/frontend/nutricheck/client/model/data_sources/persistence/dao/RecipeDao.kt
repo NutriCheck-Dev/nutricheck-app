@@ -30,4 +30,8 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     @Transaction
     @Query("SELECT * FROM recipes WHERE id = :recipeId")
     fun getRecipeWithIngredientsById(recipeId: String): Flow<RecipeWithIngredients>
+
+    @Transaction
+    @Query("SELECT * FROM recipes WHERE name LIKE '%' || :name || '%' ORDER BY name ASC")
+    fun getRecipesByName(name: String): Flow<List<RecipeWithIngredients>>
 }

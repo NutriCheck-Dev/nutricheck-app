@@ -5,14 +5,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +28,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -31,8 +36,10 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
 
 @Composable
 fun CreateRecipePage(
@@ -44,6 +51,7 @@ fun CreateRecipePage(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
+    val uiState by createRecipeViewModel.uiState.collectAsState()
     val draft by createRecipeViewModel.draft.collectAsState()
     val currentTitle = draft.title
     val currentDescription = draft.description
@@ -146,7 +154,9 @@ fun CreateRecipePage(
                                 it
                             )
                         )
-                    }
+                    },
+                    showTabRow = false,
+                    isLoading = uiState == BaseViewModel.UiState.Loading
                 )
             }
 

@@ -37,13 +37,6 @@ fun FoodComponentList(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        foodComponents.forEach { item ->
-            DishItemButton(
-                foodComponent = item,
-                trailingContent = { trailingContent?.invoke(item) },
-                onClick = { onItemClick(item) })
-        }
-
         if(editing) {
             IconButton(
                 onClick = onAddButtonClick,
@@ -65,6 +58,12 @@ fun FoodComponentList(
                 )
             }
         }
+        foodComponents.forEach { item ->
+            DishItemButton(
+                foodComponent = item,
+                trailingContent = { trailingContent?.invoke(item) },
+                onClick = { onItemClick(item) })
+        }
     }
 }
 
@@ -84,13 +83,6 @@ fun IngredientList(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        ingredients.forEach { item ->
-            DishItemButton(
-                ingredient = item,
-                trailingContent = { trailingContent?.invoke(item) },
-                onClick = { onItemClick(item) })
-        }
-
         if(editing) {
             IconButton(
                 onClick = { onAddButtonClick() },
@@ -111,6 +103,12 @@ fun IngredientList(
                     contentDescription = "Hinzufügen"
                 )
             }
+        }
+        ingredients.forEach { item ->
+            DishItemButton(
+                ingredient = item,
+                trailingContent = { trailingContent?.invoke(item) },
+                onClick = { onItemClick(item) })
         }
     }
 }

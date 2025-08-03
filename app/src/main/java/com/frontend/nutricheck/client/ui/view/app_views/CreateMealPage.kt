@@ -14,6 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,9 +36,6 @@ fun CreateMealPage(
     onConfirm: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
-    val colors = MaterialTheme.colorScheme
-    val styles = MaterialTheme.typography
-    val scrollState = rememberScrollState()
     val uiState by searchViewModel.uiState.collectAsState()
     val searchState by searchViewModel.searchState.collectAsState()
 
@@ -65,19 +65,9 @@ fun CreateMealPage(
 
         when (uiState) {
             BaseViewModel.UiState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
             }
             is BaseViewModel.UiState.Error -> {
                 val errorMessage = (uiState as BaseViewModel.UiState.Error).message
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(errorMessage)
-                    Spacer(Modifier.height(8.dp))
-                    Button(onClick = { searchViewModel.onEvent(SearchEvent.Retry) }) {
-                        Text("Erneut versuchen")
-                    }
-                }
             }
             BaseViewModel.UiState.Ready -> {
                 SearchPage(
@@ -93,7 +83,15 @@ fun CreateMealPage(
                         searchViewModel.onEvent(SearchEvent.AddFoodComponent(Pair(1.0, it)))
                     },
                     removeFoodComponent = { foodComponent ->
-                        searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(foodComponent))}
+                        searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(foodComponent))},
+                    selectedTab = searchState.parameters.selectedTab,
+                    onSelectTab = { index ->
+                        when (index) {
+                            0 -> searchViewModel.onEvent(SearchEvent.ClickSearchAll)
+                            1 -> searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
+                        }
+                    },
+                    isLoading = uiState == BaseViewModel.UiState.Loading
                 )
             }
         }

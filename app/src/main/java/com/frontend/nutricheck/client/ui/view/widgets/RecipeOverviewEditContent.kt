@@ -22,10 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -43,16 +39,17 @@ fun RecipeOverviewEditContent(
     onItemClick: (Ingredient) -> Unit,
     onEvent: (RecipeEditorEvent) -> Unit,
     onCancel: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    confirmationDialog: Boolean,
+    showConfirmationDialog: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    var showConfirmationDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             ViewsTopBar(
-                navigationIcon = { CustomCloseButton(onClick = onCancel) },
+                navigationIcon = { CustomCloseButton { onCancel() } },
                 title = {
                     TextField(
                         value = draft.title,
@@ -68,7 +65,7 @@ fun RecipeOverviewEditContent(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { showConfirmationDialog = true }) {
+                    IconButton(onClick = { showConfirmationDialog() }) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Save Edits",
@@ -134,7 +131,7 @@ fun RecipeOverviewEditContent(
                 }
             }
         }
-        if (showConfirmationDialog) {
+        if (confirmationDialog) {
             ActionConfirmationDialog(
                 title = "Aktion Bestätigen",
                 description = "Sind Sie sicher, dass Sie diese Aktion ausführen möchten?",
@@ -142,10 +139,10 @@ fun RecipeOverviewEditContent(
                 cancelText = "Nein",
                 icon = Icons.Default.Build,
                 onConfirm = {
-                    showConfirmationDialog = false
+                    showConfirmationDialog()
                     onSave
                             },
-                onCancel = { showConfirmationDialog = false }
+                onCancel = { showConfirmationDialog() }
             )
         }
     }
