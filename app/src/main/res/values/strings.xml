@@ -86,4 +86,15 @@
     <string name="error_searching_recipes">Server-Fehler beim Abrufen der Rezepte: %s</string>
     <string name="userData_error_invalid_date">Ungültiges Datum</string>
 
+    <string name="homepage_day_description">Heute</string>
+    <string name="homepage_calorie_history">Kalorienverlauf</string>
+    <string name="homepage_weight_progress">Gewichtsfortschritt</string>
+    <string name="homepage_nutrition_protein">Protein</string>
+    <string name="homepage_nutrition_carbs">Kohlenhydrate</string>
+    <string name="homepage_nutrition_fats">Fette</string>
+
+    <string name="historypage_breakfast">Frühstück</string>
+    <string name="historypage_lunch">Mittagessen</string>
+    <string name="historypage_dinner">Abendessen</string>
+    <string name="historypage_snack">Snack</string>
 </resources>

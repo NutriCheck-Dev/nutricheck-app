@@ -59,8 +59,17 @@ fun HistoryPageNavGraph(
             )
         }
         composable(
-            route = "food_details/{foodId}",
-            arguments = listOf(navArgument("foodId") { type = NavType.StringType })
+            route = "food_details?mealId={mealId}&foodProductId={foodProductId}",
+            arguments = listOf(
+                navArgument("mealId") {
+                    type = NavType.StringType
+                    nullable = false
+                },
+                navArgument("foodProductId") {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
         ) { backStackEntry ->
             val foodProductOverviewViewModel : FoodProductOverviewViewModel = hiltViewModel()
             FoodProductOverview(
@@ -69,10 +78,18 @@ fun HistoryPageNavGraph(
             )
         }
         composable(
-            route = "recipe_details/{recipeId}",
-            arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
+            route = "recipe_details?recipeId={recipeId}&mealId={mealId}",
+            arguments = listOf(
+                navArgument("recipeId") {
+                    type = NavType.StringType
+                    nullable = false
+                },
+                navArgument("mealId") {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
+        ) { val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
             RecipeOverview(
                 recipeOverviewViewModel = recipeOverviewViewModel,
                 onBack = { historyPageNavController.popBackStack() }

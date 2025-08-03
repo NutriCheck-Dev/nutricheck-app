@@ -16,9 +16,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieState
 
 @Composable
@@ -39,7 +41,7 @@ fun CaloriesToday(
         Box(modifier = Modifier.requiredSize(193.dp)) {
             // Text: "Heute"
             Text(
-                text = "Heute",
+                text = stringResource(id = R.string.homepage_day_description),
                 color = Color.White,
                 lineHeight = 1.5.em,
                 modifier = Modifier
@@ -75,7 +77,7 @@ fun CaloriesToday(
                     )
                 }
 
-                // Text "850"
+
                 Text(
                     text = dailyCalories.toString(),
                     color = Color.White,

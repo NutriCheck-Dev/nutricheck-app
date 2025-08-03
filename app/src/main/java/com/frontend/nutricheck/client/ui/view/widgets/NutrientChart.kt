@@ -120,7 +120,7 @@ fun NutrientChart(
 @Preview
 @Composable
 fun NutrientChartPreview() {
-    AppTheme() {
+    AppTheme {
         NutrientChart(
             nutrient = "Protein",
             subtitle = "grams",

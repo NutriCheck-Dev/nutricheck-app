@@ -36,12 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
-import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.ui.tooling.preview.Preview
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
@@ -76,35 +74,34 @@ fun ProfilePage(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Spacer(modifier = Modifier.height(thirtyTwoDp))
-            Row(
-                Modifier
-                    .shadow(elevation = 6.dp)
-                    .height(104.dp)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(sixteenDp))
-                    .padding(start = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically,
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(sixteenDp),
             ) {
-                Text(
-                    text = greetingText,
-                    style = TextStyle(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight(700),
-                        letterSpacing = 0.1.sp,
-                        color = MaterialTheme.colorScheme.onSecondary
-                    ),
-                    maxLines = 1
-                )
+                Row(
+                    Modifier
+                        .height(104.dp)
+                        .fillMaxWidth()
+                        .padding(start = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = greetingText,
+                        style = TextStyle(
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight(700),
+                            letterSpacing = 0.1.sp
+                        ),
+                        maxLines = 1
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(thirtyTwoDp))
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -142,11 +139,7 @@ fun ProfilePage(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                ),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Column {
                     MenuItem(
@@ -203,9 +196,7 @@ fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onCli
             contentDescription,
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text,
-            color = MaterialTheme.colorScheme.onSecondary,
-            fontSize = 16.sp,)
+        Text(text = text, fontSize = 16.sp,)
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Default.ChevronRight,
@@ -229,7 +220,6 @@ fun MenuItemWithSwitch(
             .clickable { onCheckedChange(!checked) }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .background(shape = RoundedCornerShape(8.dp), color = MaterialTheme.colorScheme.secondary)
             .padding(top = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -238,7 +228,7 @@ fun MenuItemWithSwitch(
             contentDescription,
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text, color = MaterialTheme.colorScheme.onSecondary, fontSize = 16.sp)
+        Text(text = text, fontSize = 16.sp)
         Spacer(modifier = Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Switch(

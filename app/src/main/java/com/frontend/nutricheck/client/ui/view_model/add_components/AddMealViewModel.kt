@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Date
 
 data class AddMealState(
     val foodComponents: List<FoodComponent> = emptyList(),
@@ -40,7 +39,6 @@ class AddMealViewModel @Inject constructor(
 ) : BaseViewModel() {
     private val historyDateMillis: Long? = savedStateHandle.get<Long>("historyDate")
         .takeIf { it != null && it > 0L }
-    private val historyDate: Date? = historyDateMillis?.let { Date(it) }
 
     private val _addMealState = MutableStateFlow(AddMealState())
     val createRecipeState = _addMealState.asStateFlow()

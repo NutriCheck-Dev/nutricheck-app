@@ -86,7 +86,7 @@ fun MealBlock(
     totalCalories: Double,
     items: List<MealItem>,
     onAddClick: () -> Unit = {},
-    optionsOnClick: () -> Unit = {}
+    onItemClick: (MealItem) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -105,14 +105,16 @@ fun MealBlock(
                     DishItemMealButton(
                         title = item.foodProduct.name,
                         quantity = item.quantity,
-                        calories = item.quantity * item.foodProduct.calories
+                        calories = item.quantity * item.foodProduct.calories,
+                        onClick = { onItemClick(item) }
                     )
                 }
                 is MealRecipeItem -> {
                     DishItemMealButton(
                         title = item.recipe.name,
                         quantity = item.quantity,
-                        calories = item.quantity * item.recipe.calories
+                        calories = item.quantity * item.recipe.calories,
+                        onClick = { onItemClick(item) }
                     )
                 }
             }

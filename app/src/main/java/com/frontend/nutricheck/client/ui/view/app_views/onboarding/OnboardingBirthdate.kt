@@ -130,7 +130,8 @@ fun OnboardingBirthdate(
 
         }
         if (showDatePicker) {
-            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate?.time)
+            val datePickerState =
+                rememberDatePickerState(initialSelectedDateMillis = selectedDate?.time)
             DatePickerDialog(
                 onDismissRequest = { showDatePicker = false },
                 confirmButton = {
