@@ -9,8 +9,8 @@ import java.util.Date
     tableName = "meals",
 )
 data class MealEntity(
-    @PrimaryKey val id: String = "", //date as key?, search by date? ->
-    val historyDayDate: Date = Date(), //is already in parent -> why table HistoryDay?
+    @PrimaryKey val id: String = "",
+    val historyDayDate: Date = Date(),
     val dayTime: DayTime = DayTime.BREAKFAST,
     val calories: Double,
     val carbohydrates: Double,

@@ -1,6 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import androidx.compose.material3.SelectableDates
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -11,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.app_views.CameraPreviewScreen
 import com.frontend.nutricheck.client.ui.view.app_views.CreateMealPage
 import com.frontend.nutricheck.client.ui.view.app_views.CreateRecipePage
@@ -44,7 +47,7 @@ sealed class AddScreens(val route: String) {
 
 }
 @Composable
-fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
+fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, date: Long?, dayTime: DayTime?) {
     val addNavController = rememberNavController()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
@@ -114,15 +117,27 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin) {
         }
 
         composable(route = AddScreens.AddMeal.defaultRoute) { backStackEntry ->
-            val parenEntry = remember(backStackEntry) {
+            val parentEntry = remember(backStackEntry) {
                 addNavController.getBackStackEntry("add_graph")
             }
-            val searchViewModel: FoodSearchViewModel = hiltViewModel(parenEntry)
+            LaunchedEffect(Unit) {
+                date?.let {
+                    if (parentEntry.savedStateHandle.get<String>("date") == null) {
+                        parentEntry.savedStateHandle["date"] = it
+                    }
+                }
+                dayTime?.let {
+                    if (parentEntry.savedStateHandle.get<String>("dayTime") == null) {
+                        parentEntry.savedStateHandle["dayTime"] = it
+                    }
+                }
+            }
+            val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
             CreateMealPage(
                 searchViewModel = searchViewModel,
                 onConfirm = { addNavController.navigate(AddScreens.HistoryPage.route)},
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                onBack = { addNavController.popBackStack() }
+                onBack = { mainNavController.popBackStack() }
             )
         }
 

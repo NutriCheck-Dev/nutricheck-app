@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
+import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
@@ -23,6 +24,7 @@ data class HistoryState(
     val mealId: String = "",
     val foodId: String = "",
     val recipeId: String = "",
+    val dayTime: DayTime = DayTime.BREAKFAST,
     val totalCalories: Int = 0,
     val goalCalories: Int = 0,
     val switched: Boolean = false
@@ -32,6 +34,7 @@ sealed interface HistoryEvent {
     data class AddEntryClick(val day: Date, val dayTime: DayTime) : HistoryEvent
     data class FoodClicked(val mealId: String, val foodId: String) : HistoryEvent
     data class RecipeClicked(val mealId:String, val recipeId: String) : HistoryEvent
+    data class RemoveMealItem(val mealItem: MealItem) : HistoryEvent
     data class DetailsClick(val detailsId: String) : HistoryEvent
     data class SelectDate(val day: Date) : HistoryEvent
 }
@@ -52,6 +55,7 @@ class HistoryViewModel @Inject constructor(
             is HistoryEvent.AddEntryClick -> onAddEntryClick(event.day, event.dayTime)
             is HistoryEvent.FoodClicked -> onFoodClicked(event.mealId, event.foodId)
             is HistoryEvent.RecipeClicked -> onRecipeClicked(event.mealId, event.recipeId)
+            is HistoryEvent.RemoveMealItem -> onRemoveMealItem(event.mealItem)
             is HistoryEvent.DetailsClick -> onDetailsClick(event.detailsId)
             is HistoryEvent.SelectDate -> selectDate(event.day)
         }
@@ -61,6 +65,12 @@ class HistoryViewModel @Inject constructor(
     }
     fun onAddEntryClick(day: Date, dayTime: DayTime) {
         viewModelScope.launch {
+            _historyState.update {
+                it.copy(
+                    selectedDate = day,
+                    dayTime = dayTime
+                )
+            }
             _events.emit(HistoryEvent.AddEntryClick(day, dayTime))
         }
     }
@@ -88,7 +98,12 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    //override fun displayNutritionOfDay(day: Date) {}
+    fun onRemoveMealItem(mealItem: MealItem) {
+        viewModelScope.launch {
+            historyRepository.removeMealItem(mealItem)
+            displayMealsOfDay(_historyState.value.selectedDate)
+        }
+    }
     fun displayMealsOfDay(day: Date) {
         viewModelScope.launch {
             val meals = historyRepository.getMealsForDay(day)

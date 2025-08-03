@@ -15,13 +15,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.frontend.nutricheck.client.ui.theme.extended
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @Composable
 fun ReportRecipeDialog(
-    reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(),
     title: String = "Report",
     confirmText: String = "Send",
     cancelText: String = "Cancel",

@@ -38,6 +38,7 @@ class RecipeRepositoryImpl @Inject constructor(
     private val api: RemoteApi
 ) : RecipeRepository {
     private val timeToLive = TimeUnit.MINUTES.toMillis(30)
+
     override suspend fun searchRecipes(recipeName: String): Flow<Result<List<Recipe>>> = flow {
         val cached = recipeSearchDao.resultsFor(recipeName)
             .firstOrNull()
@@ -64,13 +65,11 @@ class RecipeRepositoryImpl @Inject constructor(
                     })
                     emit(Result.Success(recipes))
                 } else if (errorBody != null) {
-                    val gson = Gson()
-                    val errorResponse = gson.fromJson(
-                        String(errorBody.bytes()),
-                        ErrorResponseDTO::class.java
-                    )
-                    val message = errorResponse.title + ": " + errorResponse.detail
-                    emit(Result.Error(errorResponse.status, message))
+                    val errorResponse = Gson().fromJson(
+                    errorBody.string(),
+                    ErrorResponseDTO::class.java)
+                    val message = errorResponse.body.title + ": " + errorResponse.body.detail
+                    Result.Error(errorResponse.body.status, message)
                 } else {
                     emit(Result.Error(message = "Unknown error"))
                 }
@@ -81,7 +80,7 @@ class RecipeRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override suspend fun insertRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe, false)
         recipeDao.insert(recipeEntity)
 
         recipe.ingredients.forEach { ingredient ->
@@ -106,12 +105,12 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
-        recipeDao.delete(recipeEntity)
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe, true)
+        recipeDao.update(recipeEntity)
     }
 
     override suspend fun updateRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe)
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe, true)
         recipeDao.update(recipeEntity)
 
         ingredientDao.deleteIngredientsOfRecipe(recipeEntity.id)
@@ -131,13 +130,11 @@ class RecipeRepositoryImpl @Inject constructor(
             if (response.isSuccessful && body != null) {
                 Result.Success(RecipeMapper.toData(body))
             } else if (errorBody != null) {
-                val gson = Gson()
-                val errorResponse = gson.fromJson(
-                    String(errorBody.bytes()),
-                    ErrorResponseDTO::class.java
-                )
-                val message = errorResponse.title + errorResponse.detail
-                Result.Error(errorResponse.status, message)
+                val errorResponse = Gson().fromJson(
+                    errorBody.string(),
+                    ErrorResponseDTO::class.java)
+                val message = errorResponse.body.title + ": " + errorResponse.body.detail
+                Result.Error(errorResponse.body.status, message)
             } else {
                 Result.Error(message = "Unknown error")
             }
@@ -156,13 +153,11 @@ class RecipeRepositoryImpl @Inject constructor(
             if (response.isSuccessful && body != null) {
                 Result.Success(body) //toData method
             } else if (errorBody != null) {
-                val gson = Gson()
-                val errorResponse = gson.fromJson(
-                    String(errorBody.bytes()),
-                    ErrorResponseDTO::class.java
-                )
-                val message = errorResponse.title + errorResponse.detail
-                Result.Error(errorResponse.status, message)
+                val errorResponse = Gson().fromJson(
+                    errorBody.string(),
+                    ErrorResponseDTO::class.java)
+                val message = errorResponse.body.title + ": "+ errorResponse.body.detail
+                Result.Error(errorResponse.body.status, message)
             } else {
                 Result.Error(message = "Unknown error")
             }
@@ -171,6 +166,7 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
+    //Necessary?
     override suspend fun getIngredientById(
         recipeId: String,
         foodProductId: String
@@ -182,6 +178,11 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun updateIngredient(ingredient: Ingredient) = withContext(Dispatchers.IO) {
         val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
         ingredientDao.update(ingredientEntity)
+    }
+
+    override suspend fun getRecipesByName(recipeName: String): List<Recipe> = withContext(Dispatchers.IO) {
+        val recipeWithIngredients = recipeDao.getRecipesByName(recipeName).first()
+        recipeWithIngredients.map { DbRecipeMapper.toRecipe(it) }
     }
 
     private fun isExpired(lastUpdate: Long?): Boolean =

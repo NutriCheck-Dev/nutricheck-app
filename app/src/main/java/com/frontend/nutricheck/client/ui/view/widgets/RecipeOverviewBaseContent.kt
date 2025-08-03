@@ -18,9 +18,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,31 +30,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
+import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverviewBaseContent(
+    recipeOverviewViewModel: RecipeOverviewViewModel,
     reportRecipeViewModel: ReportRecipeViewModel,
     recipe: Recipe,
     ingredients: List<Ingredient>,
     onItemClick: (Ingredient) -> Unit = {},
-    onDownLoad: (Recipe) -> Unit = {},
-    onEdit: () -> Unit = {},
-    onDelete: (Recipe) -> Unit = {},
-    onUpload: (Recipe) -> Unit = {},
-    onSendReport: (Recipe) -> Unit = {},
-    showReportDialog: Boolean = false,
-    onReportClick: () -> Unit = {},
-    onDismiss: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    var expanded by remember { mutableStateOf(false) }
     var count by remember { mutableIntStateOf(1) }
+    val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
+    val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -71,16 +69,23 @@ fun RecipeOverviewBaseContent(
                 },
                 actions = {
                         CustomDetailsButton(
-                            expanded = expanded,
                             dishItemButton = false,
                             ownedRecipe = recipe.visibility == RecipeVisibility.OWNER ,
                             publicRecipe = recipe.visibility == RecipeVisibility.PUBLIC,
-                            onExpandedChange = { expanded = it },
-                            onDownloadClick = { onDownLoad },
-                            onEditClick = { onEdit },
-                            onDeleteClick = { onDelete },
-                            onUploadClick = { onUpload },
-                            onReportClick = { onReportClick }
+                            onOptionClick = { option ->
+                                if (recipe.visibility == RecipeVisibility.PUBLIC
+                                    && option == DropdownMenuOptions.REPORT) {
+                                    reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked(recipe))
+                                }
+                                recipeOverviewViewModel.onEvent(
+                                    RecipeOverviewEvent.ClickDetailsOption(option)) },
+                            expanded = recipeOverviewState.parameters.showDetails,
+                            onDetailsClick = {
+                                recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDetails)
+                                             },
+                            onDismissClick = {
+                                recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDetails)
+                            }
                         )
                 }
             )
@@ -168,17 +173,25 @@ fun RecipeOverviewBaseContent(
                 }
             }
 
-            if (showReportDialog) {
+            if (reportRecipeState.reporting) {
                 item {
                     ReportRecipeDialog(
-                        reportRecipeViewModel = reportRecipeViewModel,
                         title = "Report",
                         confirmText = "Send",
                         cancelText = "Cancel",
-                        onConfirm = { onSendReport },
-                        onDismiss = { onDismiss },
-                        reportText = "Please provide a reason for reporting this recipe."
-                        //TODO: Implement onValueChange for report text
+                        onConfirm = { reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport) },
+                        onDismiss = {
+                            reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog)
+                                    },
+                        onCancel = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
+                        reportText = "Please provide a reason for reporting this recipe.",
+                        onValueChange = {
+                            reportRecipeViewModel.onEvent(
+                                ReportRecipeEvent.InputTextChanged(
+                                    it
+                                )
+                            )
+                        }
                     )
                 }
             }

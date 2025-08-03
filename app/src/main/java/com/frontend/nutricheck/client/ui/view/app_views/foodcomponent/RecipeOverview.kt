@@ -16,7 +16,6 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEven
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,26 +29,16 @@ fun RecipeOverview(
 ) {
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
     val draftState by editRecipeViewModel.draft.collectAsState()
-    val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
     val isEditing = recipeOverviewState.parameters.editing
 
     if (!isEditing) {
         RecipeOverviewBaseContent(
             recipe = recipeOverviewState.recipe,
+            recipeOverviewViewModel = recipeOverviewViewModel,
+            reportRecipeViewModel = reportRecipeViewModel,
             onItemClick = { ingredient -> onItemClick(ingredient) },
-            onDownLoad = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDownloadRecipe(it)) },
-            onEdit = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickEditRecipe) },
-            onDelete = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickDeleteRecipe(it)) },
-            onUpload = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ClickUploadRecipe(it)) },
-            onSendReport = {
-                reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport)
-                       },
-            onDismiss = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
-            onReportClick = { reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked) },
             onBack = onBack,
-            showReportDialog = reportRecipeState.reporting,
             ingredients = recipeOverviewState.parameters.ingredients,
-            reportRecipeViewModel = reportRecipeViewModel
         )
     } else {
         draftState.let { draft ->
@@ -59,7 +48,9 @@ fun RecipeOverview(
                 onSave = { editRecipeViewModel.onEvent(RecipeEditorEvent.SaveRecipe) },
                 onCancel = { editRecipeViewModel.onEvent(RecipeEditorEvent.Cancel) },
                 ingredients = draft.ingredients.map { Ingredient(recipeId = draft.id, it.second as FoodProduct, it.first) },
-                onItemClick = onItemClick
+                onItemClick = onItemClick,
+                confirmationDialog = editRecipeViewModel.draft.value.confirmationDialog,
+                showConfirmationDialog = { editRecipeViewModel.onEvent(RecipeEditorEvent.ShowConfirmationDialog) }
             )
         }
     }

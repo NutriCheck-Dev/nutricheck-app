@@ -11,19 +11,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -32,15 +29,17 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ChartRangeSwitcher(
     modifier: Modifier = Modifier,
-    options: List<String> = listOf("7T", "30T", "90T"),
+    options: List<String>,
     selectedOption: Int = 0,
-    onSelect: (String) -> Unit = {}
+    onSelect: (Int) -> Unit = {}
 ) {
-    val outerBg = Color(0xFF000000)
-    val selectedBg = Color.White
-    val unselectedBg = Color(0xFFBBBBBB)
-    val selectedTextColor = Color(0xFF121212)
-    val unselectedTextColor = Color(0xFF707179)
+    val colors = MaterialTheme.colorScheme
+
+    val outerBg = colors.surfaceContainerLow
+    val selectedBg = colors.secondary
+    val unselectedBg = colors.surface
+    val selectedTextColor = colors.onSecondary
+    val unselectedTextColor = colors.outline
 
     val totalWidth = 105.dp
     val totalHeight = 18.dp
@@ -72,7 +71,7 @@ fun ChartRangeSwitcher(
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(7.dp))
                         .background(bgColor)
-                        .clickable { onSelect(label) },
+                        .clickable { onSelect(index) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -87,18 +86,4 @@ fun ChartRangeSwitcher(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun ChartRangePreview() {
-    var selected by remember { mutableStateOf(1) }
-
-    ChartRangeSwitcher(
-        options = listOf("7T", "30T", "90T"),
-        selectedOption = selected,
-        onSelect = { clicked ->
-            selected = listOf("7T", "30T", "90T").indexOf(clicked)
-        }
-    )
 }

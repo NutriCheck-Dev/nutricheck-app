@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -21,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.ui.res.stringResource
@@ -43,7 +43,6 @@ import java.util.Date
 @Composable
 fun HistoryPage(
     historyViewModel: HistoryViewModel,
-    historyPageNavController: NavHostController,
     mainNavController: NavHostController
 ) {
     val state by historyViewModel.historyState.collectAsState()
@@ -91,12 +90,12 @@ fun HistoryPage(
                     }
                 }
                 is HistoryEvent.FoodClicked -> {
-                    historyPageNavController.navigate(
+                    mainNavController.navigate(
                         "food_details?mealId=${event.mealId}&foodProductId=${event.foodId}"
                     )
                 }
                 is HistoryEvent.RecipeClicked -> {
-                    historyPageNavController.navigate(
+                    mainNavController.navigate(
                         "recipe_details?recipeId=${event.recipeId}&mealId=${event.mealId}"
                     )
                 }
@@ -113,17 +112,20 @@ fun HistoryPage(
     val calendar = Calendar.getInstance()
     calendar.time = Date()
 
+    val colors = MaterialTheme.colorScheme
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .background(Color.Black)
+            .background(colors.surface)
     ) {
         Spacer(modifier = Modifier.height(7.dp))
         DateSelectorBar(
             selectedDate = selectedDate,
-            onPreviousDay = { selectedDate = Date(selectedDate.time - 24 * 60 * 60 * 1000) },
-            onNextDay = { selectedDate = Date(selectedDate.time + 24 * 60 * 60 * 1000) },
+            onPreviousDay = { selectedDate = Date(selectedDate.time - 24 * 60 * 60 * 1000)
+                historyViewModel.onEvent(HistoryEvent.SelectDate(selectedDate))},
+            onNextDay = { selectedDate = Date(selectedDate.time + 24 * 60 * 60 * 1000)
+                historyViewModel.onEvent(HistoryEvent.SelectDate(selectedDate))},
             onOpenCalendar = { showDatePicker = true }
         )
         if (showDatePicker) {
@@ -139,10 +141,10 @@ fun HistoryPage(
                             }
                             showDatePicker = false
                         }
-                    ) { Text("OK") }
+                    ) { Text(stringResource(R.string.label_ok)) }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) { Text("Abbrechen") }
+                    TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.cancel)) }
                 }
             ) {
                 DatePicker(state = datePickerState)
@@ -157,7 +159,7 @@ fun HistoryPage(
         Spacer(modifier = Modifier.height(20.dp))
         MealBlock(
             modifier = Modifier.padding(7.dp),
-            stringResource(id = R.string.historypage_breakfast),
+            stringResource(id = R.string.label_breakfast),
             breakfastCalories,
             items = breakfastComponents,
             onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.BREAKFAST))},
@@ -166,12 +168,14 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
         Spacer(modifier = Modifier.height(5.dp))
         MealBlock(
             modifier = Modifier.padding(7.dp),
-            stringResource(id = R.string.historypage_lunch),
+            stringResource(id = R.string.label_lunch),
             lunchCalories,
             items= lunchComponents,
             onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.LUNCH))},
@@ -180,12 +184,14 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
         Spacer(modifier = Modifier.height(5.dp))
         MealBlock(
             modifier = Modifier.padding(7.dp),
-            stringResource(id = R.string.historypage_dinner),
+            stringResource(id = R.string.label_dinner),
             dinnerCalories,
             items = dinnerComponents,
             onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.DINNER))},
@@ -194,11 +200,13 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
         Spacer(modifier = Modifier.height(5.dp))
         MealBlock(modifier = Modifier.padding(7.dp),
-            stringResource(id = R.string.historypage_snack),
+            stringResource(id = R.string.label_snack),
             snackCalories,
             items = snackComponents,
             onAddClick = { historyViewModel.onEvent(HistoryEvent.AddEntryClick(selectedDate, DayTime.SNACK))},
@@ -207,6 +215,8 @@ fun HistoryPage(
                     is MealFoodItem -> historyViewModel.onEvent(HistoryEvent.FoodClicked(item.mealId,item.foodProduct.id))
                     is MealRecipeItem -> historyViewModel.onEvent(HistoryEvent.RecipeClicked(item.mealId,item.recipe.id))
                 }
+            },
+            onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
     }
