@@ -213,7 +213,7 @@ class AddAiMealViewModel @Inject constructor(
         _photoUri.value = null
     }
     // parse the image URI to a MultipartBody.Part for sending to the backend
-    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver, context: android.content.Context): MultipartBody.Part? {
+    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver, context: Context): MultipartBody.Part? {
         if (uri == null) return null
 
         val partName = "file"

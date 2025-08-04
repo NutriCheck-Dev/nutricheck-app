@@ -56,7 +56,11 @@ fun CameraPreviewScreen(
 
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     var showCameraDialog = false
-
+    if (photoUri == null) {
+        LaunchedEffect(Unit) {
+            addAiMealViewModel.bindToCamera(context, lifecycleOwner)
+        }
+    }
     LaunchedEffect(Unit) {
         when {
             cameraPermissionState.status.isGranted -> {

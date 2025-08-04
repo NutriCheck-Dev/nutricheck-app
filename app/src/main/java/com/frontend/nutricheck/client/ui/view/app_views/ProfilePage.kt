@@ -76,6 +76,7 @@ fun ProfilePage(
         ){
             Spacer(modifier = Modifier.height(thirtyTwoDp))
             Card(
+
                 modifier = Modifier
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
