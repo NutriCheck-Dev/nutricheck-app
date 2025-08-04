@@ -86,13 +86,14 @@ fun RecipePage(
                         placeholder = { Text(stringResource(R.string.label_search_recipe)) }
                     )
 
-
+                    val myRecipes = stringResource(R.string.search_page_label_my_recipes)
+                    val onlineRecipes = stringResource(R.string.search_page_label_online_recipes)
                     CustomTabRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
-                        options = listOf(stringResource(R.string.search_page_label_my_recipes,
-                            stringResource(R.string.search_page_label_online_recipes))),
+                        options = listOf(myRecipes,
+                            onlineRecipes),
                         selectedOption = recipePageState.selectedTab,
                         onSelect = { index ->
                             when (index) {
