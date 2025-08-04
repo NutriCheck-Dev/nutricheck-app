@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,8 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.text.style.TextAlign
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
@@ -53,6 +57,7 @@ fun ProfilePage(
     val userAgeText = stringResource(id = R.string.age_years, state.age)
     val scrollState = rememberScrollState()
     val darkmode = currentTheme.value == ThemeSetting.DARK
+    val colors = MaterialTheme.colorScheme
 
     val sixteenDp = 16.dp
     val eightDp = 8.dp
@@ -71,19 +76,26 @@ fun ProfilePage(
         ){
             Spacer(modifier = Modifier.height(thirtyTwoDp))
             Card(
-                modifier = Modifier.fillMaxWidth(),
+
+                modifier = Modifier
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colors.surfaceContainer,
+                    contentColor = colors.onSurface
+                )
             ) {
                 Row(
                     Modifier
                         .height(104.dp)
                         .fillMaxWidth()
-                        .padding(start = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
+                        .padding(start = 10.dp)
+                        .background(color = colors.surfaceContainer),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = greetingText,
+                        textAlign = TextAlign.Start,
                         style = TextStyle(
                             fontSize = 32.sp,
                             fontWeight = FontWeight(700),
@@ -98,6 +110,10 @@ fun ProfilePage(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colors.surfaceContainer,
+                    contentColor = colors.onSurface
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -135,7 +151,11 @@ fun ProfilePage(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colors.surfaceContainer,
+                    contentColor = colors.onSurface
+                )
             ) {
                 Column {
                     MenuItem(

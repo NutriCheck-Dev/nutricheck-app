@@ -51,7 +51,7 @@ fun OnboardingBirthdate(
     errorState : BaseViewModel.UiState
     ) {
     var selectedDate by remember { mutableStateOf(state.birthdate) }
-    var showDatePicker by remember { mutableStateOf(true) }
+    var showDatePicker by remember { mutableStateOf(false) }
 
     val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
     val displayDate = selectedDate?.let { dateFormat.format(it) } ?: ""
@@ -103,21 +103,23 @@ fun OnboardingBirthdate(
                     color = Color(0xFFFFFFFF),
                 )
             )
-
+            Box(
+                modifier = Modifier.width(300.dp).clickable { showDatePicker = true }
+            ) {
             OutlinedTextField(
                 value = displayDate,
                 onValueChange = { },
-                modifier = Modifier
-                    .width(300.dp)
-                    .clickable { showDatePicker = true },
+                modifier = Modifier.width(300.dp),
                 label = {
                     Text(stringResource(id = R.string.userData_label_birthdate))
                 },
                 readOnly = true,
+                enabled = false,
                 isError = errorState is BaseViewModel.UiState.Error,
                 singleLine = true,
-                textStyle = TextStyle( color = Color(0xFFFFFFFF))
+                textStyle = TextStyle(color = Color(0xFFFFFFFF))
             )
+        }
             if (errorState is BaseViewModel.UiState.Error) {
                 Text(
                     modifier = Modifier

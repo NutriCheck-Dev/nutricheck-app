@@ -102,6 +102,7 @@ class HistoryViewModel @Inject constructor(
         viewModelScope.launch {
             historyRepository.removeMealItem(mealItem)
             displayMealsOfDay(_historyState.value.selectedDate)
+            displayCalorieGoal(_historyState.value.selectedDate)
         }
     }
     fun displayMealsOfDay(day: Date) {

@@ -15,7 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.BottomSheetSearch
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
@@ -53,7 +55,7 @@ fun SearchPage(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Text(
-            text = "Zutaten",
+            text = stringResource(R.string.label_ingredients),
             style = styles.titleMedium
         )
 

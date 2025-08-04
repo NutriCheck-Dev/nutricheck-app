@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 
@@ -40,10 +42,10 @@ fun RecipeNutrientChartsWidget(
     totalFat: Double
 ) {
     val nutrients = listOf(
-        NutrientEntry("Calories", "kcal", recipe.calories, totalCalories),
-        NutrientEntry("Protein", "g", recipe.protein, totalProtein),
-        NutrientEntry("Carbs", "g", recipe.carbohydrates, totalCarbs),
-        NutrientEntry("Fat", "g", recipe.fat, totalFat)
+        NutrientEntry(stringResource(R.string.label_calories), "kcal", recipe.calories, totalCalories),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", recipe.protein, totalProtein),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", recipe.carbohydrates, totalCarbs),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", recipe.fat, totalFat)
     )
     
     val pages: List<List<NutrientEntry>> = nutrients.chunked(2)
@@ -116,10 +118,10 @@ fun FoodProductNutrientChartsWidget(
     totalFat: Double = 0.0
 ) {
     val nutrients = listOf(
-        NutrientEntry("Calories", "kcal", foodProduct.calories, totalCalories),
-        NutrientEntry("Carbs", "g", foodProduct.carbohydrates, totalCarbs),
-        NutrientEntry("Protein", "g", foodProduct.protein, totalProtein),
-        NutrientEntry("Fat", "g", foodProduct.fat, totalFat)
+        NutrientEntry(stringResource(R.string.label_calories), "kcal", foodProduct.calories, totalCalories),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", foodProduct.protein, totalProtein),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", foodProduct.carbohydrates, totalCarbs),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", foodProduct.fat, totalFat)
     )
 
     Column(
