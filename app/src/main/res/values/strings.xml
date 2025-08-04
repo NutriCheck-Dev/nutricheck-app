@@ -26,13 +26,6 @@
     <string name="userData_label_goal_gain_weight">Zunehmen</string>
     <string name="userData_error_name_required">Das Namensfeld darf nicht leer sein.</string>
     <string name="userData_label_goal_maintain_weight">Gewicht halten</string>
-    <string name="userData_error_birthdate_required">Das Geburtsdatum darf nicht leer sein.</string>
-    <string name="userData_error_height_required">Die Größe darf nicht leer sein.</string>
-    <string name="userData_error_weight_required">Das Gewicht darf nicht leer sein.</string>
-    <string name="userData_error_target_weight_required">Das Zielgewicht darf nicht leer sein.</string>
-    <string name="userData_error_gender_required">Bitte wähle ein Geschlecht aus.</string>
-    <string name="userData_error_activity_level_required">Bitte wähle dein Aktivitätslevel aus.</string>
-    <string name="userData_error_goal_required">Bitte wähle ein Ziel aus.</string>
     <string name="userData_label_activity_level_occasionally">1–2/Woche</string>
     <string name="userData_label_activity_level_regularly">3–4/Woche</string>
     <string name="userData_label_activity_level_frequently">5+/Woche</string>
@@ -81,11 +74,7 @@
     <string name="camera_permission_required">Kamera-Zugriff benötigt</string>
     <string name="camera_permission_explanation">Um ein Foto aufzunehmen, benötigt die App die Erlaubnis für die Kamera</string>
     <string name="grant_permission">Erlauben</string>
-    <string name="error_encoding_image">Fehler beim Verarbeiten des Bildes, bitte nimm ein neues Bild auf</string>
-    <string name="error_no_photo_taken">Es wurde kein Foto aufgenommen, bitte nimm ein neues Foto auf</string>
-    <string name="error_searching_recipes">Server-Fehler beim Abrufen der Rezepte: %s</string>
-    <string name="userData_error_invalid_date">Ungültiges Datum</string>
-    <string name="weight_range_1_month" translatable="false">1M</string>
+   <string name="weight_range_1_month" translatable="false">1M</string>
     <string name="weight_range_3_months" translatable="false">3M</string>
     <string name="weight_range_6_months" translatable="false">6M</string>
     <string name="label_weightHistory">Gewichtsverlauf</string>
@@ -136,4 +125,26 @@
     <string name="label_history">Verlauf</string>
     <string name="label_recipes">Rezepte</string>
     <string name="label_ingredients">Zutaten</string>
+
+    <string name="error_encoding_image">Fehler beim Verarbeiten des Bildes, bitte nimm ein neues Bild auf</string>
+    <string name="error_no_photo_taken">Es wurde kein Foto aufgenommen, bitte nimm ein neues Foto auf</string>
+    <string name="error_searching_recipes">Server-Fehler beim Abrufen der Rezepte: %s</string>
+    <string name="userData_error_invalid_date">Ungültiges Datum</string>
+    <string name="userData_error_birthdate_required">Das Geburtsdatum darf nicht leer sein.</string>
+    <string name="userData_error_height_required">Die Größe darf nicht leer sein.</string>
+    <string name="userData_error_weight_required">Das Gewicht darf nicht leer sein.</string>
+    <string name="userData_error_target_weight_required">Das Zielgewicht darf nicht leer sein.</string>
+    <string name="userData_error_gender_required">Bitte wähle ein Geschlecht aus.</string>
+    <string name="userData_error_activity_level_required">Bitte wähle dein Aktivitätslevel aus.</string>
+    <string name="userData_error_goal_required">Bitte wähle ein Ziel aus.</string>
+    <string name="userData_error_name_too_short">Der eingegebene Name ist zu kurz</string>
+    <string name="userData_error_name_too_long">Der eingegebene Name ist zu lang</string>
+    <string name="userData_error_height_too_short">Die eingegebene Größe ist zu klein</string>
+    <string name="userData_error_height_too_tall">Die eingegebene Größe ist zu groß</string>
+    <string name="userData_error_weight_too_low">Das eingegebene Gewicht ist zu klein</string>
+    <string name="userData_error_weight_too_high">Das eingegebene Gewicht ist zu groß</string>
+    <string name="userData_error_birthdate_future">Das eingegebene Geburtsdatum liegt in der Zukunft</string>
+    <string name="userData_error_birthdate_too_old">Das eingegebene Geburtsdatum ist zu alt</string>
+    <string name="userData_error_target_weight_too_low">Das eingegebene Zielgewicht ist zu niedrig</string>
+    <string name="userData_error_target_weight_too_high">Das eingegebene Zielgewicht ist zu hoch</string>
 </resources>

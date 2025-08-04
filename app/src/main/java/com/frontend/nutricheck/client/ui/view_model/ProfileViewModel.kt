@@ -138,16 +138,19 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun updateUserNameDraft(username: String) {
-        if (username.isBlank()) {
-            setError(appContext.getString(R.string.userData_error_name_required))
+        val errorMessage = UserDataUtilsLogic.isNameInvalid(username)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
         _dataDraft.value = _dataDraft.value.copy(username = username)
     }
+
     private fun updateUserBirthdateDraft(birthdate: Date) {
-        if (UserDataUtilsLogic.isBirthdateInvalid(birthdate)) {
-            setError(appContext.getString(R.string.userData_error_birthdate_required))
+        val errorMessage = UserDataUtilsLogic.isBirthdateInvalid(birthdate)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
@@ -155,30 +158,33 @@ class ProfileViewModel @Inject constructor(
     }
     private fun updateUserHeightDraft(height: String) {
         val heightValue = height.toDoubleOrNull()
-        if (heightValue == null || heightValue <= 0.0) {
-            setError(appContext.getString(R.string.userData_error_height_required))
+        val errorMessage = UserDataUtilsLogic.isHeightInvalid(heightValue)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
-        _dataDraft.value = _dataDraft.value.copy(height = heightValue)
+        _dataDraft.value = _dataDraft.value.copy(height = heightValue!!)
     }
     private fun updateUserWeightDraft(weight: String) {
         val weightValue = weight.toDoubleOrNull()
-        if (weightValue == null || weightValue <= 0.0) {
-            setError(appContext.getString(R.string.userData_error_weight_required))
+        val errorMessage = UserDataUtilsLogic.isWeightInvalid(weightValue)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
-        _dataDraft.value = _dataDraft.value.copy(weight = weightValue)
+        _dataDraft.value = _dataDraft.value.copy(weight = weightValue!!)
     }
     private fun updateUserTargetWeightDraft(targetWeight: String) {
         val targetWeightValue = targetWeight.toDoubleOrNull()
-        if (targetWeightValue == null || targetWeightValue <= 0.0) {
-            setError(appContext.getString(R.string.userData_error_target_weight_required))
+        val errorMessage = UserDataUtilsLogic.isTargetWeightInvalid(targetWeightValue)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
-        _dataDraft.value = _dataDraft.value.copy(targetWeight = targetWeightValue)
+        _dataDraft.value = _dataDraft.value.copy(targetWeight = targetWeightValue!!)
     }
     private fun updateUserActivityLevelDraft(activityLevel: ActivityLevel) {
         _dataDraft.value = _dataDraft.value.copy(activityLevel = activityLevel)

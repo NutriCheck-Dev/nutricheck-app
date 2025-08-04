@@ -166,8 +166,6 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
 
         composable(AddScreens.HistoryPage.route) { DiaryNavGraph(mainNavController) }
 
-        composable(AddScreens.AddAiMeal.route) {  }
-
         composable (
             route = AddScreens.FoodOverview.route,
             arguments = listOf(
