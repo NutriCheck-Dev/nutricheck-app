@@ -99,22 +99,20 @@ fun CalorieBarChart(
     val labelMap = when (selectedRange) {
         CalorieRange.LAST_7_DAYS -> data.indices.associateWith { i ->
             val day = today.minusDays((data.size - 1 - i).toLong())
-            // z.B. "Mo", "Di", ...
             day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale).take(2)
         }
 
         CalorieRange.LAST_30_DAYS -> mapOf(
-            (data.size * 1 / 4) to "1W",
-            (data.size * 2 / 4) to "2W",
-            (data.size * 3 / 4) to "3W",
-            (data.size - 1) to "1M"
-        )
-
-        CalorieRange.LAST_60_DAYS -> mapOf(
+            0 to "1M",
             (data.size * 1 / 4) to "3W",
+            (data.size * 2 / 4) to "2W",
+            (data.size * 3 / 4) to "1W"
+        )
+        CalorieRange.LAST_60_DAYS -> mapOf(
+            0 to "3M",
+            (data.size * 1 / 4) to "9W",
             (data.size * 2 / 4) to "6W",
-            (data.size * 3 / 4) to "9W",
-            (data.size - 1) to "3M"
+            (data.size * 3 / 4) to "3W"
         )
 
     }

@@ -42,7 +42,7 @@ fun HomePage(
 
     LaunchedEffect(selectedCalorieRange, selectedWeightRange) {
         calorieHistoryViewModel.displayCalorieHistory(calorieInterval)
-        weightHistoryViewModel.displayWeightHistory(selectedWeightRange.id)
+        weightHistoryViewModel.displayWeightHistory(selectedWeightRange)
     }
 
     val calorieHistoryState by calorieHistoryViewModel.calorieHistoryState.collectAsState()
