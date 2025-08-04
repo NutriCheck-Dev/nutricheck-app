@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,10 @@ fun AddWeightDialog(
     var selectedDate by remember { mutableStateOf(Date()) }
     var showDatePicker by remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+
+    LaunchedEffect(Unit) {
+
+    }
 
 
     if (showDatePicker) {
@@ -116,6 +121,7 @@ fun AddWeightDialog(
                 }
             }
         },
+
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
                 Text(stringResource(id = R.string.cancel))
@@ -125,7 +131,6 @@ fun AddWeightDialog(
             TextButton(
                 onClick = {
                     onEvent(ProfileEvent.SaveNewWeight(weightInput, selectedDate))
-                    onDismissRequest()
                 }
             ) {
                 Text(stringResource(id = R.string.save))

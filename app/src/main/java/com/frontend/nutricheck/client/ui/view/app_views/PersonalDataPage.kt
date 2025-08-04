@@ -23,7 +23,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -117,8 +116,8 @@ fun PersonalDataPage(
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
                             selectedDate = Date(it)
+                            onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
                         }
-                        onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
                         showDatePicker = false
                     }
                 ) {

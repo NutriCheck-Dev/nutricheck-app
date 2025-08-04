@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
@@ -32,11 +33,12 @@ fun DiaryNavGraph(
                 tonalElevation = 4.dp,
                 shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
             ) {
+                val selectedTabTitle = stringResource(id = selectedTab.titleResId)
                 OverviewSwitcher(
-                    options = DiaryTab.entries.map { it.title },
-                    selectedOption = selectedTab.title,
+                    options = DiaryTab.entries.map { stringResource(it.titleResId) },
+                    selectedOption = selectedTabTitle,
                     onSelect = { option ->
-                        selectedTab = DiaryTab.entries.first { it.title == option }
+                        selectedTab = DiaryTab.entries.first { selectedTabTitle == option }
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
+import java.util.Calendar
+
 /**
  * Represents all possible events that can occur in the profile screen.
  */
@@ -32,6 +34,7 @@ sealed interface ProfileEvent {
     object NavigateToAddNewWeight : ProfileEvent
     object NavigateToProfileOverview : ProfileEvent
     object RestartApp : ProfileEvent
+    object NavigateBack : ProfileEvent
     // collected events, which lead to navigation
     object OnPersonalDataClick : ProfileEvent
     object OnAddNewWeightClick : ProfileEvent
@@ -126,7 +129,10 @@ class ProfileViewModel @Inject constructor(
     }
     init {
         viewModelScope.launch {
-            _data.value = userDataRepository.getUserData()
+            val storedUserData = userDataRepository.getUserData()
+            _data.value = storedUserData.copy(
+                age = UserDataUtilsLogic.calculateAge(storedUserData.birthdate),
+                )
             _dataDraft.value = _data.value
         }
     }
@@ -195,16 +201,20 @@ class ProfileViewModel @Inject constructor(
             setError(appContext.getString(R.string.userData_error_weight_required))
             return
         }
-        if (date > Date() || date < data.value.birthdate) {
-            setError(appContext.getString(R.string.userData_error_invalid_date))
+        val normalizedDate = date.atStartOfDay()
+        val normalizedBirthdate = dataDraft.value.birthdate.atStartOfDay()
 
+        if (normalizedDate > Date().atStartOfDay() || normalizedDate < normalizedBirthdate) {
+            setError(appContext.getString(R.string.userData_error_invalid_date))
             return
         }
-        setReady()
+
         viewModelScope.launch {
             userDataRepository.addWeight(Weight(value = weightValue.toDouble(), date = date))
             _weightData.value = userDataRepository.getWeightHistory()
         }
+        setReady()
+        emitEvent(ProfileEvent.NavigateBack)
     }
 
     private fun onChangeThemeClick(theme : ThemeSetting) {
@@ -240,7 +250,15 @@ class ProfileViewModel @Inject constructor(
         emitEvent(ProfileEvent.NavigateToProfileOverview)
     }
     private fun emitEvent(event: ProfileEvent) = viewModelScope.launch { _events.emit(event) }
-
+    private fun Date.atStartOfDay(): Date {
+        val calendar = Calendar.getInstance()
+        calendar.time = this
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.time
+    }
 
 
 

@@ -20,14 +20,12 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -37,9 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.text.style.TextAlign
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
@@ -57,6 +57,7 @@ fun ProfilePage(
     val userAgeText = stringResource(id = R.string.age_years, state.age)
     val scrollState = rememberScrollState()
     val darkmode = currentTheme.value == ThemeSetting.DARK
+    val colors = MaterialTheme.colorScheme
 
     val sixteenDp = 16.dp
     val eightDp = 8.dp
@@ -75,19 +76,26 @@ fun ProfilePage(
         ){
             Spacer(modifier = Modifier.height(thirtyTwoDp))
             Card(
-                modifier = Modifier.fillMaxWidth(),
+
+                modifier = Modifier
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colors.surfaceContainer,
+                    contentColor = colors.onSurface
+                )
             ) {
                 Row(
                     Modifier
                         .height(104.dp)
                         .fillMaxWidth()
-                        .padding(start = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.Start),
+                        .padding(start = 10.dp)
+                        .background(color = colors.surfaceContainer),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = greetingText,
+                        textAlign = TextAlign.Start,
                         style = TextStyle(
                             fontSize = 32.sp,
                             fontWeight = FontWeight(700),
@@ -102,6 +110,10 @@ fun ProfilePage(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(sixteenDp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colors.surfaceContainer,
+                    contentColor = colors.onSurface
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -139,7 +151,11 @@ fun ProfilePage(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colors.surfaceContainer,
+                    contentColor = colors.onSurface
+                )
             ) {
                 Column {
                     MenuItem(
@@ -150,9 +166,8 @@ fun ProfilePage(
                         onClick = {
                             onEvent(ProfileEvent.OnPersonalDataClick)
                         })
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 2.dp)
                     MenuItem(
                         icon = Icons.Default.BarChart,
@@ -162,9 +177,8 @@ fun ProfilePage(
                         onClick = {
                             onEvent(ProfileEvent.DisplayWeightHistory)
                         })
-                    HorizontalDivider(color = Color.Gray,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 2.dp
                     )
                     MenuItemWithSwitch(
@@ -201,7 +215,6 @@ fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onCli
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary,
         )
         Spacer (modifier = Modifier.width(24.dp))
     }
