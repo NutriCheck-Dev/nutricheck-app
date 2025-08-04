@@ -44,6 +44,13 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 
+/**
+ * ProfilePage is a composable function that displays the user's personal information, from there
+ * the user can navigate to personal data, weight history and change the theme of the app.
+ *
+ * @param state The current [UserData] state, some of the information displayed on the page.
+ * @param onEvent A callback function to send [ProfileEvent]s to the ViewModel.
+ */
 @Composable
 fun ProfilePage(
     state : UserData,

@@ -234,6 +234,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
     private fun persistDataWithCalculation () {
+        if (uiState.value is UiState.Error) return
         val userDataWithCalories = UserDataUtilsLogic.calculateNutrition(userData = UserData(
             username = _dataDraft.value.username,
             birthdate = _dataDraft.value.birthdate,

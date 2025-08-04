@@ -11,6 +11,17 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
+/**
+ * A top bar for views, typically displaying a title and optional navigation and action icons.
+ *
+ * @param modifier Modifier to be applied to the top bar.
+ * @param tonalElevation The elevation of the top bar, affecting its shadow.
+ * @param shape The shape of the top bar's corners.
+ * @param navigationIcon Composable for the navigation icon, typically a back button or menu.
+ * @param title Composable for the title of the top bar.
+ * @param actions Composable for additional action icons, such as search or settings.
+ */
 @Preview
 @Composable
 fun ViewsTopBar(

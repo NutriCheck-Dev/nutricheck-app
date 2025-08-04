@@ -23,6 +23,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -51,7 +52,14 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
+/**
+ * A composable screen that allows the user to view and edit their personal data.
+ *
+ * @param state The current [UserData] state to be displayed in the form fields.
+ * @param errorState The current UI state, used to display potential error messages.
+ * @param onEvent A callback function to send [ProfileEvent]s to the ViewModel.
+ * @param onBack A callback function to handle the back navigation action.
+ */
 @Composable
 fun PersonalDataPage(
     state: UserData,
@@ -63,74 +71,74 @@ fun PersonalDataPage(
     var selectedDate by remember { mutableStateOf(state.birthdate) }
     var showDatePicker by remember { mutableStateOf(false) }
 
-        ViewsTopBar(
-            navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
-            title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
-        )
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(50.dp))
-        }
-        personalDataFormItems(
-            userData = state,
-            onEvent = onEvent,
-            onBirthdateClick = {
-                showDatePicker = true
-            }
-        )
-        item {
-            if (errorState is BaseViewModel.UiState.Error) {
-                Text(
-                    text = errorState.message,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = {
-                    onEvent(ProfileEvent.OnSaveClick)
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(id = R.string.save))
-            }
-        }
-    }
-    if (showDatePicker) {
-        val datePickerState =
-            rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let {
-                            selectedDate = Date(it)
-                            onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
-                        }
-                        showDatePicker = false
-                    }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            ViewsTopBar(
+                navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
+                title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
+            )}
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            personalDataFormItems(
+                userData = state,
+                onEvent = onEvent,
+                onBirthdateClick = {
+                    showDatePicker = true
+                }
+            )
+            item {
+                if (errorState is BaseViewModel.UiState.Error) {
+                    Text(
+                        text = errorState.message,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { onEvent(ProfileEvent.OnSaveClick) },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(id = R.string.save))
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text(stringResource(id = R.string.cancel))
-                }
             }
-        ) {
-            DatePicker(state = datePickerState)
+        }
+        if (showDatePicker) {
+            val datePickerState =
+                rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                selectedDate = Date(it)
+                                onEvent(ProfileEvent.UpdateUserBirthdateDraft(selectedDate))
+                            }
+                            showDatePicker = false
+                        }
+                    ) {
+                        Text(stringResource(id = R.string.save))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) {
+                        Text(stringResource(id = R.string.cancel))
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
         }
     }
 }
@@ -142,10 +150,13 @@ private fun LazyListScope.personalDataFormItems(
     onBirthdateClick: () -> Unit
 ) {
     item {
+        var username by remember { mutableStateOf(userData.username) }
         EditableDataRow(
             label = stringResource(id = R.string.userData_label_name),
-            value = userData.username,
-            onValueChange = { onEvent(ProfileEvent.UpdateUserNameDraft(it)) },
+            value = username,
+            onValueChange = {
+                username = it
+                onEvent(ProfileEvent.UpdateUserNameDraft(it)) },
             keyboardType = KeyboardType.Text
         )
     }
@@ -177,18 +188,24 @@ private fun LazyListScope.personalDataFormItems(
         )
     }
     item {
+        var height by remember { mutableStateOf(userData.height.toString()) }
         EditableDataRow(
             label = stringResource(id = R.string.userData_label_height),
-            value = userData.height.toString(),
-            onValueChange = { onEvent(ProfileEvent.UpdateUserHeightDraft(it)) },
+            value = height,
+            onValueChange = {
+                height = it
+                onEvent(ProfileEvent.UpdateUserHeightDraft(it)) },
             keyboardType = KeyboardType.Number
         )
     }
     item {
+    var weight by remember { mutableStateOf(userData.weight.toString()) }
         EditableDataRow(
             label = stringResource(id = R.string.userData_label_weight),
-            value = userData.weight.toString(),
-            onValueChange = { onEvent(ProfileEvent.UpdateUserWeightDraft(it)) },
+            value = weight,
+            onValueChange = {
+                weight = it
+                onEvent(ProfileEvent.UpdateUserWeightDraft(it)) },
             keyboardType = KeyboardType.Number
         )
     }
@@ -207,10 +224,13 @@ private fun LazyListScope.personalDataFormItems(
         )
     }
     item {
+        var targetWeight by remember { mutableStateOf(userData.targetWeight.toString()) }
         EditableDataRow(
             label = stringResource(id = R.string.userData_label_target_weight),
-            value = userData.targetWeight.toString(),
-            onValueChange = { onEvent(ProfileEvent.UpdateUserTargetWeightDraft(it)) },
+            value = targetWeight,
+            onValueChange = {
+                targetWeight = it
+                onEvent(ProfileEvent.UpdateUserTargetWeightDraft(it)) },
             keyboardType = KeyboardType.Number
         )
     }
@@ -276,7 +296,6 @@ private fun EditableDataRow(
                     if (readOnly && textFieldModifier != Modifier)
                         textFieldModifier
                     else Modifier)
-
         )
     }
 }
