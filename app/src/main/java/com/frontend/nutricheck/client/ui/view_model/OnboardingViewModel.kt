@@ -89,8 +89,9 @@ class OnboardingViewModel @Inject constructor(
         }
     }
     private fun enterName(name: String) {
-        if (name.isBlank()) {
-            setError(appContext.getString(R.string.userData_error_name_required))
+        val errorMessage = UserDataUtilsLogic.isNameInvalid(name)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
@@ -99,8 +100,9 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun enterBirthdate(birthdate: Date?) {
-        if (birthdate == null || UserDataUtilsLogic.isBirthdateInvalid(birthdate)) {
-            setError(appContext.getString(R.string.userData_error_birthdate_required))
+        val errorMessage = UserDataUtilsLogic.isBirthdateInvalid(birthdate)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
@@ -119,24 +121,26 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun enterHeight(height: String) {
-        val heightAsDouble : Double? = height.toDoubleOrNull()
-        if (heightAsDouble == null || heightAsDouble <= 0) {
-            setError(appContext.getString(R.string.userData_error_height_required))
+        val heightValue = height.toDoubleOrNull()
+        val errorMessage = UserDataUtilsLogic.isHeightInvalid(heightValue)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
-        _data.update { it.copy(height = heightAsDouble) }
+        _data.update { it.copy(height = heightValue!!) }
         emitEvent(OnboardingEvent.NavigateToWeight)
     }
 
     private fun enterWeight(weight: String) {
-        val weightAsDouble: Double? = weight.toDoubleOrNull()
-        if (weightAsDouble == null || weightAsDouble <= 0) {
-            setError(appContext.getString(R.string.userData_error_weight_required))
+        val weightValue = weight.toDoubleOrNull()
+        val errorMessage = UserDataUtilsLogic.isWeightInvalid(weightValue)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
-        _data.update { it.copy(weight = weightAsDouble) }
+        _data.update { it.copy(weight = weightValue!!) }
         emitEvent(OnboardingEvent.NavigateToSportFrequency)
     }
 
@@ -161,13 +165,14 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun enterTargetWeight(targetWeight: String) {
-        val targetWeightAsDouble: Double? = targetWeight.toDoubleOrNull()
-        if (targetWeightAsDouble == null || targetWeightAsDouble <= 0.0) {
-            setError(appContext.getString(R.string.userData_error_target_weight_required))
+        val targetWeightValue = targetWeight.toDoubleOrNull()
+        val errorMessage = UserDataUtilsLogic.isTargetWeightInvalid(targetWeightValue)
+        if (errorMessage != null) {
+            setError(appContext.getString(errorMessage))
             return
         }
         setReady()
-        _data.update { it.copy(targetWeight = targetWeightAsDouble) }
+        _data.update { it.copy(targetWeight = targetWeightValue!!) }
         completeOnboarding()
     }
     private fun completeOnboarding() {
