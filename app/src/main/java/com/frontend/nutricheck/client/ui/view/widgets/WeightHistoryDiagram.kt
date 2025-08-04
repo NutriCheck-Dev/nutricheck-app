@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
@@ -50,8 +49,6 @@ fun WeightHistoryDiagram(
     }
     val currentWeight = fullData.lastOrNull()?.toString() ?: "–"
     val colors = MaterialTheme.colorScheme
-    val extendedColors = LocalExtendedColors.current
-    val progressBarColor = extendedColors.chartBlue.color
     Column(
         modifier = modifier
             .height(184.dp)
@@ -165,11 +162,11 @@ fun WeightLineChart(
                 )
             }
 
-            // Datenlinie
+
             val points = data.mapIndexed { index, value ->
                 val x = index * widthStep
                 val y = size.height - (value - minValue) * heightRatio
-                Offset(x.toFloat(), y.toFloat())
+                Offset(x, y.toFloat())
             }
 
             for (i in 0 until points.size - 1) {
@@ -181,9 +178,10 @@ fun WeightLineChart(
                 )
             }
 
-            // X-Achse Labels
+            val maxIndex = data.lastIndex
             labelMap.forEach { (index, label) ->
-                val x = points.getOrNull(index)?.x ?: return@forEach
+                val flippedIndex = maxIndex - index
+                val x = points.getOrNull(flippedIndex)?.x ?: return@forEach
                 drawContext.canvas.nativeCanvas.drawText(
                     label,
                     x,
