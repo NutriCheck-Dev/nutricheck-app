@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -34,18 +32,10 @@ sealed interface AddMealEvent {
 
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
-    private val historyRepository: HistoryRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
-    private val historyDateMillis: Long? = savedStateHandle.get<Long>("historyDate")
-        .takeIf { it != null && it > 0L }
 
     private val _addMealState = MutableStateFlow(AddMealState())
-    val createRecipeState = _addMealState.asStateFlow()
-
-    init {
-
-    }
 
     private val _events = MutableSharedFlow<AddMealEvent>()
     val events: SharedFlow<AddMealEvent> = _events.asSharedFlow()

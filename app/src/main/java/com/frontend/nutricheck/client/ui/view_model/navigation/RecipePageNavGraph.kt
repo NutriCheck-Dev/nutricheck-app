@@ -21,7 +21,6 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorView
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 
 sealed class RecipePageScreens(val route: String) {
     object RecipePage : RecipePageScreens("recipe_page")
@@ -32,10 +31,7 @@ sealed class RecipePageScreens(val route: String) {
         fun createRoute(foodId: String) = "food_product_overview/$foodId"
     }
     object CreateRecipePage : RecipePageScreens("create_recipe_page_route")
-    object ReportRecipeDialog : RecipePageScreens("report_recipe_dialog_route")
-    object ActionConfirmationDialog : RecipePageScreens("action_confirmation_dialog_route")
     object AddIngredientPage : RecipePageScreens("search/{recipeId}") {
-        fun createRoute(recipeId: String) = "search/$recipeId"
     }
     object AddedIngredientSummaryPage : RecipePageScreens("summary/{recipeId}") {
         fun createRoute(recipeId: String) = "summary/$recipeId"
@@ -94,9 +90,6 @@ fun RecipePageNavGraph(
             RecipeOverview(
                 recipeOverviewViewModel = recipeOverviewViewModel,
                 editRecipeViewModel = editRecipeViewModel,
-                /**onItemClick = { foodComponent ->
-                    navigateToFoodComponent(foodComponent)
-                },**/
             )
         }
         composable(
@@ -109,10 +102,8 @@ fun RecipePageNavGraph(
                     RecipePageScreens.RecipeOverview.createRoute(recipeId)
                 )
             }
-            val editRecipeViewModel: RecipeEditorViewModel = hiltViewModel(graphEntry)
 
             CreateMealPage(
-                //editRecipeViewModel = editRecipeViewModel,
                 searchViewModel = hiltViewModel(),
                 onItemClick = { foodComponent ->
                     navigateToFoodComponent(foodComponent)
@@ -126,7 +117,6 @@ fun RecipePageNavGraph(
         }
         composable(RecipePageScreens.CreateRecipePage.route) {
             val createRecipeViewModel: RecipeEditorViewModel = hiltViewModel()
-            val searchViewModel: FoodSearchViewModel = hiltViewModel()
             CreateRecipePage(
                 createRecipeViewModel = createRecipeViewModel,
                 onItemClick = { foodComponent ->

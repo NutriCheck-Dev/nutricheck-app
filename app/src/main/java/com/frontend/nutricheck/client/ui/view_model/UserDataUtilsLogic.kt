@@ -30,7 +30,7 @@ fun calculateAge(birthdate:  Date) : Int {
     return period.years
 }
 fun calculateNutrition(userData : UserData) : UserData {
-    var bmr = if (userData.gender == Gender.MALE) {
+    val bmr = if (userData.gender == Gender.MALE) {
         10 * userData.weight + (6.25 * userData.height) - (5 * userData.age) + 5
     } else {
         10 * userData.weight + (6.25 * userData.height) - (5 * userData.age) - 161

@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
-import androidx.compose.material3.SelectableDates
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -37,8 +36,6 @@ sealed class AddScreens(val route: String) {
     object RecipePage : AddScreens("recipe_page")
     object FoodOverview : AddScreens("food_product_overview/{foodProductId}") {
         fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
-        fun fromIngredient(recipeId: String, foodProductId: String) =
-            "food_product_overview/$recipeId/$foodProductId"
         fun fromAiMeal(mealId: String, foodProductId: String) = "food_product_overview/$foodProductId/$mealId"
     }
     object RecipeOverview : AddScreens("recipe_overview/{recipeId}") {
@@ -91,10 +88,6 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
             route = AddScreens.FoodOverview.route,
             arguments = listOf(
                 navArgument("foodProductId") { type = NavType.StringType },
-                /**navArgument("mealId") {
-                    type = NavType.StringType
-                    nullable = true
-                }**/
             )
         ) { backStack ->
             val foodProductId = backStack.arguments!!.getString("foodProductId")!!
@@ -165,8 +158,6 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
         composable(AddScreens.RecipePage.route) { RecipePageNavGraph(mainNavController)}
 
         composable(AddScreens.HistoryPage.route) { DiaryNavGraph(mainNavController) }
-
-        composable(AddScreens.AddAiMeal.route) {  }
 
         composable (
             route = AddScreens.FoodOverview.route,

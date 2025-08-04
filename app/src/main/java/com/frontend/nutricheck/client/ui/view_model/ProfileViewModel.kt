@@ -210,7 +210,7 @@ class ProfileViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            userDataRepository.addWeight(Weight(value = weightValue.toDouble(), date = date))
+            userDataRepository.addWeight(Weight(value = weightValue, date = date))
             _weightData.value = userDataRepository.getWeightHistory()
         }
         setReady()
