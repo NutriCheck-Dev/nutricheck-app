@@ -43,9 +43,9 @@ fun RecipeNutrientChartsWidget(
 ) {
     val nutrients = listOf(
         NutrientEntry(stringResource(R.string.label_calories), "kcal", recipe.calories, totalCalories),
-        NutrientEntry(stringResource(R.string.label_protein), "g", recipe.protein, totalProtein),
-        NutrientEntry(stringResource(R.string.label_carbs), "g", recipe.carbohydrates, totalCarbs),
-        NutrientEntry(stringResource(R.string.label_fat), "g", recipe.fat, totalFat)
+        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", recipe.protein, totalProtein),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", recipe.carbohydrates, totalCarbs),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", recipe.fat, totalFat)
     )
     
     val pages: List<List<NutrientEntry>> = nutrients.chunked(2)
@@ -119,9 +119,9 @@ fun FoodProductNutrientChartsWidget(
 ) {
     val nutrients = listOf(
         NutrientEntry(stringResource(R.string.label_calories), "kcal", foodProduct.calories, totalCalories),
-        NutrientEntry(stringResource(R.string.label_protein), "g", foodProduct.protein, totalProtein),
-        NutrientEntry(stringResource(R.string.label_carbs), "g", foodProduct.carbohydrates, totalCarbs),
-        NutrientEntry(stringResource(R.string.label_fat), "g", foodProduct.fat, totalFat)
+        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", foodProduct.protein, totalProtein),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", foodProduct.carbohydrates, totalCarbs),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", foodProduct.fat, totalFat)
     )
 
     Column(

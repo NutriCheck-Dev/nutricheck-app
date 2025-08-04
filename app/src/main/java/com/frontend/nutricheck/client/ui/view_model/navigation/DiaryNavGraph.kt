@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,12 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
 
-enum class DiaryTab(val title: String) {
-    HISTORY("History"),
-    RECIPES("Recipes")
+enum class DiaryTab(@StringRes val titleResId: Int) {
+    HISTORY(R.string.label_history),
+    RECIPES(R.string.label_recipes)
 }
+
 @Composable
 fun DiaryNavGraph(
     mainNavController: NavHostController
