@@ -53,7 +53,7 @@ fun SearchPage(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Text(
-            text = "Zutaten",
+            text = stringResource(R.string.label_ingredients),
             style = styles.titleMedium
         )
 
