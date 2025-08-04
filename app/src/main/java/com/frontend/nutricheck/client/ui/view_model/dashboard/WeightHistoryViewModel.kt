@@ -24,7 +24,7 @@ class WeightHistoryViewModel @Inject constructor(
     val weightHistoryState = _weightHistoryState.asStateFlow()
 
 
-    fun displayWeightHistory() {
+    fun displayWeightHistory(range: WeightRange) {
         viewModelScope.launch {
             val weightEntries = userDataRepository.getWeightHistory()
             val weightGoal = userDataRepository.getTargetWeight()
