@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.compose)
     implementation(libs.vico.core)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.exifinterface)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
@@ -97,6 +98,7 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
+    implementation (libs.androidx.exifinterface)
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.core.testing)

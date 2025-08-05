@@ -5,10 +5,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.exifinterface.media.ExifInterface
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -88,9 +90,6 @@ class AddAiMealViewModel @Inject constructor(
         }
     }
 
-    companion object {
-        private const val AI_NO_FOOD_DETECTED = "No food detected in image (AI)"
-    }
     private val imageCaptureUseCase = ImageCapture.Builder().build()
 
     /**
@@ -168,43 +167,11 @@ class AddAiMealViewModel @Inject constructor(
         )
     }
 
-    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
-        return try {
-            // load JPEG image into a Bitmap
-            val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
-            } ?: return null
-
-            // create a new file for PNG
-            val name = "${System.currentTimeMillis()}.png"
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
-            }
-
-            // save the PNG file
-            val pngUri =
-                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-            pngUri?.let {
-                contentResolver.openOutputStream(it)?.use { outputStream ->
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                }
-                bitmap.recycle() // free memory
-                return it
-            }
-            null
-        } catch (e: Exception) {
-            Log.e("ConvertJpegToPng", "Error converting JPEG to PNG: $uri", e)
-            null
-        }
-    }
-
     private fun submitPhoto() {
         viewModelScope.launch {
             setLoading()
             val multipartBody =
-                uriToMultipartBody(_photoUri.value, appContext.contentResolver, appContext)
+                uriToMultipartBody(_photoUri.value, appContext.contentResolver)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
                 _photoUri.value = null
@@ -234,15 +201,18 @@ class AddAiMealViewModel @Inject constructor(
             }
         }
     }
-
-    private val Meal.isFoodDetected: Boolean
-        get() = this.mealFoodItems.firstOrNull()?.foodProduct?.name != AI_NO_FOOD_DETECTED
-
     private fun retakePhoto() {
         _photoUri.value = null
     }
+
+    private val Meal.isFoodDetected: Boolean
+        get() = (this.mealFoodItems.firstOrNull()?.foodProduct?.calories ?: 0.0) > 0.0 &&
+                (this.mealFoodItems.firstOrNull()?.foodProduct?.carbohydrates ?: 0.0) > 0.0 &&
+                (this.mealFoodItems.firstOrNull()?.foodProduct?.protein ?: 0.0) > 0.0 &&
+                (this.mealFoodItems.firstOrNull()?.foodProduct?.fat ?: 0.0) > 0.0
+
     // parse the image URI to a MultipartBody.Part for sending to the backend
-    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver, context: Context): MultipartBody.Part? {
+    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver): MultipartBody.Part? {
         if (uri == null) return null
 
         val partName = "file"
@@ -253,7 +223,7 @@ class AddAiMealViewModel @Inject constructor(
             val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
             val pngUri = if (mimeType != "image/png") {
                 // convert JPEG to PNG
-                convertJpegToPng(uri, contentResolver, context)
+                convertJpegToPng(uri, contentResolver)
             } else {
                 uri
             } ?: return null
@@ -285,32 +255,55 @@ class AddAiMealViewModel @Inject constructor(
         }
     }
 
-    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver, context: android.content.Context): Uri? {
+    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
         return try {
             // JPEG-Bild in Bitmap laden
             val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
             } ?: return null
+            // Read EXIF orientation
+            val orientation = contentResolver.openInputStream(uri)?.use { inputStream ->
+                val exif = ExifInterface(inputStream)
+                exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
+            } ?: ExifInterface.ORIENTATION_NORMAL
 
+            // Rotate the bitmap if necessary
+            val rotatedBitmap = when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
+                else -> bitmap
+            }
+            // Create a new file for PNG
             val name = "${System.currentTimeMillis()}.png"
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, name)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
             }
+            // Save the PNG file
             val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             pngUri?.let {
                 contentResolver.openOutputStream(it)?.use { outputStream ->
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                    rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 }
-                bitmap.recycle() // free memory
+                rotatedBitmap.recycle() // Free memory
+                if (rotatedBitmap != bitmap) bitmap.recycle() // Recycle original bitmap if rotated
                 return it
             }
+            bitmap.recycle() // Recycle original bitmap if no PNG was created
             null
         } catch (e: Exception) {
             Log.e("ConvertJpegToPng", "Error converting JPEG to PNG: $uri", e)
             null
         }
+    }
+    private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix().apply { postRotate(degrees) }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
     private fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String? {
         return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
