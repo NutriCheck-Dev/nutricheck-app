@@ -4,16 +4,19 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,18 +43,17 @@ fun FoodComponentList(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         if(editing) {
-            IconButton(
+            OutlinedButton(
                 onClick = { onAddButtonClick() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 64.dp)
-                    .border(
-                        BorderStroke(2.dp, colors.onSurface),
-                        shape = RoundedCornerShape(16.dp)
-                    ),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = colors.onSurface,
-                    containerColor = Color.Transparent
+                    .heightIn(min = 64.dp),
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(1.dp, colors.outline),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = colors.onSurfaceVariant,
+                    containerColor = colors.surfaceVariant
                 )
             ) {
                 Icon(
@@ -86,18 +88,17 @@ fun IngredientList(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         if(editing) {
-            IconButton(
+            OutlinedButton(
                 onClick = { onAddButtonClick() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 64.dp)
-                    .border(
-                        BorderStroke(2.dp, colors.onSurface),
-                        shape = RoundedCornerShape(16.dp)
-                    ),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = colors.onSurface,
-                    containerColor = Color.Transparent
+                    .heightIn(min = 64.dp),
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(1.dp, colors.outline),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = colors.onSurfaceVariant,
+                    containerColor = colors.surfaceVariant
                 )
             ) {
                 Icon(

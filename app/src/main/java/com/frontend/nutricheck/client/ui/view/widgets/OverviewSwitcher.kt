@@ -79,8 +79,8 @@ fun OverviewSwitcher(
             Tab(
                 selected = index == selectedIndex,
                 onClick = { onSelect(title) },
-                selectedContentColor = colors.onPrimaryContainer,
-                unselectedContentColor = colors.onSurfaceVariant,
+                selectedContentColor = colors.onSurfaceVariant,
+                unselectedContentColor = colors.onPrimaryContainer,
                 text = {
                     Text(
                         title,

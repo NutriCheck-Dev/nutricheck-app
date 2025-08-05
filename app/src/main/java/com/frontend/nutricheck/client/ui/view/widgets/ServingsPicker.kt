@@ -121,16 +121,3 @@ fun ServingsPicker(
         }
 
 }
-
-@Preview
-@Composable
-fun AndroidNumberPickerPreview() {
-    var value by remember { mutableIntStateOf(5) }
-    AppTheme {
-        ServingsPicker(
-            value = value,
-            range = 0..10,
-            onValueChange = { newValue -> value = newValue }
-        )
-    }
-}

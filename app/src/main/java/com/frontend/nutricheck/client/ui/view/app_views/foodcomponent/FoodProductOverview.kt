@@ -103,8 +103,10 @@ fun FoodProductOverview(
                 ) {
 
                     FoodProductNutrientChartsWidget(
-                        foodProduct = foodProductState.foodProduct,
-                        modifier = Modifier.wrapContentHeight()
+                        actualCalories = foodProductState.parameters.calories,
+                        actualCarbs = foodProductState.parameters.carbohydrates,
+                        actualProtein = foodProductState.parameters.protein,
+                        actualFat = foodProductState.parameters.fat
                     )
 
                     Row(
@@ -121,13 +123,7 @@ fun FoodProductOverview(
                         Spacer(modifier = Modifier.weight(1f))
                         ServingSizeDropdown(
                             currentServingSize = foodProductState.parameters.servingSize,
-                            expanded = foodProductState.parameters.servingSizeDropDownExpanded,
-                            onExpandedChange = {
-                                foodProductOverviewViewModel.onEvent(
-                                    FoodProductOverviewEvent.ServingSizeDropDownClick
-                                )
-                            },
-                            onSelect = {
+                            onValueChange = {
                                 foodProductOverviewViewModel.onEvent(
                                     FoodProductOverviewEvent.ServingSizeChanged(it)
                                 )

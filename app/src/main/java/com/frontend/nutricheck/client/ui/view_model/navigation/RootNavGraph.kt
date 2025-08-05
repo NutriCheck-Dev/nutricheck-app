@@ -12,6 +12,8 @@ import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProduc
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
 import java.util.Date
 
 sealed class Screen(val route: String) {
@@ -96,8 +98,12 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
             )
         ) {
             val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
+            val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel()
+            val searchViewModel: FoodSearchViewModel = hiltViewModel()
             RecipeOverview(
                 recipeOverviewViewModel = recipeOverviewViewModel,
+                reportRecipeViewModel = reportRecipeViewModel,
+                searchViewModel = searchViewModel,
                 onBack = { mainNavController.navigate(Screen.DiaryPage.route) }
             )
         }

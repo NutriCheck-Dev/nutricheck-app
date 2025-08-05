@@ -36,7 +36,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEven
 import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
 
 @Composable
-fun CreateRecipePage(
+fun RecipeEditorPage(
     modifier: Modifier = Modifier,
     createRecipeViewModel: RecipeEditorViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
@@ -62,7 +62,7 @@ fun CreateRecipePage(
                     value = currentTitle,
                     placeholder = {
                         Text(
-                            text = "Rezeptname",
+                            text = if (draft.original != null) draft.original!!.name else "Rezeptname",
                             style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                             color = colors.onSurfaceVariant
                         )

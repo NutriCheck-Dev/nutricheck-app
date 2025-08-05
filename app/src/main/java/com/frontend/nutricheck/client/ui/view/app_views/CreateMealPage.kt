@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
@@ -48,9 +49,11 @@ fun CreateMealPage(
                 }
             )
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
         SearchPage(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier
+                .padding(innerPadding)
+                .padding(16.dp),
             onItemClick = { onItemClick(it) },
             expand = searchState.parameters.expanded,
             addedComponents = searchState.parameters.addedComponents.map { it.second },

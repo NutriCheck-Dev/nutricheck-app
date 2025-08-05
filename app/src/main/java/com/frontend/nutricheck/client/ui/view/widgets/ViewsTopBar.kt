@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +28,6 @@ fun ViewsTopBar(
     val navIconContentColor = colors.onSurfaceVariant
 
     Surface(
-        modifier = modifier,
         tonalElevation = tonalElevation,
         shape = shape
     ) {
@@ -39,7 +39,8 @@ fun ViewsTopBar(
                 containerColor = containerColor,
                 titleContentColor = titleContentColor,
                 navigationIconContentColor = navIconContentColor
-            )
+            ),
+            expandedHeight = TopAppBarDefaults.MediumAppBarCollapsedHeight
         )
     }
 }
