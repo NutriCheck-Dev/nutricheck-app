@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
@@ -29,8 +30,11 @@ fun DiaryNavGraph(
     Scaffold(
         topBar = {
             Surface(
-                tonalElevation = 4.dp,
-                shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
+                tonalElevation = 0.dp,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp, vertical = 8.dp)
+                    .clip(RoundedCornerShape(16.dp))
             ) {
                 OverviewSwitcher(
                     options = DiaryTab.entries.map { it.title },
@@ -38,7 +42,6 @@ fun DiaryNavGraph(
                     onSelect = { option ->
                         selectedTab = DiaryTab.entries.first { it.title == option }
                     },
-                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

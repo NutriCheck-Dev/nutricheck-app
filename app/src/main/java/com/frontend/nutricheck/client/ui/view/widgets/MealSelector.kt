@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +21,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,10 @@ fun MealSelector(
     val styles = MaterialTheme.typography
 
     CenterAlignedTopAppBar(
+        modifier = Modifier
+            .padding(horizontal = 4.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        windowInsets = WindowInsets(top = 0.dp),
         title = {
             ExposedDropdownMenuBox(
                 expanded = expanded,

@@ -58,7 +58,8 @@ fun CreateMealPage(
             expand = searchState.parameters.expanded,
             addedComponents = searchState.parameters.addedComponents.map { it.second },
             query = searchState.parameters.query,
-            searchResults = searchState.parameters.results,
+            searchResults = if (searchState.parameters.selectedTab == 0) searchState.parameters.generalResults
+                            else searchState.parameters.localRecipesResults,
             onSearchClick = { searchViewModel.onEvent(SearchEvent.Search) },
             onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
             addFoodComponent = {

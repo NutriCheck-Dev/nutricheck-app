@@ -46,7 +46,8 @@ data class CommonSearchParameters(
     val language: String = "",
     val query: String = "",
     val selectedTab: Int = 0,
-    val results: List<FoodComponent> = emptyList(),
+    val generalResults: List<FoodComponent> = emptyList(),
+    val localRecipesResults: List<Recipe> = emptyList(),
     val addedComponents: List<Pair<Double, FoodComponent>> = emptyList(),
     val expanded: Boolean = false,
     val bottomSheetExpanded: Boolean = false
@@ -61,13 +62,6 @@ sealed class SearchUiState {
     ) : SearchUiState() {
         override fun updateParams(params: CommonSearchParameters): SearchUiState =
             copy(parameters = params)
-
-        fun submitComponentsToRecipe() : List<Ingredient> {
-            val ingredients: List<Ingredient> = parameters.addedComponents.map {
-                        Ingredient(recipeId, it.second as FoodProduct, quantity = it.first)
-                    }
-            return ingredients
-        }
     }
     data class AddComponentsToMealState(
         val mealId: String,
@@ -144,7 +138,6 @@ class FoodSearchViewModel @Inject constructor(
                         }
                     }
                 }
-            val date = savedStateHandle.get<String>("date")?.toLongOrNull()?.let { Date(it) }
             savedStateHandle
                 .getStateFlow<Pair<Double, FoodComponent>?>("newComponent", null)
                 .filterNotNull()
@@ -209,7 +202,7 @@ class FoodSearchViewModel @Inject constructor(
                                      return@launch
                                  } else {
                                      _searchState.update { state ->
-                                         state.updateParams(state.parameters.copy(results = recipes))
+                                         state.updateParams(state.parameters.copy(localRecipesResults = recipes))
                                      }
                                      setReady()
                                      return@launch
@@ -247,7 +240,7 @@ class FoodSearchViewModel @Inject constructor(
                                     _searchState.update { state ->
                                         state.updateParams(
                                             state.parameters.copy(
-                                                results = result.data
+                                                generalResults = result.data
                                             )
                                         )
                                     }
@@ -298,7 +291,10 @@ class FoodSearchViewModel @Inject constructor(
 
     private fun cancelSearch() =
         _searchState.update { state ->
-            val newParams = state.parameters.copy(query = "", results = emptyList())
+            val newParams = state.parameters.copy(
+                query = "",
+                generalResults = emptyList(),
+                localRecipesResults = emptyList())
             state.updateParams(newParams)
         }
 

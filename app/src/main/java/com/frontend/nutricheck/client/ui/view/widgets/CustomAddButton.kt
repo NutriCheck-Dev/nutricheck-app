@@ -19,7 +19,7 @@ fun CustomAddButton(onClick: () -> Unit = {}) {
             .background(
                 color = colors.onSurfaceVariant,
                 shape = CircleShape
-            )
+            ),
     ) {
         Icon(
             imageVector = Icons.Default.Add,
