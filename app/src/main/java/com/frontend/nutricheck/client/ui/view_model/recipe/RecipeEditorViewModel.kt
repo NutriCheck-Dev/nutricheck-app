@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.recipe.edit
+package com.frontend.nutricheck.client.ui.view_model.recipe
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope

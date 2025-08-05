@@ -17,11 +17,11 @@ import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
 
 sealed class RecipePageScreens(val route: String) {
     object RecipePage : RecipePageScreens("recipe_page")
@@ -32,8 +32,7 @@ sealed class RecipePageScreens(val route: String) {
         fun createRoute(foodId: String) = "food_product_overview/$foodId"
     }
     object CreateRecipePage : RecipePageScreens("create_recipe_page_route")
-    object AddIngredientPage : RecipePageScreens("search/{recipeId}") {
-    }
+    object AddIngredientPage : RecipePageScreens("search/{recipeId}")
     object AddedIngredientSummaryPage : RecipePageScreens("summary/{recipeId}") {
         fun createRoute(recipeId: String) = "summary/$recipeId"
     }

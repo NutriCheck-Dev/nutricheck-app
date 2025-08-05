@@ -11,9 +11,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
 import java.util.Date
 
 sealed class Screen(val route: String) {

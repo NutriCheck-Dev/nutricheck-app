@@ -36,13 +36,13 @@ import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeNutrientChartsWidget
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewMode
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewMode
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

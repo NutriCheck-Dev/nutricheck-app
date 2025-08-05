@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.MaterialTheme

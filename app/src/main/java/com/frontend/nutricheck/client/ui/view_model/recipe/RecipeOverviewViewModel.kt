@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.recipe.overview
+package com.frontend.nutricheck.client.ui.view_model.recipe
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,7 +57,7 @@ sealed interface RecipeOverviewEvent {
 class RecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     savedStateHandle: SavedStateHandle
-) : BaseRecipeOverviewViewModel() {
+): BaseViewModel() {
     private val mode: RecipeOverviewMode = savedStateHandle.run {
         val recipeId = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
         val mealId = savedStateHandle.get<String>("mealId")?.takeIf { it.isNotBlank() }

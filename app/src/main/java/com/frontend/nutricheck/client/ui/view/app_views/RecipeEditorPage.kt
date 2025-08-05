@@ -32,8 +32,8 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 
 @Composable
 fun RecipeEditorPage(

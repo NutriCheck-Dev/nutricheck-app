@@ -20,10 +20,10 @@ import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProduc
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.overview.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")

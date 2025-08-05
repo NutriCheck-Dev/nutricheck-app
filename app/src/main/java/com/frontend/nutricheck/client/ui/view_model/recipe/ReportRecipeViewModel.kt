@@ -1,9 +1,10 @@
-package com.frontend.nutricheck.client.ui.view_model.recipe.report
+package com.frontend.nutricheck.client.ui.view_model.recipe
 
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +31,7 @@ sealed interface ReportRecipeEvent {
 @HiltViewModel
 class ReportRecipeViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
-) : BaseReportRecipeViewModel() {
+) : BaseViewModel() {
     private val _reportRecipeState = MutableStateFlow(ReportRecipeState())
     val reportRecipeState = _reportRecipeState.asStateFlow()
     private val _events = MutableSharedFlow<ReportRecipeEvent>()
@@ -45,21 +46,21 @@ class ReportRecipeViewModel @Inject constructor(
         }
     }
 
-    override fun onInputTextChanged(text: String) =
+    private fun onInputTextChanged(text: String) =
         _reportRecipeState.update { it.copy(inputText = text) }
 
-    override fun onReportClick(recipe: Recipe) {
+    private fun onReportClick(recipe: Recipe) {
         _reportRecipeState.update { it.copy(recipe = recipe) }
         _reportRecipeState.update { it.copy(reporting = true) }
     }
 
-    override fun onDismissDialog() {
+    private fun onDismissDialog() {
         _reportRecipeState.update { it.copy(recipe = null, inputText = "") }
         _reportRecipeState.update { it.copy(reporting = false) }
     }
 
 
-    override suspend fun onClickSendReport() {
+    private suspend fun onClickSendReport() {
         val recipeReport = RecipeReport(
             recipeId = _reportRecipeState.value.recipe!!.id,
             recipeName = _reportRecipeState.value.recipe!!.name,
