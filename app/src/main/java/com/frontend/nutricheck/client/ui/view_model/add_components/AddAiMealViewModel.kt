@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
@@ -87,7 +88,11 @@ class AddAiMealViewModel @Inject constructor(
         }
     }
 
+    companion object {
+        private const val AI_NO_FOOD_DETECTED = "No food detected in image (AI)"
+    }
     private val imageCaptureUseCase = ImageCapture.Builder().build()
+
     /**
      * Handles UI events which need to be processed by the ViewModel.
      *
@@ -99,9 +104,11 @@ class AddAiMealViewModel @Inject constructor(
             is AddAiMealEvent.OnSubmitPhoto -> submitPhoto()
             is AddAiMealEvent.OnTakePhoto -> takePhoto()
             is AddAiMealEvent.ResetErrorState -> setReady()
-            else -> { /* other events are for Navigation or UI updates, handled in the UI layer */ }
+            else -> { /* other events are for Navigation or UI updates, handled in the UI layer */
+            }
         }
     }
+
     /**
      * Binds the camera preview and image capture use cases to the given lifecycle owner.
      *
@@ -117,7 +124,11 @@ class AddAiMealViewModel @Inject constructor(
             cameraPreviewUseCase,
             imageCaptureUseCase
         )
-        try { awaitCancellation() } finally { processCameraProvider.unbindAll() }
+        try {
+            awaitCancellation()
+        } finally {
+            processCameraProvider.unbindAll()
+        }
     }
 
     private fun takePhoto() {
@@ -148,6 +159,7 @@ class AddAiMealViewModel @Inject constructor(
                         null
                     }
                 }
+
                 override fun onError(exception: ImageCaptureException) {
                     _photoUri.value = null
                     setError(appContext.getString(R.string.error_no_photo_taken))
@@ -155,6 +167,7 @@ class AddAiMealViewModel @Inject constructor(
             }
         )
     }
+
     private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
         return try {
             // load JPEG image into a Bitmap
@@ -171,7 +184,8 @@ class AddAiMealViewModel @Inject constructor(
             }
 
             // save the PNG file
-            val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            val pngUri =
+                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             pngUri?.let {
                 contentResolver.openOutputStream(it)?.use { outputStream ->
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
@@ -185,10 +199,12 @@ class AddAiMealViewModel @Inject constructor(
             null
         }
     }
+
     private fun submitPhoto() {
         viewModelScope.launch {
             setLoading()
-            val multipartBody = uriToMultipartBody(_photoUri.value, appContext.contentResolver, appContext)
+            val multipartBody =
+                uriToMultipartBody(_photoUri.value, appContext.contentResolver, appContext)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
                 _photoUri.value = null
@@ -198,10 +214,18 @@ class AddAiMealViewModel @Inject constructor(
             val dayTime = DayTime.dateToDayTime(Date())
             if (response is Result.Success) {
                 val meal = response.data
+                if (!meal.isFoodDetected) {
+                    setError(appContext.getString(R.string.error_no_food_detected))
+                    _photoUri.value = null
+                    return@launch
+                }
                 val mealCopy = meal.copy(dayTime = dayTime)
                 setReady()
-                emitEvent(AddAiMealEvent.ShowMealOverview(
-                    mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id))
+                emitEvent(
+                    AddAiMealEvent.ShowMealOverview(
+                        mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id
+                    )
+                )
             } else if (response is Result.Error) {
                 Log.e("SubmitPhoto", "API error: ${response.message}")
                 setError(appContext.getString(R.string.error_encoding_image))
@@ -209,7 +233,12 @@ class AddAiMealViewModel @Inject constructor(
                 return@launch
             }
         }
-    }private fun retakePhoto() {
+    }
+
+    private val Meal.isFoodDetected: Boolean
+        get() = this.mealFoodItems.firstOrNull()?.foodProduct?.name != AI_NO_FOOD_DETECTED
+
+    private fun retakePhoto() {
         _photoUri.value = null
     }
     // parse the image URI to a MultipartBody.Part for sending to the backend
