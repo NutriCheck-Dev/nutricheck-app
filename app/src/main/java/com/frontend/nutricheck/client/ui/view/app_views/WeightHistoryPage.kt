@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
@@ -24,9 +23,15 @@ import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
+/**
+ * A composable function that displays the weight history as a list.
+ *
+ * @param weightState The list of [Weight] entries to display.
+ * @param onEvent A callback function to send [ProfileEvent]s to the ViewModel.
+ * @param onBack A callback function to handle back navigation.
+ */
 @Composable
 fun WeightHistoryPage(
     weightState: List<Weight>,
@@ -84,19 +89,4 @@ private fun WeightHistoryItem(weightEntry: Weight) {
             style = MaterialTheme.typography.bodyLarge
         )
     }
-}
-
-@Preview
-@Composable
-fun WeightHistoryPagePreview() {
-    val sampleWeights = listOf(
-        Weight(date = Date(), value = 70.0),
-        Weight(date = Date(), value = 69.5),
-        Weight(date = Date(), value = 69.0)
-    )
-    WeightHistoryPage(
-        weightState = sampleWeights,
-        onEvent = {},
-        onBack = {}
-    )
 }

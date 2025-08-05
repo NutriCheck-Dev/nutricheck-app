@@ -40,10 +40,19 @@ import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.OnboardingState
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * A composable function that displays a screen for the user to enter their birthdate
+ * during the onboarding process. It features a text field for input and a date picker dialog.
+ *
+ * @param state The current state of the onboarding process, which includes the birthdate.
+ * @param onEvent A callback function to send [ProfileEvent]s to the ViewModel.
+ * @param errorState The current UI state, used to display an error message if the input is invalid.
+ */
 @Composable
 fun OnboardingBirthdate(
     state : OnboardingState,

@@ -24,7 +24,10 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
-
+/**
+ * The main and only activity of the application.
+ * It serves as the entry point and hosts the Jetpack Compose content.
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +40,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
+/**
+ * The main screen composable, which holds the bottom navigation bar and the start destination of
+ * the app's navigation graph.
+ *
+ * @param hiltWrapperViewModel A ViewModel to provide dependencies like repositories to this top-level composable.
+ */
 @Composable
 fun MainScreen(
     hiltWrapperViewModel: HiltWrapperViewModel = hiltViewModel()
@@ -76,6 +84,11 @@ fun MainScreen(
 
 
 }
+/**
+ * A helper ViewModel used to inject dependencies into top-level composables like [MainScreen].
+ *
+ * @property appSettingRepository The repository for accessing application settings.
+ */
 @HiltViewModel
 class HiltWrapperViewModel @Inject constructor(
     val appSettingRepository: AppSettingRepository

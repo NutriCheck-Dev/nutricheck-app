@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +37,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Dialog to add a new weight entry.
+ *
+ * @param onEvent A callback function to send [ProfileEvent]s to the ViewModel.
+ * @param onDismissRequest A callback function to handle dialog dismissal.
+ * @param errorState The current state of the ViewModel, used to display error messages.
+ */
 
 @Composable
 fun AddWeightDialog(
@@ -49,11 +55,6 @@ fun AddWeightDialog(
     var selectedDate by remember { mutableStateOf(Date()) }
     var showDatePicker by remember { mutableStateOf(false) }
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-
-    LaunchedEffect(Unit) {
-
-    }
-
 
     if (showDatePicker) {
         val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate.time)

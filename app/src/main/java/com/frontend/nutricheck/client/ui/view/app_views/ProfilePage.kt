@@ -202,7 +202,11 @@ fun ProfilePage(
     }
 }
 @Composable
-fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onClick: () -> Unit) {
+private fun MenuItem(
+    icon: ImageVector,
+    contentDescription : String,
+    text: String,
+    onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clickable(onClick = onClick)
@@ -227,7 +231,7 @@ fun MenuItem(icon: ImageVector, contentDescription : String, text: String, onCli
 }
 
 @Composable
-fun MenuItemWithSwitch(
+private fun MenuItemWithSwitch(
     icon: ImageVector,
     contentDescription: String,
     text: String,
