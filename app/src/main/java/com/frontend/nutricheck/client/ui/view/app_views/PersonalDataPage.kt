@@ -1,25 +1,28 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -76,7 +79,20 @@ fun PersonalDataPage(
         topBar = {
             ViewsTopBar(
                 navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
-                title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) }
+                title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) },
+                actions =  {
+                    IconButton( onClick = { onEvent(ProfileEvent.OnSaveClick) },
+                        modifier = Modifier.background(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            shape = CircleShape
+                    )) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = stringResource(R.string.save),
+                            tint = MaterialTheme.colorScheme.surface
+                        )
+                    }
+                }
             )}
     ) { innerPadding ->
         LazyColumn(
@@ -86,13 +102,6 @@ fun PersonalDataPage(
                 .padding(horizontal = 16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            personalDataFormItems(
-                userData = state,
-                onEvent = onEvent,
-                onBirthdateClick = {
-                    showDatePicker = true
-                }
-            )
             item {
                 if (errorState is BaseViewModel.UiState.Error) {
                     Text(
@@ -104,14 +113,14 @@ fun PersonalDataPage(
                             .padding(vertical = 8.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { onEvent(ProfileEvent.OnSaveClick) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(id = R.string.save))
-                }
             }
+            personalDataFormItems(
+                userData = state,
+                onEvent = onEvent,
+                onBirthdateClick = {
+                    showDatePicker = true
+                }
+            )
         }
         if (showDatePicker) {
             val datePickerState =

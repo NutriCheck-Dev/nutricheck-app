@@ -10,6 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+/**
+ * A button that navigates back to the previous screen.
+ *
+ * @param onBack Callback function to be invoked when the button is clicked.
+ */
 @Composable
 fun NavigateBackButton(
     onBack: () -> Unit = {}
