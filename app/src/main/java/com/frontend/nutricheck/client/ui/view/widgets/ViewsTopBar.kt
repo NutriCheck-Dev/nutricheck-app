@@ -12,6 +12,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +34,9 @@ fun ViewsTopBar(
     val containerColor = colors.surfaceContainerHigh
     val titleContentColor = colors.onSurfaceVariant
     val navIconContentColor = colors.onSurfaceVariant
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+        state = rememberTopAppBarState()
+    )
 
     Surface(
         color = containerColor,
@@ -53,7 +57,8 @@ fun ViewsTopBar(
             ),
             modifier = Modifier
                 .fillMaxWidth(),
-            windowInsets = WindowInsets(top = 0.dp)
+            windowInsets = WindowInsets(top = 0.dp),
+            scrollBehavior = scrollBehavior
         )
     }
 }

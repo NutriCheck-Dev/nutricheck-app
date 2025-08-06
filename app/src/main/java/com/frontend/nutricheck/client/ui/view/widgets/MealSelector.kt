@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,12 +43,16 @@ fun MealSelector(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+        state = rememberTopAppBarState()
+    )
 
     CenterAlignedTopAppBar(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp)),
         windowInsets = WindowInsets(top = 0.dp),
+        scrollBehavior = scrollBehavior,
         title = {
             ExposedDropdownMenuBox(
                 expanded = expanded,
