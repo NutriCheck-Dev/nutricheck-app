@@ -29,6 +29,11 @@ import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
 import com.frontend.nutricheck.client.R
 
+/**
+ * OnboardingWelcome composable function displays the first screen of the onboarding process.
+ *
+ * @param onEvent Callback function to handle onboarding events.
+ */
 @Composable
 fun OnboardingWelcome(
     onEvent : (OnboardingEvent) -> Unit,

@@ -41,6 +41,15 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 
+/**
+ * A composable function that displays a camera preview screen for taking photos of meals.
+ *
+ *
+ * @param addAiMealViewModel The ViewModel responsible for handling the camera and photo logic.
+ * @param onNavigateToFoodProductOverview Callback to navigate to the food product overview screen with
+ *                                        the meal ID and food product ID.
+ * @param onExit Callback to handle exiting the camera preview screen.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraPreviewScreen(

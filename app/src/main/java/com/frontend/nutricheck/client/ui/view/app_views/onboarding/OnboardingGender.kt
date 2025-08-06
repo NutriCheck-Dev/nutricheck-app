@@ -38,8 +38,17 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view.widgets.SelectOption
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.OnboardingState
+import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 
 
+/**
+ * A composable function that displays a screen for the user to enter their gender
+ * during the onboarding process. It features predefined activity levels as selectable options.
+ *
+ * @param state The current state of the onboarding process, which includes the user's selected gender.
+ * @param onEvent A callback function to send [ProfileEvent]s to the ViewModel.
+ * @param errorState The current UI state, used to display an error message if the input is invalid.
+ */
 @Composable
 fun OnboardingGender(
     state : OnboardingState,

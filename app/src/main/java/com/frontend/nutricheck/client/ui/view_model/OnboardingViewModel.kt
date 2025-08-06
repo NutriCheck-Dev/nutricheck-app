@@ -24,7 +24,12 @@ import java.util.Date
 import javax.inject.Inject
 import kotlin.String
 
+/**
+ * This interface defines the events that can occur during the onboarding process.
+ * It includes events for handling user input, navigation, and user interaction.
+ */
 sealed interface OnboardingEvent {
+    // collected events, which handle data input
     data class EnterName(val name: String) : OnboardingEvent
     data class EnterBirthdate(val birthdate: Date?) : OnboardingEvent
     data class EnterGender(val gender: Gender?) : OnboardingEvent
@@ -33,9 +38,9 @@ sealed interface OnboardingEvent {
     data class EnterSportFrequency(val activityLevel: ActivityLevel?) : OnboardingEvent
     data class EnterWeightGoal(val weightGoal: WeightGoal?) : OnboardingEvent
     data class EnterTargetWeight(val targetWeight: String) : OnboardingEvent
-
+    // collected events, which lead to navigation
     object CompleteOnboarding : OnboardingEvent
-
+    // Navigation events
     object StartOnboarding : OnboardingEvent
     object NavigateToName : OnboardingEvent
     object NavigateToBirthdate : OnboardingEvent
@@ -47,6 +52,10 @@ sealed interface OnboardingEvent {
     object NavigateToTargetWeight : OnboardingEvent
     object NavigateToDashboard : OnboardingEvent
 }
+
+/**
+ * Data class representing the state of the onboarding process. It contains user input data.
+ */
 data class OnboardingState(
     val username: String = "",
     val birthdate: Date? = null,
@@ -59,6 +68,13 @@ data class OnboardingState(
 
 )
 
+/**
+ * ViewModel for handling onboarding logic and state.
+ *
+ * @property appSettingRepository Repository for app settings.
+ * @property userDataRepository Repository for user data.
+ * @property appContext Application context for accessing resources.
+ */
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val appSettingRepository: AppSettingRepository,
@@ -72,6 +88,9 @@ class OnboardingViewModel @Inject constructor(
     private val _data = MutableStateFlow(OnboardingState())
     val data: StateFlow<OnboardingState> = _data.asStateFlow()
 
+    /**
+     * Handles onboarding events and updates the state accordingly.
+     */
     fun onEvent(event: OnboardingEvent) {
         when (event) {
             is OnboardingEvent.StartOnboarding -> { emitEvent(OnboardingEvent.NavigateToName) }

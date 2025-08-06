@@ -26,7 +26,8 @@ import java.util.Date
 import java.util.Calendar
 
 /**
- * Represents all possible events that can occur in the profile screen.
+ * Represents all possible events that can occur in the profile screen and personalData screen.
+ * These events include navigation actions, data changes, and user interactions.
  */
 sealed interface ProfileEvent {
     // Navigation events
@@ -60,6 +61,7 @@ sealed interface ProfileEvent {
  *
  * @property userDataRepository Repository for user data persistence.
  * @property appSettingRepository Repository for app settings (theme).
+ * @property appContext Application context for accessing resources.
  */
 
 @HiltViewModel
@@ -234,6 +236,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
     private fun persistDataWithCalculation () {
+        if (uiState.value is UiState.Error) return
         val userDataWithCalories = UserDataUtilsLogic.calculateNutrition(userData = UserData(
             username = _dataDraft.value.username,
             birthdate = _dataDraft.value.birthdate,
@@ -265,7 +268,4 @@ class ProfileViewModel @Inject constructor(
         calendar.set(Calendar.MILLISECOND, 0)
         return calendar.time
     }
-
-
-
 }

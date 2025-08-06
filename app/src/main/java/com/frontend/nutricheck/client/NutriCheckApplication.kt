@@ -20,7 +20,11 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
-
+/**
+ * The main Application class for the NutriCheck app.
+ * It initializes Hilt for dependency injection and sets up an observer for the
+ * application's theme setting to allow for dynamic theme changes.
+ */
 @HiltAndroidApp
 class NutriCheckApplication : Application() {
     @Inject
@@ -36,14 +40,26 @@ class NutriCheckApplication : Application() {
         }
     }
 }
-
+/**
+ * A singleton object that holds the global state for the application's current theme.
+ * This allows composables throughout the app to react to theme changes.
+ */
 object AppThemeState {
     var currentTheme = mutableStateOf(ThemeSetting.DARK)
 }
-
+/**
+ * A Hilt module for providing the DataStore instance as a dependency.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
+    /**
+     * Provides a singleton instance of [DataStore<Preferences>] for the application.
+     * The DataStore is used to persist application settings.
+     *
+     * @param context The application context provided by Hilt.
+     * @return A singleton [DataStore<Preferences>] instance.
+     */
     @Provides
     @Singleton
     fun providePreferencesDataStore(
