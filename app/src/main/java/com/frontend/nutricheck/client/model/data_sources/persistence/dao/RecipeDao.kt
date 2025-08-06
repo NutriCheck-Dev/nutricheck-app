@@ -24,7 +24,10 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     suspend fun insertAll(recipes: List<RecipeEntity> )
 
     @Transaction
-    @Query("SELECT * FROM recipes WHERE deleted = 0 ORDER BY name ASC")
+    @Query("SELECT * " +
+            "FROM recipes " +
+            "WHERE deleted = 0 " +
+            "AND id NOT IN (SELECT recipeId FROM recipe_search_index) ORDER BY name ASC")
     fun getAllRecipesWithIngredients(): Flow<List<RecipeWithIngredients>>
 
     @Transaction
@@ -36,6 +39,9 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     suspend fun exists(id: String): Boolean
   
     @Transaction
-    @Query("SELECT * FROM recipes WHERE name LIKE '%' || :name || '%' ORDER BY name ASC")
+    @Query("SELECT * " +
+            "FROM recipes " +
+            "WHERE name LIKE '%' || :name || '%' " +
+            "AND id NOT IN (SELECT recipeId FROM recipe_search_index)ORDER BY name ASC")
     fun getRecipesByName(name: String): Flow<List<RecipeWithIngredients>>
 }

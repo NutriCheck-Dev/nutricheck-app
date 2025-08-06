@@ -198,32 +198,18 @@ class FoodProductOverviewViewModel @Inject constructor(
     private fun convertNutrients() {
         _state.update { state ->
             val parameters = state.parameters
-            if (parameters.servingSize == ServingSize.ONEHOUNDREDGRAMS) {
-                return@update state // No conversion needed for 100g serving size
-            }
+            val initialFoodProduct = state.foodProduct
             val servings = parameters.servings
             val servingSize = parameters.servingSize.getAmount()
             state.copy(parameters = state.parameters.copy(
-                calories = servings * servingSize * (parameters.calories / 100),
-                protein = servings * servingSize * (parameters.protein / 100),
-                carbohydrates = servings * servingSize * (parameters.carbohydrates / 100),
-                fat = servings * servingSize * (parameters.fat / 100))
+                calories = servings * servingSize * (initialFoodProduct.calories / 100),
+                protein = servings * servingSize * (initialFoodProduct.protein / 100),
+                carbohydrates = servings * servingSize * (initialFoodProduct.carbohydrates / 100),
+                fat = servings * servingSize * (initialFoodProduct.fat / 100))
             )
         }
     }
-
-    /**private fun splitQuantity(quantity: Double): Pair<Double, Double> {
-        val canditates = ServingSize.entries.map { it.getAmount() }
-        for (size in canditates) {
-            if (quantity % size == 0.0) {
-                val servings = quantity / size
-                if (servings in 1..200) {
-                    return servings to size.toDouble()
-                }
-            }
-        }
-        return quantity to 1.0
-    }**/
+    
 
     private fun emitEvent(event: FoodProductOverviewEvent) =
         viewModelScope.launch { _events.emit(event) }

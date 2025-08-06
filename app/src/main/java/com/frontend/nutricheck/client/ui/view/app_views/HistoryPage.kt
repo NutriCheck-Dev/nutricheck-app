@@ -119,7 +119,7 @@ fun HistoryPage(
             .verticalScroll(scrollState)
             .background(colors.surface)
     ) {
-        Spacer(modifier = Modifier.height(7.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         DateSelectorBar(
             selectedDate = selectedDate,
             onPreviousDay = { selectedDate = Date(selectedDate.time - 24 * 60 * 60 * 1000)
@@ -153,12 +153,12 @@ fun HistoryPage(
 
         CalorieSummary(
             modifier = Modifier
-                .padding(7.dp),
+                .padding(8.dp),
             state = state
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         MealBlock(
-            modifier = Modifier.padding(7.dp),
+            modifier = Modifier.padding(8.dp),
             stringResource(id = R.string.label_breakfast),
             breakfastCalories,
             items = breakfastComponents,
@@ -172,9 +172,9 @@ fun HistoryPage(
             onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         MealBlock(
-            modifier = Modifier.padding(7.dp),
+            modifier = Modifier.padding(8.dp),
             stringResource(id = R.string.label_lunch),
             lunchCalories,
             items= lunchComponents,
@@ -188,9 +188,9 @@ fun HistoryPage(
             onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         MealBlock(
-            modifier = Modifier.padding(7.dp),
+            modifier = Modifier.padding(8.dp),
             stringResource(id = R.string.label_dinner),
             dinnerCalories,
             items = dinnerComponents,
@@ -204,8 +204,8 @@ fun HistoryPage(
             onRemoveClick = { historyViewModel.onEvent(HistoryEvent.RemoveMealItem(it))
             }
         )
-        Spacer(modifier = Modifier.height(5.dp))
-        MealBlock(modifier = Modifier.padding(7.dp),
+        Spacer(modifier = Modifier.height(8.dp))
+        MealBlock(modifier = Modifier.padding(8.dp),
             stringResource(id = R.string.label_snack),
             snackCalories,
             items = snackComponents,

@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.recipe.page
+package com.frontend.nutricheck.client.ui.view_model.recipe
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -44,7 +45,7 @@ sealed interface RecipePageEvent {
 class RecipePageViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val recipeRepository: RecipeRepository
-) : BaseRecipePageViewModel() {
+) : BaseViewModel() {
 
     private val _recipePageState = MutableStateFlow(RecipePageState())
     val recipePageState: StateFlow<RecipePageState> = _recipePageState.asStateFlow()
@@ -80,22 +81,22 @@ class RecipePageViewModel @Inject constructor(
         }
     }
 
-    override fun onMyRecipesClick() {
+    private fun onMyRecipesClick() {
         _recipePageState.update { it.copy(selectedTab = 0) }
         emitEvent(RecipePageEvent.ClickMyRecipes)
     }
 
-    override fun onOnlineRecipesClick() {
+    private fun onOnlineRecipesClick() {
         _recipePageState.update { it.copy(selectedTab = 1) }
         emitEvent(RecipePageEvent.ClickOnlineRecipes)
     }
 
 
-    override suspend fun onSaveRecipeClick(recipe: Recipe) {
+    private suspend fun onSaveRecipeClick(recipe: Recipe) {
         recipeRepository.insertRecipe(recipe)
     }
 
-    override suspend fun onDeleteRecipeClick(recipe: Recipe) {
+    private suspend fun onDeleteRecipeClick(recipe: Recipe) {
         recipeRepository.deleteRecipe(recipe)
     }
 

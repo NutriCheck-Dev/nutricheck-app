@@ -35,10 +35,10 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.page.RecipePageViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.report.ReportRecipeViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 
 @Composable
 fun RecipePage(

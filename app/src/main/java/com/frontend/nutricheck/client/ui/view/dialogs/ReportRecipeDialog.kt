@@ -63,7 +63,7 @@ fun ReportRecipeDialog(
         },
         dismissButton = {
             TextButton(onClick = onCancel) {
-                Text(text = cancelText, color = colors.onError)
+                Text(text = cancelText, color = colors.error)
             }
         }
     )

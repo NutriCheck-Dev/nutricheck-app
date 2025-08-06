@@ -9,6 +9,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 
 @Composable
 fun CustomCloseButton(onClick: () -> Unit = {}) {
@@ -16,11 +17,7 @@ fun CustomCloseButton(onClick: () -> Unit = {}) {
 
     IconButton(
         onClick = { onClick() },
-        modifier = Modifier
-            .background(
-                color = colors.onSurfaceVariant,
-                shape = CircleShape
-            )
+        modifier = Modifier.clip(CircleShape)
     ) {
         Icon(
             imageVector = Icons.Default.Close,

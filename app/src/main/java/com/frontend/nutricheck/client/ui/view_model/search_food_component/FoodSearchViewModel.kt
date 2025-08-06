@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.search_food_product
+package com.frontend.nutricheck.client.ui.view_model.search_food_component
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -15,6 +15,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +46,8 @@ data class CommonSearchParameters(
     val language: String = "",
     val query: String = "",
     val selectedTab: Int = 0,
-    val results: List<FoodComponent> = emptyList(),
+    val generalResults: List<FoodComponent> = emptyList(),
+    val localRecipesResults: List<Recipe> = emptyList(),
     val addedComponents: List<Pair<Double, FoodComponent>> = emptyList(),
     val expanded: Boolean = false,
     val bottomSheetExpanded: Boolean = false
@@ -60,13 +62,6 @@ sealed class SearchUiState {
     ) : SearchUiState() {
         override fun updateParams(params: CommonSearchParameters): SearchUiState =
             copy(parameters = params)
-
-        fun submitComponentsToRecipe() : List<Ingredient> {
-            val ingredients: List<Ingredient> = parameters.addedComponents.map {
-                        Ingredient(recipeId, it.second as FoodProduct, quantity = it.first)
-                    }
-            return ingredients
-        }
     }
     data class AddComponentsToMealState(
         val mealId: String,
@@ -100,7 +95,7 @@ class FoodSearchViewModel @Inject constructor(
     private val foodProductRepository: FoodProductRepository,
     private val historyRepository: HistoryRepository,
     savedStateHandle: SavedStateHandle
-) : BaseFoodSearchOverviewViewModel() {
+) : BaseViewModel() {
 
         private val mode: SearchMode =
             savedStateHandle
@@ -143,7 +138,6 @@ class FoodSearchViewModel @Inject constructor(
                         }
                     }
                 }
-            val date = savedStateHandle.get<String>("date")?.toLongOrNull()?.let { Date(it) }
             savedStateHandle
                 .getStateFlow<Pair<Double, FoodComponent>?>("newComponent", null)
                 .filterNotNull()
@@ -189,7 +183,7 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    override fun onClickSearchFoodComponent() {
+    private fun onClickSearchFoodComponent() {
         val query = _searchState.value.parameters.query
         if (query.isBlank()) {
             setError("Please enter a search term.")
@@ -208,7 +202,7 @@ class FoodSearchViewModel @Inject constructor(
                                      return@launch
                                  } else {
                                      _searchState.update { state ->
-                                         state.updateParams(state.parameters.copy(results = recipes))
+                                         state.updateParams(state.parameters.copy(localRecipesResults = recipes))
                                      }
                                      setReady()
                                      return@launch
@@ -246,7 +240,7 @@ class FoodSearchViewModel @Inject constructor(
                                     _searchState.update { state ->
                                         state.updateParams(
                                             state.parameters.copy(
-                                                results = result.data
+                                                generalResults = result.data
                                             )
                                         )
                                     }
@@ -263,7 +257,7 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    override fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) {
+    private fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) {
         _searchState.update { state ->
             val currentParams = state.parameters
             val existing = currentParams.addedComponents.find { it.second.id == foodComponent.second.id }
@@ -280,7 +274,7 @@ class FoodSearchViewModel @Inject constructor(
         }
     }
 
-    override fun onClickRemoveFoodComponent(foodComponent: FoodComponent) =
+    private fun onClickRemoveFoodComponent(foodComponent: FoodComponent) =
         _searchState.update { state ->
             val currentParams = state.parameters
             val newParams =
@@ -297,7 +291,10 @@ class FoodSearchViewModel @Inject constructor(
 
     private fun cancelSearch() =
         _searchState.update { state ->
-            val newParams = state.parameters.copy(query = "", results = emptyList())
+            val newParams = state.parameters.copy(
+                query = "",
+                generalResults = emptyList(),
+                localRecipesResults = emptyList())
             state.updateParams(newParams)
         }
 

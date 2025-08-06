@@ -32,11 +32,11 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.edit.RecipeEditorViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 
 @Composable
-fun CreateRecipePage(
+fun RecipeEditorPage(
     modifier: Modifier = Modifier,
     createRecipeViewModel: RecipeEditorViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
@@ -62,7 +62,7 @@ fun CreateRecipePage(
                     value = currentTitle,
                     placeholder = {
                         Text(
-                            text = "Rezeptname",
+                            text = if (draft.original != null) draft.original!!.name else "Rezeptname",
                             style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                             color = colors.onSurfaceVariant
                         )

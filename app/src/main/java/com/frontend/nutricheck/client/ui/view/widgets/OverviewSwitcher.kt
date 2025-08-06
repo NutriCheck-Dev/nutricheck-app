@@ -5,20 +5,26 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -26,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.text.font.FontWeight
@@ -38,10 +46,11 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverviewSwitcher(
-    modifier: Modifier = Modifier ,
     options: List<String> = emptyList(),
     selectedOption: String = "",
-    onSelect: (String) -> Unit = {}
+    onSelect: (String) -> Unit = {},
+    tonalElevation: Dp = 0.dp,
+    shape: Shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
@@ -54,48 +63,68 @@ fun OverviewSwitcher(
         }
         tabWidthStateList
     }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+        state = rememberTopAppBarState()
+    )
 
-
-    TabRow (
-        modifier = modifier
-            .fillMaxWidth()
-            .height(TopAppBarDefaults.TopAppBarExpandedHeight),
-        selectedTabIndex = selectedIndex,
-        containerColor = colors.surfaceContainerHigh,
-        contentColor = colors.onPrimaryContainer,
-        indicator = { tabPositions ->
-            TabRowDefaults.SecondaryIndicator(
-                modifier = Modifier.customTabIndicatorOffset(
-                    currentTabPosition = tabPositions[selectedIndex],
-                    tabWidth = tabWidths[selectedIndex]
-                ),
-                height = 3.dp,
-                color = colors.onPrimaryContainer
-            )
-        },
-        divider = {}
+    Surface(
+        color = colors.surfaceContainerHigh,
+        tonalElevation = tonalElevation,
+        shape = shape,
+        modifier = Modifier
+            .padding(horizontal = 4.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(16.dp))
     ) {
-        options.forEachIndexed { index, title ->
-            Tab(
-                selected = index == selectedIndex,
-                onClick = { onSelect(title) },
-                selectedContentColor = colors.onPrimaryContainer,
-                unselectedContentColor = colors.onSurfaceVariant,
-                text = {
-                    Text(
-                        title,
-                        style = styles.titleLarge,
-                        fontWeight = if (index == selectedIndex) FontWeight.Bold
-                        else FontWeight.Normal,
-                        onTextLayout = { textLayoutResult ->
-                            tabWidths[index] = with(density) {
-                                textLayoutResult.size.width.toDp()
-                            }
+        CenterAlignedTopAppBar(
+            scrollBehavior = scrollBehavior,
+            windowInsets = WindowInsets(top = 0.dp),
+            title = {
+                TabRow(
+                    selectedTabIndex = selectedIndex,
+                    containerColor = Color.Transparent,
+                    contentColor = colors.onSurfaceVariant,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.SecondaryIndicator(
+                            modifier = Modifier.customTabIndicatorOffset(
+                            currentTabPosition = tabPositions[selectedIndex],
+                            tabWidth = tabWidths[selectedIndex]
+                        ),
+                            height = 3.dp,
+                            color = colors.onPrimaryContainer
+                    )
+                },
+                divider = {}
+            ) {
+                options.forEachIndexed { index, title ->
+                    Tab(
+                        selected = index == selectedIndex,
+                        onClick = { onSelect(title) },
+                        selectedContentColor = colors.onSurfaceVariant,
+                        unselectedContentColor = colors.onPrimaryContainer,
+                        text = {
+                            Text(
+                                title,
+                                style = styles.titleLarge,
+                                fontWeight = if (index == selectedIndex) FontWeight.Bold
+                                else FontWeight.Normal,
+                                onTextLayout = { textLayoutResult ->
+                                    tabWidths[index] = with(density) {
+                                        textLayoutResult.size.width.toDp()
+                                    }
+                                }
+                            )
                         }
                     )
                 }
-            )
-        }
+            }},
+            navigationIcon = {},
+            actions = {},
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
 

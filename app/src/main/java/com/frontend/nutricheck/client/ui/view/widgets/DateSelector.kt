@@ -14,6 +14,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -44,6 +45,7 @@ fun DateSelectorBar(
     val todayFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
     val current = todayFormat.format(Date())
     val selected = todayFormat.format(selectedDate)
+    val styles = MaterialTheme.typography
 
     val displayText = if (current == selected) "Today" else dateFormat.format(selectedDate)
 
@@ -62,6 +64,7 @@ fun DateSelectorBar(
 
         Text(
             text = displayText,
+            style = styles.labelMedium,
             color = Color(0xFF71727A),
             fontSize = 18.sp,
             modifier = Modifier.clickable { onOpenCalendar() }

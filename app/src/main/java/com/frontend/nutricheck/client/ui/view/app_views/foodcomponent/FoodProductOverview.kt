@@ -31,8 +31,8 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchEvent
 
 @Composable
 fun FoodProductOverview(
@@ -103,8 +103,10 @@ fun FoodProductOverview(
                 ) {
 
                     FoodProductNutrientChartsWidget(
-                        foodProduct = foodProductState.foodProduct,
-                        modifier = Modifier.wrapContentHeight()
+                        actualCalories = foodProductState.parameters.calories,
+                        actualCarbs = foodProductState.parameters.carbohydrates,
+                        actualProtein = foodProductState.parameters.protein,
+                        actualFat = foodProductState.parameters.fat
                     )
 
                     Row(
@@ -121,13 +123,7 @@ fun FoodProductOverview(
                         Spacer(modifier = Modifier.weight(1f))
                         ServingSizeDropdown(
                             currentServingSize = foodProductState.parameters.servingSize,
-                            expanded = foodProductState.parameters.servingSizeDropDownExpanded,
-                            onExpandedChange = {
-                                foodProductOverviewViewModel.onEvent(
-                                    FoodProductOverviewEvent.ServingSizeDropDownClick
-                                )
-                            },
-                            onSelect = {
+                            onValueChange = {
                                 foodProductOverviewViewModel.onEvent(
                                     FoodProductOverviewEvent.ServingSizeChanged(it)
                                 )

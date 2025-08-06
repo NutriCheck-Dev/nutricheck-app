@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
@@ -26,21 +29,18 @@ fun DiaryNavGraph(
     mainNavController: NavHostController
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.HISTORY) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+        state = rememberTopAppBarState()
+    )
     Scaffold(
         topBar = {
-            Surface(
-                tonalElevation = 4.dp,
-                shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-            ) {
                 OverviewSwitcher(
                     options = DiaryTab.entries.map { it.title },
                     selectedOption = selectedTab.title,
                     onSelect = { option ->
                         selectedTab = DiaryTab.entries.first { it.title == option }
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                    }
                 )
-            }
         }
     ) { paddingValues ->
         Column(

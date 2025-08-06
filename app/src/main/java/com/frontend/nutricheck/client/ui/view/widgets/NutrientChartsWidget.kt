@@ -21,8 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
-import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 
 data class NutrientEntry(
     val label: String,
@@ -35,17 +33,20 @@ data class NutrientEntry(
 @Composable
 fun RecipeNutrientChartsWidget(
     modifier: Modifier = Modifier,
-    recipe: Recipe,
+    actualCalories: Double,
+    actualCarbs: Double,
+    actualProtein: Double,
+    actualFat: Double,
     totalCalories: Double,
     totalCarbs: Double,
     totalProtein: Double,
     totalFat: Double
 ) {
     val nutrients = listOf(
-        NutrientEntry(stringResource(R.string.label_calories), "kcal", recipe.calories, totalCalories),
-        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", recipe.protein, totalProtein),
-        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", recipe.carbohydrates, totalCarbs),
-        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", recipe.fat, totalFat)
+        NutrientEntry(stringResource(R.string.label_calories), "kcal", actualCalories, totalCalories),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", actualProtein, totalProtein),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", actualCarbs, totalCarbs),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", actualFat, totalFat)
     )
     
     val pages: List<List<NutrientEntry>> = nutrients.chunked(2)
@@ -110,18 +111,20 @@ fun RecipeNutrientChartsWidget(
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun FoodProductNutrientChartsWidget(
-    modifier: Modifier = Modifier,
-    foodProduct: FoodProduct,
+    actualCalories: Double,
+    actualCarbs: Double,
+    actualProtein: Double,
+    actualFat: Double,
     totalCalories: Double = 0.0,
     totalCarbs: Double = 0.0,
     totalProtein: Double = 0.0,
     totalFat: Double = 0.0
 ) {
     val nutrients = listOf(
-        NutrientEntry(stringResource(R.string.label_calories), "kcal", foodProduct.calories, totalCalories),
-        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", foodProduct.protein, totalProtein),
-        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", foodProduct.carbohydrates, totalCarbs),
-        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", foodProduct.fat, totalFat)
+        NutrientEntry(stringResource(R.string.label_calories), "kcal", actualCalories, totalCalories),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_protein), "g", actualProtein, totalProtein),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_carbs), "g", actualCarbs, totalCarbs),
+        NutrientEntry(stringResource(R.string.homepage_nutrition_fats), "g", actualFat, totalFat)
     )
 
     Column(

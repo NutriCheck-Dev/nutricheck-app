@@ -7,13 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchEvent
-import com.frontend.nutricheck.client.ui.view_model.search_food_product.SearchUiState
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchUiState
 
 @Composable
 fun CreateMealPage(
@@ -48,14 +49,17 @@ fun CreateMealPage(
                 }
             )
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
         SearchPage(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier
+                .padding(innerPadding)
+                .padding(16.dp),
             onItemClick = { onItemClick(it) },
             expand = searchState.parameters.expanded,
             addedComponents = searchState.parameters.addedComponents.map { it.second },
             query = searchState.parameters.query,
-            searchResults = searchState.parameters.results,
+            searchResults = if (searchState.parameters.selectedTab == 0) searchState.parameters.generalResults
+                            else searchState.parameters.localRecipesResults,
             onSearchClick = { searchViewModel.onEvent(SearchEvent.Search) },
             onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
             addFoodComponent = {
