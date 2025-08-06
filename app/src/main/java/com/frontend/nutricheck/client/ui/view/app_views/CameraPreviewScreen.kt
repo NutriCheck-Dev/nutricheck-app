@@ -123,9 +123,6 @@ fun CameraPreviewScreen(
             })
     }
         Box(modifier = Modifier.fillMaxSize()) {
-            if (uiState is BaseViewModel.UiState.Loading) {
-                CircularProgressIndicator()
-            }
             ExitButton(
                 onBack = { onExit() },
                 modifier = Modifier.align(Alignment.TopStart).padding(16.dp).zIndex(2f)
@@ -172,6 +169,9 @@ fun CameraPreviewScreen(
                         Text(stringResource(R.string.submit_photo))
                     }
                 }
+            }
+            if (uiState is BaseViewModel.UiState.Loading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }

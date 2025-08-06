@@ -5,10 +5,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.exifinterface.media.ExifInterface
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -20,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
@@ -88,6 +91,7 @@ class AddAiMealViewModel @Inject constructor(
     }
 
     private val imageCaptureUseCase = ImageCapture.Builder().build()
+
     /**
      * Handles UI events which need to be processed by the ViewModel.
      *
@@ -99,9 +103,11 @@ class AddAiMealViewModel @Inject constructor(
             is AddAiMealEvent.OnSubmitPhoto -> submitPhoto()
             is AddAiMealEvent.OnTakePhoto -> takePhoto()
             is AddAiMealEvent.ResetErrorState -> setReady()
-            else -> { /* other events are for Navigation or UI updates, handled in the UI layer */ }
+            else -> { /* other events are for Navigation or UI updates, handled in the UI layer */
+            }
         }
     }
+
     /**
      * Binds the camera preview and image capture use cases to the given lifecycle owner.
      *
@@ -117,7 +123,11 @@ class AddAiMealViewModel @Inject constructor(
             cameraPreviewUseCase,
             imageCaptureUseCase
         )
-        try { awaitCancellation() } finally { processCameraProvider.unbindAll() }
+        try {
+            awaitCancellation()
+        } finally {
+            processCameraProvider.unbindAll()
+        }
     }
 
     private fun takePhoto() {
@@ -148,6 +158,7 @@ class AddAiMealViewModel @Inject constructor(
                         null
                     }
                 }
+
                 override fun onError(exception: ImageCaptureException) {
                     _photoUri.value = null
                     setError(appContext.getString(R.string.error_no_photo_taken))
@@ -155,40 +166,12 @@ class AddAiMealViewModel @Inject constructor(
             }
         )
     }
-    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
-        return try {
-            // load JPEG image into a Bitmap
-            val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
-            } ?: return null
 
-            // create a new file for PNG
-            val name = "${System.currentTimeMillis()}.png"
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
-            }
-
-            // save the PNG file
-            val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-            pngUri?.let {
-                contentResolver.openOutputStream(it)?.use { outputStream ->
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                }
-                bitmap.recycle() // free memory
-                return it
-            }
-            null
-        } catch (e: Exception) {
-            Log.e("ConvertJpegToPng", "Error converting JPEG to PNG: $uri", e)
-            null
-        }
-    }
     private fun submitPhoto() {
         viewModelScope.launch {
             setLoading()
-            val multipartBody = uriToMultipartBody(_photoUri.value, appContext.contentResolver, appContext)
+            val multipartBody =
+                uriToMultipartBody(_photoUri.value, appContext.contentResolver)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
                 _photoUri.value = null
@@ -198,10 +181,18 @@ class AddAiMealViewModel @Inject constructor(
             val dayTime = DayTime.dateToDayTime(Date())
             if (response is Result.Success) {
                 val meal = response.data
+                if (!meal.isFoodDetected) {
+                    setError(appContext.getString(R.string.error_no_food_detected))
+                    _photoUri.value = null
+                    return@launch
+                }
                 val mealCopy = meal.copy(dayTime = dayTime)
                 setReady()
-                emitEvent(AddAiMealEvent.ShowMealOverview(
-                    mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id))
+                emitEvent(
+                    AddAiMealEvent.ShowMealOverview(
+                        mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id
+                    )
+                )
             } else if (response is Result.Error) {
                 Log.e("SubmitPhoto", "API error: ${response.message}")
                 setError(appContext.getString(R.string.error_encoding_image))
@@ -209,11 +200,19 @@ class AddAiMealViewModel @Inject constructor(
                 return@launch
             }
         }
-    }private fun retakePhoto() {
+    }
+    private fun retakePhoto() {
         _photoUri.value = null
     }
+
+    private val Meal.isFoodDetected: Boolean
+        get() = (this.mealFoodItems.firstOrNull()?.foodProduct?.calories ?: 0.0) > 0.0 &&
+                (this.mealFoodItems.firstOrNull()?.foodProduct?.carbohydrates ?: 0.0) > 0.0 &&
+                (this.mealFoodItems.firstOrNull()?.foodProduct?.protein ?: 0.0) > 0.0 &&
+                (this.mealFoodItems.firstOrNull()?.foodProduct?.fat ?: 0.0) > 0.0
+
     // parse the image URI to a MultipartBody.Part for sending to the backend
-    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver, context: Context): MultipartBody.Part? {
+    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver): MultipartBody.Part? {
         if (uri == null) return null
 
         val partName = "file"
@@ -224,7 +223,7 @@ class AddAiMealViewModel @Inject constructor(
             val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
             val pngUri = if (mimeType != "image/png") {
                 // convert JPEG to PNG
-                convertJpegToPng(uri, contentResolver, context)
+                convertJpegToPng(uri, contentResolver)
             } else {
                 uri
             } ?: return null
@@ -256,32 +255,55 @@ class AddAiMealViewModel @Inject constructor(
         }
     }
 
-    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver, context: android.content.Context): Uri? {
+    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
         return try {
             // JPEG-Bild in Bitmap laden
             val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
             } ?: return null
+            // Read EXIF orientation
+            val orientation = contentResolver.openInputStream(uri)?.use { inputStream ->
+                val exif = ExifInterface(inputStream)
+                exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
+            } ?: ExifInterface.ORIENTATION_NORMAL
 
+            // Rotate the bitmap if necessary
+            val rotatedBitmap = when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
+                else -> bitmap
+            }
+            // Create a new file for PNG
             val name = "${System.currentTimeMillis()}.png"
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, name)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
             }
+            // Save the PNG file
             val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             pngUri?.let {
                 contentResolver.openOutputStream(it)?.use { outputStream ->
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                    rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 }
-                bitmap.recycle() // free memory
+                rotatedBitmap.recycle() // Free memory
+                if (rotatedBitmap != bitmap) bitmap.recycle() // Recycle original bitmap if rotated
                 return it
             }
+            bitmap.recycle() // Recycle original bitmap if no PNG was created
             null
         } catch (e: Exception) {
             Log.e("ConvertJpegToPng", "Error converting JPEG to PNG: $uri", e)
             null
         }
+    }
+    private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+        val matrix = Matrix().apply { postRotate(degrees) }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
     private fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String? {
         return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
