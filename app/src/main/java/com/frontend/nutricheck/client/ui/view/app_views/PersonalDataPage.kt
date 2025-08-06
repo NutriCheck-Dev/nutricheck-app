@@ -83,7 +83,13 @@ fun PersonalDataPage(
         topBar = {
             ViewsTopBar(
                 navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
-                title = { Text(stringResource(id = R.string.profile_menu_item_personal_data)) },
+                title = { Text(
+                        text = stringResource(id = R.string.profile_menu_item_personal_data),
+                        style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = colors.onSurfaceVariant
+                     )},
                 actions =  {
                     IconButton( onClick = { onEvent(ProfileEvent.OnSaveClick) },
                         modifier = Modifier.background(
