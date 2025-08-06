@@ -181,11 +181,11 @@ class AddAiMealViewModel @Inject constructor(
             val dayTime = DayTime.dateToDayTime(Date())
             if (response is Result.Success) {
                 val meal = response.data
-                if (!meal.isFoodDetected) {
-                    setError(appContext.getString(R.string.error_no_food_detected))
-                    _photoUri.value = null
-                    return@launch
-                }
+//                if (!meal.isFoodDetected) {
+//                    setError(appContext.getString(R.string.error_no_food_detected))
+//                    _photoUri.value = null
+//                    return@launch
+//                }
                 val mealCopy = meal.copy(dayTime = dayTime)
                 setReady()
                 emitEvent(
@@ -230,7 +230,6 @@ class AddAiMealViewModel @Inject constructor(
 
             // create a file name for the multipart part
             val fileName = getFileNameFromUri(pngUri, contentResolver) ?: defaultFileName
-
             val requestBody = object : RequestBody() {
                 override fun contentType() = "image/png".toMediaTypeOrNull() ?: "application/octet-stream".toMediaType()
                 override fun contentLength(): Long =

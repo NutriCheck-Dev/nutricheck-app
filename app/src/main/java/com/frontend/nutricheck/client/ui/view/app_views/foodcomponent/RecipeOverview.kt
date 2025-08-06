@@ -41,8 +41,8 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -13,7 +13,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOver
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import java.util.Date
 
 sealed class Screen(val route: String) {

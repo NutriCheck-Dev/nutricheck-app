@@ -21,7 +21,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 
 sealed class RecipePageScreens(val route: String) {
     object RecipePage : RecipePageScreens("recipe_page")
