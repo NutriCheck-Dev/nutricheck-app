@@ -104,4 +104,14 @@
     <string name="label_history">History</string>
     <string name="label_recipes">Recipes</string>
     <string name="label_ingredients">Ingredients</string>
+    <string name="userData_error_name_too_short">The entered name is too short</string>
+    <string name="userData_error_name_too_long">The entered name is too long</string>
+    <string name="userData_error_height_too_short">The entered height is too short</string>
+    <string name="userData_error_height_too_tall">The entered height is too tall</string>
+    <string name="userData_error_weight_too_low">The entered weight is too low</string>
+    <string name="userData_error_weight_too_high">The entered weight is too high</string>
+    <string name="userData_error_birthdate_future">The entered birthdate is in the future</string>
+    <string name="userData_error_birthdate_too_old">The entered birthdate is too old</string>
+    <string name="userData_error_target_weight_too_low">The entered targetweight is too low</string>
+    <string name="userData_error_target_weight_too_high">The entered targetweight is too high</string>
 </resources>

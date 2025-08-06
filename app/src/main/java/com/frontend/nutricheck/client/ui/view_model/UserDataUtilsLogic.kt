@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model
 
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
@@ -13,14 +14,54 @@ import kotlin.math.roundToInt
 
 object UserDataUtilsLogic {
 
-fun isBirthdateInvalid(birthdate: Date): Boolean {
-    val localBirthdate = Instant.ofEpochMilli(birthdate.time)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-    val today = LocalDate.now()
-    val hundredYearsAgo = today.minusYears(100)
-    return localBirthdate.isAfter(today) || localBirthdate.isBefore(hundredYearsAgo)
+fun isNameInvalid(name: String): Int? {
+    return when {
+        name.isBlank() -> R.string.userData_error_name_required
+        name.length < 2 -> R.string.userData_error_name_too_short
+        name.length > 30 -> R.string.userData_error_name_too_long
+        else -> null
+    }
 }
+    fun isBirthdateInvalid(birthdate: Date?): Int? {
+        if (birthdate == null) {
+            return R.string.userData_error_birthdate_required
+        }
+        val localBirthdate = Instant.ofEpochMilli(birthdate.time)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+        val today = LocalDate.now()
+        val hundredYearsAgo = today.minusYears(100)
+        return when {
+            localBirthdate.isAfter(today) -> R.string.userData_error_birthdate_future
+            localBirthdate.isBefore(hundredYearsAgo) ->
+                R.string.userData_error_birthdate_too_old
+            else -> null
+        }
+    }
+fun isHeightInvalid(height: Double?): Int? {
+    return when {
+        height == null -> R.string.userData_error_height_required
+        height < 50.0 -> R.string.userData_error_height_too_short
+        height > 250.0 -> R.string.userData_error_height_too_tall
+        else -> null
+    }
+}
+fun isWeightInvalid(weight: Double?): Int? {
+    return when {
+        weight == null -> R.string.userData_error_weight_required
+        weight < 20.0 -> R.string.userData_error_weight_too_low
+        weight > 500.0 -> R.string.userData_error_weight_too_high
+        else -> null
+    }
+}
+    fun isTargetWeightInvalid(targetWeight: Double?): Int? {
+        return when {
+            targetWeight == null -> R.string.userData_error_target_weight_required
+            targetWeight < 20.0 -> R.string.userData_error_target_weight_too_low
+            targetWeight > 500.0 -> R.string.userData_error_target_weight_too_high
+            else -> null
+        }
+    }
 fun calculateAge(birthdate:  Date) : Int {
     val localBirthdate = Instant.ofEpochMilli(birthdate.time)
         .atZone(ZoneId.systemDefault())
