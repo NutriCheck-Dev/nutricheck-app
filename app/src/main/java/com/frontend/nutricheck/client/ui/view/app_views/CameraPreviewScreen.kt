@@ -84,6 +84,8 @@ fun CameraPreviewScreen(
                 cameraPermissionState.launchPermissionRequest()
             }
         }
+    }
+    LaunchedEffect(Unit) {
         addAiMealViewModel.events.collect { event ->
             when (event) {
                 is AddAiMealEvent.ShowMealOverview -> {

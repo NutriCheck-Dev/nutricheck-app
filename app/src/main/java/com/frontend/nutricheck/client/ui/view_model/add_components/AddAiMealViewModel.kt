@@ -24,7 +24,6 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
-import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +44,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.IOException
-import java.util.Date
+
 
 
 sealed interface AddAiMealEvent {
@@ -180,18 +179,16 @@ class AddAiMealViewModel @Inject constructor(
             val response = historyRepository.requestAiMeal(multipartBody)
             if (response is Result.Success) {
                 val meal = response.data
-//                if (!meal.isFoodDetected) {
-//                    setError(appContext.getString(R.string.error_no_food_detected))
-//                    _photoUri.value = null
-//                    return@launch
-//                }
+                if (!meal.isFoodDetected) {
+                    setError(appContext.getString(R.string.error_no_food_detected))
+                    _photoUri.value = null
+                    return@launch
+                }
                 historyRepository.addMeal(meal)
                 setReady()
-                emitEvent(
-                    AddAiMealEvent.ShowMealOverview(
+                emitEvent(AddAiMealEvent.ShowMealOverview(
                         meal.id, meal.mealFoodItems.first().foodProduct.id
-                    )
-                )
+                    ))
             } else if (response is Result.Error) {
                 Log.e("SubmitPhoto", "API error: ${response.message}")
                 setError(appContext.getString(R.string.error_encoding_image))

@@ -24,6 +24,7 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
@@ -115,8 +116,11 @@ fun AddNavGraph(mainNavController: NavHostController,
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     foodSearchViewModel = foodSearchViewModel,
-                    onPersist = { mainNavController.popBackStack() },
-                    onBack = { mainNavController.popBackStack() }
+                    onPersist = { addNavController.navigate(AddScreens.HistoryPage.route) },
+                    onBack = {
+                        foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.DeleteAiMeal)
+                        addNavController.popBackStack()
+                    }
                 )
             }
 

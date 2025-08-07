@@ -56,8 +56,8 @@ sealed interface FoodProductOverviewEvent {
     data class ServingsChanged(val servings: Int) : FoodProductOverviewEvent
     data class ServingSizeChanged(val servingSize: ServingSize) : FoodProductOverviewEvent
     data object SaveAndAddClick : FoodProductOverviewEvent
-    data object GoBack : FoodProductOverviewEvent
     data object ServingSizeDropDownClick : FoodProductOverviewEvent
+    data object DeleteAiMeal : FoodProductOverviewEvent
 }
 
 @HiltViewModel
@@ -107,10 +107,12 @@ class FoodProductOverviewViewModel @Inject constructor(
                 is FoodProductOverviewMode.FromSearch -> foodProductRepository.getFoodProductById(mode.foodProductId)
                 is FoodProductOverviewMode.FromIngredient -> {
                     val ingredient = recipeRepository.getIngredientById(mode.recipeId, mode.foodProductId)
+                    _state.update { it.copy(recipeId = mode.recipeId) }
                     ingredient.foodProduct
                 }
                 is FoodProductOverviewMode.FromMeal -> {
                     val mealFoodItem = historyRepository.getMealFoodItemById(mode.mealId, mode.foodProductId)
+                    _state.update { it.copy(mealId = mode.mealId) }
                     mealFoodItem.foodProduct
                 }
             }
@@ -133,8 +135,8 @@ class FoodProductOverviewViewModel @Inject constructor(
             is FoodProductOverviewEvent.ServingsChanged -> onServingsChanged(event.servings)
             is FoodProductOverviewEvent.ServingSizeChanged -> onServingSizeChanged(event.servingSize)
             is FoodProductOverviewEvent.SaveAndAddClick -> viewModelScope.launch { onSaveChanges() }
-            is FoodProductOverviewEvent.GoBack -> onBackClick()
-            FoodProductOverviewEvent.ServingSizeDropDownClick -> onServingSizeDropDownClick()
+            is FoodProductOverviewEvent.ServingSizeDropDownClick -> onServingSizeDropDownClick()
+            is FoodProductOverviewEvent.DeleteAiMeal -> deleteAiMeal()
         }
     }
 
@@ -150,7 +152,6 @@ class FoodProductOverviewViewModel @Inject constructor(
                     quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0)
                 )
                 recipeRepository.updateIngredient(ingredient)
-                emitEvent(FoodProductOverviewEvent.GoBack)
             }
             is FoodProductOverviewMode.FromMeal -> {
                 val mealFoodItem = MealFoodItem(
@@ -158,15 +159,11 @@ class FoodProductOverviewViewModel @Inject constructor(
                     foodProduct = state.foodProduct,
                     quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0))
                 historyRepository.updateMealFoodItem(mealFoodItem)
-                emitEvent(FoodProductOverviewEvent.GoBack)
             }
             is FoodProductOverviewMode.FromSearch -> {
             }
         }
     }
-
-    override fun onBackClick() =
-        emitEvent(FoodProductOverviewEvent.GoBack)
 
     override fun onServingsChanged(servings: Int) {
         _state.update { state ->
@@ -207,6 +204,19 @@ class FoodProductOverviewViewModel @Inject constructor(
                 carbohydrates = servings * servingSize * (initialFoodProduct.carbohydrates / 100),
                 fat = servings * servingSize * (initialFoodProduct.fat / 100))
             )
+        }
+    }
+
+
+    private fun deleteAiMeal() {
+        viewModelScope.launch {
+            when(mode) {
+                is FoodProductOverviewMode.FromMeal -> {
+                    val meal = historyRepository.getMealById(mode.mealId)
+                    historyRepository.deleteMeal(meal)
+                }
+                else -> {}
+            }
         }
     }
     

@@ -7,7 +7,6 @@ import kotlinx.coroutines.Job
 abstract class BaseFoodOverviewViewModel() :BaseViewModel() {
 
     abstract suspend fun onSaveChanges()
-    abstract fun onBackClick(): Job
     abstract fun onServingsChanged(servings: Int)
     abstract fun onServingSizeChanged(servingSize: ServingSize)
 }

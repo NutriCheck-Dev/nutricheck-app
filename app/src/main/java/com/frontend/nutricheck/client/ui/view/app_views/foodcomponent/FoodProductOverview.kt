@@ -44,7 +44,6 @@ fun FoodProductOverview(
     val foodProductState by foodProductOverviewViewModel.foodProductViewState.collectAsState()
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val onCancel = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.GoBack)
     val uiState by foodProductOverviewViewModel.uiState.collectAsState()
 
     Scaffold(
@@ -52,7 +51,6 @@ fun FoodProductOverview(
             ViewsTopBar(
                 navigationIcon = {
                     CustomCloseButton {
-                        onCancel
                         onBack()
                     }
                 },
@@ -66,11 +64,18 @@ fun FoodProductOverview(
                     )
                 },
                 actions = {
-                    if (foodProductState.mode is FoodProductOverviewMode.FromSearch)
-                        CustomPersistButton { foodSearchViewModel!!.onEvent(
-                            SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                        CustomPersistButton {
+                            if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
+                            foodSearchViewModel!!.onEvent(
+                                SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct())
+                            )
+                            } else {
+                                foodProductOverviewViewModel.onEvent(
+                                    FoodProductOverviewEvent.SaveAndAddClick
+                                )
+                            }
                             onPersist()
-                        } else null
+                        }
                 }
             )
         }
