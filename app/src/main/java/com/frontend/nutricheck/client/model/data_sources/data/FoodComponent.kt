@@ -30,4 +30,9 @@ sealed interface FoodComponent {
      * Returns the fat content of the food component in grams.
      */
     val fat: Double
+
+    /**
+     * Returns the servings of the food component
+     */
+    val servings: Int
 }

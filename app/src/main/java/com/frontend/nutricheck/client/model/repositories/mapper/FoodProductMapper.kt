@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.model.repositories.mapper
 
 import com.frontend.nutricheck.client.dto.FoodProductDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 
 object FoodProductMapper {
     fun toDTO(foodProductEntity: FoodProduct) : FoodProductDTO = FoodProductDTO(
@@ -20,6 +21,8 @@ object FoodProductMapper {
             calories = foodProductDTO.calories,
             carbohydrates = foodProductDTO.carbohydrates,
             protein = foodProductDTO.protein,
-            fat = foodProductDTO.fat
+            fat = foodProductDTO.fat,
+            servings = 1,
+            servingSize = ServingSize.ONEHOUNDREDGRAMS
         )
 }

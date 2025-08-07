@@ -1,10 +1,10 @@
 package com.frontend.nutricheck.client.model.data_sources.data.flags
 
-enum class ServingSize(private val amount: Int) {
-    ONEGRAM(1),
-    TENGRAMS(10),
-    ONEHOUNDREDGRAMS(100),
-    TWOHOUNDREDGRAMS(200);
+enum class ServingSize(private val amount: Double) {
+    ONEGRAM(1.0),
+    TENGRAMS(10.0),
+    ONEHOUNDREDGRAMS(100.0),
+    TWOHOUNDREDGRAMS(200.0);
 
     fun getDisplayName(): String {
         return if (this == ONEGRAM) {
@@ -13,7 +13,7 @@ enum class ServingSize(private val amount: Int) {
             "$amount grams"
         }
     }
-    fun getAmount(): Int {
+    fun getAmount(): Double {
         return amount
     }
 }

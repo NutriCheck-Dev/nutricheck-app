@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 
-//This file represents a DishItemButton composable function that displays a button for a dish item.
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
@@ -76,7 +75,7 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${foodComponent.calories} cal, Portionsgröße ${foodComponent.fat}",
+                    text = "${foodComponent.calories * foodComponent.servings} cal, Portions ${foodComponent.servings}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -146,7 +145,7 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${ingredient.foodProduct.calories} cal, Portionsgröße ${ingredient.quantity}",
+                    text = "${ingredient.foodProduct.calories} cal, Portions ${ingredient.quantity}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -211,7 +210,7 @@ fun DishItemMealButton(
                 )
 
                 Text(
-                    text = "${calories.toInt()} kcal, ${quantity}g",
+                    text = "${calories.toInt()} cal, Portions: $quantity",
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,

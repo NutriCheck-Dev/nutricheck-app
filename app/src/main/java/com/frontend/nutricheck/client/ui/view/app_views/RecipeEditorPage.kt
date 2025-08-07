@@ -130,16 +130,14 @@ fun RecipeEditorPage(
                 SearchPage(
                     onItemClick = { onItemClick(it) },
                     expand = draft.expanded,
-                    addedComponents = draft.ingredients.map { it.second },
+                    addedComponents = draft.ingredients.map { it },
                     query = draft.query,
                     searchResults = draft.results,
                     onSearchClick = { createRecipeViewModel.onEvent(RecipeEditorEvent.SearchIngredients) },
                     onQueryChange = { createRecipeViewModel.onEvent(RecipeEditorEvent.QueryChanged(it)) },
                     addFoodComponent = {
                         createRecipeViewModel.onEvent(
-                            RecipeEditorEvent.IngredientAdded(
-                                Pair(1.0, it)
-                            )
+                            RecipeEditorEvent.IngredientAdded(it)
                         )
                     },
                     removeFoodComponent = {
