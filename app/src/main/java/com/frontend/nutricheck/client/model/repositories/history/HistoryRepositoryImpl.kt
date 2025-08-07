@@ -57,7 +57,6 @@ class HistoryRepositoryImpl @Inject constructor(
 
             if (response.isSuccessful && body != null) {
                 val meal = MealMapper.toData(body)
-                addMeal(meal)
                 Result.Success(meal)
             } else if (errorBody != null) {
                 val errorResponse = Gson().fromJson(
