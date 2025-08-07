@@ -28,9 +28,9 @@ import com.frontend.nutricheck.client.R
 
 @Composable
 fun MealHeader(
-    titel: String,
+    title: String,
     modifier: Modifier = Modifier,
-    calorieCount: Double
+    calorieCount: Int
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -43,7 +43,7 @@ fun MealHeader(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = titel,
+            text = title,
             color = colors.onSurfaceVariant,
             lineHeight = 16.sp,
             fontSize = 16.sp,
@@ -88,7 +88,7 @@ fun MealFooter(
 fun MealBlock(
     modifier: Modifier = Modifier,
     mealName: String,
-    totalCalories: Double,
+    totalCalories: Int,
     items: List<MealItem>,
     onAddClick: () -> Unit = {},
     onItemClick: (MealItem) -> Unit,
@@ -119,7 +119,7 @@ fun MealBlock(
                         DishItemMealButton(
                             modifier = Modifier.weight(1f), // gibt Platz frei für die drei Punkte
                             title = item.foodProduct.name,
-                            quantity = item.quantity,
+                            quantity = item.quantity * 100,
                             calories = item.quantity * item.foodProduct.calories,
                             onClick = { onItemClick(item) }
                         )
@@ -129,7 +129,7 @@ fun MealBlock(
                         DishItemMealButton(
                             modifier = Modifier.weight(1f),
                             title = item.recipe.name,
-                            quantity = item.quantity,
+                            quantity = item.quantity * 100,
                             calories = item.quantity * item.recipe.calories,
                             onClick = { onItemClick(item) }
                         )

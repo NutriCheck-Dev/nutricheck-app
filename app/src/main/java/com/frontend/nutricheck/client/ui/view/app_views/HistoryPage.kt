@@ -57,28 +57,28 @@ fun HistoryPage(
         val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
-    }
+    }.toInt()
     val breakfastComponents = breakfastItems.flatMap { it.mealFoodItems + it.mealRecipeItems }
     val lunchItems = mealsGrouped[DayTime.LUNCH] ?: emptyList()
     val lunchCalories = lunchItems.sumOf { meal ->
         val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
-    }
+    }.toInt()
     val lunchComponents = lunchItems.flatMap { it.mealFoodItems + it.mealRecipeItems }
     val dinnerItems = mealsGrouped[DayTime.DINNER] ?: emptyList()
     val dinnerCalories = dinnerItems.sumOf { meal ->
         val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
-    }
+    }.toInt()
     val dinnerComponents = dinnerItems.flatMap { it.mealFoodItems + it.mealRecipeItems }
     val snackItems = mealsGrouped[DayTime.SNACK] ?: emptyList()
     val snackCalories = snackItems.sumOf { meal ->
         val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
-    }
+    }.toInt()
     val snackComponents = snackItems.flatMap { it.mealFoodItems + it.mealRecipeItems }
 
     LaunchedEffect(key1 = Unit) {

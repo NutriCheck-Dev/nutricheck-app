@@ -211,7 +211,7 @@ fun DishItemMealButton(
                 )
 
                 Text(
-                    text = "${calories.toInt()} kcal, ${quantity}g",
+                    text = "${calories.toInt()} kcal, ${quantity.toInt()}g",
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,

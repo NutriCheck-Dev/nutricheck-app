@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -24,13 +25,19 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
+import java.util.Date
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
     object AddAiMeal : AddScreens("add_ai_meal/{mealId}")
-    object AddMeal : AddScreens("add_meal?recipeId={recipeId}") {
+    object AddMeal : AddScreens("add_meal?dayTime={dayTime}&date={date}") {
         const val defaultRoute = "add_meal"
+
+        fun withArgs(dayTime: DayTime, date: Long): String {
+            return "add_meal?dayTime=${dayTime.name}&date=$date"
+        }
     }
+
     object AddRecipe : AddScreens("add_recipe")
     object HistoryPage : AddScreens("history_page")
     object RecipePage : AddScreens("recipe_page")
@@ -59,7 +66,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
         startDestination = when(origin) {
             AddDialogOrigin.BOTTOM_NAV_BAR -> AddScreens.AddMainPage.route
             AddDialogOrigin.RECIPE_PAGE -> AddScreens.AddRecipe.route
-            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.defaultRoute
+            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.withArgs(dayTime!!, date!!)
         },
         route = "add_graph"
     ) {
@@ -110,26 +117,34 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
             )
         }
 
-        composable(route = AddScreens.AddMeal.defaultRoute) { backStackEntry ->
-            val parentEntry = remember(backStackEntry) {
-                addNavController.getBackStackEntry("add_graph")
-            }
-            LaunchedEffect(Unit) {
-                date?.let {
-                    if (parentEntry.savedStateHandle.get<String>("date") == null) {
-                        parentEntry.savedStateHandle["date"] = it
-                    }
+        composable(
+            route = AddScreens.AddMeal.route,
+            arguments = listOf(
+                navArgument("dayTime") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("date") {
+                    type = NavType.StringType
+                    nullable = true
                 }
-                dayTime?.let {
-                    if (parentEntry.savedStateHandle.get<String>("dayTime") == null) {
-                        parentEntry.savedStateHandle["dayTime"] = it
-                    }
-                }
-            }
-            val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
+            )
+        ) { backStackEntry ->
+
+            val dayTimeStr = backStackEntry.arguments?.getString("dayTime")
+            val dayTime = dayTimeStr?.runCatching { DayTime.valueOf(this) }?.getOrNull()
+
+            val dateStr = backStackEntry.arguments?.getString("date")
+            val date = dateStr?.toLongOrNull()
+
+            Log.v("AddMeal", "From route → dayTime=$dayTime, date=$date")
+
+            // ViewModel hier holen – ohne parentEntry
+            val searchViewModel: FoodSearchViewModel = hiltViewModel(backStackEntry)
+
             CreateMealPage(
                 searchViewModel = searchViewModel,
-                onConfirm = { addNavController.navigate(AddScreens.HistoryPage.route)},
+                onConfirm = { addNavController.navigate(AddScreens.HistoryPage.route) },
                 onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
                 onBack = { mainNavController.popBackStack() }
             )

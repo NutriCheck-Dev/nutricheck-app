@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -41,27 +42,19 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
         composable(Screen.DiaryPage.route) { DiaryNavGraph(mainNavController) }
         composable(Screen.ProfilePage.route) { ProfilePageNavGraph() }
         composable(Screen.Add.route) { backStackEntry ->
-            val originArg = backStackEntry.arguments?.getString("origin")
-            val dateArg = backStackEntry.arguments?.getString("date")
-            val dayTimeArg = backStackEntry.arguments?.getString("dayTime")
-            val effectiveOriginName: String = when (originArg) {
-                null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR.name
-                else -> originArg
-            }
-            val effectiveDateLong = when (dateArg) {
-                null, "{date}" -> Date().time
-                else -> dateArg.toLongOrNull() ?: Date().time
-            }
-            val effectiveDayTimeName = when (dayTimeArg) {
-                null, "{dayTime}" -> DayTime.BREAKFAST.name
-                else -> dayTimeArg
-            }
-            val origin = AddDialogOrigin.valueOf(effectiveOriginName)
+            val originStr = backStackEntry.arguments?.getString("origin")
+            val origin = runCatching { AddDialogOrigin.valueOf(originStr ?: "BOTTOM_NAV_BAR") }.getOrDefault(AddDialogOrigin.BOTTOM_NAV_BAR)
+            val date = backStackEntry.arguments?.getString("date")?.toLongOrNull() ?: Date().time
+            val dayTimeStr = backStackEntry.arguments?.getString("dayTime")
+            val dayTime = dayTimeStr?.let { runCatching { DayTime.valueOf(it) }.getOrNull() }
+
+            Log.v("RootNavGraph", "→ AddNavGraph mit $origin / $date / $dayTime")
+
             AddNavGraph(
                 mainNavController = mainNavController,
                 origin = origin,
-                date = effectiveDateLong,
-                dayTime = DayTime.valueOf(effectiveDayTimeName)
+                date = date,
+                dayTime = dayTime
             )
         }
 
