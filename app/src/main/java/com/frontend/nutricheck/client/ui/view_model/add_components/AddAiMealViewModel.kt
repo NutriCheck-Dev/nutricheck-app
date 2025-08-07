@@ -178,20 +178,18 @@ class AddAiMealViewModel @Inject constructor(
                 return@launch
             }
             val response = historyRepository.requestAiMeal(multipartBody)
-            val dayTime = DayTime.dateToDayTime(Date())
             if (response is Result.Success) {
                 val meal = response.data
-                if (!meal.isFoodDetected) {
-                    setError(appContext.getString(R.string.error_no_food_detected))
-                    _photoUri.value = null
-                    return@launch
-                }
-                val mealCopy = meal.copy(dayTime = dayTime)
-                historyRepository.addMeal(mealCopy)
+//                if (!meal.isFoodDetected) {
+//                    setError(appContext.getString(R.string.error_no_food_detected))
+//                    _photoUri.value = null
+//                    return@launch
+//                }
+                historyRepository.addMeal(meal)
                 setReady()
                 emitEvent(
                     AddAiMealEvent.ShowMealOverview(
-                        mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id
+                        meal.id, meal.mealFoodItems.first().foodProduct.id
                     )
                 )
             } else if (response is Result.Error) {
