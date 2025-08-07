@@ -119,4 +119,6 @@
     <string name="range_60_days">60D</string>
     <string name="range_15_days">15D</string>
     <string name="error_no_food_detected">No meal was detected, please take a new photo</string>
+    <string name="recipe_name_placeholder">recipe name</string>
+    <string name="recipe_description">description</string>
 </resources>

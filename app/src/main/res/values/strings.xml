@@ -148,4 +148,6 @@
     <string name="userData_error_target_weight_too_low">Das eingegebene Zielgewicht ist zu niedrig</string>
     <string name="userData_error_target_weight_too_high">Das eingegebene Zielgewicht ist zu hoch</string>
     <string name="error_no_food_detected">Es wurde kein Essen erkannt, bitte nimm ein neues Bild auf</string>
+    <string name="recipe_name_placeholder">Rezeptname</string>
+    <string name="recipe_description">Beschreibung</string>
 </resources>
