@@ -10,13 +10,17 @@ object DbMealFoodItemMapper {
         MealFoodItemEntity(
             mealId = mealFoodItem.mealId,
             foodProductId = mealFoodItem.foodProduct.id,
-            quantity = mealFoodItem.quantity
+            quantity = mealFoodItem.quantity,
+            servings = mealFoodItem.servings,
+            servingSize = mealFoodItem.servingSize
         )
 
     fun toMealFoodItem(mealFoodItemWithProduct: MealFoodItemWithProduct) : MealFoodItem =
         MealFoodItem(
             mealId = mealFoodItemWithProduct.mealFoodItem.mealId,
             foodProduct = DbFoodProductMapper.toFoodProduct(mealFoodItemWithProduct.foodProduct),
-            quantity = mealFoodItemWithProduct.mealFoodItem.quantity
+            quantity = mealFoodItemWithProduct.mealFoodItem.quantity,
+            servings = mealFoodItemWithProduct.mealFoodItem.servings,
+            servingSize = mealFoodItemWithProduct.mealFoodItem.servingSize
         )
 }

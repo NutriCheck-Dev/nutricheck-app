@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check

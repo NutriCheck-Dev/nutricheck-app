@@ -20,9 +20,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class FoodProductRepositoryImpl @Inject constructor(
-    val foodDao: FoodDao,
-    val foodSearchDao: FoodSearchDao,
-    val api: RemoteApi
+    private val foodDao: FoodDao,
+    private val foodSearchDao: FoodSearchDao,
+    private val api: RemoteApi
 ) : FoodProductRepository {
     private val timeToLive = TimeUnit.MINUTES.toMillis(30)
     override suspend fun searchFoodProducts(foodProductName: String, language: String): Flow<Result<List<FoodProduct>>> = flow {

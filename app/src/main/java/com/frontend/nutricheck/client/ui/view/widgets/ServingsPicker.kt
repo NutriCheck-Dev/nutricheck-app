@@ -33,12 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import com.frontend.nutricheck.client.model.data_sources.data.flags.Fractions
 import kotlin.math.roundToInt
 
 @Composable
 fun ServingsPicker(
     value: Int,
     range: IntRange,
+    integerList: List<String> = range.map { it.toString() },
+    fractionList: List<String> = Fractions.entries.map { it.toString() },
     onValueChange: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -47,11 +50,10 @@ fun ServingsPicker(
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
 
-    val list = range.map { it.toString() }
     val visibleCount = 8
     val halfCount = (visibleCount - 1) / 2
 
-    val initialIndex = list.indexOf(value.toString())
+    val initialIndex = integerList.indexOf(value.toString())
         .coerceAtLeast(0)
 
     val state = rememberLazyListState(
@@ -102,7 +104,7 @@ fun ServingsPicker(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(240.dp),
-                    list = list,
+                    list = integerList,
                     textStyle = styles.bodyLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
