@@ -46,14 +46,7 @@ data class RecipeOverviewState (
     val parameters: CommonRecipeOverviewParams
 ) {
     fun submitRecipe(): Recipe {
-        return Recipe(
-            id = recipe.id,
-            name = recipe.name,
-            ingredients = parameters.ingredients,
-            calories = parameters.calories,
-            protein = parameters.protein,
-            carbohydrates = parameters.carbohydrates,
-            fat = parameters.fat,
+        return recipe.copy(
             servings = parameters.servings
         )
     }
@@ -118,6 +111,7 @@ class RecipeOverviewViewModel @Inject constructor(
                 )
 
             _recipeOverviewState.update { it.copy(recipe = recipe, parameters = newParams) }
+            convertNutrients()
         }
     }
 

@@ -117,7 +117,6 @@ fun RecipeOverview(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
 
-            //TODO: Add actual values for total calories, carbs, protein, and fat
             item {
                 RecipeNutrientChartsWidget(
                     modifier = Modifier.fillMaxWidth(),

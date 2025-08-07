@@ -47,6 +47,7 @@ data class RecipeDraft(
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
+    data class ServingsChanged(val servings: Int) : RecipeEditorEvent
     data class IngredientAdded(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
@@ -109,6 +110,7 @@ class RecipeEditorViewModel @Inject constructor(
         when (event) {
             is RecipeEditorEvent.TitleChanged -> titleChanged(event.title)
             is RecipeEditorEvent.DescriptionChanged -> descriptionChanged(event.description)
+            is RecipeEditorEvent.ServingsChanged -> onServingsChanged(event.servings)
             is RecipeEditorEvent.IngredientAdded -> addIngredients(event.foodProduct)
             is RecipeEditorEvent.IngredientRemoved -> removeIngredient(event.foodProduct)
             is RecipeEditorEvent.SaveRecipe -> saveRecipe()
@@ -248,5 +250,11 @@ class RecipeEditorViewModel @Inject constructor(
         _draft.update { draft ->
             draft.copy(query = query)
         }
+
+    private fun onServingsChanged(servings: Int) {
+        _draft.update { draft ->
+            draft.copy(servings = servings)
+        }
+    }
 
 }
