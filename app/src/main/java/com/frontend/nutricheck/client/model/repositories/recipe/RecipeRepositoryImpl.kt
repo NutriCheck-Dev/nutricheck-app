@@ -69,7 +69,7 @@ class RecipeRepositoryImpl @Inject constructor(
                     errorBody.string(),
                     ErrorResponseDTO::class.java)
                     val message = errorResponse.body.title + ": " + errorResponse.body.detail
-                    Result.Error(errorResponse.body.status, message)
+                    emit(Result.Error(errorResponse.body.status, message))
                 } else {
                     emit(Result.Error(message = "Unknown error"))
                 }
@@ -159,7 +159,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 val message = errorResponse.body.title + ": "+ errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {
-                Result.Error(message = "Unknown error")
+                Result.Error(message = "Unknown server error")
             }
         } catch (io: IOException) {
             Result.Error(message = "Connection issue")

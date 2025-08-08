@@ -12,6 +12,7 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +37,7 @@ data class RecipeDraft(
     val title: String,
     val description: String,
     val servings: Int,
-    val ingredients: List<Pair<Double, FoodComponent>> = emptyList(),
+    val ingredients: List<FoodComponent> = emptyList(),
     val expanded: Boolean = false,
     val language: String = "",
     val query: String = "",
@@ -47,13 +48,13 @@ data class RecipeDraft(
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
-    data class IngredientAdded(val foodProduct: Pair<Double, FoodComponent>) : RecipeEditorEvent
+    data class ServingsChanged(val servings: Int) : RecipeEditorEvent
+    data class IngredientAdded(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
     object ShowConfirmationDialog : RecipeEditorEvent
     object SearchIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
-    object Cancel : RecipeEditorEvent
     object ExpandBottomSheet : RecipeEditorEvent
 }
 
@@ -62,6 +63,7 @@ class RecipeEditorViewModel @Inject constructor(
     private val recipeRepo: RecipeRepository,
     private val appSettingRepository: AppSettingRepository,
     private val foodProductRepository: FoodProductRepository,
+    private val combinedSearchListStore: CombinedSearchListStore,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -92,9 +94,7 @@ class RecipeEditorViewModel @Inject constructor(
                     title = recipe.name,
                     description = recipe.instructions,
                     servings = recipe.servings,
-                    ingredients = recipe.ingredients.map { ingredient ->
-                        Pair(ingredient.quantity, ingredient.foodProduct)
-                    }
+                    ingredients = recipe.ingredients.map { it.foodProduct }
                 )
                 appSettingRepository.language.collect { language ->
                     _draft.update { draft ->
@@ -112,10 +112,10 @@ class RecipeEditorViewModel @Inject constructor(
         when (event) {
             is RecipeEditorEvent.TitleChanged -> titleChanged(event.title)
             is RecipeEditorEvent.DescriptionChanged -> descriptionChanged(event.description)
+            is RecipeEditorEvent.ServingsChanged -> onServingsChanged(event.servings)
             is RecipeEditorEvent.IngredientAdded -> addIngredients(event.foodProduct)
             is RecipeEditorEvent.IngredientRemoved -> removeIngredient(event.foodProduct)
             is RecipeEditorEvent.SaveRecipe -> saveRecipe()
-            is RecipeEditorEvent.Cancel -> cancel()
             is RecipeEditorEvent.ExpandBottomSheet -> {
                 _draft.update { draft ->
                     draft.copy(expanded = !draft.expanded)
@@ -136,37 +136,48 @@ class RecipeEditorViewModel @Inject constructor(
         _draft.value = _draft.value.copy(description = description)
     }
 
-    private fun addIngredients(foodComponent: Pair<Double, FoodComponent>) {
+    private fun addIngredients(foodComponent: FoodComponent) {
         _draft.update { draft ->
             val current = draft.ingredients
-            val existing = current.find { it.second.id == foodComponent.second.id }
+            val existing = current.find { it.id == foodComponent.id }
             val newAddedComponents = if (existing != null) {
-                current.filterNot { it.second.id == foodComponent.second.id } +
-                        Pair(existing.first + foodComponent.first, existing.second)
+                current.filterNot { it.id == foodComponent.id } +
+                        foodComponent
             } else {
                 current + foodComponent
             }
-            draft.copy(ingredients = newAddedComponents)
+            val combinedList = newAddedComponents + draft.results.filter { it.id != foodComponent.id }
+            combinedSearchListStore.update(combinedList)
+            draft.copy(
+                ingredients = newAddedComponents,
+                results = _draft.value.results.filterNot { it.id == foodComponent.id }
+            )
         }
     }
 
     private fun removeIngredient(foodProduct: FoodComponent) =
         _draft.update { draft ->
             val currentIngredients = draft.ingredients
-            val newIngredients = currentIngredients.filterNot { it.second.id == foodProduct.id }
-            draft.copy(ingredients = newIngredients)
+            val newIngredients = currentIngredients.filterNot { it.id == foodProduct.id }
+            val combinedList = newIngredients + draft.results + foodProduct
+            combinedSearchListStore.update(combinedList)
+            draft.copy(
+                results = draft.results + foodProduct,
+                ingredients = newIngredients
+            )
         }
 
 
     private fun saveRecipe() {
+        viewModelScope.launch {
         val draft = _draft.value
         if (draft.title.isBlank()) {
             setError("Bitte geben sie ihrem Rezept einen Namen.")
-            return
+            return@launch
         }
         if (draft.ingredients.isEmpty()) {
             setError("Bitte fügen sie mindestens eine Zutat hinzu.")
-            return
+            return@launch
         }
         setReady()
         val totals = draft.ingredients.fold(
@@ -177,17 +188,16 @@ class RecipeEditorViewModel @Inject constructor(
                 "fat" to 0.0
             )
         ) { acc, ingredient ->
-            acc["calories"] = acc["calories"]!! + ingredient.second.calories * ingredient.first
-            acc["carbohydrates"] = acc["carbohydrates"]!! + ingredient.second.carbohydrates * ingredient.first
-            acc["protein"] = acc["protein"]!! + ingredient.second.protein * ingredient.first
-            acc["fat"] = acc["fat"]!! + ingredient.second.fat * ingredient.first
+            acc["calories"] = acc["calories"]!! + ingredient.calories * ingredient.servings
+            acc["carbohydrates"] = acc["carbohydrates"]!! + ingredient.carbohydrates * ingredient.servings
+            acc["protein"] = acc["protein"]!! + ingredient.protein * ingredient.servings
+            acc["fat"] = acc["fat"]!! + ingredient.fat * ingredient.servings
             acc
         }
-        val actualIngredients = draft.ingredients.map {
+        val actualIngredients = draft.ingredients.map { foodComponent ->
             Ingredient(
                 recipeId = draft.id,
-                foodProduct = it.second as FoodProduct,
-                quantity = it.first
+                foodProduct = foodComponent as FoodProduct
             )
         }
         val recipe = Recipe(
@@ -203,31 +213,11 @@ class RecipeEditorViewModel @Inject constructor(
             visibility = draft.original?.visibility ?: RecipeVisibility.OWNER
         )
 
-        viewModelScope.launch {
+
             when (mode) {
                 is RecipeMode.Create -> recipeRepo.insertRecipe(recipe)
                 is RecipeMode.Edit -> recipeRepo.uploadRecipe(recipe)
             }
-        }
-    }
-
-    private fun cancel() {
-        setReady()
-        _draft.value = when (val original = _draft.value.original) {
-            null -> RecipeDraft(
-                id = UUID.randomUUID().toString(),
-                title = "",
-                description = "",
-                servings = 1
-            )
-            else -> RecipeDraft(
-                original = original,
-                id = original.id,
-                title = original.name,
-                description = original.instructions,
-                servings = original.servings,
-                ingredients = original.ingredients.map { Pair(it.quantity, it.foodProduct) }
-            )
         }
     }
 
@@ -260,6 +250,8 @@ class RecipeEditorViewModel @Inject constructor(
                     }
                 }
             setReady()
+            val combinedList = _draft.value.ingredients + _draft.value.results
+            combinedSearchListStore.update(combinedList)
         }
     }
 
@@ -273,6 +265,10 @@ class RecipeEditorViewModel @Inject constructor(
             draft.copy(query = query)
         }
 
-    private fun emitEvent(event: RecipeEditorEvent) =
-        viewModelScope.launch { _events.emit(event) }
+    private fun onServingsChanged(servings: Int) {
+        _draft.update { draft ->
+            draft.copy(servings = servings)
+        }
+    }
+
 }

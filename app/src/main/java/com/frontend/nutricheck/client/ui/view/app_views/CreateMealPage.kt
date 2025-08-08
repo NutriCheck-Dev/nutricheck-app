@@ -56,14 +56,14 @@ fun CreateMealPage(
                 .padding(16.dp),
             onItemClick = { onItemClick(it) },
             expand = searchState.parameters.expanded,
-            addedComponents = searchState.parameters.addedComponents.map { it.second },
+            addedComponents = searchState.parameters.addedComponents.map { it },
             query = searchState.parameters.query,
             searchResults = if (searchState.parameters.selectedTab == 0) searchState.parameters.generalResults
                             else searchState.parameters.localRecipesResults,
             onSearchClick = { searchViewModel.onEvent(SearchEvent.Search) },
             onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
             addFoodComponent = {
-                searchViewModel.onEvent(SearchEvent.AddFoodComponent(Pair(1.0, it))) },
+                searchViewModel.onEvent(SearchEvent.AddFoodComponent(it)) },
             removeFoodComponent = { foodComponent ->
                 searchViewModel.onEvent(SearchEvent.RemoveFoodComponent(foodComponent))},
             selectedTab = searchState.parameters.selectedTab,

@@ -46,7 +46,7 @@ data class CommonSearchParameters(
     val selectedTab: Int = 0,
     val generalResults: List<FoodComponent> = emptyList(),
     val localRecipesResults: List<Recipe> = emptyList(),
-    val addedComponents: List<Pair<Double, FoodComponent>> = emptyList(),
+    val addedComponents: List<FoodComponent> = emptyList(),
     val expanded: Boolean = false,
     val bottomSheetExpanded: Boolean = false
 )
@@ -74,7 +74,7 @@ sealed class SearchUiState {
 sealed interface  SearchEvent {
     data class DayTimeChanged(val dayTime: DayTime) : SearchEvent
     data class QueryChanged(val query: String) : SearchEvent
-    data class AddFoodComponent(val foodComponent: Pair<Double, FoodComponent>) : SearchEvent
+    data class AddFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     data class RemoveFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     object Search : SearchEvent
     object Retry : SearchEvent
@@ -92,6 +92,7 @@ class FoodSearchViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val foodProductRepository: FoodProductRepository,
     private val historyRepository: HistoryRepository,
+    private val combinedSearchListStore: CombinedSearchListStore,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -137,7 +138,7 @@ class FoodSearchViewModel @Inject constructor(
                     }
                 }
             savedStateHandle
-                .getStateFlow<Pair<Double, FoodComponent>?>("newComponent", null)
+                .getStateFlow<FoodComponent?>("newComponent", null)
                 .filterNotNull()
                 .collect { component ->
                     onEvent(SearchEvent.AddFoodComponent(component))
@@ -202,6 +203,8 @@ class FoodSearchViewModel @Inject constructor(
                                      _searchState.update { state ->
                                          state.updateParams(state.parameters.copy(localRecipesResults = recipes))
                                      }
+                                     val recipeList = _searchState.value.parameters.localRecipesResults
+                                     combinedSearchListStore.update(recipeList)
                                      setReady()
                                      return@launch
                                  }
@@ -249,25 +252,57 @@ class FoodSearchViewModel @Inject constructor(
                                     setError(result.message!!)
                                 }
                             }
+                            val combinedList = _searchState.value.parameters.generalResults +
+                                    _searchState.value.parameters.addedComponents
+                            combinedSearchListStore.update(combinedList)
                         } }
                 }
             }
         }
     }
 
-    private fun onClickAddFoodComponent(foodComponent: Pair<Double, FoodComponent>) {
+    private fun onClickAddFoodComponent(foodComponent: FoodComponent) {
         _searchState.update { state ->
             val currentParams = state.parameters
-            val existing = currentParams.addedComponents.find { it.second.id == foodComponent.second.id }
+            val existing = currentParams.addedComponents.find { it.id == foodComponent.id }
             val newAddedComponents = if (existing != null) {
                 currentParams.addedComponents
-                    .filterNot { it.second.id == foodComponent.second.id } +
-                        (existing.first + foodComponent.first to foodComponent.second)
+                    .filterNot { it.id == foodComponent.id } +
+                        when(foodComponent) {
+                            is FoodProduct ->
+                                FoodProduct(
+                                    id = foodComponent.id,
+                                    name = foodComponent.name,
+                                    calories = foodComponent.calories,
+                                    carbohydrates = foodComponent.carbohydrates,
+                                    protein = foodComponent.protein,
+                                    fat = foodComponent.fat,
+                                    servings = foodComponent.servings,
+                                    servingSize = foodComponent.servingSize,
+                            )
+                            is Recipe ->
+                                Recipe(
+                                    id = foodComponent.id,
+                                    name = foodComponent.name,
+                                    calories = foodComponent.calories,
+                                    carbohydrates = foodComponent.carbohydrates,
+                                    protein = foodComponent.protein,
+                                    fat = foodComponent.fat,
+                                    ingredients = foodComponent.ingredients.map { Ingredient(it.recipeId, it.foodProduct) },
+                                    servings = foodComponent.servings
+                                )
+                        }
+
             } else {
                 currentParams.addedComponents + foodComponent
             }
             val newParams =
-                currentParams.copy(addedComponents = newAddedComponents)
+                currentParams.copy(
+                    addedComponents = newAddedComponents,
+                    generalResults = currentParams.generalResults.filterNot { it.id == foodComponent.id },
+                )
+            val combinedList = newParams.generalResults + newParams.addedComponents
+            combinedSearchListStore.update(combinedList)
             state.updateParams(newParams)
         }
     }
@@ -276,7 +311,12 @@ class FoodSearchViewModel @Inject constructor(
         _searchState.update { state ->
             val currentParams = state.parameters
             val newParams =
-                state.parameters.copy(addedComponents = currentParams.addedComponents.filterNot { it.second.id == foodComponent.id })
+                state.parameters.copy(
+                    generalResults = currentParams.generalResults + foodComponent,
+                    addedComponents = currentParams.addedComponents.filterNot { it.id == foodComponent.id }
+                )
+            val combinedList = newParams.generalResults + newParams.addedComponents
+            combinedSearchListStore.update(combinedList)
             state.updateParams(newParams)
         }
 
@@ -293,6 +333,7 @@ class FoodSearchViewModel @Inject constructor(
                 query = "",
                 generalResults = emptyList(),
                 localRecipesResults = emptyList())
+            combinedSearchListStore.update(emptyList())
             state.updateParams(newParams)
         }
 
@@ -321,22 +362,20 @@ class FoodSearchViewModel @Inject constructor(
             return
         }
 
-        val (foodPairs, recipePairs) = state.parameters.addedComponents
-            .partition { it.second is FoodProduct }
+        val (foodProducts, recipes) = state.parameters.addedComponents
+            .partition { it is FoodProduct }
 
-        val mealFoodItems = foodPairs.map { (quantity, component) ->
+        val mealFoodItems = foodProducts.map { component ->
             MealFoodItem(
                 mealId = state.mealId,
-                foodProduct = component as FoodProduct,
-                quantity = quantity
+                foodProduct = component as FoodProduct
             )
         }
 
-        val mealRecipeItems = recipePairs.map { (quantity, component) ->
+        val mealRecipeItems = recipes.map { component ->
             MealRecipeItem(
                 mealId = state.mealId,
-                recipe = component as Recipe,
-                quantity = quantity
+                recipe = component as Recipe
             )
         }
         viewModelScope.launch {
@@ -359,7 +398,7 @@ class FoodSearchViewModel @Inject constructor(
                     fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
                     + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
                     date = Date(),
-                    dayTime = state.dayTime!!,
+                    dayTime = state.dayTime,
                     mealFoodItems = mealFoodItems,
                     mealRecipeItems = mealRecipeItems
 
@@ -378,6 +417,4 @@ class FoodSearchViewModel @Inject constructor(
         _searchState.update { state ->
             state.updateParams(state.parameters.copy(selectedTab = 1))
         }
-
-
 }

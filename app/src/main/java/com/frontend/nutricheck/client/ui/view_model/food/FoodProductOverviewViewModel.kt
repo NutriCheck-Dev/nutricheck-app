@@ -9,6 +9,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,11 +46,11 @@ data class FoodProductOverviewState (
     val recipeId: String? = null,
     val parameters: CommonFoodProductOverviewParams
 ) {
-    fun submitFoodProduct(): Pair<Double, FoodProduct> {
-        return Pair(
-            parameters.servings * (parameters.servingSize.getAmount() / 100.0),
-            foodProduct
-            )
+    fun submitFoodProduct(): FoodProduct {
+        return foodProduct.copy(
+            servings = parameters.servings,
+            servingSize = parameters.servingSize,
+        )
     }
 }
 
@@ -65,6 +67,7 @@ class FoodProductOverviewViewModel @Inject constructor(
     private val foodProductRepository: FoodProductRepository,
     private val recipeRepository: RecipeRepository,
     private val historyRepository: HistoryRepository,
+    private val combinedSearchListStore: CombinedSearchListStore,
     savedStateHandle: SavedStateHandle
 ) : BaseFoodOverviewViewModel() {
 
@@ -104,14 +107,21 @@ class FoodProductOverviewViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val foodProduct = when (mode) {
-                is FoodProductOverviewMode.FromSearch -> foodProductRepository.getFoodProductById(mode.foodProductId)
+                is FoodProductOverviewMode.FromSearch -> {
+                    val searchList = combinedSearchListStore.state.first()
+                    searchList.find { it.id == mode.foodProductId } ?: foodProductRepository.getFoodProductById(mode.foodProductId)
+                }
+
                 is FoodProductOverviewMode.FromIngredient -> {
-                    val ingredient = recipeRepository.getIngredientById(mode.recipeId, mode.foodProductId)
+                    val ingredient =
+                        recipeRepository.getIngredientById(mode.recipeId, mode.foodProductId)
                     _state.update { it.copy(recipeId = mode.recipeId) }
                     ingredient.foodProduct
                 }
+
                 is FoodProductOverviewMode.FromMeal -> {
-                    val mealFoodItem = historyRepository.getMealFoodItemById(mode.mealId, mode.foodProductId)
+                    val mealFoodItem =
+                        historyRepository.getMealFoodItemById(mode.mealId, mode.foodProductId)
                     _state.update { it.copy(mealId = mode.mealId) }
                     mealFoodItem.foodProduct
                 }
@@ -121,10 +131,14 @@ class FoodProductOverviewViewModel @Inject constructor(
                 calories = foodProduct.calories,
                 protein = foodProduct.protein,
                 carbohydrates = foodProduct.carbohydrates,
-                fat = foodProduct.fat
+                fat = foodProduct.fat,
+                servings = foodProduct.servings,
+                servingSize = (foodProduct as FoodProduct).servingSize
             )
             _state.update { it.copy(foodProduct = foodProduct, parameters = newParams) }
+            convertNutrients()
         }
+
     }
 
     private val _events = MutableSharedFlow<FoodProductOverviewEvent>()
@@ -149,7 +163,9 @@ class FoodProductOverviewViewModel @Inject constructor(
                 val ingredient = Ingredient(
                     recipeId = state.recipeId!!,
                     foodProduct = state.foodProduct,
-                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0)
+                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0),
+                    servings = commonParams.servings,
+                    servingSize = commonParams.servingSize
                 )
                 recipeRepository.updateIngredient(ingredient)
             }
@@ -157,11 +173,13 @@ class FoodProductOverviewViewModel @Inject constructor(
                 val mealFoodItem = MealFoodItem(
                     mealId = state.mealId!!,
                     foodProduct = state.foodProduct,
-                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0))
+                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0),
+                    servings = commonParams.servings,
+                    servingSize = commonParams.servingSize
+                )
                 historyRepository.updateMealFoodItem(mealFoodItem)
             }
-            is FoodProductOverviewMode.FromSearch -> {
-            }
+            is FoodProductOverviewMode.FromSearch -> {}
         }
     }
 
@@ -219,9 +237,4 @@ class FoodProductOverviewViewModel @Inject constructor(
             }
         }
     }
-    
-
-    private fun emitEvent(event: FoodProductOverviewEvent) =
-        viewModelScope.launch { _events.emit(event) }
-
 }

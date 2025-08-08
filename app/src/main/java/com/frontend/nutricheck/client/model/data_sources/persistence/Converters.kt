@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
-import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
@@ -77,15 +76,4 @@ class Converters {
     @TypeConverter
     fun toDayTime(name: String?): DayTime? = name?.let { DayTime.valueOf(it) }
 
-    @TypeConverter
-    fun fromReport(report: RecipeReport?): String =
-        moshi
-            .adapter(RecipeReport::class.java)
-            .toJson(report ?: RecipeReport())
-
-    @TypeConverter
-    fun toReport(json: String): RecipeReport? {
-        val adapter = moshi.adapter(RecipeReport::class.java)
-        return adapter.fromJson(json)
-    }
 }

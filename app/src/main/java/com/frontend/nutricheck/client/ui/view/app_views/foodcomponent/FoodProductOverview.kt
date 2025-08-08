@@ -31,6 +31,8 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 
@@ -38,6 +40,7 @@ import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 fun FoodProductOverview(
     foodProductOverviewViewModel: FoodProductOverviewViewModel,
     foodSearchViewModel: FoodSearchViewModel? = null,
+    recipeEditorViewModel: RecipeEditorViewModel? = null,
     onPersist: () -> Unit = { },
     onBack: () -> Unit = { }
 ) {
@@ -64,18 +67,22 @@ fun FoodProductOverview(
                     )
                 },
                 actions = {
-                        CustomPersistButton {
-                            if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
-                            foodSearchViewModel!!.onEvent(
-                                SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct())
-                            )
-                            } else {
-                                foodProductOverviewViewModel.onEvent(
-                                    FoodProductOverviewEvent.SaveAndAddClick
+                    CustomPersistButton {
+                        if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
+                            if (foodSearchViewModel != null) {
+                                foodSearchViewModel.onEvent(
+                                    SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct())
                                 )
-                            }
-                            onPersist()
+                            } else recipeEditorViewModel?.onEvent(
+                                RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
+                            )
+                        } else {
+                            foodProductOverviewViewModel.onEvent(
+                                FoodProductOverviewEvent.SaveAndAddClick
+                            )
                         }
+                        onPersist()
+                    }
                 }
             )
         }

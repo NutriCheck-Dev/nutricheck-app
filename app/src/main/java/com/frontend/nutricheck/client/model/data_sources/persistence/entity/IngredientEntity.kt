@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 
 @Entity(
     tableName = "ingredients",
@@ -29,5 +30,7 @@ import androidx.room.Index
 data class IngredientEntity (
     val recipeId: String,
     val foodProductId: String,
-    val quantity: Double
+    val quantity: Double,
+    val servings: Int,
+    val servingSize: ServingSize
 )

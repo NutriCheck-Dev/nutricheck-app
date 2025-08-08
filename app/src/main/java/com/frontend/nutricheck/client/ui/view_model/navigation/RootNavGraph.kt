@@ -28,7 +28,7 @@ sealed class Screen(val route: String) {
         }
     }
 }
-    @Composable
+@Composable
 fun RootNavGraph(mainNavController: NavHostController, startDestination: String) {
 
     NavHost(

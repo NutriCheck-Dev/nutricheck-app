@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,20 +45,24 @@ data class RecipeOverviewState (
     val mealId: String? = null,
     val parameters: CommonRecipeOverviewParams
 ) {
-    fun submitRecipe(): Pair<Double, Recipe> {
-        val servings = parameters.servings
-        return Pair(servings.toDouble(), recipe)
+    fun submitRecipe(): Recipe {
+        return recipe.copy(
+            servings = parameters.servings
+        )
     }
 }
 sealed interface RecipeOverviewEvent {
     data class ClickDetailsOption(val option: DropdownMenuOptions) : RecipeOverviewEvent
     data class ServingsChanged(val servings: Int) : RecipeOverviewEvent
+    data class NavigateToEditRecipe(val recipeId: String) : RecipeOverviewEvent
     data object ClickDetails : RecipeOverviewEvent
 }
 
 @HiltViewModel
 class RecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
+    private val historyRepository: HistoryRepository,
+    private val combinedSearchListStore: CombinedSearchListStore,
     savedStateHandle: SavedStateHandle
 ): BaseViewModel() {
     private val mode: RecipeOverviewMode = savedStateHandle.run {
@@ -84,16 +91,28 @@ class RecipeOverviewViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val recipe = recipeRepository.getRecipeById(mode.recipeId)
+            val recipe = when(mode) {
+                is RecipeOverviewMode.FromSearch -> {
+                    val searchList = combinedSearchListStore.state.first()
+                    searchList.find { it.id == mode.recipeId } ?: recipeRepository.getRecipeById(mode.recipeId)
+                }
+                is RecipeOverviewMode.General -> recipeRepository.getRecipeById(mode.recipeId)
+                is RecipeOverviewMode.FromMeal -> {
+                    val meal = historyRepository.getMealRecipeItemById(mode.mealId, mode.recipeId)
+                    meal.recipe
+                }
+            }
             val newParams = initialParams.copy(
-                ingredients = recipe.ingredients,
-                servings = recipe.servings,
+                ingredients = (recipe as Recipe).ingredients,
                 calories = recipe.calories,
                 protein = recipe.protein,
                 carbohydrates = recipe.carbohydrates,
                 fat = recipe.fat,
+                servings = recipe.servings
                 )
+
             _recipeOverviewState.update { it.copy(recipe = recipe, parameters = newParams) }
+            convertNutrients()
         }
     }
 
@@ -108,6 +127,9 @@ class RecipeOverviewViewModel @Inject constructor(
             is RecipeOverviewEvent.ClickDetailsOption -> onDetailsOptionClick(event.option)
             is RecipeOverviewEvent.ClickDetails -> onDetailsClicked()
             is RecipeOverviewEvent.ServingsChanged -> onServingsChanged(event.servings)
+            is RecipeOverviewEvent.NavigateToEditRecipe -> viewModelScope.launch {
+                _events.emit(RecipeOverviewEvent.NavigateToEditRecipe(event.recipeId))
+            }
         }
     }
 
@@ -149,7 +171,7 @@ class RecipeOverviewViewModel @Inject constructor(
                 DropdownMenuOptions.DOWNLOAD -> recipeRepository.insertRecipe(_recipeOverviewState.value.recipe)
                 DropdownMenuOptions.UPLOAD -> recipeRepository.uploadRecipe(_recipeOverviewState.value.recipe)
                 DropdownMenuOptions.REPORT -> _recipeOverviewState.update { it.copy(parameters = it.parameters.copy(showReportDialog = !it.parameters.showReportDialog)) }
-                DropdownMenuOptions.EDIT -> {}
+                DropdownMenuOptions.EDIT -> _events.emit(RecipeOverviewEvent.NavigateToEditRecipe(_recipeOverviewState.value.recipe.id))
             }
         }
     }
