@@ -24,7 +24,6 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
-import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +44,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.IOException
-import java.util.Date
+
 
 
 sealed interface AddAiMealEvent {
@@ -178,7 +177,6 @@ class AddAiMealViewModel @Inject constructor(
                 return@launch
             }
             val response = historyRepository.requestAiMeal(multipartBody)
-            val dayTime = DayTime.dateToDayTime(Date())
             if (response is Result.Success) {
                 val meal = response.data
                 if (!meal.isFoodDetected) {
@@ -186,13 +184,11 @@ class AddAiMealViewModel @Inject constructor(
                     _photoUri.value = null
                     return@launch
                 }
-                val mealCopy = meal.copy(dayTime = dayTime)
+                historyRepository.addMeal(meal)
                 setReady()
-                emitEvent(
-                    AddAiMealEvent.ShowMealOverview(
-                        mealCopy.id, mealCopy.mealFoodItems.first().foodProduct.id
-                    )
-                )
+                emitEvent(AddAiMealEvent.ShowMealOverview(
+                        meal.id, meal.mealFoodItems.first().foodProduct.id
+                    ))
             } else if (response is Result.Error) {
                 Log.e("SubmitPhoto", "API error: ${response.message}")
                 setError(appContext.getString(R.string.error_encoding_image))
@@ -230,7 +226,6 @@ class AddAiMealViewModel @Inject constructor(
 
             // create a file name for the multipart part
             val fileName = getFileNameFromUri(pngUri, contentResolver) ?: defaultFileName
-
             val requestBody = object : RequestBody() {
                 override fun contentType() = "image/png".toMediaTypeOrNull() ?: "application/octet-stream".toMediaType()
                 override fun contentLength(): Long =

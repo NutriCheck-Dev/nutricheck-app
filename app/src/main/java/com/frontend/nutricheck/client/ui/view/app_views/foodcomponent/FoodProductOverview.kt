@@ -33,8 +33,8 @@ import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 
 @Composable
 fun FoodProductOverview(
@@ -47,7 +47,6 @@ fun FoodProductOverview(
     val foodProductState by foodProductOverviewViewModel.foodProductViewState.collectAsState()
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val onCancel = foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.GoBack)
     val uiState by foodProductOverviewViewModel.uiState.collectAsState()
 
     Scaffold(
@@ -55,7 +54,6 @@ fun FoodProductOverview(
             ViewsTopBar(
                 navigationIcon = {
                     CustomCloseButton {
-                        onCancel
                         onBack()
                     }
                 },
@@ -69,8 +67,8 @@ fun FoodProductOverview(
                     )
                 },
                 actions = {
-                    if (foodProductState.mode is FoodProductOverviewMode.FromSearch)
-                        CustomPersistButton {
+                    CustomPersistButton {
+                        if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
                             if (foodSearchViewModel != null) {
                                 foodSearchViewModel.onEvent(
                                     SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct())
@@ -78,8 +76,13 @@ fun FoodProductOverview(
                             } else recipeEditorViewModel?.onEvent(
                                 RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
                             )
-                            onPersist()
-                        } else null
+                        } else {
+                            foodProductOverviewViewModel.onEvent(
+                                FoodProductOverviewEvent.SaveAndAddClick
+                            )
+                        }
+                        onPersist()
+                    }
                 }
             )
         }

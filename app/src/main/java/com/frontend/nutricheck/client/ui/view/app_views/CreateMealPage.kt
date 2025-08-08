@@ -12,9 +12,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchEvent
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchUiState
+import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.SearchUiState
 
 @Composable
 fun CreateMealPage(

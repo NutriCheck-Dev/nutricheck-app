@@ -24,11 +24,12 @@ import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewView
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
-    object AddAiMeal : AddScreens("add_ai_meal/{mealId}")
+    object AddAiMeal : AddScreens("add_ai_meal")
     object AddMeal : AddScreens("add_meal?recipeId={recipeId}") {
         const val defaultRoute = "add_meal"
     }
@@ -41,16 +42,21 @@ sealed class AddScreens(val route: String) {
         fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
         fun fromIngredient(recipeId: String, foodProductId: String) =
             "food_product_overview/$foodProductId?recipeId=$recipeId"
-        fun fromAiMeal(mealId: String, foodProductId: String) = "food_product_overview/$foodProductId?mealId=$mealId"
+        fun fromAiMeal(mealId: String, foodProductId: String) =
+            "food_product_overview/$foodProductId?mealId=$mealId"
     }
     object RecipeOverview : AddScreens("recipe_overview/{recipeId}?fromSearch={fromSearch}") {
-        fun createRoute(recipeId: String, fromSearch: Boolean) = "recipe_overview/$recipeId?fromSearch=$fromSearch"
+        fun createRoute(recipeId: String, fromSearch: Boolean) =
+            "recipe_overview/$recipeId?fromSearch=$fromSearch"
 
     }
 
 }
 @Composable
-fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, date: Long?, dayTime: DayTime?) {
+fun AddNavGraph(mainNavController: NavHostController,
+                origin: AddDialogOrigin,
+                date: Long?,
+                dayTime: DayTime?) {
     val addNavController = rememberNavController()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
@@ -297,7 +303,9 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     onPersist = { addNavController.navigate(AddScreens.HistoryPage.route) },
-                    onBack = { addNavController.popBackStack() }
+                    onBack = {
+                        foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.DeleteAiMeal)
+                        addNavController.popBackStack() }
                 )
             }
         }

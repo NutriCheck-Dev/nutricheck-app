@@ -30,8 +30,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
@@ -67,7 +69,8 @@ fun RecipeEditorPage(
                     value = currentTitle,
                     placeholder = {
                         Text(
-                            text = if (draft.original != null) draft.original!!.name else "Rezeptname",
+                            text = if (draft.original != null) draft.original!!.name else
+                                stringResource(R.string.recipe_name_placeholder),
                             style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                             color = colors.onSurfaceVariant
                         )
@@ -132,7 +135,7 @@ fun RecipeEditorPage(
             }
 
             Text(
-                text = "Beschreibung",
+                text = stringResource(R.string.recipe_description),
                 style = styles.titleMedium,
                 )
             Card(
