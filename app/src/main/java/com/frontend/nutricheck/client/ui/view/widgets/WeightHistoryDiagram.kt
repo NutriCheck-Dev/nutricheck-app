@@ -26,8 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
+import java.util.Date
 
 enum class WeightRange(val id: String, val labelResId: Int) {
     LAST_1_MONTH("1M", R.string.range_1_month),
@@ -42,12 +44,7 @@ fun WeightHistoryDiagram(
     onPeriodSelected: (WeightRange) -> Unit
 ) {
     val fullData = weightHistoryState.weightData
-    val displayedData = when (selectedRange) {
-        WeightRange.LAST_1_MONTH -> fullData.takeLast(30)
-        WeightRange.LAST_6_MONTHS -> fullData.takeLast(180)
-        WeightRange.LAST_12_MONTHS -> fullData
-    }
-    val currentWeight = fullData.lastOrNull()?.toString() ?: "–"
+    val currentWeight = fullData.lastOrNull()?.value.toString() ?: "–"
     val colors = MaterialTheme.colorScheme
     Column(
         modifier = modifier
@@ -87,45 +84,70 @@ fun WeightHistoryDiagram(
 
         Spacer(modifier = Modifier.height(7.dp))
 
-        WeightLineChart(displayedData, selectedRange)
+        WeightLineChart(
+            data = fullData,
+            selectedRange = selectedRange
+        )
     }
 }
 @Composable
 fun WeightLineChart(
-    data: List<Double>,
+    data: List<Weight>,
     selectedRange: WeightRange,
     modifier: Modifier = Modifier
 ) {
-    val maxValue = data.maxOrNull() ?: 1.0
-    val minValue = data.minOrNull() ?: 0.0
-
     val colors = MaterialTheme.colorScheme
     val extendedColors = LocalExtendedColors.current
     val lineColor = extendedColors.chartBlue.color
     val textColor = colors.onSurface.toArgb()
     val gridColor = colors.outlineVariant
 
+    if (data.isEmpty()) return
+
+    val now = Date()
+    val startDate = when (selectedRange) {
+        WeightRange.LAST_1_MONTH -> Date(now.time - 30L * 24 * 60 * 60 * 1000)
+        WeightRange.LAST_6_MONTHS -> Date(now.time - 180L * 24 * 60 * 60 * 1000)
+        WeightRange.LAST_12_MONTHS -> Date(now.time - 365L * 24 * 60 * 60 * 1000)
+    }
+
+    val daysInRange = ((now.time - startDate.time) / (24 * 60 * 60 * 1000)).toInt() + 1
+
+    val weightByDay = data.associateBy {
+        // Key = nur Datumsteil (Jahr/Monat/Tag)
+        it.date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+    }
+
+    val dates = (0 until daysInRange).map { offset ->
+        startDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().plusDays(offset.toLong())
+    }
+
+    val maxValue = data.maxOf { it.value }
+    val minValue = data.minOf { it.value }
+
     val steps = 3
     val yStep = (maxValue - minValue) / steps
     val yLabels = (0..steps).map { i -> minValue + i * yStep }
 
-    val labelMap = when (selectedRange) {
-        WeightRange.LAST_1_MONTH -> mapOf(
-            14 to stringResource(R.string.range_15_days),
-            data.size - 1 to stringResource(R.string.range_1_month)
+    val labelPositions = when (selectedRange) {
+        WeightRange.LAST_1_MONTH -> listOf(
+            1f - (14f / 30f) to stringResource(R.string.range_15_days),
+            1f - (29f / 30f) to stringResource(R.string.range_1_month)
         )
-        WeightRange.LAST_6_MONTHS -> mapOf(
-            (data.size * 1 / 3) to stringResource(R.string.range_2_months),
-            (data.size * 2 / 3) to stringResource(R.string.range_4_months),
-            data.size - 1 to stringResource(R.string.range_6_months)
+        WeightRange.LAST_6_MONTHS -> listOf(
+            1f - (60f / 180f) to stringResource(R.string.range_2_months),
+            1f - (120f / 180f) to stringResource(R.string.range_4_months),
+            1f - (179f / 180f) to stringResource(R.string.range_6_months)
         )
-        WeightRange.LAST_12_MONTHS -> mapOf(
-            (data.size * 1 / 4) to stringResource(R.string.range_3_months),
-            (data.size * 2 / 4) to stringResource(R.string.range_6_months),
-            (data.size * 3 / 4) to stringResource(R.string.range_9_months),
-            data.size - 1 to stringResource(R.string.range_12_months)
+        WeightRange.LAST_12_MONTHS -> listOf(
+            1f - (90f / 365f) to stringResource(R.string.range_3_months),
+            1f - (180f / 365f) to stringResource(R.string.range_6_months),
+            1f - (270f / 365f) to stringResource(R.string.range_9_months),
+            1f - (364f / 365f) to stringResource(R.string.range_12_months)
         )
     }
+
+
 
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -137,10 +159,10 @@ fun WeightLineChart(
                 .height(70.dp)
                 .padding(horizontal = 30.dp)
         ) {
-            val widthStep = size.width / (data.size - 1).coerceAtLeast(1)
             val heightRatio = size.height / (maxValue - minValue).coerceAtLeast(1.0)
+            val dayWidth = size.width / daysInRange.coerceAtLeast(1)
 
-            // Y-Achse mit Linien und Text
+            // Y-Achse
             yLabels.forEach { yValue ->
                 val y = size.height - (yValue - minValue) * heightRatio
                 drawLine(
@@ -162,26 +184,28 @@ fun WeightLineChart(
                 )
             }
 
-
-            val points = data.mapIndexed { index, value ->
-                val x = index * widthStep
-                val y = size.height - (value - minValue) * heightRatio
-                Offset(x, y.toFloat())
+            val points = dates.mapIndexedNotNull { index, localDate ->
+                val weight = weightByDay[localDate]
+                if (weight != null) {
+                    val x = index * dayWidth
+                    val y = size.height - (weight.value - minValue) * heightRatio
+                    x to Offset(x, y.toFloat())
+                } else null
             }
 
             for (i in 0 until points.size - 1) {
+                val (_, p1) = points[i]
+                val (_, p2) = points[i + 1]
+
                 drawLine(
                     color = lineColor,
-                    start = points[i],
-                    end = points[i + 1],
+                    start = p1,
+                    end = p2,
                     strokeWidth = 4f
                 )
             }
-
-            val maxIndex = data.lastIndex
-            labelMap.forEach { (index, label) ->
-                val flippedIndex = maxIndex - index
-                val x = points.getOrNull(flippedIndex)?.x ?: return@forEach
+            labelPositions.forEach { (relativePos, label) ->
+                val x = size.width * relativePos
                 drawContext.canvas.nativeCanvas.drawText(
                     label,
                     x,
