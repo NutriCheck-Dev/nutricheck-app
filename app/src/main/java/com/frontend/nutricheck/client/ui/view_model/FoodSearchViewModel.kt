@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
@@ -288,7 +289,12 @@ class FoodSearchViewModel @Inject constructor(
                                     carbohydrates = foodComponent.carbohydrates,
                                     protein = foodComponent.protein,
                                     fat = foodComponent.fat,
-                                    ingredients = foodComponent.ingredients.map { Ingredient(it.recipeId, it.foodProduct) },
+                                    ingredients = foodComponent.ingredients.map {
+                                        Ingredient(
+                                            it.recipeId,
+                                            it.foodProduct
+                                        )
+                                    },
                                     servings = foodComponent.servings
                                 )
                         }

@@ -8,7 +8,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenu
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.search_food_component.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
