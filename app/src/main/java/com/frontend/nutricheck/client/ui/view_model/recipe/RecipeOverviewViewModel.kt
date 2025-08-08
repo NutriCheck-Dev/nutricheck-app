@@ -54,6 +54,7 @@ data class RecipeOverviewState (
 sealed interface RecipeOverviewEvent {
     data class ClickDetailsOption(val option: DropdownMenuOptions) : RecipeOverviewEvent
     data class ServingsChanged(val servings: Int) : RecipeOverviewEvent
+    data class NavigateToEditRecipe(val recipeId: String) : RecipeOverviewEvent
     data object ClickDetails : RecipeOverviewEvent
 }
 
@@ -126,6 +127,9 @@ class RecipeOverviewViewModel @Inject constructor(
             is RecipeOverviewEvent.ClickDetailsOption -> onDetailsOptionClick(event.option)
             is RecipeOverviewEvent.ClickDetails -> onDetailsClicked()
             is RecipeOverviewEvent.ServingsChanged -> onServingsChanged(event.servings)
+            is RecipeOverviewEvent.NavigateToEditRecipe -> viewModelScope.launch {
+                _events.emit(RecipeOverviewEvent.NavigateToEditRecipe(event.recipeId))
+            }
         }
     }
 
@@ -167,7 +171,7 @@ class RecipeOverviewViewModel @Inject constructor(
                 DropdownMenuOptions.DOWNLOAD -> recipeRepository.insertRecipe(_recipeOverviewState.value.recipe)
                 DropdownMenuOptions.UPLOAD -> recipeRepository.uploadRecipe(_recipeOverviewState.value.recipe)
                 DropdownMenuOptions.REPORT -> _recipeOverviewState.update { it.copy(parameters = it.parameters.copy(showReportDialog = !it.parameters.showReportDialog)) }
-                DropdownMenuOptions.EDIT -> {}
+                DropdownMenuOptions.EDIT -> _events.emit(RecipeOverviewEvent.NavigateToEditRecipe(_recipeOverviewState.value.recipe.id))
             }
         }
     }

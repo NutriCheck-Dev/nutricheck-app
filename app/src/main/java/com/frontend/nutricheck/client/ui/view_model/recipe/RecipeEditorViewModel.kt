@@ -12,6 +12,7 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.search_food_component.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,6 +63,7 @@ class RecipeEditorViewModel @Inject constructor(
     private val recipeRepo: RecipeRepository,
     private val appSettingRepository: AppSettingRepository,
     private val foodProductRepository: FoodProductRepository,
+    private val combinedSearchListStore: CombinedSearchListStore,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -144,7 +146,12 @@ class RecipeEditorViewModel @Inject constructor(
             } else {
                 current + foodComponent
             }
-            draft.copy(ingredients = newAddedComponents)
+            val combinedList = newAddedComponents + draft.results.filter { it.id != foodComponent.id }
+            combinedSearchListStore.update(combinedList)
+            draft.copy(
+                ingredients = newAddedComponents,
+                results = _draft.value.results.filterNot { it.id == foodComponent.id }
+            )
         }
     }
 
@@ -152,7 +159,12 @@ class RecipeEditorViewModel @Inject constructor(
         _draft.update { draft ->
             val currentIngredients = draft.ingredients
             val newIngredients = currentIngredients.filterNot { it.id == foodProduct.id }
-            draft.copy(ingredients = newIngredients)
+            val combinedList = newIngredients + draft.results + foodProduct
+            combinedSearchListStore.update(combinedList)
+            draft.copy(
+                results = draft.results + foodProduct,
+                ingredients = newIngredients
+            )
         }
 
 
@@ -238,6 +250,8 @@ class RecipeEditorViewModel @Inject constructor(
                     }
                 }
             setReady()
+            val combinedList = _draft.value.ingredients + _draft.value.results
+            combinedSearchListStore.update(combinedList)
         }
     }
 
