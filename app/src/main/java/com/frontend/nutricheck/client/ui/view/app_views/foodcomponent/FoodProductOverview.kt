@@ -31,6 +31,8 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_component.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.search_food_component.SearchEvent
 
@@ -38,6 +40,7 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_component.Search
 fun FoodProductOverview(
     foodProductOverviewViewModel: FoodProductOverviewViewModel,
     foodSearchViewModel: FoodSearchViewModel? = null,
+    recipeEditorViewModel: RecipeEditorViewModel? = null,
     onPersist: () -> Unit = { },
     onBack: () -> Unit = { }
 ) {
@@ -67,8 +70,14 @@ fun FoodProductOverview(
                 },
                 actions = {
                     if (foodProductState.mode is FoodProductOverviewMode.FromSearch)
-                        CustomPersistButton { foodSearchViewModel!!.onEvent(
-                            SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                        CustomPersistButton {
+                            if (foodSearchViewModel != null) {
+                                foodSearchViewModel.onEvent(
+                                    SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct())
+                                )
+                            } else recipeEditorViewModel?.onEvent(
+                                RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
+                            )
                             onPersist()
                         } else null
                 }

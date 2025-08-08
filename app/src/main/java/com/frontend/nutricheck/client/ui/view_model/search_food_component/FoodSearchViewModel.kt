@@ -313,7 +313,10 @@ class FoodSearchViewModel @Inject constructor(
         _searchState.update { state ->
             val currentParams = state.parameters
             val newParams =
-                state.parameters.copy(addedComponents = currentParams.addedComponents.filterNot { it.id == foodComponent.id })
+                state.parameters.copy(
+                    generalResults = currentParams.generalResults + foodComponent,
+                    addedComponents = currentParams.addedComponents.filterNot { it.id == foodComponent.id }
+                )
             val combinedList = newParams.generalResults + newParams.addedComponents
             combinedSearchListStore.update(combinedList)
             state.updateParams(newParams)
