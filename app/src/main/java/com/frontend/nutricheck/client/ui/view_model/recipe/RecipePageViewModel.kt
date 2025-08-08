@@ -37,6 +37,7 @@ sealed interface RecipePageEvent {
     data class ClickDeleteRecipe(val recipe: Recipe) : RecipePageEvent
     data class QueryChanged(val query: String) : RecipePageEvent
     data class ClickDetailsOption(val recipe: Recipe, val option: DropdownMenuOptions) : RecipePageEvent
+    data class NavigateToEditRecipe(val recipeId: String) : RecipePageEvent
     object ShowDetailsMenu : RecipePageEvent
     object SearchOnline : RecipePageEvent
 }
@@ -78,6 +79,7 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.SearchOnline -> viewModelScope.launch { performOnlineSearch() }
             is RecipePageEvent.ClickDetailsOption -> onDetailsOptionClick(event.recipe, event.option)
             is RecipePageEvent.ShowDetailsMenu -> onDetailsClick()
+            is RecipePageEvent.NavigateToEditRecipe -> emitEvent(RecipePageEvent.NavigateToEditRecipe(event.recipeId))
         }
     }
 
@@ -154,7 +156,7 @@ class RecipePageViewModel @Inject constructor(
                 }
                 DropdownMenuOptions.UPLOAD -> recipeRepository.uploadRecipe(recipe)
                 DropdownMenuOptions.REPORT -> _recipePageState.update { it.copy(showReportDialog = !_recipePageState.value.showReportDialog) }
-                DropdownMenuOptions.EDIT -> {}
+                DropdownMenuOptions.EDIT -> emitEvent(RecipePageEvent.NavigateToEditRecipe(recipe.id))
             }
         }
     }

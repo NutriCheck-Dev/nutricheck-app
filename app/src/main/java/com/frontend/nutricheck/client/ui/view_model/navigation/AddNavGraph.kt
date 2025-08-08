@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
@@ -113,7 +112,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
                 )
             }
 
-            composable(
+            /**composable(
                 route = AddScreens.FoodOverview.route,
                 arguments = listOf(
                     navArgument("foodProductId") { type = NavType.StringType },
@@ -136,7 +135,7 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
                     onPersist = { addNavController.popBackStack() },
                     onBack = { addNavController.popBackStack() }
                 )
-            }
+            }**/
 
             composable (
                 route = AddScreens.RecipeOverview.route,
@@ -178,15 +177,25 @@ fun AddNavGraph(mainNavController: NavHostController, origin: AddDialogOrigin, d
                     navArgument("recipeId") {
                         type = NavType.StringType
                         nullable = true
+                        defaultValue = null
+                    },
+                    navArgument("mealId") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
                     }
                 )
             ) { backStack ->
                 val foodProductId = backStack.arguments!!.getString("foodProductId")!!
-                val recipeId = backStack.arguments?.getString("recipeId")!!
+                val recipeId = backStack.arguments!!.getString("recipeId")
+                val mealId = backStack.arguments!!.getString("mealId")
+                val mode = when {
+                    recipeId != null -> AddScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
+                    mealId != null -> AddScreens.FoodOverview.fromAiMeal(mealId, foodProductId)
+                    else -> AddScreens.FoodOverview.fromSearch(foodProductId)
+                }
                 val graphEntry = remember(backStack) {
-                    addNavController.getBackStackEntry(
-                        AddScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
-                    )
+                    addNavController.getBackStackEntry(mode)
                 }
                 val searchGraphEntry = remember(backStack) {
                     addNavController.getBackStackEntry("add_meal_graph")

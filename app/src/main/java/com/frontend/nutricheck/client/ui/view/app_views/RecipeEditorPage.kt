@@ -39,7 +39,6 @@ import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
 
 @Composable
 fun RecipeEditorPage(

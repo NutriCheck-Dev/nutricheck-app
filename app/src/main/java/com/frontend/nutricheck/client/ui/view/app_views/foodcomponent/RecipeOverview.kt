@@ -48,7 +48,7 @@ import com.frontend.nutricheck.client.ui.view_model.search_food_component.Search
 @Composable
 fun RecipeOverview(
     recipeOverviewViewModel: RecipeOverviewViewModel,
-    searchViewModel: FoodSearchViewModel,
+    searchViewModel: FoodSearchViewModel? = null,
     reportRecipeViewModel: ReportRecipeViewModel,
     onItemClick: (Ingredient) -> Unit = {},
     onPersist: () -> Unit = {},
@@ -101,7 +101,11 @@ fun RecipeOverview(
                         )
                     } else {
                         CustomPersistButton {
-                            searchViewModel.onEvent(SearchEvent.AddFoodComponent(recipeOverviewState.submitRecipe()))
+                            searchViewModel?.onEvent(
+                                SearchEvent.AddFoodComponent(
+                                    recipeOverviewState.submitRecipe()
+                                )
+                            )
                             onPersist()
                         }
                     }
