@@ -94,7 +94,15 @@ class RecipeEditorViewModel @Inject constructor(
                     title = recipe.name,
                     description = recipe.instructions,
                     servings = recipe.servings,
-                    ingredients = recipe.ingredients.map { it.foodProduct }
+                    ingredients = recipe.ingredients.map { ingredient ->
+                        ingredient.foodProduct.copy(
+                            servings = ingredient.servings,
+                            servingSize = ingredient.servingSize
+                        )
+                    }
+                )
+                combinedSearchListStore.update(
+                    _draft.value.ingredients + _draft.value.results
                 )
                 appSettingRepository.language.collect { language ->
                     _draft.update { draft ->
@@ -216,7 +224,7 @@ class RecipeEditorViewModel @Inject constructor(
 
             when (mode) {
                 is RecipeMode.Create -> recipeRepo.insertRecipe(recipe)
-                is RecipeMode.Edit -> recipeRepo.uploadRecipe(recipe)
+                is RecipeMode.Edit -> recipeRepo.updateRecipe(recipe)
             }
         }
     }

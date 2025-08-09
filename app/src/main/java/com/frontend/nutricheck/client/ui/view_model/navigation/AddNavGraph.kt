@@ -118,31 +118,6 @@ fun AddNavGraph(mainNavController: NavHostController,
                 )
             }
 
-            /**composable(
-                route = AddScreens.FoodOverview.route,
-                arguments = listOf(
-                    navArgument("foodProductId") { type = NavType.StringType },
-                )
-            ) { backStack ->
-                val foodProductId = backStack.arguments!!.getString("foodProductId")!!
-                val graphEntry = remember(backStack) {
-                    addNavController.getBackStackEntry(
-                        AddScreens.FoodOverview.fromSearch(foodProductId)
-                    )
-                }
-                val searchGraphEntry = remember(backStack) {
-                    addNavController.getBackStackEntry("add_meal_graph")
-                }
-                val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
-                val foodSearchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
-                FoodProductOverview(
-                    foodProductOverviewViewModel = foodProductOverviewViewModel,
-                    foodSearchViewModel = foodSearchViewModel,
-                    onPersist = { addNavController.popBackStack() },
-                    onBack = { addNavController.popBackStack() }
-                )
-            }**/
-
             composable (
                 route = AddScreens.RecipeOverview.route,
                 arguments = listOf(
