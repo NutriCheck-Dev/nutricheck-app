@@ -27,7 +27,7 @@ data class RecipePageState(
     val selectedTab: Int = 0,
     val query: String = "",
     val showReportDialog: Boolean = false,
-    val showDetailsMenu: Boolean = false,
+    val showDetailsMenuRecipeId: String? = null,
 )
 
 sealed interface RecipePageEvent {
@@ -38,7 +38,7 @@ sealed interface RecipePageEvent {
     data class QueryChanged(val query: String) : RecipePageEvent
     data class ClickDetailsOption(val recipe: Recipe, val option: DropdownMenuOptions) : RecipePageEvent
     data class NavigateToEditRecipe(val recipeId: String) : RecipePageEvent
-    object ShowDetailsMenu : RecipePageEvent
+    data class ShowDetailsMenu(val recipeId: String?) : RecipePageEvent
     object SearchOnline : RecipePageEvent
 }
 
@@ -78,7 +78,7 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.QueryChanged -> _recipePageState.update { it.copy(query = event.query) }
             is RecipePageEvent.SearchOnline -> viewModelScope.launch { performOnlineSearch() }
             is RecipePageEvent.ClickDetailsOption -> onDetailsOptionClick(event.recipe, event.option)
-            is RecipePageEvent.ShowDetailsMenu -> onDetailsClick()
+            is RecipePageEvent.ShowDetailsMenu -> onDetailsClick(event.recipeId)
             is RecipePageEvent.NavigateToEditRecipe -> emitEvent(RecipePageEvent.NavigateToEditRecipe(event.recipeId))
         }
     }
@@ -137,8 +137,8 @@ class RecipePageViewModel @Inject constructor(
         }
     }
 
-    private fun onDetailsClick() {
-        _recipePageState.update { it.copy(showDetailsMenu = !_recipePageState.value.showDetailsMenu) }
+    private fun onDetailsClick(recipeId: String?) {
+        _recipePageState.update { it.copy(showDetailsMenuRecipeId = recipeId) }
     }
 
     private fun onDetailsOptionClick(recipe: Recipe, option: DropdownMenuOptions) {

@@ -122,18 +122,19 @@ fun RecipePage(
                                     onItemClick(recipe as Recipe)
                                 },
                                 trailingContent = { foodComponent ->
+                                    val recipe = foodComponent as Recipe
                                     CustomDetailsButton(
                                         dishItemButton = true,
                                         ownedRecipe = true,
                                         onOptionClick = { option ->
                                             recipePageViewModel.onEvent(
-                                            RecipePageEvent.ClickDetailsOption(foodComponent as Recipe, option)) },
-                                        expanded = recipePageState.showDetailsMenu,
+                                            RecipePageEvent.ClickDetailsOption(recipe, option)) },
+                                        expanded = recipePageState.showDetailsMenuRecipeId == recipe.id,
                                         onDetailsClick = { recipePageViewModel.onEvent(
-                                            RecipePageEvent.ShowDetailsMenu)
+                                            RecipePageEvent.ShowDetailsMenu(recipe.id))
                                         },
                                         onDismissClick = { recipePageViewModel.onEvent(
-                                            RecipePageEvent.ShowDetailsMenu
+                                            RecipePageEvent.ShowDetailsMenu(null)
                                         )}
                                     )
                                 }
@@ -151,21 +152,22 @@ fun RecipePage(
                                             onItemClick(recipe as Recipe)
                                                       },
                                         trailingContent = { foodComponent ->
+                                            val recipe = foodComponent as Recipe
                                             CustomDetailsButton(
                                                 dishItemButton = true,
                                                 publicRecipe = true,
                                                 onOptionClick = { option ->
                                                     if (option == DropdownMenuOptions.REPORT) {
-                                                        reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked(foodComponent as Recipe))
+                                                        reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked(recipe))
                                                     }
                                                     recipePageViewModel.onEvent(
-                                                        RecipePageEvent.ClickDetailsOption(foodComponent as Recipe, option)) },
-                                                expanded = recipePageState.showDetailsMenu,
+                                                        RecipePageEvent.ClickDetailsOption(recipe, option)) },
+                                                expanded = recipePageState.showDetailsMenuRecipeId == recipe.id,
                                                 onDetailsClick = {
-                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu)
+                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu(recipe.id))
                                                 },
                                                 onDismissClick = {
-                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu)
+                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu(null))
                                                 })
                                         }
                                     )
