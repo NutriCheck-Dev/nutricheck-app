@@ -106,24 +106,26 @@ class FoodProductOverviewViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val foodProduct = when (mode) {
+            val (foodProduct, servingsPair) = when (mode) {
                 is FoodProductOverviewMode.FromSearch -> {
-                    val searchList = combinedSearchListStore.state.first()
-                    searchList.find { it.id == mode.foodProductId } ?: foodProductRepository.getFoodProductById(mode.foodProductId)
+                    val foodProduct = combinedSearchListStore.state.first()
+                        .find { it.id == mode.foodProductId }
+                        ?: foodProductRepository.getFoodProductById(mode.foodProductId)
+                    Pair(foodProduct, Pair(foodProduct.servings, (foodProduct as FoodProduct).servingSize))
                 }
 
                 is FoodProductOverviewMode.FromIngredient -> {
                     val ingredient =
                         recipeRepository.getIngredientById(mode.recipeId, mode.foodProductId)
                     _state.update { it.copy(recipeId = mode.recipeId) }
-                    ingredient.foodProduct
+                    Pair(ingredient.foodProduct, Pair(ingredient.servings, ingredient.servingSize))
                 }
 
                 is FoodProductOverviewMode.FromMeal -> {
                     val mealFoodItem =
                         historyRepository.getMealFoodItemById(mode.mealId, mode.foodProductId)
                     _state.update { it.copy(mealId = mode.mealId) }
-                    mealFoodItem.foodProduct
+                    Pair(mealFoodItem.foodProduct, Pair(mealFoodItem.servings, mealFoodItem.servingSize))
                 }
             }
             val newParams = initialParams.copy(
@@ -132,10 +134,10 @@ class FoodProductOverviewViewModel @Inject constructor(
                 protein = foodProduct.protein,
                 carbohydrates = foodProduct.carbohydrates,
                 fat = foodProduct.fat,
-                servings = foodProduct.servings,
-                servingSize = (foodProduct as FoodProduct).servingSize
+                servings = servingsPair.first,
+                servingSize = servingsPair.second
             )
-            _state.update { it.copy(foodProduct = foodProduct, parameters = newParams) }
+            _state.update { it.copy(foodProduct = (foodProduct as FoodProduct), parameters = newParams) }
             convertNutrients()
         }
 

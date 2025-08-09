@@ -44,4 +44,5 @@ interface RecipeRepository {
     suspend fun getIngredientById(recipeId: String, foodProductId: String): Ingredient
     suspend fun updateIngredient(ingredient: Ingredient)
     suspend fun getRecipesByName(recipeName: String): List<Recipe>
+    fun observeRecipeById(recipeId: String): Flow<Recipe>
 }

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -184,6 +185,11 @@ class RecipeRepositoryImpl @Inject constructor(
         val recipeWithIngredients = recipeDao.getRecipesByName(recipeName).first()
         recipeWithIngredients.map { DbRecipeMapper.toRecipe(it) }
     }
+
+    override fun observeRecipeById(recipeId: String): Flow<Recipe> =
+        recipeDao.getRecipeWithIngredientsById(recipeId)
+            .map(DbRecipeMapper::toRecipe)
+            .flowOn(Dispatchers.IO)
 
     private fun isExpired(lastUpdate: Long?): Boolean =
         lastUpdate == null || System.currentTimeMillis() - lastUpdate > timeToLive

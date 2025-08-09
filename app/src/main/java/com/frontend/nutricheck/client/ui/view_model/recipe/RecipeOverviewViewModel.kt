@@ -91,28 +91,57 @@ class RecipeOverviewViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val recipe = when(mode) {
+            when(mode) {
                 is RecipeOverviewMode.FromSearch -> {
                     val searchList = combinedSearchListStore.state.first()
-                    searchList.find { it.id == mode.recipeId } ?: recipeRepository.getRecipeById(mode.recipeId)
+                    val foodComponent = searchList.find { it.id == mode.recipeId } ?: recipeRepository.getRecipeById(mode.recipeId)
+                    val recipe = foodComponent as Recipe
+                    _recipeOverviewState.update { state ->
+                        val params = state.parameters.copy(
+                            ingredients = recipe.ingredients,
+                            calories = recipe.calories,
+                            protein = recipe.protein,
+                            carbohydrates = recipe.carbohydrates,
+                            fat = recipe.fat,
+                            servings = state.parameters.servings
+                        )
+                        state.copy(recipe = recipe, parameters = params)
+                    }
+                    convertNutrients()
                 }
-                is RecipeOverviewMode.General -> recipeRepository.getRecipeById(mode.recipeId)
+                is RecipeOverviewMode.General ->
+                    recipeRepository.observeRecipeById(mode.recipeId)
+                        .collect { recipe ->
+                            _recipeOverviewState.update { state ->
+                                val params = state.parameters.copy(
+                                    ingredients = recipe.ingredients,
+                                    calories = recipe.calories,
+                                    protein = recipe.protein,
+                                    carbohydrates = recipe.carbohydrates,
+                                    fat = recipe.fat,
+                                    servings = state.parameters.servings
+                                )
+                                state.copy(recipe = recipe, parameters = params)
+                            }
+                            convertNutrients()
+                        }
                 is RecipeOverviewMode.FromMeal -> {
                     val meal = historyRepository.getMealRecipeItemById(mode.mealId, mode.recipeId)
-                    meal.recipe
+                    val recipe = meal.recipe
+                    _recipeOverviewState.update { state ->
+                        val params = state.parameters.copy(
+                            ingredients = recipe.ingredients,
+                            calories = recipe.calories,
+                            protein = recipe.protein,
+                            carbohydrates = recipe.carbohydrates,
+                            fat = recipe.fat,
+                            servings = state.parameters.servings
+                        )
+                        state.copy(recipe = recipe, parameters = params)
+                    }
+                    convertNutrients()
                 }
             }
-            val newParams = initialParams.copy(
-                ingredients = (recipe as Recipe).ingredients,
-                calories = recipe.calories,
-                protein = recipe.protein,
-                carbohydrates = recipe.carbohydrates,
-                fat = recipe.fat,
-                servings = recipe.servings
-                )
-
-            _recipeOverviewState.update { it.copy(recipe = recipe, parameters = newParams) }
-            convertNutrients()
         }
     }
 
