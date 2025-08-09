@@ -27,7 +27,7 @@ data class RecipePageState(
     val selectedTab: Int = 0,
     val query: String = "",
     val showReportDialog: Boolean = false,
-    val showDetailsMenuRecipeId: String? = null,
+    val expandedRecipeId: String? = null,
 )
 
 sealed interface RecipePageEvent {
@@ -138,7 +138,7 @@ class RecipePageViewModel @Inject constructor(
     }
 
     private fun onDetailsClick(recipeId: String?) {
-        _recipePageState.update { it.copy(showDetailsMenuRecipeId = recipeId) }
+        _recipePageState.update { it.copy(expandedRecipeId = recipeId) }
     }
 
     private fun onDetailsOptionClick(recipe: Recipe, option: DropdownMenuOptions) {

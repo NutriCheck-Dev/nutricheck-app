@@ -129,7 +129,7 @@ fun RecipePage(
                                         onOptionClick = { option ->
                                             recipePageViewModel.onEvent(
                                             RecipePageEvent.ClickDetailsOption(recipe, option)) },
-                                        expanded = recipePageState.showDetailsMenuRecipeId == recipe.id,
+                                        expanded = recipePageState.expandedRecipeId == recipe.id,
                                         onDetailsClick = { recipePageViewModel.onEvent(
                                             RecipePageEvent.ShowDetailsMenu(recipe.id))
                                         },
@@ -162,7 +162,7 @@ fun RecipePage(
                                                     }
                                                     recipePageViewModel.onEvent(
                                                         RecipePageEvent.ClickDetailsOption(recipe, option)) },
-                                                expanded = recipePageState.showDetailsMenuRecipeId == recipe.id,
+                                                expanded = recipePageState.expandedRecipeId == recipe.id,
                                                 onDetailsClick = {
                                                     recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu(recipe.id))
                                                 },
