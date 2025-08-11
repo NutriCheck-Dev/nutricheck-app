@@ -101,6 +101,13 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun observeMyRecipes(): Flow<List<Recipe>> =
+        recipeDao.getAllRecipesWithIngredients(RecipeVisibility.OWNER)
+            .map { list ->
+                list.map(DbRecipeMapper::toRecipe)
+            }
+            .flowOn(Dispatchers.IO)
+
     override suspend fun getRecipeById(recipeId: String): Recipe = withContext(Dispatchers.IO) {
         val recipeWithIngredients = recipeDao.getRecipeWithIngredientsById(recipeId).first()
         DbRecipeMapper.toRecipe(recipeWithIngredients)

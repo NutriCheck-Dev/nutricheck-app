@@ -55,16 +55,15 @@ class RecipePageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            setLoading()
-            val myRecipes = recipeRepository.getMyRecipes()
+            recipeRepository.observeMyRecipes().collect { list ->
+                _recipePageState.update { it.copy(myRecipes = list) }
+            }
             val onlineRecipes = emptyList<Recipe>()
             _recipePageState.update { it.copy(
-                myRecipes = myRecipes,
                 onlineRecipes = onlineRecipes,
                 selectedTab = 0,
                 query = ""
             ) }
-            setReady()
         }
     }
 
@@ -123,9 +122,9 @@ class RecipePageViewModel @Inject constructor(
                     setLoading()
                     _recipePageState.update { it.copy(onlineRecipes = emptyList()) }
                 }
-                .catch { it ->
+                .catch { body ->
                     _recipePageState.update { it.copy(onlineRecipes = emptyList()) }
-                    setError(it.message!!)
+                    setError(body.message!!)
                 }
                 .collect { result ->
                     when (result) {

@@ -24,6 +24,7 @@ interface RecipeRepository {
      * Retrieves all local saved recipes from the database.
      */
     suspend fun getMyRecipes(): List<Recipe>
+
     /**
      * Retrieves a recipe by its ID.
      */
@@ -45,4 +46,5 @@ interface RecipeRepository {
     suspend fun updateIngredient(ingredient: Ingredient)
     suspend fun getRecipesByName(recipeName: String): List<Recipe>
     fun observeRecipeById(recipeId: String): Flow<Recipe>
+    suspend fun observeMyRecipes(): Flow<List<Recipe>>
 }
