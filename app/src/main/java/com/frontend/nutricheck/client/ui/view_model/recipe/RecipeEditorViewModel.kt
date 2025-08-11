@@ -192,7 +192,7 @@ class RecipeEditorViewModel @Inject constructor(
             setError(appContext.getString(R.string.error_no_recipe_name))
             return@launch
         }
-        if (draft.ingredients.size < 2) {
+        if (draft.ingredients.size < 3) {
             setError(appContext.getString(R.string.error_not_enough_ingredients))
             return@launch
         }

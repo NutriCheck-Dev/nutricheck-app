@@ -6,6 +6,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
@@ -93,7 +94,7 @@ class RecipeRepositoryImpl @Inject constructor(
 
 
     override suspend fun getMyRecipes(): List<Recipe> = withContext(Dispatchers.IO) {
-        val recipesWithIngredients = recipeDao.getAllRecipesWithIngredients()
+        val recipesWithIngredients = recipeDao.getAllRecipesWithIngredients(RecipeVisibility.OWNER)
         val list = recipesWithIngredients.first()
         list.map { recipeWithIngredients ->
             DbRecipeMapper.toRecipe(recipeWithIngredients)

@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.RecipeWithIngredients
 import kotlinx.coroutines.flow.Flow
@@ -26,9 +27,9 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     @Transaction
     @Query("SELECT * " +
             "FROM recipes " +
-            "WHERE deleted = 0 " +
-            "AND id NOT IN (SELECT recipeId FROM recipe_search_index) ORDER BY name ASC")
-    fun getAllRecipesWithIngredients(): Flow<List<RecipeWithIngredients>>
+            "WHERE deleted = 0 AND visibility = :visibility " +
+            "ORDER BY name ASC")
+    fun getAllRecipesWithIngredients(visibility: RecipeVisibility): Flow<List<RecipeWithIngredients>>
 
     @Transaction
     @Query("SELECT * FROM recipes WHERE id = :recipeId")
