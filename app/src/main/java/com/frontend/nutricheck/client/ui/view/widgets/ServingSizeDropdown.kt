@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -50,15 +51,11 @@ fun ServingSizeDropdown(
 
     val list = options.map { it.getDisplayName() }
     val visibleCount = 8
-    val halfCount = (visibleCount - 1) / 2
 
-    val initialIndex = list.indexOf(currentServingSize.getDisplayName())
-        .coerceAtLeast(0)
+    val initialIndex = list.indexOf(currentServingSize.getDisplayName()).coerceAtLeast(0)
 
-    val state = rememberLazyListState(
-        initialFirstVisibleItemIndex = initialIndex
-    )
-    val fling = rememberSnapFlingBehavior(lazyListState = state)
+    val state = rememberLazyListState()
+    val fling = rememberSnapFlingBehavior(lazyListState = state, snapPosition = SnapPosition.Center)
 
     Box(modifier = Modifier
         .width(180.dp)
@@ -110,10 +107,10 @@ fun ServingSizeDropdown(
                 state = state,
                 flingBehavior = fling,
                 visibleCount = visibleCount,
-                halfCount = halfCount,
                 onSelectedIndexChange = { realIndex ->
                     onValueChange(options.elementAt(realIndex))
-                }
+                },
+                selectedInitialIndex = initialIndex
             )
         }
     }

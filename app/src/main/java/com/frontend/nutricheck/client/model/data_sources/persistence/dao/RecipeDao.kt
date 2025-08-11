@@ -36,7 +36,7 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     fun getRecipeWithIngredientsById(recipeId: String): Flow<RecipeWithIngredients>
 
 
-    @Query("SELECT EXISTS(SELECT 1 FROM foods WHERE id = :id)")
+    @Query("SELECT EXISTS(SELECT 1 FROM recipes WHERE id = :id)")
     suspend fun exists(id: String): Boolean
   
     @Transaction

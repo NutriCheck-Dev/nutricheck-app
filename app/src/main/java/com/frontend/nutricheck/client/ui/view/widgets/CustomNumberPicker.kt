@@ -5,22 +5,23 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -33,6 +34,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun CustomNumberPicker(
@@ -42,20 +47,39 @@ fun CustomNumberPicker(
     state: LazyListState,
     flingBehavior: FlingBehavior,
     visibleCount: Int,
-    halfCount: Int,
-    onSelectedIndexChange: (Int) -> Unit
+    onSelectedIndexChange: (Int) -> Unit,
+    selectedInitialIndex: Int = 0
 ) {
     val colors = MaterialTheme.colorScheme
-    val height = with(LocalDensity.current) {
-        textStyle.fontSize.toDp() + 8.dp
-    }
-    val centeredIndex by remember {
-        derivedStateOf { state.firstVisibleItemIndex + halfCount }
+
+    val rowHeight = with(LocalDensity.current) { (textStyle.fontSize.toDp() + 8.dp).roundToPx() }
+    val viewPortHeight = with(LocalDensity.current) { (textStyle.fontSize.toDp() + 8.dp) * visibleCount }
+    val centerPadding = with(LocalDensity.current) { (viewPortHeight / 2f - (rowHeight / 2f).toDp()) }
+
+    var didInitialScroll by remember { mutableStateOf(false) }
+    LaunchedEffect(selectedInitialIndex, didInitialScroll) {
+        if (!didInitialScroll) {
+            snapshotFlow { state.layoutInfo.viewportEndOffset - state.layoutInfo.viewportStartOffset }
+                .first { it > 0 }
+            state.scrollToItem(selectedInitialIndex)
+            didInitialScroll = true
+        }
     }
 
-    LaunchedEffect(centeredIndex) {
-        val realIndex = (centeredIndex - halfCount).coerceIn(0, list.lastIndex)
-        onSelectedIndexChange(realIndex)
+    LaunchedEffect(state) {
+        snapshotFlow { state.isScrollInProgress }
+            .distinctUntilChanged()
+            .filter { !it }
+            .map {
+                val info = state.layoutInfo
+                val viewportCenter = (info.viewportStartOffset + info.viewportEndOffset) / 2
+                info.visibleItemsInfo.minByOrNull { itemInfo ->
+                    val center = itemInfo.offset + itemInfo.size / 2
+                    kotlin.math.abs(center - viewportCenter)
+                }?.index ?: 0
+            }
+            .distinctUntilChanged()
+            .collect { onSelectedIndexChange(it) }
     }
 
     Box(
@@ -69,7 +93,7 @@ fun CustomNumberPicker(
             flingBehavior = flingBehavior,
             modifier = Modifier
                 .padding(4.dp)
-                .height(height * visibleCount)
+                .height(viewPortHeight)
                 .fillMaxWidth()
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
                 .drawWithContent{
@@ -83,31 +107,18 @@ fun CustomNumberPicker(
                         blendMode = BlendMode.DstIn
                     )
                 },
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(vertical = centerPadding)
         ) {
-            items(halfCount) {
-                Spacer(Modifier
-                    .fillMaxWidth()
-                    .height(height)
-                )
-            }
-
-            items(list) { value ->
+            items(list.size) { index ->
                 Text(
-                    text = value,
+                    text = list[index],
                     style = textStyle,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(height)
+                        .height(with(LocalDensity.current) { rowHeight.toDp() })
                         .wrapContentHeight(Alignment.CenterVertically)
-                )
-            }
-
-            items(halfCount) {
-                Spacer(Modifier
-                    .fillMaxWidth()
-                    .height(height)
                 )
             }
         }
@@ -116,7 +127,7 @@ fun CustomNumberPicker(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth(.95f)
-                .height(height + 4.dp)
+                .height(with(LocalDensity.current) { rowHeight.toDp() } + 4.dp)
                 .background(colors.primary.copy(0.15f), RoundedCornerShape(8.dp))
                 .border(1.dp, colors.primary, RoundedCornerShape(8.dp))
         )

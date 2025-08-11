@@ -112,7 +112,7 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe, true)
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe, false)
         recipeDao.update(recipeEntity)
 
         ingredientDao.deleteIngredientsOfRecipe(recipeEntity.id)
