@@ -23,9 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
@@ -70,7 +73,7 @@ fun MealSelector(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = dayTime?.toString() ?: "Select Meal",
+                        text = dayTime?.getDescription(context = LocalContext.current) ?: stringResource(R.string.label_select_meal),
                         style = styles.headlineMedium,
                         color = colors.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -91,7 +94,7 @@ fun MealSelector(
                 ) {
                     mealOptions.forEach { dayTime ->
                         DropdownMenuItem(
-                            text = { Text(dayTime.toString()) },
+                            text = { Text(dayTime.getDescription(context = LocalContext.current)) },
                             onClick = {
                                 onMealSelected(dayTime)
                                 onExpandedChange()
