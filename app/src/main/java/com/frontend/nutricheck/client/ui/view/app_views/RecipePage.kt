@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -67,16 +68,10 @@ fun RecipePage(
                     }
                 }
                 is BaseViewModel.UiState.Error -> {
-                    val message = (uiState as BaseViewModel.UiState.Error).message
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Fehler: $message")
-                            Spacer(Modifier.height(8.dp))
-                            Button(onClick = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) }) {
-                                Text(stringResource(R.string.label_retry))
-                            }
-                        }
-                    }
+                    ShowErrorMessage(
+                        error = (uiState as BaseViewModel.UiState.Error).message,
+                        onClick = { recipePageViewModel.onEvent(RecipePageEvent.ResetErrorState) }
+                    )
                 }
                 BaseViewModel.UiState.Ready -> {
                     FoodComponentSearchBar(
@@ -202,4 +197,22 @@ fun RecipePage(
             }
         }
     }
+}
+
+@Composable
+private fun ShowErrorMessage(
+    title: String = stringResource(R.string.show_error_message_title),
+    error: String,
+    onClick: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { onClick() },
+        title = { Text(title) },
+        text = { Text(error) },
+        confirmButton = {
+            Button(onClick = { onClick() }) {
+                Text(stringResource(R.string.label_ok))
+            }
+        }
+    )
 }

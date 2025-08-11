@@ -67,17 +67,17 @@ fun CustomNumberPicker(
     }
 
     LaunchedEffect(state) {
-        snapshotFlow { state.isScrollInProgress }
-            .distinctUntilChanged()
-            .filter { !it }
-            .map {
-                val info = state.layoutInfo
+        snapshotFlow {
+            val info = state.layoutInfo
+            if (info.visibleItemsInfo.isEmpty()) -1 else {
                 val viewportCenter = (info.viewportStartOffset + info.viewportEndOffset) / 2
                 info.visibleItemsInfo.minByOrNull { itemInfo ->
                     val center = itemInfo.offset + itemInfo.size / 2
                     kotlin.math.abs(center - viewportCenter)
-                }?.index ?: 0
+                }?.index ?: -1
             }
+        }
+            .filter { it >= 0 }
             .distinctUntilChanged()
             .collect { onSelectedIndexChange(it) }
     }
@@ -127,7 +127,7 @@ fun CustomNumberPicker(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth(.95f)
-                .height(with(LocalDensity.current) { rowHeight.toDp() } + 4.dp)
+                .height(with(LocalDensity.current) { rowHeight.toDp() } + 8.dp)
                 .background(colors.primary.copy(0.15f), RoundedCornerShape(8.dp))
                 .border(1.dp, colors.primary, RoundedCornerShape(8.dp))
         )

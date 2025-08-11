@@ -40,6 +40,8 @@ sealed interface RecipePageEvent {
     data class NavigateToEditRecipe(val recipeId: String) : RecipePageEvent
     data class ShowDetailsMenu(val recipeId: String?) : RecipePageEvent
     object SearchOnline : RecipePageEvent
+    object RecipeUploaded : RecipePageEvent
+    object ResetErrorState : RecipePageEvent
 }
 
 @HiltViewModel
@@ -80,6 +82,9 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.ClickDetailsOption -> onDetailsOptionClick(event.recipe, event.option)
             is RecipePageEvent.ShowDetailsMenu -> onDetailsClick(event.recipeId)
             is RecipePageEvent.NavigateToEditRecipe -> emitEvent(RecipePageEvent.NavigateToEditRecipe(event.recipeId))
+            is RecipePageEvent.ResetErrorState -> setReady()
+            is RecipePageEvent.RecipeUploaded -> null
+
         }
     }
 
@@ -154,7 +159,12 @@ class RecipePageViewModel @Inject constructor(
                     val refreshedList = recipeRepository.getMyRecipes()
                     _recipePageState.update { it.copy(myRecipes = refreshedList) }
                 }
-                DropdownMenuOptions.UPLOAD -> recipeRepository.uploadRecipe(recipe)
+                DropdownMenuOptions.UPLOAD -> {
+                    when (val body = recipeRepository.uploadRecipe(recipe)) {
+                        is Result.Success -> _events.emit(RecipePageEvent.RecipeUploaded)
+                        is Result.Error ->  setError(body.message!!)
+                    }
+                }
                 DropdownMenuOptions.REPORT -> _recipePageState.update { it.copy(showReportDialog = !_recipePageState.value.showReportDialog) }
                 DropdownMenuOptions.EDIT -> emitEvent(RecipePageEvent.NavigateToEditRecipe(recipe.id))
             }
