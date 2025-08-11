@@ -1,7 +1,9 @@
 package com.frontend.nutricheck.client.ui.view_model
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
@@ -16,6 +18,7 @@ import com.frontend.nutricheck.client.model.repositories.history.HistoryReposito
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -85,6 +88,8 @@ sealed interface  SearchEvent {
     object SubmitComponentsToMeal : SearchEvent
     object MealSelectorClick: SearchEvent
     object ExpandBottomSheet : SearchEvent
+    object ResetErrorState : SearchEvent
+    data object MealSaved : SearchEvent
 }
 
 @HiltViewModel
@@ -94,6 +99,7 @@ class FoodSearchViewModel @Inject constructor(
     private val foodProductRepository: FoodProductRepository,
     private val historyRepository: HistoryRepository,
     private val combinedSearchListStore: CombinedSearchListStore,
+    @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -180,13 +186,14 @@ class FoodSearchViewModel @Inject constructor(
             }
             is SearchEvent.ClickSearchAll -> onSearchAllClick()
             is SearchEvent.ClickSearchMyRecipes -> onSearchMyRecipesClick()
+            is SearchEvent.ResetErrorState -> setReady()
+            is SearchEvent.MealSaved -> null
         }
     }
 
     private fun onClickSearchFoodComponent() {
         val query = _searchState.value.parameters.query
         if (query.isBlank()) {
-            setError("Please enter a search term.")
             return
         }
         viewModelScope.launch {
@@ -197,8 +204,6 @@ class FoodSearchViewModel @Inject constructor(
                          if (_searchState.value.parameters.selectedTab == 1) {
                              recipeRepository.getRecipesByName(query).let { recipes ->
                                  if (recipes.isEmpty()) {
-                                     setError("Keine Rezepte gefunden.")
-                                     setReady()
                                      return@launch
                                  } else {
                                      _searchState.update { state ->
@@ -311,6 +316,9 @@ class FoodSearchViewModel @Inject constructor(
             combinedSearchListStore.update(combinedList)
             state.updateParams(newParams)
         }
+        viewModelScope.launch {
+            _events.emit(SearchEvent.AddFoodComponent(foodComponent))
+        }
     }
 
     private fun onClickRemoveFoodComponent(foodComponent: FoodComponent) =
@@ -364,7 +372,7 @@ class FoodSearchViewModel @Inject constructor(
         if (state !is SearchUiState.AddComponentsToMealState) return
 
         if (state.dayTime == null) {
-            setError("Please select a day time for the meal.")
+            setError(appContext.getString(R.string.error_missing_dayTime))
             return
         }
 
@@ -384,32 +392,45 @@ class FoodSearchViewModel @Inject constructor(
                 recipe = component as Recipe
             )
         }
-        viewModelScope.launch {
-            if (mode is SearchMode.ComponentsForMeal) {
-                val originalMeal = historyRepository.getMealById(state.mealId)
-                originalMeal.copy(
-                    mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
-                    mealRecipeItems = originalMeal.mealRecipeItems + mealRecipeItems
-                )
-                historyRepository.updateMeal(originalMeal)
-            } else {
-                val newMeal = Meal(
-                    id = state.mealId,
-                    calories = (mealFoodItems).sumOf { it.foodProduct.calories * it.quantity}
-                    + (mealRecipeItems).sumOf { it.recipe.calories * it.quantity },
-                    carbohydrates = (mealFoodItems).sumOf { it.foodProduct.carbohydrates * it.quantity }
-                    + (mealRecipeItems).sumOf { it.recipe.carbohydrates * it.quantity },
-                    protein = (mealFoodItems).sumOf { it.foodProduct.protein * it.quantity }
-                    + (mealRecipeItems).sumOf { it.recipe.protein * it.quantity },
-                    fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
-                    + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
-                    date = Date(),
-                    dayTime = state.dayTime,
-                    mealFoodItems = mealFoodItems,
-                    mealRecipeItems = mealRecipeItems
 
-                )
-                historyRepository.addMeal(newMeal)
+        if (mealFoodItems.isEmpty() && mealRecipeItems.isEmpty()) {
+            setError(appContext.getString(R.string.error_create_meal_missing_foodComponent))
+            return
+        }
+
+        viewModelScope.launch {
+            setLoading()
+            try {
+                if (mode is SearchMode.ComponentsForMeal) {
+                    val originalMeal = historyRepository.getMealById(state.mealId)
+                    originalMeal.copy(
+                        mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
+                        mealRecipeItems = originalMeal.mealRecipeItems + mealRecipeItems
+                    )
+                    historyRepository.updateMeal(originalMeal)
+                } else {
+                    val newMeal = Meal(
+                        id = state.mealId,
+                        calories = (mealFoodItems).sumOf { it.foodProduct.calories * it.quantity }
+                                + (mealRecipeItems).sumOf { it.recipe.calories * it.quantity },
+                        carbohydrates = (mealFoodItems).sumOf { it.foodProduct.carbohydrates * it.quantity }
+                                + (mealRecipeItems).sumOf { it.recipe.carbohydrates * it.quantity },
+                        protein = (mealFoodItems).sumOf { it.foodProduct.protein * it.quantity }
+                                + (mealRecipeItems).sumOf { it.recipe.protein * it.quantity },
+                        fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
+                                + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
+                        date = Date(),
+                        dayTime = state.dayTime,
+                        mealFoodItems = mealFoodItems,
+                        mealRecipeItems = mealRecipeItems
+
+                    )
+                    historyRepository.addMeal(newMeal)
+                    _events.emit(SearchEvent.MealSaved)
+                }
+                setReady()
+            } catch (e: Exception) {
+                setError("Failed to save meal: ${e.message}")
             }
         }
     }

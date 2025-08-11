@@ -43,15 +43,12 @@ fun SearchPage(
     isLoading: Boolean,
 ) {
     val styles = MaterialTheme.typography
-    val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(expand) }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Text(

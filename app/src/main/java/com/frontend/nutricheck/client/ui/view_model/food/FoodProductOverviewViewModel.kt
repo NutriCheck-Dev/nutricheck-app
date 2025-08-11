@@ -60,6 +60,8 @@ sealed interface FoodProductOverviewEvent {
     data object SaveAndAddClick : FoodProductOverviewEvent
     data object ServingSizeDropDownClick : FoodProductOverviewEvent
     data object DeleteAiMeal : FoodProductOverviewEvent
+    data object SubmitMealItem : FoodProductOverviewEvent
+    data object UpdateIngredient : FoodProductOverviewEvent
 }
 
 @HiltViewModel
@@ -153,6 +155,8 @@ class FoodProductOverviewViewModel @Inject constructor(
             is FoodProductOverviewEvent.SaveAndAddClick -> viewModelScope.launch { onSaveChanges() }
             is FoodProductOverviewEvent.ServingSizeDropDownClick -> onServingSizeDropDownClick()
             is FoodProductOverviewEvent.DeleteAiMeal -> deleteAiMeal()
+            is FoodProductOverviewEvent.SubmitMealItem -> null
+            is FoodProductOverviewEvent.UpdateIngredient -> null
         }
     }
 
@@ -170,6 +174,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                     servingSize = commonParams.servingSize
                 )
                 recipeRepository.updateIngredient(ingredient)
+                _events.emit(FoodProductOverviewEvent.UpdateIngredient)
             }
             is FoodProductOverviewMode.FromMeal -> {
                 val mealFoodItem = MealFoodItem(
@@ -180,8 +185,9 @@ class FoodProductOverviewViewModel @Inject constructor(
                     servingSize = commonParams.servingSize
                 )
                 historyRepository.updateMealFoodItem(mealFoodItem)
+                _events.emit(FoodProductOverviewEvent.SubmitMealItem)
             }
-            is FoodProductOverviewMode.FromSearch -> {}
+            is FoodProductOverviewMode.FromSearch -> null
         }
     }
 
@@ -235,7 +241,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                     val meal = historyRepository.getMealById(mode.mealId)
                     historyRepository.deleteMeal(meal)
                 }
-                else -> {}
+                else -> null
             }
         }
     }

@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,7 +61,6 @@ fun RecipeEditorPage(
     val draft by recipeEditorViewModel.draft.collectAsState()
     val currentTitle = draft.title
     val currentDescription = draft.description
-    val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = modifier
@@ -107,53 +111,78 @@ fun RecipeEditorPage(
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn (
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(innerPadding)
-                .padding(16.dp)
-                .scrollable(state = scrollState, orientation = Orientation.Vertical),
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Text(
-                    text = "Servings:",
-                    style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = colors.onSurfaceVariant,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                ServingsPicker(
-                    value = draft.servings,
-                    range = 1..200,
-                    onValueChange = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ServingsChanged(it)) }
-                )
+            if (uiState is BaseViewModel.UiState.Error) {
+                item {
+                    ShowErrorMessage(
+                        error = (uiState as BaseViewModel.UiState.Error).message,
+                        onClick = {
+                            recipeEditorViewModel.onEvent(RecipeEditorEvent.ResetErrorState)
+                        }
+                    )
+                }
             }
-
-            Text(
-                text = stringResource(R.string.recipe_description),
-                style = styles.titleMedium,
-                )
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, colors.outline)
-            ) {
-                TextField(
-                    value = currentDescription,
-                    onValueChange = { newDescription ->
-                        recipeEditorViewModel.onEvent(RecipeEditorEvent.DescriptionChanged(newDescription))
-                        },
+            item {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                )
+                        .wrapContentHeight()
+                ) {
+                    Text(
+                        text = "Servings:",
+                        style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = colors.onSurfaceVariant,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    ServingsPicker(
+                        value = draft.servings,
+                        range = 1..200,
+                        onValueChange = {
+                            recipeEditorViewModel.onEvent(
+                                RecipeEditorEvent.ServingsChanged(
+                                    it
+                                )
+                            )
+                        }
+                    )
+                }
             }
 
+            item {
+                Text(
+                    text = stringResource(R.string.recipe_description),
+                    style = styles.titleMedium,
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, colors.outline)
+                ) {
+                    TextField(
+                        value = currentDescription,
+                        onValueChange = { newDescription ->
+                            recipeEditorViewModel.onEvent(
+                                RecipeEditorEvent.DescriptionChanged(
+                                    newDescription
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+            }
+
+            item {
                 SearchPage(
                     onItemClick = { onItemClick(it) },
                     expand = draft.expanded,
@@ -161,7 +190,13 @@ fun RecipeEditorPage(
                     query = draft.query,
                     searchResults = draft.results,
                     onSearchClick = { recipeEditorViewModel.onEvent(RecipeEditorEvent.SearchIngredients) },
-                    onQueryChange = { recipeEditorViewModel.onEvent(RecipeEditorEvent.QueryChanged(it)) },
+                    onQueryChange = {
+                        recipeEditorViewModel.onEvent(
+                            RecipeEditorEvent.QueryChanged(
+                                it
+                            )
+                        )
+                    },
                     addFoodComponent = {
                         recipeEditorViewModel.onEvent(
                             RecipeEditorEvent.IngredientAdded(it)
@@ -178,6 +213,24 @@ fun RecipeEditorPage(
                     isLoading = uiState == BaseViewModel.UiState.Loading
                 )
             }
-
+        }
     }
+}
+
+@Composable
+private fun ShowErrorMessage(
+    title: String = stringResource(R.string.show_error_message_title),
+    error: String,
+    onClick: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { onClick() },
+        title = { Text(title) },
+        text = { Text(error) },
+        confirmButton = {
+            Button(onClick = { onClick() }) {
+                Text(stringResource(R.string.label_ok))
+            }
+        }
+    )
 }

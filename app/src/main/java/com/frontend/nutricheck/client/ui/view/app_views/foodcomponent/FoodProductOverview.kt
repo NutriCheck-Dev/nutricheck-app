@@ -41,7 +41,6 @@ fun FoodProductOverview(
     foodProductOverviewViewModel: FoodProductOverviewViewModel,
     foodSearchViewModel: FoodSearchViewModel? = null,
     recipeEditorViewModel: RecipeEditorViewModel? = null,
-    onPersist: () -> Unit = { },
     onBack: () -> Unit = { }
 ) {
     val foodProductState by foodProductOverviewViewModel.foodProductViewState.collectAsState()
@@ -68,20 +67,15 @@ fun FoodProductOverview(
                 },
                 actions = {
                     CustomPersistButton {
-                        if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
-                            if (foodSearchViewModel != null) {
-                                foodSearchViewModel.onEvent(
-                                    SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct())
-                                )
-                            } else recipeEditorViewModel?.onEvent(
-                                RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
-                            )
-                        } else {
-                            foodProductOverviewViewModel.onEvent(
-                                FoodProductOverviewEvent.SaveAndAddClick
-                            )
-                        }
-                        onPersist()
+                       if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
+                           foodSearchViewModel?.let {
+                               it.onEvent(SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                           } ?: recipeEditorViewModel?.onEvent(
+                               RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
+                           )
+                       } else {
+                           foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
+                       }
                     }
                 }
             )

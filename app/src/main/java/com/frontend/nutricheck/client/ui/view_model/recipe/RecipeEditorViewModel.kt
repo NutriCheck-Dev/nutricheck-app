@@ -1,7 +1,9 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
@@ -14,6 +16,7 @@ import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -56,6 +59,7 @@ sealed interface RecipeEditorEvent {
     object SearchIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
     object ExpandBottomSheet : RecipeEditorEvent
+    object ResetErrorState : RecipeEditorEvent
 }
 
 @HiltViewModel
@@ -64,6 +68,7 @@ class RecipeEditorViewModel @Inject constructor(
     private val appSettingRepository: AppSettingRepository,
     private val foodProductRepository: FoodProductRepository,
     private val combinedSearchListStore: CombinedSearchListStore,
+    @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -132,6 +137,7 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.SearchIngredients -> onSearchIngredients()
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
             is RecipeEditorEvent.ShowConfirmationDialog -> changeShowConfirmationDialog()
+            is RecipeEditorEvent.ResetErrorState -> setReady()
         }
     }
 
@@ -145,21 +151,24 @@ class RecipeEditorViewModel @Inject constructor(
     }
 
     private fun addIngredients(foodComponent: FoodComponent) {
-        _draft.update { draft ->
-            val current = draft.ingredients
-            val existing = current.find { it.id == foodComponent.id }
-            val newAddedComponents = if (existing != null) {
-                current.filterNot { it.id == foodComponent.id } +
-                        foodComponent
-            } else {
-                current + foodComponent
+        viewModelScope.launch{
+            _draft.update { draft ->
+                val current = draft.ingredients
+                val existing = current.find { it.id == foodComponent.id }
+                val newAddedComponents = if (existing != null) {
+                    current.filterNot { it.id == foodComponent.id } +
+                            foodComponent
+                } else {
+                    current + foodComponent
+                }
+                val combinedList = newAddedComponents + draft.results.filter { it.id != foodComponent.id }
+                combinedSearchListStore.update(combinedList)
+                draft.copy(
+                    ingredients = newAddedComponents,
+                    results = _draft.value.results.filterNot { it.id == foodComponent.id }
+                )
             }
-            val combinedList = newAddedComponents + draft.results.filter { it.id != foodComponent.id }
-            combinedSearchListStore.update(combinedList)
-            draft.copy(
-                ingredients = newAddedComponents,
-                results = _draft.value.results.filterNot { it.id == foodComponent.id }
-            )
+            _events.emit(RecipeEditorEvent.IngredientAdded(foodComponent))
         }
     }
 
@@ -180,11 +189,11 @@ class RecipeEditorViewModel @Inject constructor(
         viewModelScope.launch {
         val draft = _draft.value
         if (draft.title.isBlank()) {
-            setError("Bitte geben sie ihrem Rezept einen Namen.")
+            setError(appContext.getString(R.string.error_no_recipe_name))
             return@launch
         }
-        if (draft.ingredients.isEmpty()) {
-            setError("Bitte fügen sie mindestens eine Zutat hinzu.")
+        if (draft.ingredients.size < 2) {
+            setError(appContext.getString(R.string.error_not_enough_ingredients))
             return@launch
         }
         setReady()
@@ -232,7 +241,6 @@ class RecipeEditorViewModel @Inject constructor(
     private fun onSearchIngredients() {
         val query = _draft.value.query
         if (query.isBlank()) {
-            setError("Please enter a search term.")
             return
         }
 

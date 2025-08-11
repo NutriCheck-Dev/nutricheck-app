@@ -150,4 +150,10 @@
     <string name="error_no_food_detected">Es wurde kein Essen erkannt, bitte nimm ein neues Bild auf</string>
     <string name="recipe_name_placeholder">Rezeptname</string>
     <string name="recipe_description">Beschreibung</string>
+    <string name="meal_logged_success">Mahlzeit erfolgreich hinzugefügt</string>
+    <string name="show_error_message_title">Ups, es ist etwas schief gelaufen</string>
+    <string name="error_not_enough_ingredients">Bitte füge mindestens zwei Zutat hinzu.</string>
+    <string name="error_no_recipe_name">Bitte gebe deinem Rezept einen Namen.</string>
+    <string name="error_missing_dayTime">Bitte wähle eine Tageszeit für Mahlzeit aus</string>
+    <string name="error_create_meal_missing_foodComponent">Bitte füge mindestens ein Lebensmittelprodukt oder Rezept zur Mahlzeit hinzu.</string>
 </resources>

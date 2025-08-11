@@ -25,7 +25,9 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 
 sealed class AddScreens(val route: String) {
     object AddMainPage : Screen("add")
@@ -34,7 +36,6 @@ sealed class AddScreens(val route: String) {
         const val defaultRoute = "add_meal"
     }
     object AddRecipe : AddScreens("add_recipe")
-    object HistoryPage : AddScreens("history_page")
     object RecipePage : AddScreens("recipe_page")
     object FoodOverview : AddScreens(
         "food_product_overview/{foodProductId}" +
@@ -110,11 +111,21 @@ fun AddNavGraph(mainNavController: NavHostController,
                     }
                 }
                 val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
+
+                LaunchedEffect(searchViewModel) {
+                    searchViewModel.events.collect { event ->
+                        if (event is SearchEvent.MealSaved) {
+                            mainNavController.navigate(Screen.DiaryPage.route) {
+                                popUpTo(Screen.Add.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
                 CreateMealPage(
                     searchViewModel = searchViewModel,
-                    onConfirm = { addNavController.navigate(AddScreens.HistoryPage.route)},
                     onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                    onBack = { mainNavController.popBackStack() }
+                    onBack = { addNavController.popBackStack() }
                 )
             }
 
@@ -184,10 +195,17 @@ fun AddNavGraph(mainNavController: NavHostController,
                 val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
                 val foodSearchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
 
+                LaunchedEffect(foodSearchViewModel) {
+                    foodSearchViewModel.events.collect { event ->
+                        if (event is SearchEvent.AddFoodComponent) {
+                            addNavController.popBackStack()
+                        }
+                    }
+                }
+
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     foodSearchViewModel = foodSearchViewModel,
-                    onPersist = { addNavController.popBackStack() },
                     onBack = { addNavController.popBackStack() }
                 )
             }
@@ -235,10 +253,17 @@ fun AddNavGraph(mainNavController: NavHostController,
                 }
                 val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
                 val recipeEditorViewModel: RecipeEditorViewModel = hiltViewModel(searchGraphEntry)
+
+                LaunchedEffect(recipeEditorViewModel) {
+                    recipeEditorViewModel.events.collect { event ->
+                        if (event is RecipeEditorEvent.IngredientAdded) {
+                            addNavController.popBackStack()
+                        }
+                    }
+                }
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     recipeEditorViewModel = recipeEditorViewModel,
-                    onPersist = { addNavController.popBackStack() },
                     onBack = { addNavController.popBackStack() }
                 )
             }
@@ -275,9 +300,19 @@ fun AddNavGraph(mainNavController: NavHostController,
                 }
                 val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
 
+                LaunchedEffect(foodProductOverviewViewModel) {
+                    foodProductOverviewViewModel.events.collect { event ->
+                        if (event is FoodProductOverviewEvent.SubmitMealItem) {
+                            mainNavController.navigate(Screen.DiaryPage.route) {
+                                popUpTo(Screen.Add.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
+
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
-                    onPersist = { addNavController.navigate(AddScreens.HistoryPage.route) },
                     onBack = {
                         foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.DeleteAiMeal)
                         addNavController.popBackStack() }
@@ -286,8 +321,6 @@ fun AddNavGraph(mainNavController: NavHostController,
         }
 
         composable(AddScreens.RecipePage.route) { RecipePageNavGraph(mainNavController)}
-
-        composable(AddScreens.HistoryPage.route) { DiaryNavGraph(mainNavController) }
     }
 }
 

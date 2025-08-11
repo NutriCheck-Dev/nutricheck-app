@@ -111,5 +111,14 @@ fun CustomNumberPicker(
                 )
             }
         }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(.95f)
+                .height(height + 4.dp)
+                .background(colors.primary.copy(0.15f), RoundedCornerShape(8.dp))
+                .border(1.dp, colors.primary, RoundedCornerShape(8.dp))
+        )
     }
 }

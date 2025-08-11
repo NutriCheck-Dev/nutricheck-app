@@ -181,12 +181,13 @@ fun CameraPreviewScreen(
 
 @Composable
 private fun ShowErrorMessage(
+    title: String = stringResource(R.string.show_error_message_title),
     error: String,
     onClick: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = { onClick() },
-        title = { Text(error) },
+        title = { Text(title) },
         text = { Text(error) },
         confirmButton = {
             Button(onClick = { onClick() }) {
