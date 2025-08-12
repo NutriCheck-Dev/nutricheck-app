@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +36,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
 import com.frontend.nutricheck.client.ui.view_model.HistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.navigation.AddDialogOrigin
+import com.frontend.nutricheck.client.ui.view_model.navigation.HistoryPageScreens
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 import java.util.Calendar
 import java.util.Date
@@ -43,7 +45,8 @@ import java.util.Date
 @Composable
 fun HistoryPage(
     historyViewModel: HistoryViewModel,
-    mainNavController: NavHostController
+    mainNavController: NavHostController,
+    historyNavController: NavHostController
 ) {
     val state by historyViewModel.historyState.collectAsState()
     var selectedDate by remember { mutableStateOf(Date()) }
@@ -85,19 +88,26 @@ fun HistoryPage(
         historyViewModel.events.collect { event ->
             when (event) {
                 is HistoryEvent.AddEntryClick -> {
-                    mainNavController.navigate(Screen.Add.createRoute(AddDialogOrigin.HISTORY_PAGE, event.day, event.dayTime)) {
-                        launchSingleTop = true
-                    }
+                    historyNavController.navigate(
+                        HistoryPageScreens.AddMeal.createRoute(
+                            dayTime = event.dayTime,
+                            date = event.day.time
+                        ),
+                        navOptions = null
+                    )
+                    Log.v("HistoryPage", "Navigating to Add Meal with date: ${event.day}, dayTime: ${event.dayTime}")
                 }
                 is HistoryEvent.FoodClicked -> {
-                    mainNavController.navigate(
-                        "food_details?mealId=${event.mealId}&foodProductId=${event.foodId}"
-                    )
+                    historyNavController.navigate(HistoryPageScreens.FoodDetails.createRoute(
+                        mealId = event.mealId,
+                        foodProductId = event.foodId
+                    ))
                 }
                 is HistoryEvent.RecipeClicked -> {
-                    mainNavController.navigate(
-                        "recipe_details?recipeId=${event.recipeId}&mealId=${event.mealId}"
-                    )
+                    historyNavController.navigate(HistoryPageScreens.RecipeDetails.createRoute(
+                        mealId = event.mealId,
+                        recipeId = event.recipeId
+                    ))
                 }
                 is HistoryEvent.SelectDate -> {
                     selectedDate = event.day
