@@ -62,10 +62,16 @@ class RecipeRepositoryImpl @Inject constructor(
                     val recipes = body.map { RecipeMapper.toData(it) }
 
                     val ids = recipes.map { it.id }
-                    val visibilitiesById = recipeDao.getVisibilityById(ids)
-                    val ownedIds = visibilitiesById.filter { it.visibility == RecipeVisibility.OWNER }
-                        .map { it.id }
-                        .toSet()
+                    val ownedIds: Set<String> =
+                        if (ids.isEmpty()) {
+                            emptySet()
+                        } else {
+                            recipeDao.getVisibilityById(ids)
+                                .asSequence()
+                                .filter { it.visibility == RecipeVisibility.OWNER }
+                                .map { it.id }
+                                .toSet()
+                        }
                     val merged = recipes.map { remote ->
                         if (remote.id in ownedIds) remote.copy(visibility = RecipeVisibility.OWNER)
                         else remote
@@ -73,7 +79,7 @@ class RecipeRepositoryImpl @Inject constructor(
 
                     merged.forEach { cacheRemoteRecipe(it) }
                     recipeSearchDao.clearQuery(recipeName)
-                    recipeSearchDao.upsertEntities(recipes.map {
+                    recipeSearchDao.upsertEntities(merged.map {
                         RecipeSearchEntity(recipeName, it.id, now)
                     })
                     emit(Result.Success(merged))
@@ -234,7 +240,7 @@ class RecipeRepositoryImpl @Inject constructor(
             recipeDao.updateIfNotOwner(
                 id = incoming.id,
                 name = incoming.name,
-                description = incoming.instructions,
+                instructions = incoming.instructions,
                 calories = incoming.calories,
                 visibility = incoming.visibility
             )

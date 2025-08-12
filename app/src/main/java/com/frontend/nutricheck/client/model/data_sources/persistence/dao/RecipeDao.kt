@@ -58,7 +58,7 @@ interface RecipeDao : BaseDao<RecipeEntity> {
         """
         UPDATE recipes SET
         name = :name,
-        instructions = :description,
+        instructions = :instructions,
         calories = :calories,
         visibility = :visibility
         WHERE id = :id AND visibility != :ownerVisibility
@@ -67,7 +67,7 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     suspend fun updateIfNotOwner(
         id: String,
         name: String,
-        description: String?,
+        instructions: String?,
         calories: Double,
         visibility: RecipeVisibility,
         ownerVisibility: RecipeVisibility = RecipeVisibility.OWNER
@@ -76,7 +76,7 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     @Query("SELECT * FROM recipes WHERE id = :id")
     suspend fun getRecipeEntityById(id: String): RecipeEntity?
 
-    @Query("SELECT id, visibility FROM recipes WHERE id = :id")
-    suspend fun getVisibilityById(id: List<String>): List<VisibilityById>
+    @Query("SELECT id, visibility FROM recipes WHERE id IN (:ids)")
+    suspend fun getVisibilityById(ids: List<String>): List<VisibilityById>
 
 }
