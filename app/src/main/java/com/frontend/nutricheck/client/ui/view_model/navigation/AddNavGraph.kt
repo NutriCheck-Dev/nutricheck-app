@@ -19,7 +19,6 @@ import com.frontend.nutricheck.client.ui.view.app_views.CreateMealPage
 import com.frontend.nutricheck.client.ui.view.app_views.RecipeEditorPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
-import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
@@ -30,7 +29,9 @@ import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEven
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 
 sealed class AddScreens(val route: String) {
-    object AddMainPage : Screen("add")
+    object AddMealGraph : AddScreens("add_meal_graph")
+    object AddRecipeGraph : AddScreens("add_recipe_graph")
+    object AddAiMealGraph : AddScreens("add_ai_meal_graph")
     object AddAiMeal : AddScreens("add_ai_meal")
     object AddMeal : AddScreens("add_meal?recipeId={recipeId}") {
         const val defaultRoute = "add_meal"
@@ -71,27 +72,14 @@ fun AddNavGraph(
     NavHost(
         navController = addNavController,
         startDestination = when(origin) {
-            AddDialogOrigin.BOTTOM_NAV_BAR -> AddScreens.AddMainPage.route
+            AddDialogOrigin.BOTTOM_NAV_BAR_ADD_MEAL -> AddScreens.AddMealGraph.route
+            AddDialogOrigin.BOTTOM_NAV_BAR_ADD_RECIPE -> AddScreens.AddRecipeGraph.route
+            AddDialogOrigin.BOTTOM_NAV_BAR_ADD_AI_MEAL -> AddScreens.AddAiMealGraph.route
             AddDialogOrigin.RECIPE_PAGE -> AddScreens.AddRecipe.route
             AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.defaultRoute
         },
         route = "add_graph"
     ) {
-        composable(AddScreens.AddMainPage.route) {
-            AddDialog(
-                onAddMealClick = {
-                    addNavController.navigate(AddScreens.AddMeal.defaultRoute)
-                },
-                onAddRecipeClick = {
-                    addNavController.navigate(AddScreens.AddRecipe.route)
-                },
-                onScanFoodClick = {
-                    addNavController.navigate(AddScreens.AddAiMeal.route)
-                },
-                onDismissRequest = { mainNavController.popBackStack() }
-            )
-        }
-
         navigation(
             startDestination = AddScreens.AddMeal.defaultRoute,
             route = "add_meal_graph"
@@ -127,7 +115,7 @@ fun AddNavGraph(
                 CreateMealPage(
                     searchViewModel = searchViewModel,
                     onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                    onBack = { addNavController.popBackStack() }
+                    onBack = { mainNavController.popBackStack() }
                 )
             }
 

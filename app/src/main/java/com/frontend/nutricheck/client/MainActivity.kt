@@ -68,7 +68,7 @@ fun MainScreen(
                 if (currentDestination != Screen.Onboarding.route) {
                     BottomNavigationBar(
                         currentDestination = currentDestination,
-                        onClickAdd = { mainNavController.navigate(Screen.Add.route) },
+                        onClickAdd = { mainNavController.navigate(Screen.AddButton.route) },
                         onClickHome = { mainNavController.navigate(Screen.HomePage.route) },
                         onClickDiary = { mainNavController.navigate(Screen.DiaryPage.route) },
                         onClickProfile = { mainNavController.navigate(Screen.ProfilePage.route) }
