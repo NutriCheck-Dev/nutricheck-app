@@ -31,7 +31,7 @@ fun DiaryNavGraph(
     mainNavController: NavHostController
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.HISTORY) }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+    TopAppBarDefaults.enterAlwaysScrollBehavior(
         state = rememberTopAppBarState()
     )
     val context = mainNavController.context

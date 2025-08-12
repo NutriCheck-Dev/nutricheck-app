@@ -68,9 +68,8 @@ fun FoodProductOverview(
                 actions = {
                     CustomPersistButton {
                        if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
-                           foodSearchViewModel?.let {
-                               it.onEvent(SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
-                           } ?: recipeEditorViewModel?.onEvent(
+                           foodSearchViewModel?.onEvent(SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                               ?: recipeEditorViewModel?.onEvent(
                                RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
                            )
                        } else {

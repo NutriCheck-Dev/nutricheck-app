@@ -60,12 +60,23 @@ class RecipeRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     val now = System.currentTimeMillis()
                     val recipes = body.map { RecipeMapper.toData(it) }
-                    recipes.forEach { insertRecipe(it) }
+
+                    val ids = recipes.map { it.id }
+                    val visibilitiesById = recipeDao.getVisibilityById(ids)
+                    val ownedIds = visibilitiesById.filter { it.visibility == RecipeVisibility.OWNER }
+                        .map { it.id }
+                        .toSet()
+                    val merged = recipes.map { remote ->
+                        if (remote.id in ownedIds) remote.copy(visibility = RecipeVisibility.OWNER)
+                        else remote
+                    }
+
+                    merged.forEach { cacheRemoteRecipe(it) }
                     recipeSearchDao.clearQuery(recipeName)
                     recipeSearchDao.upsertEntities(recipes.map {
                         RecipeSearchEntity(recipeName, it.id, now)
                     })
-                    emit(Result.Success(recipes))
+                    emit(Result.Success(merged))
                 } else if (errorBody != null) {
                     val errorResponse = Gson().fromJson(
                     errorBody.string(),
@@ -212,6 +223,30 @@ class RecipeRepositoryImpl @Inject constructor(
     private suspend fun checkForFoodProducts(ingredient: Ingredient) = withContext(Dispatchers.IO) {
         if (!foodDao.exists(ingredient.foodProduct.id)) {
             foodDao.insert(DbFoodProductMapper.toFoodProductEntity(ingredient.foodProduct))
+        }
+    }
+
+    private suspend fun cacheRemoteRecipe(recipe: Recipe) = withContext(Dispatchers.IO){
+        val incoming = DbRecipeMapper.toRecipeEntity(recipe, false)
+
+        val rowId = recipeDao.insertIgnore(incoming)
+        if (rowId == -1L) {
+            recipeDao.updateIfNotOwner(
+                id = incoming.id,
+                name = incoming.name,
+                description = incoming.instructions,
+                calories = incoming.calories,
+                visibility = incoming.visibility
+            )
+        }
+
+        val existing = recipeDao.getRecipeEntityById(incoming.id)
+        if (existing?.visibility != RecipeVisibility.OWNER) {
+            ingredientDao.deleteIngredientsOfRecipe(incoming.id)
+            recipe.ingredients.forEach { ingredient ->
+                checkForFoodProducts(ingredient)
+                ingredientDao.insert(DbIngredientMapper.toIngredientEntity(ingredient))
+            }
         }
     }
 }

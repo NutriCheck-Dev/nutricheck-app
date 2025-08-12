@@ -34,52 +34,52 @@ fun AddDialog(
     onDismissRequest: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
-        ModalBottomSheet(
-            onDismissRequest = { onDismissRequest() },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-            dragHandle = null, // Disable the drag handle
-            scrimColor = Color.Black.copy(alpha = 0.3f) // Semi-transparent background
-            ) {
-            Surface(
+    ModalBottomSheet(
+        onDismissRequest = { onDismissRequest() },
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        dragHandle = null, // Disable the drag handle
+        scrimColor = Color.Black.copy(alpha = 0.3f) // Semi-transparent background
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { },
+            color = colors.surfaceVariant,
+            contentColor = colors.onSurfaceVariant
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { },
-                color = colors.surfaceVariant,
-                contentColor = colors.onSurfaceVariant
+                    .padding(vertical = 43.dp),
+                verticalArrangement = Arrangement.spacedBy(33.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 43.dp),
-                    verticalArrangement = Arrangement.spacedBy(33.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(26.dp)
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(26.dp)
-                    ) {
-                        AddOptionButton(
-                            icon = Icons.Default.Search,
-                            label = stringResource(id = R.string.add_dialog_meal_title),
-                            onClick = {
-                                onAddMealClick()
-                            }
-                        )
-                        AddOptionButton(
-                            icon = Icons.Default.CameraAlt,
-                            label = stringResource(id = R.string.add_dialog_scan_title),
-                            onClick = { onScanFoodClick() }
-                        )
-                    }
                     AddOptionButton(
-                        icon = Icons.Default.Create,
-                        label = stringResource(id = R.string.add_dialog_recipe_title),
-                        onClick = { onAddRecipeClick() }
+                        icon = Icons.Default.Search,
+                        label = stringResource(id = R.string.add_dialog_meal_title),
+                        onClick = {
+                            onAddMealClick()
+                        }
+                    )
+                    AddOptionButton(
+                        icon = Icons.Default.CameraAlt,
+                        label = stringResource(id = R.string.add_dialog_scan_title),
+                        onClick = { onScanFoodClick() }
                     )
                 }
+                AddOptionButton(
+                    icon = Icons.Default.Create,
+                    label = stringResource(id = R.string.add_dialog_recipe_title),
+                    onClick = { onAddRecipeClick() }
+                )
             }
         }
     }
+}

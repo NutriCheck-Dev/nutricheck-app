@@ -12,6 +12,11 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Reci
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.RecipeWithIngredients
 import kotlinx.coroutines.flow.Flow
 
+data class VisibilityById(
+    val id: String,
+    val visibility: RecipeVisibility
+)
+
 @Dao
 interface RecipeDao : BaseDao<RecipeEntity> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -45,4 +50,33 @@ interface RecipeDao : BaseDao<RecipeEntity> {
             "WHERE name LIKE '%' || :name || '%' " +
             "AND id NOT IN (SELECT recipeId FROM recipe_search_index)ORDER BY name ASC")
     fun getRecipesByName(name: String): Flow<List<RecipeWithIngredients>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIgnore(recipe: RecipeEntity): Long
+
+    @Query(
+        """
+        UPDATE recipes SET
+        name = :name,
+        instructions = :description,
+        calories = :calories,
+        visibility = :visibility
+        WHERE id = :id AND visibility != :ownerVisibility
+        """
+    )
+    suspend fun updateIfNotOwner(
+        id: String,
+        name: String,
+        description: String?,
+        calories: Double,
+        visibility: RecipeVisibility,
+        ownerVisibility: RecipeVisibility = RecipeVisibility.OWNER
+    )
+
+    @Query("SELECT * FROM recipes WHERE id = :id")
+    suspend fun getRecipeEntityById(id: String): RecipeEntity?
+
+    @Query("SELECT id, visibility FROM recipes WHERE id = :id")
+    suspend fun getVisibilityById(id: List<String>): List<VisibilityById>
+
 }
