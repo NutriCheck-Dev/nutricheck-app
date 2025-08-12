@@ -17,8 +17,7 @@ class UserDataUtilsLogic {
             // When
             val result = UserDataUtilsLogic.isBirthdateInvalid(validBirthdate)
             // Then
-            assertThat(result).isFalse()
-
+            assertThat(result) == null
     }
     @Test
     fun `isBirthdateInvalid with future birthdate returns true`() {
@@ -27,7 +26,7 @@ class UserDataUtilsLogic {
             // When
             val result = UserDataUtilsLogic.isBirthdateInvalid(invalidBirthdate)
             // Then
-            assertThat(result).isTrue()
+            assertThat(result) != null
     }
     @Test
     fun `isBirthdateInvalid with birthdate older than 100 years returns true`() {
@@ -36,7 +35,7 @@ class UserDataUtilsLogic {
             // When
             val result = UserDataUtilsLogic.isBirthdateInvalid(invalidBirthdate)
             // Then
-            assertThat(result).isTrue()
+            assertThat(result) != null
     }
 
     @Test

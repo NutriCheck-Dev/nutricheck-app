@@ -1,16 +1,18 @@
 package com.frontend.nutricheck.client.model.data_sources.data.flags
 
+import android.content.Context
+import com.frontend.nutricheck.client.R
 import java.util.Calendar
 import java.util.Date
 
-enum class DayTime(private val value: String) {
-    BREAKFAST("Breakfast"),
-    LUNCH ("Lunch"),
-    DINNER ("Dinner"),
-    SNACK ("Snack");
+enum class DayTime(val stringResId: Int) {
+    BREAKFAST(R.string.label_breakfast),
+    LUNCH (R.string.label_lunch),
+    DINNER (R.string.label_dinner),
+    SNACK (R.string.label_snack);
 
-    override fun toString(): String {
-        return value
+    fun getDescription(context: Context): String {
+        return context.getString(stringResId)
     }
     companion object {
     fun dateToDayTime(date: Date): DayTime {
