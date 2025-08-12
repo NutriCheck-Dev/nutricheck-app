@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
@@ -56,6 +57,8 @@ sealed interface RecipeOverviewEvent {
     data class ServingsChanged(val servings: Int) : RecipeOverviewEvent
     data class NavigateToEditRecipe(val recipeId: String) : RecipeOverviewEvent
     data object ClickDetails : RecipeOverviewEvent
+    data object RecipeUploaded : RecipeOverviewEvent
+    data object ResetErrorState : RecipeOverviewEvent
 }
 
 @HiltViewModel
@@ -159,6 +162,8 @@ class RecipeOverviewViewModel @Inject constructor(
             is RecipeOverviewEvent.NavigateToEditRecipe -> viewModelScope.launch {
                 _events.emit(RecipeOverviewEvent.NavigateToEditRecipe(event.recipeId))
             }
+            is RecipeOverviewEvent.RecipeUploaded -> null
+            is RecipeOverviewEvent.ResetErrorState -> setReady()
         }
     }
 
@@ -198,7 +203,12 @@ class RecipeOverviewViewModel @Inject constructor(
             when (option) {
                 DropdownMenuOptions.DELETE -> recipeRepository.deleteRecipe(_recipeOverviewState.value.recipe)
                 DropdownMenuOptions.DOWNLOAD -> recipeRepository.insertRecipe(_recipeOverviewState.value.recipe)
-                DropdownMenuOptions.UPLOAD -> recipeRepository.uploadRecipe(_recipeOverviewState.value.recipe)
+                DropdownMenuOptions.UPLOAD -> {
+                    when (val body = recipeRepository.uploadRecipe(_recipeOverviewState.value.recipe)) {
+                        is Result.Success -> _events.emit(RecipeOverviewEvent.RecipeUploaded)
+                        is Result.Error ->  setError(body.message!!)
+                    }
+                }
                 DropdownMenuOptions.REPORT -> _recipeOverviewState.update { it.copy(parameters = it.parameters.copy(showReportDialog = !it.parameters.showReportDialog)) }
                 DropdownMenuOptions.EDIT -> _events.emit(RecipeOverviewEvent.NavigateToEditRecipe(_recipeOverviewState.value.recipe.id))
             }

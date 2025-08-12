@@ -101,6 +101,13 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun observeMyRecipes(): Flow<List<Recipe>> =
+        recipeDao.getAllRecipesWithIngredients(RecipeVisibility.OWNER)
+            .map { list ->
+                list.map(DbRecipeMapper::toRecipe)
+            }
+            .flowOn(Dispatchers.IO)
+
     override suspend fun getRecipeById(recipeId: String): Recipe = withContext(Dispatchers.IO) {
         val recipeWithIngredients = recipeDao.getRecipeWithIngredientsById(recipeId).first()
         DbRecipeMapper.toRecipe(recipeWithIngredients)
@@ -112,7 +119,7 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
-        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe, true)
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(recipe, false)
         recipeDao.update(recipeEntity)
 
         ingredientDao.deleteIngredientsOfRecipe(recipeEntity.id)
@@ -126,20 +133,27 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun uploadRecipe(recipe: Recipe): Result<Recipe> = withContext(Dispatchers.IO) {
         try {
             val response = api.uploadRecipe(RecipeMapper.toDto(recipe))
-            val body = response.body()
-            val errorBody = response.errorBody()
-
-            if (response.isSuccessful && body != null) {
-                Result.Success(RecipeMapper.toData(body))
-            } else if (errorBody != null) {
-                val errorResponse = Gson().fromJson(
-                    errorBody.string(),
-                    ErrorResponseDTO::class.java)
-                val message = errorResponse.body.title + ": " + errorResponse.body.detail
-                Result.Error(errorResponse.body.status, message)
-            } else {
-                Result.Error(message = "Unknown error")
+            response.body()?.let { dto ->
+                return@withContext Result.Success(RecipeMapper.toData(dto))
             }
+            val code = response.code()
+            val rawError = response.errorBody()?.use { it.string() }
+
+            val parsed = rawError
+                ?.takeIf { it.isNotBlank() }
+                ?.let { runCatching { Gson().fromJson(it, ErrorResponseDTO::class.java) }.getOrNull() }
+
+            val serverMessage = parsed?.body?.let { body ->
+                listOfNotNull(body.title, body.detail)
+                    .filter { it.isNotBlank() }
+                    .joinToString { ": " }
+            }
+
+            val fallback = if (code == 401) {
+                "Upload failed: Recipe already exists."
+            } else { "Upload failed" }
+
+            Result.Error(parsed?.body?.status ?: code, message = serverMessage ?: fallback)
         } catch (io: IOException) {
             Result.Error(message = "Connection issue")
         }

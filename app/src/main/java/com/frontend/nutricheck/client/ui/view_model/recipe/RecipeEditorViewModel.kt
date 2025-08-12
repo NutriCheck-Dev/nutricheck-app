@@ -58,6 +58,7 @@ sealed interface RecipeEditorEvent {
     object ShowConfirmationDialog : RecipeEditorEvent
     object SearchIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
+    object RecipeSaved : RecipeEditorEvent
     object ExpandBottomSheet : RecipeEditorEvent
     object ResetErrorState : RecipeEditorEvent
 }
@@ -74,7 +75,7 @@ class RecipeEditorViewModel @Inject constructor(
 
     private val mode: RecipeMode =
         savedStateHandle.get<String>("recipeId")
-            ?.takeIf { it.isNotEmpty() }
+            ?.takeIf { it.isNotBlank() }
             ?.let { RecipeMode.Edit(it) }
             ?: RecipeMode.Create
 
@@ -138,6 +139,7 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
             is RecipeEditorEvent.ShowConfirmationDialog -> changeShowConfirmationDialog()
             is RecipeEditorEvent.ResetErrorState -> setReady()
+            is RecipeEditorEvent.RecipeSaved -> null
         }
     }
 
@@ -232,8 +234,14 @@ class RecipeEditorViewModel @Inject constructor(
 
 
             when (mode) {
-                is RecipeMode.Create -> recipeRepo.insertRecipe(recipe)
-                is RecipeMode.Edit -> recipeRepo.updateRecipe(recipe)
+                is RecipeMode.Create -> {
+                    recipeRepo.insertRecipe(recipe)
+                    _events.emit(RecipeEditorEvent.RecipeSaved)
+                }
+                is RecipeMode.Edit -> {
+                    recipeRepo.updateRecipe(recipe)
+                    _events.emit(RecipeEditorEvent.RecipeSaved)
+                }
             }
         }
     }

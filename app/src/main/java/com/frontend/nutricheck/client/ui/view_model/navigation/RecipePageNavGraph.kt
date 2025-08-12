@@ -2,8 +2,6 @@ package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -37,8 +35,11 @@ sealed class RecipePageScreens(val route: String) {
         fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
         fun fromIngredient(recipeId: String, foodProductId: String) = "food_product_overview/$foodProductId?recipeId=$recipeId"
     }
-    object RecipeEditorPage : RecipePageScreens("create_recipe_page_route?recipeId={recipeId}") {
-        fun createRoute(recipeId: String) = "create_recipe_page_route?recipeId=$recipeId"
+    object RecipeEditorPage : RecipePageScreens("recipe_editor") {
+        const val ARGUMENT = "recipeId"
+        val pattern =  "recipe_editor?$ARGUMENT={$ARGUMENT}"
+        fun newRecipe() = "recipe_editor"
+        fun editRecipe(recipeId: String) = "recipe_editor?$ARGUMENT=$recipeId"
     }
 }
 
@@ -67,7 +68,7 @@ fun RecipePageNavGraph(
                     recipePageViewModel.events.collect { event ->
                         if (event is RecipePageEvent.NavigateToEditRecipe) {
                             recipePageNavController.navigate(
-                                RecipePageScreens.RecipeEditorPage.createRoute(event.recipeId)
+                                RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
                             )
                         }
 
@@ -77,7 +78,7 @@ fun RecipePageNavGraph(
                     recipePageViewModel = recipePageViewModel,
                     reportRecipeViewModel = reportRecipeViewModel,
                     onAddRecipeClick = {
-                        mainNavController.navigate(AddScreens.AddRecipe.route)
+                        recipePageNavController.navigate(RecipePageScreens.RecipeEditorPage.newRecipe())
                     },
                     onItemClick = { recipe ->
                         recipePageNavController.navigate(
@@ -106,7 +107,7 @@ fun RecipePageNavGraph(
                     recipeOverviewViewModel.events.collect { event ->
                         if (event is RecipeOverviewEvent.NavigateToEditRecipe) {
                             recipePageNavController.navigate(
-                                RecipePageScreens.RecipeEditorPage.createRoute(event.recipeId)
+                                RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
                             )
                         }
 
@@ -168,28 +169,35 @@ fun RecipePageNavGraph(
             route = "recipe_editor_page_graph"
         ) {
             composable(
-                route = RecipePageScreens.RecipeEditorPage.route,
+                route = RecipePageScreens.RecipeEditorPage.pattern,
                 arguments = listOf(
-                    navArgument("recipeId") {
+                    navArgument(RecipePageScreens.RecipeEditorPage.ARGUMENT) {
                         type = NavType.StringType
                         nullable = true
+                        defaultValue = null
                     }
                 )
             ) { backStackEntry ->
-                val recipeId = backStackEntry.arguments?.getString("recipeId")!!
                 val parentEntry = remember(backStackEntry) {
                     recipePageNavController.getBackStackEntry("recipe_editor_page_graph")
                 }
                 val recipeEditorViewModel: RecipeEditorViewModel = hiltViewModel(parentEntry)
-                val recipeEditorState by recipeEditorViewModel.draft.collectAsState()
+
+                LaunchedEffect(recipeEditorViewModel) {
+                    recipeEditorViewModel.events.collect { event ->
+                        if (event is RecipeEditorEvent.RecipeSaved) {
+                            recipePageNavController.popBackStack()
+                        }
+                    }
+                }
+
                 RecipeEditorPage(
                     recipeEditorViewModel = recipeEditorViewModel,
                     onItemClick = { foodProduct ->
                         recipePageNavController.navigate(
                             RecipePageScreens.FoodProductOverview.fromSearch(foodProduct.id))
                     },
-                    onBack = { recipePageNavController.popBackStack() },
-                    onSave = { recipePageNavController.popBackStack() }
+                    onBack = { recipePageNavController.popBackStack() }
                 )
             }
 

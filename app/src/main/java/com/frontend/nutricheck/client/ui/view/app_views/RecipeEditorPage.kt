@@ -47,7 +47,6 @@ fun RecipeEditorPage(
     modifier: Modifier = Modifier,
     recipeEditorViewModel: RecipeEditorViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
-    onSave: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
@@ -93,7 +92,6 @@ fun RecipeEditorPage(
                 ) },
                 actions = {
                     IconButton(onClick = {
-                        onSave()
                         recipeEditorViewModel.onEvent(RecipeEditorEvent.SaveRecipe)
                     }) {
                         Icon(

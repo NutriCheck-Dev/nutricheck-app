@@ -54,10 +54,12 @@ sealed class AddScreens(val route: String) {
 
 }
 @Composable
-fun AddNavGraph(mainNavController: NavHostController,
-                origin: AddDialogOrigin,
-                date: Long?,
-                dayTime: DayTime?) {
+fun AddNavGraph(
+    mainNavController: NavHostController,
+    origin: AddDialogOrigin,
+    date: Long?,
+    dayTime: DayTime?
+) {
     val addNavController = rememberNavController()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
@@ -228,10 +230,21 @@ fun AddNavGraph(mainNavController: NavHostController,
                     addNavController.getBackStackEntry("add_recipe_graph")
                 }
                 val createRecipeViewModel: RecipeEditorViewModel = hiltViewModel(searchGraphEntry)
+
+                LaunchedEffect(createRecipeViewModel) {
+                    createRecipeViewModel.events.collect { event ->
+                        if (event is RecipeEditorEvent.RecipeSaved) {
+                            addNavController.navigate(AddScreens.RecipePage.route) {
+                                popUpTo(Screen.Add.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
+
                 RecipeEditorPage(
                     recipeEditorViewModel = createRecipeViewModel,
                     onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                    onSave = { addNavController.navigate(AddScreens.RecipePage.route)},
                     onBack = { addNavController.popBackStack() }
                 )
             }
