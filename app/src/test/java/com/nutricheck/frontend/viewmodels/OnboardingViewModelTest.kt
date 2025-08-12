@@ -12,6 +12,12 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
 import com.frontend.nutricheck.client.ui.view_model.OnboardingViewModel
 import com.google.common.truth.Truth.assertThat
+import io.mockk.MockKAnnotations // Import für MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every // Import für das Festlegen von Mock-Verhalten
+import io.mockk.impl.annotations.MockK // Annotation für Mock-Objekte
+import io.mockk.verify // Import für die Überprüfung von Aufrufen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -24,31 +30,35 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import java.util.Date
-
+/**
+ * Unit tests for the [OnboardingViewModel].
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingViewModelTest {
 
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
+    /**
+     * Initializes mocks and sets up the ViewModel before each test.
+     */
     @Before
     fun setUp() {
-        MockitoAnnotations.openMocks(this)
-        whenever(appContext.getString(any())).thenReturn("error message")
+        MockKAnnotations.init(this)
+        every { appContext.getString(any()) } returns "error message"
         onboardingViewModel = OnboardingViewModel(
             appSettingRepository, userDataRepository, appContext)
+
+        coEvery { userDataRepository
+            .addUserDataAndAddWeight(any<UserData>(), any<Weight>()) } returns Unit
+        coEvery { appSettingRepository.setOnboardingCompleted() } returns Unit
+
     }
-    @Mock
-    private lateinit var appContext: Context
-    @Mock
-    private lateinit var appSettingRepository: AppSettingRepository
-    @Mock
-    private lateinit var userDataRepository: UserDataRepository
+
+    @MockK private lateinit var appContext: Context
+    @MockK private lateinit var appSettingRepository: AppSettingRepository
+    @MockK private lateinit var userDataRepository: UserDataRepository
+
     private lateinit var onboardingViewModel : OnboardingViewModel
 
     class MainCoroutineRule : TestWatcher() {
@@ -66,17 +76,20 @@ class OnboardingViewModelTest {
         assertThat(onboardingViewModel.uiState.value)
             .isInstanceOf(BaseViewModel.UiState.Error::class.java)
     }
+
     @Test
     fun `enterName with valid name updates state`() = runTest {
         onboardingViewModel.onEvent(OnboardingEvent.EnterName("John Doe"))
         assertThat(onboardingViewModel.data.value.username).isEqualTo("John Doe")
     }
+
     @Test
     fun `enterBirthdate with null sets error state`() = runTest {
         onboardingViewModel.onEvent(OnboardingEvent.EnterBirthdate(null))
         assertThat(onboardingViewModel.uiState.value)
             .isInstanceOf(BaseViewModel.UiState.Error::class.java)
     }
+
     @Test
     fun `enterBirthdate with valid date updates state`() = runTest {
         val validDate = Date(1234567890L)
@@ -190,8 +203,9 @@ class OnboardingViewModelTest {
         onboardingViewModel.onEvent(OnboardingEvent.EnterTargetWeight("75"))
         advanceUntilIdle()
 
-        verify(userDataRepository).addUserData(any<UserData>())
-        verify(userDataRepository).addWeight(any<Weight>())
-        verify(appSettingRepository).setOnboardingCompleted()
+        coVerify {
+            userDataRepository.addUserDataAndAddWeight(any<UserData>(), any<Weight>())
+            appSettingRepository.setOnboardingCompleted()
+        }
     }
 }

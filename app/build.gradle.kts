@@ -43,6 +43,11 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 configurations.all {
     exclude(group = "com.intellij", module = "annotations")
@@ -100,13 +105,16 @@ dependencies {
     implementation(libs.compose.numberpicker)
     implementation (libs.androidx.exifinterface)
 
-    testImplementation(libs.junit)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.mockito.core)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation (libs.mockito.kotlin)
-    testImplementation (libs.androidx.datastore.preferences)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.androidx.datastore.preferences)
     testImplementation(libs.mockito.inline)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlin.test)
 
 }
