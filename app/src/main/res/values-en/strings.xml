@@ -128,4 +128,6 @@
     <string name="error_missing_dayTime">Please select a time of day for the meal</string>
     <string name="error_create_meal_missing_foodComponent">Please add at least one food product or recipe to the meal.</string>
     <string name="label_select_meal">Select Daytime</string>
+    <string name="label_delete">Delete</string>
+    <string name="delete_weight_dialog_title">"Do you really want to delete the weight? "</string>
 </resources>

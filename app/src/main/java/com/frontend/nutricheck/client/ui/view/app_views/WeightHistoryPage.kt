@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
+import com.frontend.nutricheck.client.ui.view.widgets.ExitButton
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
@@ -63,14 +64,21 @@ fun WeightHistoryPage(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(weightState) { weightEntry ->
-                WeightHistoryItem(weightEntry = weightEntry)
+                WeightHistoryItem(weightEntry = weightEntry,
+                    onDeleteClick = { selectedWeight ->
+                        onEvent(ProfileEvent.OnWeightClick(selectedWeight))
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun WeightHistoryItem(weightEntry: Weight) {
+private fun WeightHistoryItem(
+    weightEntry: Weight,
+    onDeleteClick: (Weight) -> Unit = {},
+) {
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
     Row(
@@ -87,6 +95,10 @@ private fun WeightHistoryItem(weightEntry: Weight) {
         Text(
             text = "${weightEntry.value} kg",
             style = MaterialTheme.typography.bodyLarge
+        )
+        ExitButton(
+            onBack = { onDeleteClick(weightEntry) },
+            modifier = Modifier
         )
     }
 }
