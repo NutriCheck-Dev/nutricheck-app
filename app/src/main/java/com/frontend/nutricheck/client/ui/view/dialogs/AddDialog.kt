@@ -39,7 +39,7 @@ fun AddDialog(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
             dragHandle = null, // Disable the drag handle
-            scrimColor = Color.Black.copy(alpha = 0.4f) // Semi-transparent background
+            scrimColor = Color.Black.copy(alpha = 0.3f) // Semi-transparent background
             ) {
             Surface(
                 modifier = Modifier
