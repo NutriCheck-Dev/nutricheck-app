@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,7 +46,9 @@ data class RecipeDraft(
     val language: String = "",
     val query: String = "",
     val results: List<FoodComponent> = emptyList(),
-    val confirmationDialog : Boolean = false
+    val confirmationDialog : Boolean = false,
+    val hasSearched: Boolean = false,
+    val lastSearchedQuery: String? = null
 )
 
 sealed interface RecipeEditorEvent {
@@ -248,8 +251,13 @@ class RecipeEditorViewModel @Inject constructor(
 
     private fun onSearchIngredients() {
         val query = _draft.value.query
-        if (query.isBlank()) {
-            return
+        if (query.isBlank()) return
+
+        _draft.update { draft ->
+            draft.copy(
+                hasSearched = true,
+                lastSearchedQuery = query
+            )
         }
 
         viewModelScope.launch {
@@ -259,6 +267,7 @@ class RecipeEditorViewModel @Inject constructor(
             foodProducts
                 .onStart { setLoading() }
                 .catch { setError(it.message!!) }
+                .drop(1)
                 .collect { result ->
                     when (result) {
                         is Result.Success -> {

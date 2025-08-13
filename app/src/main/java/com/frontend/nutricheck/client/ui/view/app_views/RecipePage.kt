@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -52,98 +53,126 @@ fun RecipePage(
     val scrollState = rememberScrollState()
     val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
 
-    Surface(
-        modifier = modifier.fillMaxSize()
+Surface(
+    modifier = modifier.fillMaxSize()
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+        if (uiState is BaseViewModel.UiState.Error) {
+            ShowErrorMessage(
+                error = (uiState as BaseViewModel.UiState.Error).message,
+                onClick = { recipePageViewModel.onEvent(RecipePageEvent.ResetErrorState) }
+            )
+        }
+        FoodComponentSearchBar(
+            query = recipePageState.query,
+            onQueryChange = {
+                recipePageViewModel.onEvent(
+                    RecipePageEvent.QueryChanged(
+                        it
+                    )
+                )
+                            },
+            onSearch = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) },
+            placeholder = { Text(stringResource(R.string.label_search_recipe)) }
+        )
+
+        val myRecipes = stringResource(R.string.search_page_label_my_recipes)
+        val onlineRecipes = stringResource(R.string.search_page_label_online_recipes)
+        CustomTabRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            options = listOf(
+                myRecipes,
+                onlineRecipes
+            ),
+            selectedOption = recipePageState.selectedTab,
+            onSelect = { index ->
+                when (index) {
+                    0 -> recipePageViewModel.onEvent(RecipePageEvent.ClickMyRecipes)
+                    1 -> recipePageViewModel.onEvent(RecipePageEvent.ClickOnlineRecipes)
+                }
+            }
+        )
+        val recipes = if (recipePageState.selectedTab == 0) {
+            recipePageState.myRecipes
+        } else {
+            recipePageState.onlineRecipes
+        }
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(8.dp),
+            contentAlignment = Alignment.Center
         ) {
-            when (uiState) {
-                BaseViewModel.UiState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-                is BaseViewModel.UiState.Error -> {
-                    ShowErrorMessage(
-                        error = (uiState as BaseViewModel.UiState.Error).message,
-                        onClick = { recipePageViewModel.onEvent(RecipePageEvent.ResetErrorState) }
-                    )
-                }
-                BaseViewModel.UiState.Ready -> {
-                    FoodComponentSearchBar(
-                        query = recipePageState.query,
-                        onQueryChange = { recipePageViewModel.onEvent(RecipePageEvent.QueryChanged(it))},
-                        onSearch = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) },
-                        placeholder = { Text(stringResource(R.string.label_search_recipe)) }
-                    )
-
-                    val myRecipes = stringResource(R.string.search_page_label_my_recipes)
-                    val onlineRecipes = stringResource(R.string.search_page_label_online_recipes)
-                    CustomTabRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        options = listOf(myRecipes,
-                            onlineRecipes),
-                        selectedOption = recipePageState.selectedTab,
-                        onSelect = { index ->
-                            when (index) {
-                                0 -> recipePageViewModel.onEvent(RecipePageEvent.ClickMyRecipes)
-                                1 -> recipePageViewModel.onEvent(RecipePageEvent.ClickOnlineRecipes)
+            when (recipePageState.selectedTab) {
+                0 -> FoodComponentList(
+                    foodComponents = recipes,
+                    onItemClick = { recipe ->
+                        onItemClick(recipe as Recipe)
+                    },
+                    trailingContent = { foodComponent ->
+                        val recipe = foodComponent as Recipe
+                        CustomDetailsButton(
+                            dishItemButton = true,
+                            ownedRecipe = true,
+                            onOptionClick = { option ->
+                                recipePageViewModel.onEvent(
+                                    RecipePageEvent.ClickDetailsOption(recipe, option)
+                                )
+                            },
+                            expanded = recipePageState.expandedRecipeId == recipe.id,
+                            onDetailsClick = {
+                                recipePageViewModel.onEvent(
+                                    RecipePageEvent.ShowDetailsMenu(recipe.id)
+                                )
+                            },
+                            onDismissClick = {
+                                recipePageViewModel.onEvent(
+                                    RecipePageEvent.ShowDetailsMenu(null)
+                                )
                             }
-                        }
-                    )
-                    val recipes = if (recipePageState.selectedTab == 0) {
-                        recipePageState.myRecipes
-                    } else {
-                        recipePageState.onlineRecipes
+                        )
                     }
+                )
 
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .verticalScroll(scrollState)
-                    ) {
-                        when (recipePageState.selectedTab) {
-                            0 -> FoodComponentList(
-                                foodComponents = recipes,
-                                onItemClick = { recipe ->
-                                    onItemClick(recipe as Recipe)
-                                },
-                                trailingContent = { foodComponent ->
-                                    val recipe = foodComponent as Recipe
-                                    CustomDetailsButton(
-                                        dishItemButton = true,
-                                        ownedRecipe = true,
-                                        onOptionClick = { option ->
-                                            recipePageViewModel.onEvent(
-                                            RecipePageEvent.ClickDetailsOption(recipe, option)) },
-                                        expanded = recipePageState.expandedRecipeId == recipe.id,
-                                        onDetailsClick = { recipePageViewModel.onEvent(
-                                            RecipePageEvent.ShowDetailsMenu(recipe.id))
-                                        },
-                                        onDismissClick = { recipePageViewModel.onEvent(
-                                            RecipePageEvent.ShowDetailsMenu(null)
-                                        )}
-                                    )
-                                }
+                1 -> {
+                    when {
+                        recipePageState.query.isBlank() -> {
+                            Text(
+                                text = stringResource(R.string.label_enter_search_word),
+                                style = MaterialTheme.typography.bodyLarge
                             )
-                            1 -> {
-                                if (recipePageState.query.isBlank()) {
-                                    Text(
-                                        text = stringResource(R.string.label_enter_search_word),
-                                        modifier = Modifier.align(Alignment.Center)
-                                    )
-                                } else {
+
+                        }
+
+                        uiState == BaseViewModel.UiState.Loading -> {
+                            CircularProgressIndicator()
+                        }
+
+                        recipePageState.hasSearched &&
+                                recipePageState.lastSearchedQuery == recipePageState.query &&
+                                recipePageState.onlineRecipes.isEmpty() -> {
+                            Text(
+                                text = stringResource(R.string.error_search_result_empty),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+
+                        }
+
+                        else -> {
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                item {
                                     FoodComponentList(
                                         foodComponents = recipePageState.onlineRecipes,
                                         onItemClick = { recipe ->
                                             onItemClick(recipe as Recipe)
-                                                      },
+                                        },
                                         trailingContent = { foodComponent ->
                                             val recipe = foodComponent as Recipe
                                             CustomDetailsButton(
@@ -151,51 +180,78 @@ fun RecipePage(
                                                 publicRecipe = true,
                                                 onOptionClick = { option ->
                                                     if (option == DropdownMenuOptions.REPORT) {
-                                                        reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked(recipe))
+                                                        reportRecipeViewModel.onEvent(
+                                                            ReportRecipeEvent.ReportClicked(
+                                                                recipe
+                                                            )
+                                                        )
                                                     }
                                                     recipePageViewModel.onEvent(
-                                                        RecipePageEvent.ClickDetailsOption(recipe, option)) },
+                                                        RecipePageEvent.ClickDetailsOption(
+                                                            recipe,
+                                                            option
+                                                        )
+                                                    )
+                                                },
                                                 expanded = recipePageState.expandedRecipeId == recipe.id,
                                                 onDetailsClick = {
-                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu(recipe.id))
+                                                    recipePageViewModel.onEvent(
+                                                        RecipePageEvent.ShowDetailsMenu(
+                                                            recipe.id
+                                                        )
+                                                    )
                                                 },
                                                 onDismissClick = {
-                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu(null))
+                                                    recipePageViewModel.onEvent(
+                                                        RecipePageEvent.ShowDetailsMenu(
+                                                            null
+                                                        )
+                                                    )
                                                 })
                                         }
                                     )
                                 }
                             }
                         }
+                    }
 
-                        ExtendedFloatingActionButton(
-                            modifier = Modifier
-                                .padding(12.dp)
-                                .align(Alignment.BottomEnd),
-                            onClick = { onAddRecipeClick() }
-                        ) {
-                            Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                            Text(
-                                text = stringResource(R.string.label_add_recipe),
-                                modifier = Modifier.padding(2.dp),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
+                    ExtendedFloatingActionButton(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.BottomEnd),
+                        onClick = { onAddRecipeClick() }
+                    ) {
+                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                        Text(
+                            text = stringResource(R.string.label_add_recipe),
+                            modifier = Modifier.padding(2.dp),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
 
-                        if (reportRecipeState.reporting) {
-                            ReportRecipeDialog(
-                                onConfirm = { reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport) },
-                                onCancel = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
-                                onValueChange = { reportRecipeViewModel.onEvent(ReportRecipeEvent.InputTextChanged(it)) },
-                                reportText = reportRecipeState.inputText
-                            )
-                        }
+                    if (reportRecipeState.reporting) {
+                        ReportRecipeDialog(
+                            onConfirm = {
+                                reportRecipeViewModel.onEvent(
+                                    ReportRecipeEvent.SendReport
+                                )
+                            },
+                            onCancel = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
+                            onValueChange = {
+                                reportRecipeViewModel.onEvent(
+                                    ReportRecipeEvent.InputTextChanged(it)
+                                )
+                            },
+                            reportText = reportRecipeState.inputText
+                        )
                     }
                 }
             }
         }
     }
 }
+}
+
 
 @Composable
 private fun ShowErrorMessage(

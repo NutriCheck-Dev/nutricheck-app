@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -52,7 +53,9 @@ data class CommonSearchParameters(
     val localRecipesResults: List<Recipe> = emptyList(),
     val addedComponents: List<FoodComponent> = emptyList(),
     val expanded: Boolean = false,
-    val bottomSheetExpanded: Boolean = false
+    val bottomSheetExpanded: Boolean = false,
+    val hasSearched: Boolean = false,
+    val lastSearchedQuery: String? = null
 )
 
 sealed class SearchUiState {
@@ -193,9 +196,17 @@ class FoodSearchViewModel @Inject constructor(
 
     private fun onClickSearchFoodComponent() {
         val query = _searchState.value.parameters.query
-        if (query.isBlank()) {
-            return
+        if (query.isBlank()) return
+
+        _searchState.update { state ->
+            state.updateParams(
+                state.parameters.copy(
+                    hasSearched = true,
+                    lastSearchedQuery = query
+                )
+            )
         }
+
         viewModelScope.launch {
             val language = _searchState.value.parameters.language
             when (mode) {
@@ -237,6 +248,7 @@ class FoodSearchViewModel @Inject constructor(
                                     }
                                 }
                             }
+                            .drop(1)
                             .map { Result.Success(it) }
                     merged
                         .onStart { setLoading() }
@@ -346,7 +358,10 @@ class FoodSearchViewModel @Inject constructor(
             val newParams = state.parameters.copy(
                 query = "",
                 generalResults = emptyList(),
-                localRecipesResults = emptyList())
+                localRecipesResults = emptyList(),
+                hasSearched = false,
+                lastSearchedQuery = null
+            )
             combinedSearchListStore.update(emptyList())
             state.updateParams(newParams)
         }

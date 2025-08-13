@@ -46,7 +46,6 @@ fun CreateMealPage(
             if (event is SearchEvent.MealSaved) {
                 snackbarHostState.showSnackbar(
                     message = context.getString(R.string.meal_logged_success),
-                    //withDismissAction = true,
                     duration = SnackbarDuration.Short
                 )
             }
@@ -111,7 +110,9 @@ fun CreateMealPage(
                             1 -> searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
                         }
                     },
-                    isLoading = uiState == BaseViewModel.UiState.Loading
+                    isLoading = uiState == BaseViewModel.UiState.Loading,
+                    showEmptyState = searchState.parameters.hasSearched &&
+                    searchState.parameters.lastSearchedQuery == searchState.parameters.query
                 )
             }
         }

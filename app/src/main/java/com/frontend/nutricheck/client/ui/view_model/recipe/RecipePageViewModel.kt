@@ -28,6 +28,8 @@ data class RecipePageState(
     val query: String = "",
     val showReportDialog: Boolean = false,
     val expandedRecipeId: String? = null,
+    val hasSearched: Boolean = false,
+    val lastSearchedQuery: String? = null
 )
 
 sealed interface RecipePageEvent {
@@ -115,6 +117,9 @@ class RecipePageViewModel @Inject constructor(
             setReady()
             return
         }
+
+        _recipePageState.update { it.copy(hasSearched = true, lastSearchedQuery = query) }
+
         viewModelScope.launch {
             recipeRepository
                 .searchRecipes(query)

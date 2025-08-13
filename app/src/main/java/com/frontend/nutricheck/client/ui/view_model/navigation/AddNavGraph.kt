@@ -233,7 +233,7 @@ fun AddNavGraph(
                 RecipeEditorPage(
                     recipeEditorViewModel = createRecipeViewModel,
                     onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                    onBack = { addNavController.popBackStack() }
+                    onBack = { mainNavController.popBackStack() }
                 )
             }
 
