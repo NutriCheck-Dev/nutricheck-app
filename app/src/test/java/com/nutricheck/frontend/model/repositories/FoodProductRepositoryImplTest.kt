@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.model
+package com.nutricheck.frontend.model.repositories
 
 import com.frontend.nutricheck.client.dto.FoodProductDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
@@ -18,11 +18,11 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import retrofit2.Response
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.assertNotNull
-import org.junit.Assert.assertEquals
+import retrofit2.Response
+import kotlin.test.assertNotNull
 
 class FoodProductRepositoryImplTest {
 
@@ -52,7 +52,11 @@ class FoodProductRepositoryImplTest {
 
         every { foodSearchDao.resultsFor(query) } returns flowOf(listOf())
         coEvery { foodSearchDao.getLatestUpdatedFor(query) } returns null
-        coEvery { api.searchFoodProduct(query, "en") } returns Response.success(listOf(foodProductDTO))
+        coEvery { api.searchFoodProduct(query, "en") } returns Response.success(
+            listOf(
+                foodProductDTO
+            )
+        )
         every { FoodProductMapper.toData(foodProductDTO) } returns foodProduct
 
         val result = repository.searchFoodProducts(query, "en").first()
@@ -60,8 +64,8 @@ class FoodProductRepositoryImplTest {
 
         if (result is Result.Success) {
             assertNotNull(result.data)
-            assertEquals(foodProductDTO.id, result.data[0].id)
-            assertEquals(foodProductDTO.name, result.data[0].name)
+            Assert.assertEquals(foodProductDTO.id, result.data[0].id)
+            Assert.assertEquals(foodProductDTO.name, result.data[0].name)
             //deprecated assertEquals(foodProductDTO.fat, result.data[0].fat)
         }
         unmockkObject(FoodProductMapper)

@@ -4,9 +4,50 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlinx.kover")
     alias(libs.plugins.hilt)
 }
+kover {
+    reports {
+        total {
+            html {
+                onCheck = true
+            }
+            xml {
+                onCheck = true
+            }
+        }
+        filters {
+            excludes {
+                classes(
+                    // Generated code
+                    "*.BuildConfig",
+                    "*_Factory*",
+                    "*_MembersInjector*",
+                    "*Hilt_*",
+                    "*.databinding.*",
+                    "*ComposableSingletons*",
 
+                    // UI Theme & Resources
+                    "*.ui.theme.*",
+                    "*.*Theme*",
+                    "*.R\$*",
+                    "*Composable",
+
+                    // Test classes
+                    "*Test*",
+                    "*.*Test",
+                    "*.test.*"
+                )
+
+                packages(
+                    "com.frontend.nutricheck.client.ui.theme",
+                    "dagger.hilt.internal.aggregatedroot.codegen"
+                )
+            }
+        }
+    }
+}
 android {
     namespace = "com.frontend.nutricheck.client"
     compileSdk = 35
@@ -22,6 +63,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -48,6 +93,7 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
 }
 configurations.all {
     exclude(group = "com.intellij", module = "annotations")
@@ -107,19 +153,15 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.core.testing)
-    testImplementation(libs.mockito.core)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.androidx.datastore.preferences)
-    testImplementation(libs.mockito.inline)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api) //?
-    testImplementation(libs.mockito.core.v5180)
-    testImplementation(libs.mockito.junit.jupiter) //?
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlin.test)
-
+    androidTestImplementation(libs.androidx.core)
+    androidTestImplementation(libs.androidx.runner)
 }
