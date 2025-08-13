@@ -34,7 +34,7 @@ sealed class AddScreens(val route: String) {
     object AddAiMealGraph : AddScreens("add_ai_meal_graph")
     object AddAiMeal : AddScreens("add_ai_meal")
     object AddMeal : AddScreens("add_meal?recipeId={recipeId}") {
-        const val defaultRoute = "add_meal"
+        const val DEFAULT = "add_meal"
     }
     object AddRecipe : AddScreens("add_recipe")
     object RecipePage : AddScreens("recipe_page")
@@ -76,15 +76,15 @@ fun AddNavGraph(
             AddDialogOrigin.BOTTOM_NAV_BAR_ADD_RECIPE -> AddScreens.AddRecipeGraph.route
             AddDialogOrigin.BOTTOM_NAV_BAR_ADD_AI_MEAL -> AddScreens.AddAiMealGraph.route
             AddDialogOrigin.RECIPE_PAGE -> AddScreens.AddRecipe.route
-            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.defaultRoute
+            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.DEFAULT
         },
         route = "add_graph"
     ) {
         navigation(
-            startDestination = AddScreens.AddMeal.defaultRoute,
+            startDestination = AddScreens.AddMeal.DEFAULT,
             route = "add_meal_graph"
         ) {
-            composable(AddScreens.AddMeal.defaultRoute) { backStackEntry ->
+            composable(AddScreens.AddMeal.DEFAULT) { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     addNavController.getBackStackEntry("add_meal_graph")
                 }

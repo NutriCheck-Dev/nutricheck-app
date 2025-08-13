@@ -125,8 +125,16 @@ class RecipeRepositoryImpl @Inject constructor(
             }
             .flowOn(Dispatchers.IO)
 
-    override suspend fun downloadRecipe(recipe: Recipe): Result<Recipe> {
-        TODO("Not yet implemented")
+    override suspend fun downloadRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
+        val ownedRecipe = recipe.copy(visibility = RecipeVisibility.OWNER)
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(ownedRecipe, false)
+        recipeDao.insert(recipeEntity)
+
+        recipe.ingredients.forEach { ingredient ->
+            val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+            checkForFoodProducts(ingredient)
+            ingredientDao.insert(ingredientEntity)
+        }
     }
 
     override suspend fun getRecipeById(recipeId: String): Recipe = withContext(Dispatchers.IO) {
@@ -167,7 +175,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val serverMessage = parsed?.body?.let { body ->
                 listOfNotNull(body.title, body.detail)
                     .filter { it.isNotBlank() }
-                    .joinToString { ": " }
+                    .joinToString(separator = ": ")
             }
 
             val fallback = if (code == 401) {

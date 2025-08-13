@@ -37,7 +37,7 @@ sealed class RecipePageScreens(val route: String) {
     }
     object RecipeEditorPage : RecipePageScreens("recipe_editor") {
         const val ARGUMENT = "recipeId"
-        val pattern =  "recipe_editor?$ARGUMENT={$ARGUMENT}"
+        const val PATTERN =  "recipe_editor?$ARGUMENT={$ARGUMENT}"
         fun newRecipe() = "recipe_editor"
         fun editRecipe(recipeId: String) = "recipe_editor?$ARGUMENT=$recipeId"
     }
@@ -169,7 +169,7 @@ fun RecipePageNavGraph(
             route = "recipe_editor_page_graph"
         ) {
             composable(
-                route = RecipePageScreens.RecipeEditorPage.pattern,
+                route = RecipePageScreens.RecipeEditorPage.PATTERN,
                 arguments = listOf(
                     navArgument(RecipePageScreens.RecipeEditorPage.ARGUMENT) {
                         type = NavType.StringType

@@ -47,5 +47,5 @@ interface RecipeRepository {
     suspend fun getRecipesByName(recipeName: String): List<Recipe>
     fun observeRecipeById(recipeId: String): Flow<Recipe>
     suspend fun observeMyRecipes(): Flow<List<Recipe>>
-    suspend fun downloadRecipe(recipe: Recipe): Result<Recipe>
+    suspend fun downloadRecipe(recipe: Recipe)
 }
