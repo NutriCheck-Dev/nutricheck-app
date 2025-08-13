@@ -105,6 +105,7 @@ dependencies {
     implementation(libs.compose.numberpicker)
     implementation (libs.androidx.exifinterface)
 
+    testImplementation(libs.junit)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.mockito.core)
     testImplementation(libs.truth)
@@ -112,6 +113,10 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.androidx.datastore.preferences)
     testImplementation(libs.mockito.inline)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter.api) //?
+    testImplementation(libs.mockito.core.v5180)
+    testImplementation(libs.mockito.junit.jupiter) //?
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.mockk)
