@@ -96,6 +96,7 @@ fun OverviewSwitcher(
             ) {
                 options.forEachIndexed { index, title ->
                     Tab(
+                        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
                         selected = index == selectedIndex,
                         onClick = { onSelect(title) },
                         selectedContentColor = colors.onSurfaceVariant,

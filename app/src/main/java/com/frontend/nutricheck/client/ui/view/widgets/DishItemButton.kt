@@ -145,7 +145,8 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${ingredient.servings * ingredient.foodProduct.calories} cal, Portions ${ingredient.servings}",
+                    text = "${ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)} cal, " +
+                            "Portions ${ingredient.servings}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

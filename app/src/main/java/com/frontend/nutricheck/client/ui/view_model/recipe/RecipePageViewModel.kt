@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -153,16 +154,10 @@ class RecipePageViewModel @Inject constructor(
     private fun onDetailsOptionClick(recipe: Recipe, option: DropdownMenuOptions) {
         viewModelScope.launch {
             when (option) {
-                DropdownMenuOptions.DELETE -> {
-                    recipeRepository.deleteRecipe(recipe)
-                    val refreshedList = recipeRepository.getMyRecipes()
-                    _recipePageState.update { it.copy(myRecipes = refreshedList) }
-                }
-                DropdownMenuOptions.DOWNLOAD -> {
-                    recipeRepository.insertRecipe(recipe)
-                    val refreshedList = recipeRepository.getMyRecipes()
-                    _recipePageState.update { it.copy(myRecipes = refreshedList) }
-                }
+                DropdownMenuOptions.DELETE -> recipeRepository.deleteRecipe(recipe)
+
+                DropdownMenuOptions.DOWNLOAD -> recipeRepository.downloadRecipe(recipe)
+
                 DropdownMenuOptions.UPLOAD -> {
                     when (val body = recipeRepository.uploadRecipe(recipe)) {
                         is Result.Success -> _events.emit(RecipePageEvent.RecipeUploaded)

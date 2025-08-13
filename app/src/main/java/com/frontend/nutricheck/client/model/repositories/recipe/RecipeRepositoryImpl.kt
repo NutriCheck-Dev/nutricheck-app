@@ -125,6 +125,10 @@ class RecipeRepositoryImpl @Inject constructor(
             }
             .flowOn(Dispatchers.IO)
 
+    override suspend fun downloadRecipe(recipe: Recipe): Result<Recipe> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getRecipeById(recipeId: String): Recipe = withContext(Dispatchers.IO) {
         val recipeWithIngredients = recipeDao.getRecipeWithIngredientsById(recipeId).first()
         DbRecipeMapper.toRecipe(recipeWithIngredients)

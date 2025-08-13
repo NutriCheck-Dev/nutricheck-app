@@ -107,8 +107,7 @@ Surface(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(8.dp),
-            contentAlignment = Alignment.Center
+                .padding(8.dp)
         ) {
             when (recipePageState.selectedTab) {
                 0 -> FoodComponentList(
@@ -144,24 +143,39 @@ Surface(
                 1 -> {
                     when {
                         recipePageState.query.isBlank() -> {
-                            Text(
-                                text = stringResource(R.string.label_enter_search_word),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                                ) {
+                                Text(
+                                    text = stringResource(R.string.label_enter_search_word),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
 
                         }
 
                         uiState == BaseViewModel.UiState.Loading -> {
-                            CircularProgressIndicator()
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
 
                         recipePageState.hasSearched &&
                                 recipePageState.lastSearchedQuery == recipePageState.query &&
                                 recipePageState.onlineRecipes.isEmpty() -> {
-                            Text(
-                                text = stringResource(R.string.error_search_result_empty),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.error_search_result_empty),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
 
                         }
 

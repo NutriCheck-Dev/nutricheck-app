@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -266,8 +267,8 @@ class RecipeEditorViewModel @Inject constructor(
                 .searchFoodProducts(query, language)
             foodProducts
                 .onStart { setLoading() }
+                .onCompletion { setReady() }
                 .catch { setError(it.message!!) }
-                .drop(1)
                 .collect { result ->
                     when (result) {
                         is Result.Success -> {
@@ -282,7 +283,6 @@ class RecipeEditorViewModel @Inject constructor(
                         }
                     }
                 }
-            setReady()
             val combinedList = _draft.value.ingredients + _draft.value.results
             combinedSearchListStore.update(combinedList)
         }
