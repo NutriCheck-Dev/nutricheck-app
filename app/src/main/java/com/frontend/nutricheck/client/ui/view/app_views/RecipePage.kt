@@ -111,35 +111,50 @@ Surface(
             contentAlignment = Alignment.Center
         ) {
             when (recipePageState.selectedTab) {
-                0 -> FoodComponentList(
-                    foodComponents = recipes,
-                    onItemClick = { recipe ->
-                        onItemClick(recipe as Recipe)
-                    },
-                    trailingContent = { foodComponent ->
-                        val recipe = foodComponent as Recipe
-                        CustomDetailsButton(
-                            dishItemButton = true,
-                            ownedRecipe = true,
-                            onOptionClick = { option ->
-                                recipePageViewModel.onEvent(
-                                    RecipePageEvent.ClickDetailsOption(recipe, option)
-                                )
-                            },
-                            expanded = recipePageState.expandedRecipeId == recipe.id,
-                            onDetailsClick = {
-                                recipePageViewModel.onEvent(
-                                    RecipePageEvent.ShowDetailsMenu(recipe.id)
-                                )
-                            },
-                            onDismissClick = {
-                                recipePageViewModel.onEvent(
-                                    RecipePageEvent.ShowDetailsMenu(null)
-                                )
-                            }
+                0 -> {
+                    FoodComponentList(
+                        foodComponents = recipes,
+                        onItemClick = { recipe ->
+                            onItemClick(recipe as Recipe)
+                        },
+                        trailingContent = { foodComponent ->
+                            val recipe = foodComponent as Recipe
+                            CustomDetailsButton(
+                                dishItemButton = true,
+                                ownedRecipe = true,
+                                onOptionClick = { option ->
+                                    recipePageViewModel.onEvent(
+                                        RecipePageEvent.ClickDetailsOption(recipe, option)
+                                    )
+                                },
+                                expanded = recipePageState.expandedRecipeId == recipe.id,
+                                onDetailsClick = {
+                                    recipePageViewModel.onEvent(
+                                        RecipePageEvent.ShowDetailsMenu(recipe.id)
+                                    )
+                                },
+                                onDismissClick = {
+                                    recipePageViewModel.onEvent(
+                                        RecipePageEvent.ShowDetailsMenu(null)
+                                    )
+                                }
+                            )
+                        }
+                    )
+                    ExtendedFloatingActionButton(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.BottomEnd),
+                        onClick = { onAddRecipeClick() }
+                    ) {
+                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                        Text(
+                            text = stringResource(R.string.label_add_recipe),
+                            modifier = Modifier.padding(2.dp),
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
-                )
+                }
 
                 1 -> {
                     when {
@@ -213,20 +228,6 @@ Surface(
                                 }
                             }
                         }
-                    }
-
-                    ExtendedFloatingActionButton(
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.BottomEnd),
-                        onClick = { onAddRecipeClick() }
-                    ) {
-                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                        Text(
-                            text = stringResource(R.string.label_add_recipe),
-                            modifier = Modifier.padding(2.dp),
-                            style = MaterialTheme.typography.labelLarge
-                        )
                     }
 
                     if (reportRecipeState.reporting) {
