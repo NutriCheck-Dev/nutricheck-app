@@ -157,4 +157,6 @@
     <string name="error_missing_dayTime">Bitte wähle eine Tageszeit für Mahlzeit aus</string>
     <string name="error_create_meal_missing_foodComponent">Bitte füge mindestens ein Lebensmittelprodukt oder Rezept zur Mahlzeit hinzu.</string>
     <string name="label_select_meal">Tageszeit auswählen</string>
+    <string name="label_delete">Löschen</string>
+    <string name="delete_weight_dialog_title">"Möchtest du das Gewicht wirklich löschen? "</string>
 </resources>

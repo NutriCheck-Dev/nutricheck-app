@@ -7,6 +7,7 @@ interface UserDataRepository {
     suspend fun getUserData() : UserData
     suspend fun getWeightHistory(): List<Weight>
     suspend fun addWeight(weight: Weight)
+    suspend fun deleteWeight(weight : Weight)
     suspend fun addUserData(userData: UserData)
     suspend fun updateUserData(userData: UserData)
     suspend fun getTargetWeight(): Double
