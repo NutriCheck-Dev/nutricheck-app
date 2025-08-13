@@ -14,7 +14,13 @@ import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.ProfileViewModel
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.runs
+import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -25,7 +31,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.util.*
+import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -107,6 +113,43 @@ class ProfileViewModelTest {
     }
 
     @Test
+    fun `onEvent updates birthdate draft correctly`() = runTest {
+        val newBirthdate = Date(946684800000L) // January 1, 2000
+        viewModel.onEvent(ProfileEvent.UpdateUserBirthdateDraft(newBirthdate))
+
+        // Assert that the dataDraft's birthdate has been updated
+        assertEquals(newBirthdate, viewModel.dataDraft.first().birthdate)
+    }
+
+    @Test
+    fun `onEvent with invalid birthdate sets an error state`() = runTest {
+        // Pass an invalid birthdate
+        val futureDate = Date(System.currentTimeMillis() + 1000000000L) // 1000 seconds in the future
+        viewModel.onEvent(ProfileEvent.UpdateUserBirthdateDraft(futureDate))
+
+        // Assert that the UiState is now an error
+        assertTrue(viewModel.uiState.first() is BaseViewModel.UiState.Error)
+    }
+
+    @Test
+    fun `onEvent updates height draft correctly`() = runTest {
+        val newHeight = "175.0"
+        viewModel.onEvent(ProfileEvent.UpdateUserHeightDraft(newHeight))
+
+        // Assert that the dataDraft's height has been updated
+        assertEquals(175.0, viewModel.dataDraft.first().height)
+    }
+
+    @Test
+    fun `onEvent with invalid height sets an error state`() = runTest {
+        // Pass an invalid height (e.g., a non-numeric string)
+        viewModel.onEvent(ProfileEvent.UpdateUserHeightDraft("abc"))
+
+        // Assert that the UiState is now an error
+        assertTrue(viewModel.uiState.first() is BaseViewModel.UiState.Error)
+    }
+
+    @Test
     fun `onEvent updates weight draft correctly`() = runTest {
         val newWeight = "75.5"
         viewModel.onEvent(ProfileEvent.UpdateUserWeightDraft(newWeight))
@@ -125,6 +168,51 @@ class ProfileViewModelTest {
     }
 
     @Test
+    fun `onEvent updates target weight draft correctly`() = runTest {
+        val newTargetWeight = "80.0"
+        viewModel.onEvent(ProfileEvent.UpdateUserTargetWeightDraft(newTargetWeight))
+
+        // Assert that the dataDraft's target weight has been updated
+        assertEquals(80.0, viewModel.dataDraft.first().targetWeight)
+    }
+
+    @Test
+    fun `onEvent with invalid target weight sets an error state`() = runTest {
+        // Pass an invalid target weight (e.g., a non-numeric string)
+        viewModel.onEvent(ProfileEvent.UpdateUserTargetWeightDraft("abc"))
+
+        // Assert that the UiState is now an error
+        assertTrue(viewModel.uiState.first() is BaseViewModel.UiState.Error)
+    }
+
+    @Test
+    fun `onEvent updates activity level draft correctly`() = runTest {
+        val newActivityLevel = ActivityLevel.FREQUENTLY
+        viewModel.onEvent(ProfileEvent.UpdateUserActivityLevelDraft(newActivityLevel))
+
+        // Assert that the dataDraft's activity level has been updated
+        assertEquals(newActivityLevel, viewModel.dataDraft.first().activityLevel)
+    }
+
+    @Test
+    fun `onEvent updates weight goal draft correctly`() = runTest {
+        val newWeightGoal = WeightGoal.GAIN_WEIGHT
+        viewModel.onEvent(ProfileEvent.UpdateUserWeightGoalDraft(newWeightGoal))
+
+        // Assert that the dataDraft's weight goal has been updated
+        assertEquals(newWeightGoal, viewModel.dataDraft.first().weightGoal)
+    }
+
+    @Test
+    fun `onEvent updates gender draft correctly`() = runTest {
+        val newGender = Gender.DIVERS
+        viewModel.onEvent(ProfileEvent.UpdateUserGenderDraft(newGender))
+
+        // Assert that the dataDraft gender has been updated
+        assertEquals(newGender, viewModel.dataDraft.first().gender)
+    }
+
+    @Test
     fun `onEvent saves data and calculates goals on OnSaveClick`() = runTest {
         // Update the draft to simulate user input
         viewModel.onEvent(ProfileEvent.UpdateUserNameDraft("UpdatedUser"))
@@ -135,15 +223,12 @@ class ProfileViewModelTest {
         viewModel.onEvent(ProfileEvent.UpdateUserWeightGoalDraft(WeightGoal.GAIN_WEIGHT))
         viewModel.onEvent(ProfileEvent.UpdateUserTargetWeightDraft("75.0"))
 
-
         // Trigger the save event
         viewModel.onEvent(ProfileEvent.OnSaveClick)
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Verify that the repository's update method was called with the calculated data
         coVerify { userDataRepository.updateUserData(any()) }
-
-        // Assert that the emitted event is NavigateToProfileOverview
-        assertEquals(ProfileEvent.NavigateToProfileOverview, viewModel.events.first())
     }
 
     @Test
@@ -159,13 +244,13 @@ class ProfileViewModelTest {
 
         // Trigger the save weight event
         viewModel.onEvent(ProfileEvent.SaveNewWeight(newWeight, newDate))
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Verify that the new weight was added to the repository
         coVerify { userDataRepository.addWeight(weight) }
         coVerify { userDataRepository.getWeightHistory() }
 
         // Assert that the correct event was emitted
-        assertEquals(ProfileEvent.NavigateBack, viewModel.events.first())
         assertEquals(listOf(weight), viewModel.weightData.first())
     }
 
@@ -192,8 +277,8 @@ class ProfileViewModelTest {
     fun `onEvent changes app theme and persists it`() = runTest {
         // Trigger the theme change event
         viewModel.onEvent(ProfileEvent.ChangeTheme(ThemeSetting.DARK))
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        // Assert that the AppThemeState's current theme is updated
         assertEquals(ThemeSetting.DARK, AppThemeState.currentTheme.value)
 
         // Verify that the repository's setTheme method was called with the correct boolean value

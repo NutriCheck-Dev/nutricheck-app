@@ -35,7 +35,6 @@ sealed interface ProfileEvent {
     object NavigateToAddNewWeight : ProfileEvent
     object NavigateToProfileOverview : ProfileEvent
     object RestartApp : ProfileEvent
-    object NavigateBack : ProfileEvent
     // collected events, which lead to navigation
     object OnPersonalDataClick : ProfileEvent
     object OnAddNewWeightClick : ProfileEvent
@@ -222,7 +221,6 @@ class ProfileViewModel @Inject constructor(
             _weightData.value = userDataRepository.getWeightHistory()
         }
         setReady()
-        emitEvent(ProfileEvent.NavigateBack)
     }
 
     private fun onChangeThemeClick(theme : ThemeSetting) {

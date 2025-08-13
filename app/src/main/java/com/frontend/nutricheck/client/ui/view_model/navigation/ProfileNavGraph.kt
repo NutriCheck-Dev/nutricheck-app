@@ -63,9 +63,6 @@ fun ProfilePageNavGraph() {
                 is ProfileEvent.RestartApp -> {
                     (context as? Activity)?.recreate()
                 }
-                is ProfileEvent.NavigateBack -> {
-                    profileNavController.popBackStack()
-                }
                 else -> { /* No action needed for other events */ }
             }
         }
