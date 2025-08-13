@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
@@ -149,7 +148,6 @@ class FoodSearchViewModel @Inject constructor(
             savedStateHandle.get<String>("date")
                 ?.let { date ->
                     _searchState.update { state ->
-                        Log.v("XD", "SearchViewModel init with mode: $date")
                         when (state) {
                             is SearchUiState.AddComponentsToMealState ->
                                 state.copy(date = date.toLong())
@@ -412,7 +410,7 @@ class FoodSearchViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val mealDate = state.date ?: Date().time
+            val mealDate = state.date?.let { Date(it) } ?: Date()
             setLoading()
             try {
                 if (mode is SearchMode.ComponentsForMeal) {
@@ -433,7 +431,7 @@ class FoodSearchViewModel @Inject constructor(
                                 + (mealRecipeItems).sumOf { it.recipe.protein * it.quantity },
                         fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
                                 + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
-                        date = Date(mealDate),
+                        date = mealDate,
                         dayTime = state.dayTime,
                         mealFoodItems = mealFoodItems,
                         mealRecipeItems = mealRecipeItems

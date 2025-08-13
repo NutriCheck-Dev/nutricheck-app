@@ -35,9 +35,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.DateSelectorBar
 import com.frontend.nutricheck.client.ui.view.widgets.MealBlock
 import com.frontend.nutricheck.client.ui.view_model.HistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
-import com.frontend.nutricheck.client.ui.view_model.navigation.AddDialogOrigin
 import com.frontend.nutricheck.client.ui.view_model.navigation.HistoryPageScreens
-import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 import java.util.Calendar
 import java.util.Date
 
@@ -49,7 +47,8 @@ fun HistoryPage(
     historyNavController: NavHostController
 ) {
     val state by historyViewModel.historyState.collectAsState()
-    var selectedDate by remember { mutableStateOf(Date()) }
+    val date = state.selectedDate
+    var selectedDate by remember { mutableStateOf(date) }
     var showDatePicker by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
