@@ -16,7 +16,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import java.util.Date
 import kotlin.test.assertEquals
@@ -88,14 +87,27 @@ class UserDataRepositoryImplTest {
      * Tests getUserData() when no user data exists in the database.
      * Verifies that the method returns a default UserData object.
      */
-    @Ignore
     @Test
     fun `getUserData returns default UserData when none exists`() = runTest {
         coEvery { mockUserDataDao.getUserData() } returns null
 
         val result = repository.getUserData()
 
-        assertEquals(UserData(), result)
+        // Verify that returned UserData has default values
+        // Birthdate works with Date() so it is not checked here
+        assertEquals("", result.username)
+        assertEquals(Gender.DIVERS, result.gender)
+        assertEquals(0.0, result.height)
+        assertEquals(0.0, result.weight)
+        assertEquals(0, result.age)
+        assertEquals(0.0, result.targetWeight)
+        assertEquals(0, result.dailyCaloriesGoal)
+        assertEquals(0, result.proteinGoal)
+        assertEquals(0, result.carbsGoal)
+        assertEquals(0, result.fatsGoal)
+        assertEquals(WeightGoal.MAINTAIN_WEIGHT, result.weightGoal)
+        assertEquals(ActivityLevel.NEVER, result.activityLevel)
+
         coVerify { mockUserDataDao.getUserData() }
     }
 

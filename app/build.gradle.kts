@@ -27,12 +27,18 @@ kover {
                     "*Hilt_*",
                     "*.databinding.*",
                     "*ComposableSingletons*",
+                    "*hilt_aggregated_deps*",
+
+                    // Data classes
+                    "*dao*",
+                    "*exceptions*",
 
                     // UI Theme & Resources
                     "*.ui.theme.*",
+                    "*.ui.view.*",
                     "*.*Theme*",
                     "*.R\$*",
-                    "*Composable",
+                    "*Composable*",
 
                     // Test classes
                     "*Test*",
