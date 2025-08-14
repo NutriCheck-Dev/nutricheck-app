@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.R
@@ -31,6 +32,7 @@ enum class DiaryTab(val stringResId: Int) {
 fun DiaryNavGraph(
     mainNavController: NavHostController
 ) {
+    val context = LocalContext.current
     val historyPageNavController = rememberNavController()
     val recipePageNavController = rememberNavController()
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.HISTORY) }
