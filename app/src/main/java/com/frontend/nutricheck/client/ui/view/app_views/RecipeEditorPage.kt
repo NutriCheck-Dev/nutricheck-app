@@ -47,7 +47,6 @@ fun RecipeEditorPage(
     modifier: Modifier = Modifier,
     recipeEditorViewModel: RecipeEditorViewModel,
     onItemClick: (FoodComponent) -> Unit = {},
-    onSave: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
@@ -63,7 +62,7 @@ fun RecipeEditorPage(
             .background(colors.background),
         topBar = {
             ViewsTopBar(
-                navigationIcon = { NavigateBackButton(onBack = { onBack() }) },
+                navigationIcon = { NavigateBackButton{ onBack() } },
                 title = { TextField(
                     value = currentTitle,
                     placeholder = {
@@ -93,7 +92,6 @@ fun RecipeEditorPage(
                 ) },
                 actions = {
                     IconButton(onClick = {
-                        onSave()
                         recipeEditorViewModel.onEvent(RecipeEditorEvent.SaveRecipe)
                     }) {
                         Icon(
@@ -205,7 +203,8 @@ fun RecipeEditorPage(
                         )
                     },
                     showTabRow = false,
-                    isLoading = uiState == BaseViewModel.UiState.Loading
+                    isLoading = uiState == BaseViewModel.UiState.Loading,
+                    showEmptyState = draft.hasSearched && draft.lastSearchedQuery == draft.query
                 )
             }
         }

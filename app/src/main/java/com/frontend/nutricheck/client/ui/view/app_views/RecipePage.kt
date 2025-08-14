@@ -3,15 +3,14 @@ package com.frontend.nutricheck.client.ui.view.app_views
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -50,107 +49,158 @@ fun RecipePage(
 ) {
     val recipePageState by recipePageViewModel.recipePageState.collectAsState()
     val uiState by recipePageViewModel.uiState.collectAsState()
-    val scrollState = rememberScrollState()
+    rememberScrollState()
     val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
 
-    Surface(
-        modifier = modifier.fillMaxSize()
+Surface(
+    modifier = modifier.fillMaxSize()
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+        if (uiState is BaseViewModel.UiState.Error) {
+            ShowErrorMessage(
+                error = (uiState as BaseViewModel.UiState.Error).message,
+                onClick = { recipePageViewModel.onEvent(RecipePageEvent.ResetErrorState) }
+            )
+        }
+        FoodComponentSearchBar(
+            query = recipePageState.query,
+            onQueryChange = {
+                recipePageViewModel.onEvent(
+                    RecipePageEvent.QueryChanged(
+                        it
+                    )
+                )
+                            },
+            onSearch = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) },
+            placeholder = { Text(stringResource(R.string.label_search_recipe)) }
+        )
+
+        val myRecipes = stringResource(R.string.search_page_label_my_recipes)
+        val onlineRecipes = stringResource(R.string.search_page_label_online_recipes)
+        CustomTabRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            options = listOf(
+                myRecipes,
+                onlineRecipes
+            ),
+            selectedOption = recipePageState.selectedTab,
+            onSelect = { index ->
+                when (index) {
+                    0 -> recipePageViewModel.onEvent(RecipePageEvent.ClickMyRecipes)
+                    1 -> recipePageViewModel.onEvent(RecipePageEvent.ClickOnlineRecipes)
+                }
+            }
+        )
+        val recipes = if (recipePageState.selectedTab == 0) {
+            recipePageState.myRecipes
+        } else {
+            recipePageState.onlineRecipes
+        }
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            when (uiState) {
-                BaseViewModel.UiState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-                is BaseViewModel.UiState.Error -> {
-                    val message = (uiState as BaseViewModel.UiState.Error).message
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Fehler: $message")
-                            Spacer(Modifier.height(8.dp))
-                            Button(onClick = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) }) {
-                                Text(stringResource(R.string.label_retry))
-                            }
-                        }
-                    }
-                }
-                BaseViewModel.UiState.Ready -> {
-                    FoodComponentSearchBar(
-                        query = recipePageState.query,
-                        onQueryChange = { recipePageViewModel.onEvent(RecipePageEvent.QueryChanged(it))},
-                        onSearch = { recipePageViewModel.onEvent(RecipePageEvent.SearchOnline) },
-                        placeholder = { Text(stringResource(R.string.label_search_recipe)) }
-                    )
-
-                    val myRecipes = stringResource(R.string.search_page_label_my_recipes)
-                    val onlineRecipes = stringResource(R.string.search_page_label_online_recipes)
-                    CustomTabRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        options = listOf(myRecipes,
-                            onlineRecipes),
-                        selectedOption = recipePageState.selectedTab,
-                        onSelect = { index ->
-                            when (index) {
-                                0 -> recipePageViewModel.onEvent(RecipePageEvent.ClickMyRecipes)
-                                1 -> recipePageViewModel.onEvent(RecipePageEvent.ClickOnlineRecipes)
-                            }
-                        }
-                    )
-                    val recipes = if (recipePageState.selectedTab == 0) {
-                        recipePageState.myRecipes
-                    } else {
-                        recipePageState.onlineRecipes
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .verticalScroll(scrollState)
-                    ) {
-                        when (recipePageState.selectedTab) {
-                            0 -> FoodComponentList(
-                                foodComponents = recipes,
-                                onItemClick = { recipe ->
-                                    onItemClick(recipe as Recipe)
+            when (recipePageState.selectedTab) {
+                0 -> {
+                    FoodComponentList(
+                        foodComponents = recipes,
+                        onItemClick = { recipe ->
+                            onItemClick(recipe as Recipe)
+                        },
+                        trailingContent = { foodComponent ->
+                            val recipe = foodComponent as Recipe
+                            CustomDetailsButton(
+                                dishItemButton = true,
+                                ownedRecipe = true,
+                                onOptionClick = { option ->
+                                    recipePageViewModel.onEvent(
+                                        RecipePageEvent.ClickDetailsOption(recipe, option)
+                                    )
                                 },
-                                trailingContent = { foodComponent ->
-                                    val recipe = foodComponent as Recipe
-                                    CustomDetailsButton(
-                                        dishItemButton = true,
-                                        ownedRecipe = true,
-                                        onOptionClick = { option ->
-                                            recipePageViewModel.onEvent(
-                                            RecipePageEvent.ClickDetailsOption(recipe, option)) },
-                                        expanded = recipePageState.expandedRecipeId == recipe.id,
-                                        onDetailsClick = { recipePageViewModel.onEvent(
-                                            RecipePageEvent.ShowDetailsMenu(recipe.id))
-                                        },
-                                        onDismissClick = { recipePageViewModel.onEvent(
-                                            RecipePageEvent.ShowDetailsMenu(null)
-                                        )}
+                                expanded = recipePageState.expandedRecipeId == recipe.id,
+                                onDetailsClick = {
+                                    recipePageViewModel.onEvent(
+                                        RecipePageEvent.ShowDetailsMenu(recipe.id)
+                                    )
+                                },
+                                onDismissClick = {
+                                    recipePageViewModel.onEvent(
+                                        RecipePageEvent.ShowDetailsMenu(null)
                                     )
                                 }
                             )
-                            1 -> {
-                                if (recipePageState.query.isBlank()) {
-                                    Text(
-                                        text = stringResource(R.string.label_enter_search_word),
-                                        modifier = Modifier.align(Alignment.Center)
-                                    )
-                                } else {
+                        }
+                    )
+                    ExtendedFloatingActionButton(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.BottomEnd),
+                        onClick = { onAddRecipeClick() }
+                    ) {
+                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                        Text(
+                            text = stringResource(R.string.label_add_recipe),
+                            modifier = Modifier.padding(2.dp),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
+
+                1 -> {
+                    when {
+                        recipePageState.query.isBlank() -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                                ) {
+                                Text(
+                                    text = stringResource(R.string.label_enter_search_word),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+
+                        }
+
+                        uiState == BaseViewModel.UiState.Loading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        recipePageState.hasSearched &&
+                                recipePageState.lastSearchedQuery == recipePageState.query &&
+                                recipePageState.onlineRecipes.isEmpty() -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.error_search_result_empty),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+
+                        }
+
+                        else -> {
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                item {
                                     FoodComponentList(
                                         foodComponents = recipePageState.onlineRecipes,
                                         onItemClick = { recipe ->
                                             onItemClick(recipe as Recipe)
-                                                      },
+                                        },
                                         trailingContent = { foodComponent ->
                                             val recipe = foodComponent as Recipe
                                             CustomDetailsButton(
@@ -158,48 +208,79 @@ fun RecipePage(
                                                 publicRecipe = true,
                                                 onOptionClick = { option ->
                                                     if (option == DropdownMenuOptions.REPORT) {
-                                                        reportRecipeViewModel.onEvent(ReportRecipeEvent.ReportClicked(recipe))
+                                                        reportRecipeViewModel.onEvent(
+                                                            ReportRecipeEvent.ReportClicked(
+                                                                recipe
+                                                            )
+                                                        )
                                                     }
                                                     recipePageViewModel.onEvent(
-                                                        RecipePageEvent.ClickDetailsOption(recipe, option)) },
+                                                        RecipePageEvent.ClickDetailsOption(
+                                                            recipe,
+                                                            option
+                                                        )
+                                                    )
+                                                },
                                                 expanded = recipePageState.expandedRecipeId == recipe.id,
                                                 onDetailsClick = {
-                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu(recipe.id))
+                                                    recipePageViewModel.onEvent(
+                                                        RecipePageEvent.ShowDetailsMenu(
+                                                            recipe.id
+                                                        )
+                                                    )
                                                 },
                                                 onDismissClick = {
-                                                    recipePageViewModel.onEvent(RecipePageEvent.ShowDetailsMenu(null))
+                                                    recipePageViewModel.onEvent(
+                                                        RecipePageEvent.ShowDetailsMenu(
+                                                            null
+                                                        )
+                                                    )
                                                 })
                                         }
                                     )
                                 }
                             }
                         }
+                    }
 
-                        ExtendedFloatingActionButton(
-                            modifier = Modifier
-                                .padding(12.dp)
-                                .align(Alignment.BottomEnd),
-                            onClick = { onAddRecipeClick() }
-                        ) {
-                            Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                            Text(
-                                text = stringResource(R.string.label_add_recipe),
-                                modifier = Modifier.padding(2.dp),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-
-                        if (reportRecipeState.reporting) {
-                            ReportRecipeDialog(
-                                onConfirm = { reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport) },
-                                onCancel = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
-                                onValueChange = { reportRecipeViewModel.onEvent(ReportRecipeEvent.InputTextChanged(it)) },
-                                reportText = reportRecipeState.inputText
-                            )
-                        }
+                    if (reportRecipeState.reporting) {
+                        ReportRecipeDialog(
+                            onConfirm = {
+                                reportRecipeViewModel.onEvent(
+                                    ReportRecipeEvent.SendReport
+                                )
+                            },
+                            onCancel = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
+                            onValueChange = {
+                                reportRecipeViewModel.onEvent(
+                                    ReportRecipeEvent.InputTextChanged(it)
+                                )
+                            },
+                            reportText = reportRecipeState.inputText
+                        )
                     }
                 }
             }
         }
     }
+}
+}
+
+
+@Composable
+private fun ShowErrorMessage(
+    title: String = stringResource(R.string.show_error_message_title),
+    error: String,
+    onClick: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { onClick() },
+        title = { Text(title) },
+        text = { Text(error) },
+        confirmButton = {
+            Button(onClick = { onClick() }) {
+                Text(stringResource(R.string.label_ok))
+            }
+        }
+    )
 }

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,7 +46,9 @@ data class RecipeDraft(
     val language: String = "",
     val query: String = "",
     val results: List<FoodComponent> = emptyList(),
-    val confirmationDialog : Boolean = false
+    val confirmationDialog : Boolean = false,
+    val hasSearched: Boolean = false,
+    val lastSearchedQuery: String? = null
 )
 
 sealed interface RecipeEditorEvent {
@@ -58,6 +61,7 @@ sealed interface RecipeEditorEvent {
     object ShowConfirmationDialog : RecipeEditorEvent
     object SearchIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
+    object RecipeSaved : RecipeEditorEvent
     object ExpandBottomSheet : RecipeEditorEvent
     object ResetErrorState : RecipeEditorEvent
 }
@@ -74,7 +78,7 @@ class RecipeEditorViewModel @Inject constructor(
 
     private val mode: RecipeMode =
         savedStateHandle.get<String>("recipeId")
-            ?.takeIf { it.isNotEmpty() }
+            ?.takeIf { it.isNotBlank() }
             ?.let { RecipeMode.Edit(it) }
             ?: RecipeMode.Create
 
@@ -138,6 +142,7 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
             is RecipeEditorEvent.ShowConfirmationDialog -> changeShowConfirmationDialog()
             is RecipeEditorEvent.ResetErrorState -> setReady()
+            is RecipeEditorEvent.RecipeSaved -> null
         }
     }
 
@@ -232,16 +237,27 @@ class RecipeEditorViewModel @Inject constructor(
 
 
             when (mode) {
-                is RecipeMode.Create -> recipeRepo.insertRecipe(recipe)
-                is RecipeMode.Edit -> recipeRepo.updateRecipe(recipe)
+                is RecipeMode.Create -> {
+                    recipeRepo.insertRecipe(recipe)
+                    _events.emit(RecipeEditorEvent.RecipeSaved)
+                }
+                is RecipeMode.Edit -> {
+                    recipeRepo.updateRecipe(recipe)
+                    _events.emit(RecipeEditorEvent.RecipeSaved)
+                }
             }
         }
     }
 
     private fun onSearchIngredients() {
         val query = _draft.value.query
-        if (query.isBlank()) {
-            return
+        if (query.isBlank()) return
+
+        _draft.update { draft ->
+            draft.copy(
+                hasSearched = true,
+                lastSearchedQuery = query
+            )
         }
 
         viewModelScope.launch {
@@ -250,6 +266,7 @@ class RecipeEditorViewModel @Inject constructor(
                 .searchFoodProducts(query, language)
             foodProducts
                 .onStart { setLoading() }
+                .onCompletion { setReady() }
                 .catch { setError(it.message!!) }
                 .collect { result ->
                     when (result) {
@@ -265,7 +282,6 @@ class RecipeEditorViewModel @Inject constructor(
                         }
                     }
                 }
-            setReady()
             val combinedList = _draft.value.ingredients + _draft.value.results
             combinedSearchListStore.update(combinedList)
         }

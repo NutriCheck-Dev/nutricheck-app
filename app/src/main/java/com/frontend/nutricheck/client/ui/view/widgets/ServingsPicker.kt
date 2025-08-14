@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import com.frontend.nutricheck.client.model.data_sources.data.flags.Fractions
 import kotlin.math.roundToInt
 
 @Composable
@@ -41,7 +41,7 @@ fun ServingsPicker(
     value: Int,
     range: IntRange,
     integerList: List<String> = range.map { it.toString() },
-    fractionList: List<String> = Fractions.entries.map { it.toString() },
+    //fractionList: List<String> = Fractions.entries.map { it.toString() },
     onValueChange: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -51,15 +51,12 @@ fun ServingsPicker(
     val styles = MaterialTheme.typography
 
     val visibleCount = 8
-    val halfCount = (visibleCount - 1) / 2
 
     val initialIndex = integerList.indexOf(value.toString())
         .coerceAtLeast(0)
 
-    val state = rememberLazyListState(
-        initialFirstVisibleItemIndex = initialIndex
-    )
-    val fling = rememberSnapFlingBehavior(lazyListState = state)
+    val state = rememberLazyListState()
+    val fling = rememberSnapFlingBehavior(lazyListState = state, snapPosition = SnapPosition.Center)
 
     Box(modifier = Modifier
         .width(180.dp)
@@ -111,10 +108,10 @@ fun ServingsPicker(
                     state = state,
                     flingBehavior = fling,
                     visibleCount = visibleCount,
-                    halfCount = halfCount,
                     onSelectedIndexChange = { realIndex ->
                         onValueChange(range.elementAt(realIndex))
-                    }
+                    },
+                    selectedInitialIndex = initialIndex
                 )
             }
         }

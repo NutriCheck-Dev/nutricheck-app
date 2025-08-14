@@ -127,4 +127,6 @@
     <string name="error_no_recipe_name">Please give your recipe a name</string>
     <string name="error_missing_dayTime">Please select a time of day for the meal</string>
     <string name="error_create_meal_missing_foodComponent">Please add at least one food product or recipe to the meal.</string>
+    <string name="label_select_meal">Select Daytime</string>
+    <string name="error_search_result_empty">No results found</string>
 </resources>

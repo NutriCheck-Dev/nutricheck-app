@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,9 +24,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
@@ -36,6 +40,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeNutrientChartsWidget
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
@@ -57,6 +62,7 @@ fun RecipeOverview(
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     val recipeOverviewState by recipeOverviewViewModel.recipeOverviewState.collectAsState()
+    val uiState by recipeOverviewViewModel.uiState.collectAsState()
     val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
     val recipe = recipeOverviewState.recipe
 
@@ -121,6 +127,16 @@ fun RecipeOverview(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
 
+            if (uiState is BaseViewModel.UiState.Error) {
+                item {
+                    ShowErrorMessage(
+                        title = stringResource(R.string.show_error_message_title),
+                        error = (uiState as BaseViewModel.UiState.Error).message,
+                        onClick = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ResetErrorState) }
+                    )
+                }
+            }
+
             item {
                 RecipeNutrientChartsWidget(
                     modifier = Modifier.fillMaxWidth(),
@@ -175,25 +191,25 @@ fun RecipeOverview(
                 )
             }
             item {
-                Text(
-                    text = "Beschreibung",
-                    style = styles.titleMedium,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
                 if (recipe.instructions.isNotBlank()) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(1.dp, colors.outline)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = recipe.instructions,
-                                style = styles.bodyMedium
-                            )
+                    Text(
+                        text = "Beschreibung",
+                        style = styles.titleMedium,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            border = BorderStroke(1.dp, colors.outline)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = recipe.instructions,
+                                    style = styles.bodyMedium
+                                )
+                            }
                         }
-                    }
                 }
             }
 
@@ -221,5 +237,23 @@ fun RecipeOverview(
             }
         }
     }
+}
+
+@Composable
+private fun ShowErrorMessage(
+    title: String = stringResource(R.string.show_error_message_title),
+    error: String,
+    onClick: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { onClick() },
+        title = { Text(title) },
+        text = { Text(error) },
+        confirmButton = {
+            Button(onClick = { onClick() }) {
+                Text(stringResource(R.string.label_ok))
+            }
+        }
+    )
 }
 

@@ -2,6 +2,7 @@ package com.nutricheck.frontend.model.dbmapper
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
@@ -25,7 +26,10 @@ class DbIngredientMapperTest {
         val ingredient = Ingredient(
             recipeId = "recipe456",
             foodProduct = foodProduct,
-            quantity = 2.5
+            quantity = 2.5,
+            servings = 1,
+            servingSize = ServingSize.ONEGRAM,
+
         )
 
         val entity = DbIngredientMapper.toIngredientEntity(ingredient)
@@ -49,7 +53,10 @@ class DbIngredientMapperTest {
         val ingredientEntity = IngredientEntity(
             recipeId = "recipe999",
             foodProductId = "food789",
-            quantity = 1.5
+            quantity = 1.5,
+            servings = 1,
+            servingSize = ServingSize.ONEGRAM
+
         )
 
         val relation = IngredientWithFoodProduct(

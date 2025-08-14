@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,13 +14,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.frontend.nutricheck.client.R
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
 
-enum class DiaryTab(val title: String) {
-    HISTORY("History"),
-    RECIPES("Recipes")
+enum class DiaryTab(val stringResId: Int) {
+    HISTORY(R.string.label_history),
+    RECIPES(R.string.label_recipes);
+
+    fun getDescription(context: Context): String {
+        return context.getString(stringResId)
+    }
 }
 @Composable
 fun DiaryNavGraph(
@@ -49,10 +55,10 @@ fun DiaryNavGraph(
         topBar = {
             if (showHeader) {
                 OverviewSwitcher(
-                    options = DiaryTab.entries.map { it.title },
-                    selectedOption = selectedTab.title,
+                    options = DiaryTab.entries.map { it.getDescription(context) },
+                    selectedOption = selectedTab.getDescription(context),
                     onSelect = { option ->
-                        selectedTab = DiaryTab.entries.first { it.title == option }
+                        selectedTab = DiaryTab.entries.first { it.getDescription(context) == option }
                     }
                 )
             }
