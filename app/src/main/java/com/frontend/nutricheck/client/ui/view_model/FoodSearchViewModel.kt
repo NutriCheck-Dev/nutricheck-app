@@ -13,10 +13,10 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
-import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -28,17 +28,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
-import kotlin.collections.map
 
 sealed class SearchMode {
     data class ComponentsForMeal(val mealId: String) : SearchMode()
@@ -259,10 +258,10 @@ class FoodSearchViewModel @Inject constructor(
                                     }
                                 }
                             }
-                            .drop(1)
                             .map { Result.Success(it) }
                     merged
                         .onStart { setLoading() }
+                        .onCompletion { setReady() }
                         .catch { setError(it.message!!) }
                         .collect { result ->
                             when (result) {
@@ -274,7 +273,6 @@ class FoodSearchViewModel @Inject constructor(
                                             )
                                         )
                                     }
-                                    setReady()
                                 }
 
                                 is Result.Error -> {
