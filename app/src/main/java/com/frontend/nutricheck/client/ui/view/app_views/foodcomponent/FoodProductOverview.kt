@@ -77,6 +77,7 @@ fun FoodProductOverview(
                        }
                     }
                 }
+
             )
         }
     ) { innerPadding ->

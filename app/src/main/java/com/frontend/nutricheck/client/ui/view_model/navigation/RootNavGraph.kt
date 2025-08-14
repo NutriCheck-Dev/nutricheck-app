@@ -104,48 +104,5 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
                 dayTime = DayTime.valueOf(effectiveDayTimeName)
             )
         }
-
-        composable(
-            route = "food_details?mealId={mealId}&foodProductId={foodProductId}",
-            arguments = listOf(
-                navArgument("mealId") {
-                    type = NavType.StringType
-                    nullable = false
-                },
-                navArgument("foodProductId") {
-                    type = NavType.StringType
-                    nullable = false
-                }
-            )
-        ) { backStackEntry ->
-            val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel()
-            FoodProductOverview(
-                foodProductOverviewViewModel = foodProductOverviewViewModel,
-                onBack = { mainNavController.navigate(Screen.DiaryPage.route) }
-            )
-        }
-        composable(
-            route = "recipe_details?recipeId={recipeId}&mealId={mealId}",
-            arguments = listOf(
-                navArgument("recipeId") {
-                    type = NavType.StringType
-                    nullable = false
-                },
-                navArgument("mealId") {
-                    type = NavType.StringType
-                    nullable = false
-                }
-            )
-        ) {
-            val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
-            val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel()
-            val searchViewModel: FoodSearchViewModel = hiltViewModel()
-            RecipeOverview(
-                recipeOverviewViewModel = recipeOverviewViewModel,
-                reportRecipeViewModel = reportRecipeViewModel,
-                searchViewModel = searchViewModel,
-                onBack = { mainNavController.navigate(Screen.DiaryPage.route) }
-            )
-        }
     }
 }

@@ -19,6 +19,9 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import java.io.IOException
@@ -173,6 +176,30 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem) = withContext(Dispatchers.IO) {
         mealRecipeItemDao.update(DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem))
     }
+
+    override suspend fun observeMealsForDay(date: Date): Flow<List<Meal>> =
+         mealDao.observeMealsForDay(date)
+            .map { list ->
+                list.map(DbMealMapper:: toMeal) }
+            .flowOn(Dispatchers.IO)
+
+
+    override suspend fun observeCaloriesOfDay(date: Date): Flow<Int> =
+        mealDao.observeMealsForDay(date) // Flow<List<DbMealWithAll>>
+            .map { dbMeals ->
+                val meals = dbMeals.map { DbMealMapper.toMeal(it) }
+                meals.sumOf { meal ->
+                    val foodItemsCalories = meal.mealFoodItems.sumOf { ingredient ->
+                        ingredient.quantity * ingredient.foodProduct.calories
+                    }
+                    val recipeItemsCalories = meal.mealRecipeItems.sumOf { recipe ->
+                        recipe.quantity * recipe.recipe.calories
+                    }
+                    foodItemsCalories + recipeItemsCalories
+                }.toInt()
+            }
+            .flowOn(Dispatchers.IO)
+
 
     private suspend fun checkForFoodProducts(mealFoodItems: List<MealFoodItem>) = withContext(Dispatchers.IO) {
         for (mealFoodItem in mealFoodItems) {

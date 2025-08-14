@@ -71,6 +71,7 @@ sealed class SearchUiState {
     data class AddComponentsToMealState(
         val mealId: String,
         val dayTime: DayTime? = null,
+        val date: Long? = null,
         override val parameters: CommonSearchParameters,
     ) : SearchUiState() {
         override fun updateParams(params: CommonSearchParameters): SearchUiState =
@@ -143,6 +144,16 @@ class FoodSearchViewModel @Inject constructor(
                         when (state) {
                             is SearchUiState.AddComponentsToMealState ->
                                 state.copy(dayTime = dayTime)
+                            else -> state
+                        }
+                    }
+                }
+            savedStateHandle.get<String>("date")
+                ?.let { date ->
+                    _searchState.update { state ->
+                        when (state) {
+                            is SearchUiState.AddComponentsToMealState ->
+                                state.copy(date = date.toLong())
                             else -> state
                         }
                     }
@@ -414,6 +425,7 @@ class FoodSearchViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            val mealDate = state.date?.let { Date(it) } ?: Date()
             setLoading()
             try {
                 if (mode is SearchMode.ComponentsForMeal) {
@@ -434,7 +446,7 @@ class FoodSearchViewModel @Inject constructor(
                                 + (mealRecipeItems).sumOf { it.recipe.protein * it.quantity },
                         fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
                                 + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
-                        date = Date(),
+                        date = mealDate,
                         dayTime = state.dayTime,
                         mealFoodItems = mealFoodItems,
                         mealRecipeItems = mealRecipeItems
