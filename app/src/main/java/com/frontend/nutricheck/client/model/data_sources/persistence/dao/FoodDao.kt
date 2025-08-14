@@ -27,4 +27,16 @@ interface FoodDao : BaseDao<FoodProductEntity> {
 
     @Query("SELECT EXISTS(SELECT 1 FROM foods WHERE id = :id)")
     suspend fun exists(id: String): Boolean
+
+    @Query("""
+        DELETE FROM foods
+        WHERE NOT EXISTS (SELECT 1 FROM ingredients i WHERE i.foodProductId = foods.id)
+        AND NOT EXISTS (SELECT 1 FROM meal_food_items mfi WHERE mfi.foodProductId = foods.id)
+        AND COALESCE((
+        SELECT MAX(s.lastUpdated)
+        FROM food_search_index s
+        WHERE s.foodProductId = foods.id
+        ), 0) < :cutoff
+    """)
+    suspend fun deleteExpiredUnreferencedFoodProducts(cutoff: Long): Int
 }

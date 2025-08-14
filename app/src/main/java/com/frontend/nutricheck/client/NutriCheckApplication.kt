@@ -7,6 +7,14 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.frontend.nutricheck.client.model.repositories.CachePruneWorker
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.Module
 import dagger.Provides
@@ -18,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 /**
@@ -26,9 +35,16 @@ import javax.inject.Singleton
  * application's theme setting to allow for dynamic theme changes.
  */
 @HiltAndroidApp
-class NutriCheckApplication : Application() {
-    @Inject
-    lateinit var appSettingRepository: AppSettingRepository
+class NutriCheckApplication :
+    Application(), Configuration.Provider {
+
+        @Inject lateinit var workerFactory: HiltWorkerFactory
+        @Inject lateinit var appSettingRepository: AppSettingRepository
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     override fun onCreate() {
         super.onCreate()
@@ -38,6 +54,25 @@ class NutriCheckApplication : Application() {
                     if (isDarkMode) ThemeSetting.DARK else ThemeSetting.LIGHT
             }
         }
+        scheduleCachePrune()
+    }
+
+    private fun scheduleCachePrune() {
+        val request = PeriodicWorkRequestBuilder<CachePruneWorker>(
+            1, TimeUnit.HOURS,
+            15, TimeUnit.MINUTES)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                    .build()
+            )
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "cache_prune",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
     }
 }
 /**

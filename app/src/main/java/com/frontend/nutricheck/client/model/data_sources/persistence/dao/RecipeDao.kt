@@ -79,4 +79,20 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     @Query("SELECT id, visibility FROM recipes WHERE id IN (:ids)")
     suspend fun getVisibilityById(ids: List<String>): List<VisibilityById>
 
+    @Query("""
+        DELETE FROM recipes
+        WHERE
+        visibility != :visibility
+        AND NOT EXISTS (SELECT 1 FROM meal_recipe_items mri WHERE mri.recipeId = recipes.id)
+        AND COALESCE((
+            SELECT MAX(s.lastUpdated)
+            FROM recipe_search_index s
+            WHERE s.recipeId = recipes.id
+        ), 0) < :cutoff
+    """)
+    suspend fun deleteExpiredUnreferencedRecipes(
+        cutoff: Long,
+        visibility: RecipeVisibility = RecipeVisibility.OWNER
+    ): Int
+
 }
