@@ -102,8 +102,7 @@ class AddAiMealViewModel @Inject constructor(
             is AddAiMealEvent.OnSubmitPhoto -> submitPhoto()
             is AddAiMealEvent.OnTakePhoto -> takePhoto()
             is AddAiMealEvent.ResetErrorState -> setReady()
-            else -> { /* other events are for Navigation or UI updates, handled in the UI layer */
-            }
+            else -> { /* other events are for Navigation or UI updates, handled in the UI layer */ }
         }
     }
 

@@ -39,6 +39,13 @@ class UserDataRepositoryImpl @Inject constructor(
         weightDao.insert(newWeight)
     }
     /**
+     * Deletes a weight entry from the database.
+     * @param weight The Weight object to delete.
+     */
+    override suspend fun deleteWeight(weight: Weight) = withContext(Dispatchers.IO) {
+        weightDao.delete(weight)
+    }
+    /**
      * Inserts new user data into the database.
      * @param userData The UserData object to insert.
      */
