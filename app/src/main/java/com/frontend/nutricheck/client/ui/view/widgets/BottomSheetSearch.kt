@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,71 +37,89 @@ fun BottomSheetSearch(
     onSearch: () -> Unit = {},
     showTabRow: Boolean = true,
     isLoading: Boolean = false,
+    showEmptyState: Boolean = false,
 ) {
 
     if (showBottomSheet) {
-    ModalBottomSheet(
-        onDismissRequest = { onDismiss() },
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(
-                    min = 0.dp,
-                    max = with(LocalConfiguration.current) {
-                        (screenHeightDp.dp * 0.75f)
-                    }
-                )
+        ModalBottomSheet(
+            onDismissRequest = { onDismiss() },
         ) {
-            Column(
-                modifier = Modifier
+            Box(
+                Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                    .heightIn(
+                        min = 0.dp,
+                        max = with(LocalConfiguration.current) {
+                            (screenHeightDp.dp * 0.75f)
+                        }
+                    )
             ) {
-                FoodComponentSearchBar(
-                    query = query,
-                    onQueryChange = { onQueryChange(it) },
-                    onSearch = { onSearch() },
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    FoodComponentSearchBar(
+                        query = query,
+                        onQueryChange = { onQueryChange(it) },
+                        onSearch = { onSearch() },
 
-                    )
+                        )
 
-                if (showTabRow) {
-                    CustomTabRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        options = listOf("Alle", "Meine Rezepte"),
-                        selectedOption = selectedTab,
-                        onSelect = { onSelectTab(it) }
-                    )
-                }
-
-                if (isLoading) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                    if (showTabRow) {
+                        CustomTabRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            options = listOf("Alle", "Meine Rezepte"),
+                            selectedOption = selectedTab,
+                            onSelect = { onSelectTab(it) }
+                        )
                     }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                    ) {
-                        item {
-                            FoodComponentList(
-                                foodComponents = foodComponents,
-                                trailingContent = { foodComponent ->
-                                    trailingContent?.invoke(
-                                        foodComponent
+
+                    when {
+                        isLoading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        showEmptyState && foodComponents.isEmpty() -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.error_search_result_empty),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }
+
+                        else -> {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                            ) {
+                                item {
+                                    FoodComponentList(
+                                        foodComponents = foodComponents,
+                                        trailingContent = { foodComponent ->
+                                            trailingContent?.invoke(foodComponent)
+                                        },
+                                        onItemClick = { foodComponent -> onItemClick(foodComponent) }
                                     )
-                                },
-                                onItemClick = { foodComponent -> onItemClick(foodComponent) }
-                            )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-    }
     }
 }

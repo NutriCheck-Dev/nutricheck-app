@@ -7,11 +7,15 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -39,6 +43,7 @@ sealed interface HistoryEvent {
     data class SelectDate(val day: Date) : HistoryEvent
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
@@ -74,48 +79,56 @@ class HistoryViewModel @Inject constructor(
             _events.emit(HistoryEvent.AddEntryClick(day, dayTime))
         }
     }
-
+    private fun observeMeals() {
+        viewModelScope.launch {
+            historyState
+                .map { it.selectedDate }
+                .distinctUntilChanged()
+                .flatMapLatest { selectedDate ->
+                    historyRepository.observeMealsForDay(selectedDate)
+                }
+                .collect { meals ->
+                    _historyState.update {
+                        it.copy(mealsGrouped = meals.groupBy { meal -> meal.dayTime })
+                    }
+                }
+        }
+    }
+    private fun observeCalories() {
+        viewModelScope.launch {
+            historyState
+                .map { it.selectedDate }
+                .distinctUntilChanged()
+                .flatMapLatest { selectedDate ->
+                    historyRepository.observeCaloriesOfDay(selectedDate)
+                }
+                .collect { totalCalories ->
+                    val goalCalories = userDataRepository.getDailyCalorieGoal() // einmaliger Abruf
+                    _historyState.update {
+                        it.copy(
+                            totalCalories = totalCalories,
+                            goalCalories = goalCalories
+                        )
+                    }
+                }
+        }
+    }
     fun selectDate(day: Date) {
         _historyState.update {
             it.copy(
                 selectedDate = day
             )
         }
-        displayMealsOfDay(day)
-        displayCalorieGoal(day)
-    }
-
-    private fun displayCalorieGoal(day: Date) {
-        viewModelScope.launch {
-            val totalCalories = historyRepository.getCaloriesOfDay(day)
-            val goalCalories = userDataRepository.getDailyCalorieGoal()
-            _historyState.update {
-                it.copy(
-                    totalCalories = totalCalories,
-                    goalCalories = goalCalories
-                )
-            }
-        }
+        observeMeals()
+        observeCalories()
     }
 
     fun onRemoveMealItem(mealItem: MealItem) {
         viewModelScope.launch {
             historyRepository.removeMealItem(mealItem)
-            displayMealsOfDay(_historyState.value.selectedDate)
-            displayCalorieGoal(_historyState.value.selectedDate)
         }
     }
-    fun displayMealsOfDay(day: Date) {
-        viewModelScope.launch {
-            val meals = historyRepository.getMealsForDay(day)
-            val groupedMeals = meals.groupBy { it.dayTime }
-            _historyState.update {
-                it.copy(
-                    mealsGrouped = groupedMeals
-                )
-            }
-        }
-    }
+
 
     fun onFoodClicked(mealId: String, foodId: String) {
         viewModelScope.launch {
@@ -132,5 +145,4 @@ class HistoryViewModel @Inject constructor(
             _events.emit(HistoryEvent.DetailsClick(detailsId))
         }
     }
-    //override fun onTotalCaloriesClick(totalCalories: Int) {} TODO
 }

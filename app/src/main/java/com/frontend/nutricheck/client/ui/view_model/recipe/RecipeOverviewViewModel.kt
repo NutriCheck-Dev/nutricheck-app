@@ -202,7 +202,7 @@ class RecipeOverviewViewModel @Inject constructor(
         viewModelScope.launch {
             when (option) {
                 DropdownMenuOptions.DELETE -> recipeRepository.deleteRecipe(_recipeOverviewState.value.recipe)
-                DropdownMenuOptions.DOWNLOAD -> recipeRepository.insertRecipe(_recipeOverviewState.value.recipe)
+                DropdownMenuOptions.DOWNLOAD -> recipeRepository.downloadRecipe(_recipeOverviewState.value.recipe)
                 DropdownMenuOptions.UPLOAD -> {
                     when (val body = recipeRepository.uploadRecipe(_recipeOverviewState.value.recipe)) {
                         is Result.Success -> _events.emit(RecipeOverviewEvent.RecipeUploaded)

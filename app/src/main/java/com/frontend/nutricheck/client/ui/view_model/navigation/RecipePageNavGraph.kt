@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.frontend.nutricheck.client.ui.view.app_views.RecipeEditorPage
@@ -37,7 +36,7 @@ sealed class RecipePageScreens(val route: String) {
     }
     object RecipeEditorPage : RecipePageScreens("recipe_editor") {
         const val ARGUMENT = "recipeId"
-        val pattern =  "recipe_editor?$ARGUMENT={$ARGUMENT}"
+        const val PATTERN =  "recipe_editor?$ARGUMENT={$ARGUMENT}"
         fun newRecipe() = "recipe_editor"
         fun editRecipe(recipeId: String) = "recipe_editor?$ARGUMENT=$recipeId"
     }
@@ -46,8 +45,9 @@ sealed class RecipePageScreens(val route: String) {
 @Composable
 fun RecipePageNavGraph(
     mainNavController: NavHostController,
+    recipePageNavController: NavHostController
 ) {
-    val recipePageNavController = rememberNavController()
+
 
     NavHost(
         navController = recipePageNavController,
@@ -169,7 +169,7 @@ fun RecipePageNavGraph(
             route = "recipe_editor_page_graph"
         ) {
             composable(
-                route = RecipePageScreens.RecipeEditorPage.pattern,
+                route = RecipePageScreens.RecipeEditorPage.PATTERN,
                 arguments = listOf(
                     navArgument(RecipePageScreens.RecipeEditorPage.ARGUMENT) {
                         type = NavType.StringType

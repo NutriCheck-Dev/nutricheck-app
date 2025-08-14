@@ -9,6 +9,7 @@ object DbMealMapper {
     fun toMealEntity(meal: Meal) : MealEntity =
         MealEntity(
             id = meal.id,
+            historyDayDate = meal.date,
             dayTime = meal.dayTime,
             calories = meal.calories,
             carbohydrates = meal.carbohydrates,

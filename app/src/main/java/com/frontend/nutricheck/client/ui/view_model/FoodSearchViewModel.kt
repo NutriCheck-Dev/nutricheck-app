@@ -13,10 +13,10 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
-import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -31,13 +31,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
-import kotlin.collections.map
 
 sealed class SearchMode {
     data class ComponentsForMeal(val mealId: String) : SearchMode()
@@ -52,7 +52,9 @@ data class CommonSearchParameters(
     val localRecipesResults: List<Recipe> = emptyList(),
     val addedComponents: List<FoodComponent> = emptyList(),
     val expanded: Boolean = false,
-    val bottomSheetExpanded: Boolean = false
+    val bottomSheetExpanded: Boolean = false,
+    val hasSearched: Boolean = false,
+    val lastSearchedQuery: String? = null
 )
 
 sealed class SearchUiState {
@@ -68,6 +70,7 @@ sealed class SearchUiState {
     data class AddComponentsToMealState(
         val mealId: String,
         val dayTime: DayTime? = null,
+        val date: Long? = null,
         override val parameters: CommonSearchParameters,
     ) : SearchUiState() {
         override fun updateParams(params: CommonSearchParameters): SearchUiState =
@@ -144,6 +147,16 @@ class FoodSearchViewModel @Inject constructor(
                         }
                     }
                 }
+            savedStateHandle.get<String>("date")
+                ?.let { date ->
+                    _searchState.update { state ->
+                        when (state) {
+                            is SearchUiState.AddComponentsToMealState ->
+                                state.copy(date = date.toLong())
+                            else -> state
+                        }
+                    }
+                }
             savedStateHandle
                 .getStateFlow<FoodComponent?>("newComponent", null)
                 .filterNotNull()
@@ -193,9 +206,17 @@ class FoodSearchViewModel @Inject constructor(
 
     private fun onClickSearchFoodComponent() {
         val query = _searchState.value.parameters.query
-        if (query.isBlank()) {
-            return
+        if (query.isBlank()) return
+
+        _searchState.update { state ->
+            state.updateParams(
+                state.parameters.copy(
+                    hasSearched = true,
+                    lastSearchedQuery = query
+                )
+            )
         }
+
         viewModelScope.launch {
             val language = _searchState.value.parameters.language
             when (mode) {
@@ -240,6 +261,7 @@ class FoodSearchViewModel @Inject constructor(
                             .map { Result.Success(it) }
                     merged
                         .onStart { setLoading() }
+                        .onCompletion { setReady() }
                         .catch { setError(it.message!!) }
                         .collect { result ->
                             when (result) {
@@ -251,7 +273,6 @@ class FoodSearchViewModel @Inject constructor(
                                             )
                                         )
                                     }
-                                    setReady()
                                 }
 
                                 is Result.Error -> {
@@ -346,7 +367,10 @@ class FoodSearchViewModel @Inject constructor(
             val newParams = state.parameters.copy(
                 query = "",
                 generalResults = emptyList(),
-                localRecipesResults = emptyList())
+                localRecipesResults = emptyList(),
+                hasSearched = false,
+                lastSearchedQuery = null
+            )
             combinedSearchListStore.update(emptyList())
             state.updateParams(newParams)
         }
@@ -399,6 +423,7 @@ class FoodSearchViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            val mealDate = state.date?.let { Date(it) } ?: Date()
             setLoading()
             try {
                 if (mode is SearchMode.ComponentsForMeal) {
@@ -419,7 +444,7 @@ class FoodSearchViewModel @Inject constructor(
                                 + (mealRecipeItems).sumOf { it.recipe.protein * it.quantity },
                         fat = (mealFoodItems).sumOf { it.foodProduct.fat * it.quantity }
                                 + (mealRecipeItems).sumOf { it.recipe.fat * it.quantity },
-                        date = Date(),
+                        date = mealDate,
                         dayTime = state.dayTime,
                         mealFoodItems = mealFoodItems,
                         mealRecipeItems = mealRecipeItems

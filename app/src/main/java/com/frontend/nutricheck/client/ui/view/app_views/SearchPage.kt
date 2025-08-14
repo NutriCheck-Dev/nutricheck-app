@@ -39,6 +39,7 @@ fun SearchPage(
     expand: Boolean = false,
     showTabRow: Boolean = true,
     isLoading: Boolean,
+    showEmptyState: Boolean
 ) {
     val styles = MaterialTheme.typography
     val sheetState = rememberModalBottomSheetState()
@@ -93,6 +94,7 @@ fun SearchPage(
             onSelectTab = { onSelectTab(it) },
             showTabRow = showTabRow,
             isLoading = isLoading,
+            showEmptyState = showEmptyState
         )
     }
 }
