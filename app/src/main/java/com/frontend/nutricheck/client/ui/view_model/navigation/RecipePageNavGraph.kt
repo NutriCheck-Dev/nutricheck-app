@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.frontend.nutricheck.client.ui.view.app_views.RecipeEditorPage
@@ -45,8 +44,9 @@ sealed class RecipePageScreens(val route: String) {
 @Composable
 fun RecipePageNavGraph(
     mainNavController: NavHostController,
+    recipePageNavController: NavHostController
 ) {
-    val recipePageNavController = rememberNavController()
+
 
     NavHost(
         navController = recipePageNavController,

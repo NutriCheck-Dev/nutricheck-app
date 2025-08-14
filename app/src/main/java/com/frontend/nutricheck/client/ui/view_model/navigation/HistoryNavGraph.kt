@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
@@ -22,6 +21,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOver
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
@@ -60,9 +60,9 @@ sealed class HistoryPageScreens(val route: String) {
 
 @Composable
 fun HistoryPageNavGraph(
-    mainNavController: NavHostController
+    mainNavController: NavHostController,
+    historyPageNavController: NavHostController
 ) {
-    val historyPageNavController = rememberNavController()
 
     fun navigateToFoodComponent(foodComponent: FoodComponent) {
         if (foodComponent is FoodProduct) {
@@ -209,6 +209,13 @@ fun HistoryPageNavGraph(
                 )
             ) { backStackEntry ->
                 val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel()
+                LaunchedEffect(foodProductOverviewViewModel) {
+                    foodProductOverviewViewModel.events.collect { event ->
+                        if (event is FoodProductOverviewEvent.SubmitMealItem) {
+                            historyPageNavController.popBackStack()
+                        }
+                    }
+                }
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     onBack = { historyPageNavController.popBackStack() }
@@ -234,6 +241,7 @@ fun HistoryPageNavGraph(
                     recipeOverviewViewModel = recipeOverviewViewModel,
                     reportRecipeViewModel = reportRecipeViewModel,
                     searchViewModel = searchViewModel,
+                    onPersist = { historyPageNavController.popBackStack() },
                     onBack = { historyPageNavController.popBackStack() }
                 )
             }
