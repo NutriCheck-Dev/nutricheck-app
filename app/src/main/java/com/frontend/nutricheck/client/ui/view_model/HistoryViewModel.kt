@@ -103,8 +103,12 @@ class HistoryViewModel @Inject constructor(
                     historyRepository.observeCaloriesOfDay(selectedDate)
                 }
                 .collect { totalCalories ->
+                    val goalCalories = userDataRepository.getDailyCalorieGoal() // einmaliger Abruf
                     _historyState.update {
-                        it.copy(totalCalories = totalCalories)
+                        it.copy(
+                            totalCalories = totalCalories,
+                            goalCalories = goalCalories
+                        )
                     }
                 }
         }
