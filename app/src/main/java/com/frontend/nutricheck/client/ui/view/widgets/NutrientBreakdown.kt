@@ -95,7 +95,7 @@ fun MacroProgress(
     val colors = MaterialTheme.colorScheme
     val extendedColors = LocalExtendedColors.current
 
-    val backgroundBarColor = colors.surfaceVariant // oder z. B. colors.outlineVariant
+    val backgroundBarColor = colors.surfaceVariant
     val progressBarColor = extendedColors.chartBlue.color
 
     Column(
@@ -120,7 +120,7 @@ fun MacroProgress(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        // Hintergrundbalken
+        // background bar
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -128,7 +128,7 @@ fun MacroProgress(
                 .clip(RoundedCornerShape(50))
                 .background(backgroundBarColor)
         ) {
-            // Fortschrittsbalken
+            // progress bar
             Box(
                 modifier = Modifier
                     .fillMaxWidth(progress.coerceIn(0f, 1f))

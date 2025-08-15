@@ -132,6 +132,7 @@ fun AddWeightDialog(
             TextButton(
                 onClick = {
                     onEvent(ProfileEvent.SaveNewWeight(weightInput, selectedDate))
+                    onDismissRequest()
                 }
             ) {
                 Text(stringResource(id = R.string.save))

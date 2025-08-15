@@ -24,7 +24,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
+import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -75,7 +75,7 @@ sealed interface AddAiMealEvent {
  */
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
-    private val historyRepository: HistoryRepositoryImpl,
+    private val historyRepository: HistoryRepository,
     @ApplicationContext private val appContext: Context
 ) : BaseViewModel() {
 
