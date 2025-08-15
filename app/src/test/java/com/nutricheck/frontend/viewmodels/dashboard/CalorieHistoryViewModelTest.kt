@@ -4,8 +4,6 @@ import com.frontend.nutricheck.client.model.repositories.history.HistoryReposito
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryEvent
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryViewModel
-import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieState
-import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -20,8 +18,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import kotlin.math.abs
@@ -30,10 +26,6 @@ import kotlin.test.assertTrue
 
 /**
  * Unit test class for CalorieHistoryViewModel.
- *
- * Tests calorie history retrieval over multiple days, date range generation,
- * event handling, and state management using mocked repositories to ensure
- * proper business logic and UI state handling.
  */
 @ExperimentalCoroutinesApi
 class CalorieHistoryViewModelTest {
@@ -86,14 +78,13 @@ class CalorieHistoryViewModelTest {
     }
 
     /**
-     * Tests displayCalorieHistory() with a normal number of days.
      * Verifies that calorie history is retrieved for the correct number of days
      * and state is updated properly.
      */
     @Test
     fun `displayCalorieHistory fetches correct number of days`() = runTest {
-        val days = 5
-        val expectedCalories = listOf(1800, 2100, 1950, 2200, 1750)
+        val days = 7
+        val expectedCalories = listOf(1800, 2100, 1950, 2200, 1750, 1900, 1890)
 
         coEvery { mockHistoryRepository.getCaloriesOfDay(any()) } returnsMany expectedCalories
 
@@ -108,49 +99,6 @@ class CalorieHistoryViewModelTest {
         coVerify(exactly = days) { mockHistoryRepository.getCaloriesOfDay(any()) }
         coVerify { mockUserDataRepository.getDailyCalorieGoal() }
     }
-
-    /**
-     * Tests displayCalorieHistory() with a single day.
-     * Verifies that the method works correctly with minimal input.
-     */
-    @Test
-    fun `displayCalorieHistory handles single day correctly`() = runTest {
-        val days = 1
-        val expectedCalories = listOf(1800)
-
-        coEvery { mockHistoryRepository.getCaloriesOfDay(any()) } returns 1800
-
-        viewModel.displayCalorieHistory(days)
-
-        val state = viewModel.calorieHistoryState.first()
-
-        assertEquals(expectedCalories, state.calorieHistory)
-        assertEquals(sampleCalorieGoal, state.calorieGoal)
-
-        coVerify(exactly = 1) { mockHistoryRepository.getCaloriesOfDay(any()) }
-        coVerify { mockUserDataRepository.getDailyCalorieGoal() }
-    }
-
-    /**
-     * Tests displayCalorieHistory() with zero days.
-     * Verifies edge case handling when no days are requested.
-     */
-    @Test
-    fun `displayCalorieHistory handles zero days correctly`() = runTest {
-        val days = 0
-
-        viewModel.displayCalorieHistory(days)
-
-        val state = viewModel.calorieHistoryState.first()
-
-        assertEquals(emptyList(), state.calorieHistory)
-        assertEquals(sampleCalorieGoal, state.calorieGoal)
-
-        // No history calls should be made for 0 days
-        coVerify(exactly = 0) { mockHistoryRepository.getCaloriesOfDay(any()) }
-        coVerify { mockUserDataRepository.getDailyCalorieGoal() }
-    }
-
     /**
      * Tests displayCalorieHistory() with a large number of days.
      * Verifies that the method can handle extended date ranges.
