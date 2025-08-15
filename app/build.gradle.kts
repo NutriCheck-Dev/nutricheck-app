@@ -31,7 +31,6 @@ kover {
                     "*HiltModules*",
 
                     // Data classes
-                    "*dao*",
                     "*exceptions*",
 
                     // UI Theme & Resources
