@@ -46,7 +46,10 @@ import okio.BufferedSink
 import java.io.IOException
 
 
-
+/**
+ * All possible events for AI-based meal estimation.
+ * Events are used for communication between the UI and ViewModel.
+ */
 sealed interface AddAiMealEvent {
     object OnRetakePhoto : AddAiMealEvent
     object OnSubmitPhoto : AddAiMealEvent
@@ -62,27 +65,39 @@ sealed interface AddAiMealEvent {
  *
  * Responsibilities:
  * - Binds camera preview to lifecycle.
- * - Captures photos and encodes them as Base64.
+ * - Captures photos with proper EXIF handling.
+ * - Converts images to PNG format
  * - Sends the encoded image to the backend for meal estimation.
- * - Emits UI events for navigation and error handling.
+ * - Validates AI meal detection results.
  *
  * @property appContext Application context for accessing resources and content resolver.
- * @property historyRepository Remote repository for API interactions.
+ * @property historyRepository Remote repository for API interactions and meal history management.
  */
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
     private val historyRepository: HistoryRepositoryImpl,
     @ApplicationContext private val appContext: Context
 ) : BaseViewModel() {
+
+    companion object {
+        private const val MIME_TYPE_JPEG = "image/jpeg"
+        private const val MIME_TYPE_PNG = "image/png"
+
+        // Minimum nutritional values to consider a meal valid
+        private const val MIN_NUTRITIONAL_VALUE = 0.0
+    }
+    // Camera-related state
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest.asStateFlow()
 
+    // Photo-related state
     private val _photoUri = MutableStateFlow<Uri?>(null)
     val photoUri: StateFlow<Uri?> = _photoUri.asStateFlow()
 
     private val _events = MutableSharedFlow<AddAiMealEvent>()
     val events: SharedFlow<AddAiMealEvent> = _events.asSharedFlow()
 
+    // Camera use cases
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
             _surfaceRequest.update { newSurfaceRequest }
@@ -111,52 +126,57 @@ class AddAiMealViewModel @Inject constructor(
      *
      * @param appContext The application context.
      * @param lifecycleOwner The lifecycle owner to bind the camera to.
+     *
      */
-    suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
-        val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
-        val selector = CameraSelector.DEFAULT_BACK_CAMERA
-        processCameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            selector,
-            cameraPreviewUseCase,
-            imageCaptureUseCase
-        )
+    suspend fun bindToCamera(context: Context, lifecycleOwner: LifecycleOwner) {
         try {
+            val processCameraProvider = ProcessCameraProvider.awaitInstance(context)
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            processCameraProvider.bindToLifecycle(
+                lifecycleOwner,
+                cameraSelector,
+                cameraPreviewUseCase,
+                imageCaptureUseCase
+            )
             awaitCancellation()
         } finally {
-            processCameraProvider.unbindAll()
+            // Ensure camera resources are properly released
+            ProcessCameraProvider.getInstance(context).get().unbindAll()
         }
     }
 
+    /**
+     * Handles photo capture process.
+     */
     private fun takePhoto() {
+        // Generate a unique filename for the photo
         val name = "${System.currentTimeMillis()}.jpg"
+        // Prepare content values for MediaStore
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(MediaStore.MediaColumns.MIME_TYPE, MIME_TYPE_JPEG)
             put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
         }
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(
+        // Create output options for the image capture
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
                 appContext.contentResolver,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues
-            )
-            .build()
+            ).build()
 
         imageCaptureUseCase.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(appContext),
+            //Creates the callback for handling image capture results
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(result: ImageCapture.OutputFileResults) {
                     val jpegUri = result.savedUri
-                    // convert jpeg to png if necessary
-                    val pngUri = jpegUri?.let { convertJpegToPng(it, appContext.contentResolver) }
-                    _photoUri.value = pngUri ?: run {
+                    _photoUri.value = jpegUri ?: run {
                         setError(appContext.getString(R.string.error_no_photo_taken))
                         null
                     }
                 }
-
                 override fun onError(exception: ImageCaptureException) {
                     _photoUri.value = null
                     setError(appContext.getString(R.string.error_no_photo_taken))
@@ -165,97 +185,125 @@ class AddAiMealViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Handles the submission of the captured photo for AI-based meal estimation.
+     * Also validates the meal data received from the backend.
+     */
     private fun submitPhoto() {
         viewModelScope.launch {
             setLoading()
             val multipartBody =
-                uriToMultipartBody(_photoUri.value, appContext.contentResolver)
+                convertUriToMultipartBody(_photoUri.value)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
                 _photoUri.value = null
                 return@launch
             }
             val response = historyRepository.requestAiMeal(multipartBody)
-            if (response is Result.Success) {
+            handleApiResponse(response)
+        }
+    }
+
+    /**
+     * Handles the API response from the AI meal estimation request.
+     * @param response The result of the API call containing the meal data or an error.
+     */
+    private suspend fun handleApiResponse(response: Result<Meal>) {
+        when (response) {
+            is Result.Success -> {
                 val meal = response.data
-                if (!meal.isFoodDetected) {
+                if (meal.isFoodDetected()) {
+                    historyRepository.addMeal(meal)
+                    setReady()
+                    // Emit event to show meal overview with the food product ID
+                    emitEvent(
+                        AddAiMealEvent.ShowMealOverview(
+                            meal.id, meal.mealFoodItems.first().foodProduct.id
+                        )
+                    )
+                } else {
                     setError(appContext.getString(R.string.error_no_food_detected))
                     _photoUri.value = null
-                    return@launch
                 }
-                historyRepository.addMeal(meal)
-                setReady()
-                emitEvent(AddAiMealEvent.ShowMealOverview(
-                        meal.id, meal.mealFoodItems.first().foodProduct.id
-                    ))
-            } else if (response is Result.Error) {
-                Log.e("SubmitPhoto", "API error: ${response.message}")
+            }
+            is Result.Error -> {
                 setError(appContext.getString(R.string.error_encoding_image))
                 _photoUri.value = null
-                return@launch
             }
         }
     }
+
+    /**
+     * Resets the photo URI to allow retaking the photo.
+     */
     private fun retakePhoto() {
         _photoUri.value = null
     }
+    /**
+     * Extension function to check if a meal contains detected food.
+     * Food is considered detected if all nutritional values are greater than zero.
+     * @return true if food is detected, false otherwise
+     */
+    private fun Meal.isFoodDetected(): Boolean {
+        val firstFoodProduct = this.mealFoodItems.firstOrNull()?.foodProduct
+        return firstFoodProduct?.let { product ->
+            product.calories > MIN_NUTRITIONAL_VALUE &&
+                    product.carbohydrates > MIN_NUTRITIONAL_VALUE &&
+                    product.protein > MIN_NUTRITIONAL_VALUE &&
+                    product.fat > MIN_NUTRITIONAL_VALUE
+        } == true
+    }
 
-    private val Meal.isFoodDetected: Boolean
-        get() = (this.mealFoodItems.firstOrNull()?.foodProduct?.calories ?: 0.0) > 0.0 &&
-                (this.mealFoodItems.firstOrNull()?.foodProduct?.carbohydrates ?: 0.0) > 0.0 &&
-                (this.mealFoodItems.firstOrNull()?.foodProduct?.protein ?: 0.0) > 0.0 &&
-                (this.mealFoodItems.firstOrNull()?.foodProduct?.fat ?: 0.0) > 0.0
-
-    // parse the image URI to a MultipartBody.Part for sending to the backend
-    private fun uriToMultipartBody(uri: Uri?, contentResolver: ContentResolver): MultipartBody.Part? {
+    /**
+    * Converts a URI to MultipartBody.Part for API transmission.
+    * Handles image processing including format conversion and rotation correction.
+    *
+    * @param uri The image URI to convert
+    * @return MultipartBody.Part or null if conversion fails
+    */
+    private fun convertUriToMultipartBody(uri: Uri?): MultipartBody.Part? {
         if (uri == null) return null
-
-        val partName = "file"
-        val defaultFileName = "upload.png"
-
         return try {
-            // test if the URI is a valid image
-            val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
-            val pngUri = if (mimeType != "image/png") {
-                // convert JPEG to PNG
-                convertJpegToPng(uri, contentResolver)
-            } else {
-                uri
-            } ?: return null
+            val contentResolver = appContext.contentResolver
+            val mimeType = contentResolver.getType(uri) ?: MIME_TYPE_JPEG
 
-            // create a file name for the multipart part
-            val fileName = getFileNameFromUri(pngUri, contentResolver) ?: defaultFileName
-            val requestBody = object : RequestBody() {
-                override fun contentType() = "image/png".toMediaTypeOrNull() ?: "application/octet-stream".toMediaType()
-                override fun contentLength(): Long =
-                    contentResolver.query(pngUri, null, null, null, null)?.use { cursor ->
-                        if (cursor.moveToFirst()) {
-                            val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-                            if (sizeIndex != -1) cursor.getLong(sizeIndex) else -1
-                        } else -1
-                    } ?: -1
-
-                override fun writeTo(sink: BufferedSink) {
-                    contentResolver.openInputStream(pngUri)?.use { inputStream ->
-                        inputStream.copyTo(sink.outputStream())
-                    } ?: throw IOException("Failed to open InputStream for URI: $pngUri")
+            // Process image based on type
+            val (processedUri, finalMimeType) = when {
+                mimeType == MIME_TYPE_PNG -> {
+                    // PNG files don't need processing
+                    Pair(uri, MIME_TYPE_PNG)
+                }
+                mimeType.startsWith("image/") -> {
+                    // Process JPEG and other image formats
+                    val processedUri = processImageWithRotation(uri, contentResolver)
+                    Pair(processedUri ?: uri, if (processedUri != null) MIME_TYPE_PNG else mimeType)
+                }
+                else -> {
+                    // Fallback for unknown types
+                    Pair(uri, mimeType)
                 }
             }
-            // create the MultipartBody.Part
-            MultipartBody.Part.createFormData(partName, fileName, requestBody)
+            createMultipartBodyPart(processedUri, finalMimeType, contentResolver)
         } catch (e: Exception) {
-            Log.e("UriToMultipartBody", "Unexpected error processing URI: $uri", e)
+            Log.e("ConvertUriToMultipartBody", "Error converting URI to MultipartBody: $uri", e)
             null
         }
     }
-
-    private fun convertJpegToPng(uri: Uri, contentResolver: ContentResolver): Uri? {
+    /**
+     * Processes JPEG images by applying EXIF rotation and converting to PNG.
+     * This ensures consistent image orientation regardless of device rotation.
+     *
+     * @param uri The original image URI
+     * @param contentResolver ContentResolver for accessing the image
+     * @return Processed image URI or null if processing fails
+     */
+    private fun processImageWithRotation(uri: Uri, contentResolver: ContentResolver): Uri? {
         return try {
-            // JPEG-Bild in Bitmap laden
-            val bitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
+            // Load the bitmap from URI
+            val originalBitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
             } ?: return null
-            // Read EXIF orientation
+            // Get EXIF orientation from the image
             val orientation = contentResolver.openInputStream(uri)?.use { inputStream ->
                 val exif = ExifInterface(inputStream)
                 exif.getAttributeInt(
@@ -263,61 +311,120 @@ class AddAiMealViewModel @Inject constructor(
                     ExifInterface.ORIENTATION_NORMAL
                 )
             } ?: ExifInterface.ORIENTATION_NORMAL
-
-            // Rotate the bitmap if necessary
+            // Apply rotation if needed
             val rotatedBitmap = when (orientation) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
-                ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
-                ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
-                else -> bitmap
+                ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(originalBitmap, 90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(originalBitmap, 180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(originalBitmap, 270f)
+                else -> originalBitmap
             }
-            // Create a new file for PNG
-            val name = "${System.currentTimeMillis()}.png"
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
+            // Save as PNG to avoid quality loss
+            val pngUri = saveBitmapAsPng(rotatedBitmap, contentResolver)
+            // Clean up memory
+            if (rotatedBitmap != originalBitmap) {
+                originalBitmap.recycle()
             }
-            // Save the PNG file
-            val pngUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-            pngUri?.let {
-                contentResolver.openOutputStream(it)?.use { outputStream ->
-                    rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                }
-                rotatedBitmap.recycle() // Free memory
-                if (rotatedBitmap != bitmap) bitmap.recycle() // Recycle original bitmap if rotated
-                return it
-            }
-            bitmap.recycle() // Recycle original bitmap if no PNG was created
-            null
+            rotatedBitmap.recycle()
+            pngUri
         } catch (e: Exception) {
-            Log.e("ConvertJpegToPng", "Error converting JPEG to PNG: $uri", e)
+            Log.e("ProcessImageWithRotation", "Error processing image with rotation: $uri", e)
             null
         }
     }
+
+    /**
+     * Rotates a bitmap by the specified degrees.
+     */
     private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
         val matrix = Matrix().apply { postRotate(degrees) }
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
+
+    /**
+     * Saves a bitmap as PNG to MediaStore.
+     * @param bitmap The bitmap to save
+     * @param contentResolver ContentResolver for access
+     * @return URI of saved image or null if failed
+     */
+    private fun saveBitmapAsPng(bitmap: Bitmap, contentResolver: ContentResolver): Uri? {
+        val name = "${System.currentTimeMillis()}.png"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, MIME_TYPE_PNG)
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
+        }
+
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues)?.also { pngUri ->
+            contentResolver.openOutputStream(pngUri)?.use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            }
+        }
+    }
+    /**
+     * Creates a MultipartBody.Part from URI and MIME type for API transmission.
+     * @param uri The image URI
+     * @param mimeType The MIME type of the image
+     * @param contentResolver ContentResolver for accessing the image
+     * @return MultipartBody.Part or null if creation fails
+     */
+    private fun createMultipartBodyPart(
+        uri: Uri,
+        mimeType: String,
+        contentResolver: ContentResolver
+    ): MultipartBody.Part? {
+        val partName = "file"
+        val fileName = getFileNameFromUri(uri, contentResolver) ?: "upload.${getFileExtension(mimeType)}"
+        // Creates a RequestBody from URI for multipart upload
+        val requestBody = object : RequestBody() {
+            override fun contentType() = mimeType.toMediaTypeOrNull() ?: "application/octet-stream".toMediaType()
+            //Gets the file size from URI
+            override fun contentLength(): Long =
+                contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                        if (sizeIndex != -1) cursor.getLong(sizeIndex) else -1
+                    } else -1
+                } ?: -1
+
+            override fun writeTo(sink: BufferedSink) {
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    inputStream.copyTo(sink.outputStream())
+                } ?: throw IOException("Failed to open InputStream for URI: $uri")
+            }
+        }
+
+        return MultipartBody.Part.createFormData(partName, fileName, requestBody)
+    }
+    /**
+     * Gets the display name of a file from its URI.
+     * @param uri The file URI
+     * @param contentResolver ContentResolver for access
+     * @return File name or null if not available
+     */
     private fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String? {
         return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
                 val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (nameIndex != -1) {
-                    cursor.getString(nameIndex).let {
-                        if (!it.endsWith(".png", ignoreCase = true)) {
-                            it.substringBeforeLast(".", it) + ".png"
-                        } else {
-                            it
-                        }
-                    }
-                } else {
-                    null
-                }
-            } else {
-                null
-            }
+                if (nameIndex != -1) cursor.getString(nameIndex) else null
+            } else null
         }
     }
-    private fun emitEvent(event: AddAiMealEvent) = viewModelScope.launch { _events.emit(event) }
+    /**
+     * Gets appropriate file extension for MIME type.
+     * @param mimeType The MIME type
+     * @return File extension without dot
+     */
+    private fun getFileExtension(mimeType: String): String = when (mimeType) {
+        MIME_TYPE_PNG -> "png"
+        MIME_TYPE_JPEG, "image/jpg" -> "jpg"
+        else -> "jpg"
+    }
+    /**
+     * Emits an event to the shared flow for UI consumption.
+     * @param event The event to emit
+     */
+    private fun emitEvent(event: AddAiMealEvent) = viewModelScope.launch {
+        _events.emit(event)
+    }
 }
