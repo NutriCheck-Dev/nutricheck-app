@@ -79,18 +79,6 @@ interface RecipeDao : BaseDao<RecipeEntity> {
     @Query("SELECT EXISTS(SELECT 1 FROM recipes WHERE id = :id)")
     suspend fun exists(id: String): Boolean
 
-    /**
-     * Searches recipes by name, excluding indexed recipes.
-     * @param name The name to search for (partial matching)
-     * @return Flow of matching recipes with ingredients, ordered by name
-     */
-    @Transaction
-    @Query("SELECT * " +
-            "FROM recipes " +
-            "WHERE name LIKE '%' || :name || '%' " +
-            "AND id NOT IN (SELECT recipeId FROM recipe_search_index) ORDER BY name ASC")
-    fun getRecipesByName(name: String): Flow<List<RecipeWithIngredients>>
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIgnore(recipe: RecipeEntity): Long
 
@@ -118,5 +106,21 @@ interface RecipeDao : BaseDao<RecipeEntity> {
 
     @Query("SELECT id, visibility FROM recipes WHERE id IN (:ids)")
     suspend fun getVisibilityById(ids: List<String>): List<VisibilityById>
+
+    @Query("""
+        DELETE FROM recipes
+        WHERE
+        visibility != :visibility
+        AND NOT EXISTS (SELECT 1 FROM meal_recipe_items mri WHERE mri.recipeId = recipes.id)
+        AND COALESCE((
+            SELECT MAX(s.lastUpdated)
+            FROM recipe_search_index s
+            WHERE s.recipeId = recipes.id
+        ), 0) < :cutoff
+    """)
+    suspend fun deleteExpiredUnreferencedRecipes(
+        cutoff: Long,
+        visibility: RecipeVisibility = RecipeVisibility.OWNER
+    ): Int
 
 }

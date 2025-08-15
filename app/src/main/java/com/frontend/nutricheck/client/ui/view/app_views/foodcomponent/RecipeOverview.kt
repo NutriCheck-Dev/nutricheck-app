@@ -38,16 +38,17 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.IngredientList
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeNutrientChartsWidget
+import com.frontend.nutricheck.client.ui.view.widgets.ServingsField
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
+import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,11 +165,18 @@ fun RecipeOverview(
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    ServingsPicker(
-                        value = recipeOverviewState.parameters.servings,
-                        range = 1..200,
-                        onValueChange = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ServingsChanged(it)) }
-                    )
+
+                    if (searchViewModel != null) {
+                        ServingsPicker(
+                            value = recipeOverviewState.parameters.servings,
+                            range = 1..200,
+                            onValueChange = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ServingsChanged(it)) }
+                        )
+                    } else {
+                        ServingsField(
+                            value = recipeOverviewState.parameters.servings
+                        )
+                    }
                 }
             }
 

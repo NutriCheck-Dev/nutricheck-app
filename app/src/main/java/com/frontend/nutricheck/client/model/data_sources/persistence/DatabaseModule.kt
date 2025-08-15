@@ -32,7 +32,9 @@ object DatabaseModule {
             context,
             LocalDatabase::class.java,
             "nutricheck_database"
-        ).fallbackToDestructiveMigration(false).build()
+        )
+            .addMigrations(Migrations.MIGRATION_15_16)
+            .build()
     }
 
     @Singleton

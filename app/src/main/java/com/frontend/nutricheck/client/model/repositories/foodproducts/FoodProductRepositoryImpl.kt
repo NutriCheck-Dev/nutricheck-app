@@ -24,7 +24,7 @@ class FoodProductRepositoryImpl @Inject constructor(
     private val foodSearchDao: FoodSearchDao,
     private val api: RemoteApi
 ) : FoodProductRepository {
-    private val timeToLive = TimeUnit.MINUTES.toMillis(30)
+    private val timeToLive = TimeUnit.MINUTES.toMillis(15)
     override suspend fun searchFoodProducts(foodProductName: String, language: String): Flow<Result<List<FoodProduct>>> = flow {
         val cached = foodSearchDao.resultsFor(foodProductName)
             .firstOrNull()

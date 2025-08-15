@@ -10,6 +10,7 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,6 +18,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -54,19 +58,21 @@ class RecipePageViewModel @Inject constructor(
 
     private val _recipePageState = MutableStateFlow(RecipePageState())
     val recipePageState: StateFlow<RecipePageState> = _recipePageState.asStateFlow()
+    private val queryFlow = MutableStateFlow("")
 
     init {
         viewModelScope.launch {
-            recipeRepository.observeMyRecipes().collect { list ->
-                _recipePageState.update { it.copy(myRecipes = list) }
-            }
-            val onlineRecipes = emptyList<Recipe>()
-            _recipePageState.update { it.copy(
-                onlineRecipes = onlineRecipes,
-                selectedTab = 0,
-                query = ""
-            ) }
+            combine(
+                recipeRepository.observeMyRecipes(),
+                queryFlow.debounce(150)
+            ) { list, query ->
+                filterAndSort(list, query)
+            }.flowOn(Dispatchers.Default)
+                .collect { filtered ->
+                    _recipePageState.update { it.copy(myRecipes = filtered) }
+                }
         }
+        _recipePageState.update { it.copy(onlineRecipes = emptyList(), selectedTab = 0, query = "") }
     }
 
     private val _events = MutableSharedFlow<RecipePageEvent>()
@@ -78,7 +84,10 @@ class RecipePageViewModel @Inject constructor(
             is RecipePageEvent.ClickOnlineRecipes -> onOnlineRecipesClick()
             is RecipePageEvent.ClickSaveRecipe -> viewModelScope.launch { onSaveRecipeClick(event.recipe) }
             is RecipePageEvent.ClickDeleteRecipe -> viewModelScope.launch { onDeleteRecipeClick(event.recipe) }
-            is RecipePageEvent.QueryChanged -> _recipePageState.update { it.copy(query = event.query) }
+            is RecipePageEvent.QueryChanged -> {
+                _recipePageState.update { it.copy(query = event.query) }
+                queryFlow.value = event.query
+            }
             is RecipePageEvent.SearchOnline -> viewModelScope.launch { performOnlineSearch() }
             is RecipePageEvent.ClickDetailsOption -> onDetailsOptionClick(event.recipe, event.option)
             is RecipePageEvent.ShowDetailsMenu -> onDetailsClick(event.recipeId)
@@ -167,5 +176,35 @@ class RecipePageViewModel @Inject constructor(
                 DropdownMenuOptions.EDIT -> emitEvent(RecipePageEvent.NavigateToEditRecipe(recipe.id))
             }
         }
+    }
+
+    private fun String.norm() =
+        lowercase().trim().replace(Regex("\\s+"), " ")
+
+    private data class SortKey(val rank: Int, val position: Int, val name: String)
+
+    private fun sortKeyFor(name: String, query: String): SortKey {
+        val normedName = name.norm()
+        if (query.isBlank()) return SortKey(9, 0, normedName)
+        val i = normedName.indexOf(query)
+        if (i < 0) return SortKey(Int.MAX_VALUE, Int.MAX_VALUE, normedName)
+        val rank = when {
+            i == 0 -> 0
+            i > 0 && normedName[i - 1].isWhitespace() -> 1
+            else -> 2
+        }
+        return SortKey(rank, i, normedName)
+    }
+
+    private fun filterAndSort(list: List<Recipe>, query: String): List<Recipe> {
+        val normedQuery = query.norm()
+        if (query.isBlank()) return list.sortedBy { it.name.lowercase() }
+
+        return list.asSequence()
+            .map { it to sortKeyFor(it.name, normedQuery) }
+            .filter { it.second.rank != Int.MAX_VALUE }
+            .sortedWith(compareBy({ it.second.rank }, { it.second.position }, { it.second.name }))
+            .map { it.first }
+            .toList()
     }
 }

@@ -106,7 +106,7 @@ class RecipeOverviewViewModel @Inject constructor(
                             protein = recipe.protein,
                             carbohydrates = recipe.carbohydrates,
                             fat = recipe.fat,
-                            servings = state.parameters.servings
+                            servings = recipe.servings
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
@@ -122,7 +122,7 @@ class RecipeOverviewViewModel @Inject constructor(
                                     protein = recipe.protein,
                                     carbohydrates = recipe.carbohydrates,
                                     fat = recipe.fat,
-                                    servings = state.parameters.servings
+                                    servings = recipe.servings
                                 )
                                 state.copy(recipe = recipe, parameters = params)
                             }
@@ -138,7 +138,7 @@ class RecipeOverviewViewModel @Inject constructor(
                             protein = recipe.protein,
                             carbohydrates = recipe.carbohydrates,
                             fat = recipe.fat,
-                            servings = state.parameters.servings
+                            servings = recipe.servings
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
