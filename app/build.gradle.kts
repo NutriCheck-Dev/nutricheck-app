@@ -28,6 +28,7 @@ kover {
                     "*.databinding.*",
                     "*ComposableSingletons*",
                     "*hilt_aggregated_deps*",
+                    "*HiltModules*",
 
                     // Data classes
                     "*dao*",
