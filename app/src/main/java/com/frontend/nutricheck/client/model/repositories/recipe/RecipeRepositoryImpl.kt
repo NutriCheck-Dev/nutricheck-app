@@ -60,12 +60,29 @@ class RecipeRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     val now = System.currentTimeMillis()
                     val recipes = body.map { RecipeMapper.toData(it) }
-                    recipes.forEach { insertRecipe(it) }
+
+                    val ids = recipes.map { it.id }
+                    val ownedIds: Set<String> =
+                        if (ids.isEmpty()) {
+                            emptySet()
+                        } else {
+                            recipeDao.getVisibilityById(ids)
+                                .asSequence()
+                                .filter { it.visibility == RecipeVisibility.OWNER }
+                                .map { it.id }
+                                .toSet()
+                        }
+                    val merged = recipes.map { remote ->
+                        if (remote.id in ownedIds) remote.copy(visibility = RecipeVisibility.OWNER)
+                        else remote
+                    }
+
+                    merged.forEach { cacheRemoteRecipe(it) }
                     recipeSearchDao.clearQuery(recipeName)
-                    recipeSearchDao.upsertEntities(recipes.map {
+                    recipeSearchDao.upsertEntities(merged.map {
                         RecipeSearchEntity(recipeName, it.id, now)
                     })
-                    emit(Result.Success(recipes))
+                    emit(Result.Success(merged))
                 } else if (errorBody != null) {
                     val errorResponse = Gson().fromJson(
                     errorBody.string(),
@@ -108,6 +125,18 @@ class RecipeRepositoryImpl @Inject constructor(
             }
             .flowOn(Dispatchers.IO)
 
+    override suspend fun downloadRecipe(recipe: Recipe) = withContext(Dispatchers.IO) {
+        val ownedRecipe = recipe.copy(visibility = RecipeVisibility.OWNER)
+        val recipeEntity = DbRecipeMapper.toRecipeEntity(ownedRecipe, false)
+        recipeDao.insert(recipeEntity)
+
+        recipe.ingredients.forEach { ingredient ->
+            val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+            checkForFoodProducts(ingredient)
+            ingredientDao.insert(ingredientEntity)
+        }
+    }
+
     override suspend fun getRecipeById(recipeId: String): Recipe = withContext(Dispatchers.IO) {
         val recipeWithIngredients = recipeDao.getRecipeWithIngredientsById(recipeId).first()
         DbRecipeMapper.toRecipe(recipeWithIngredients)
@@ -146,7 +175,7 @@ class RecipeRepositoryImpl @Inject constructor(
             val serverMessage = parsed?.body?.let { body ->
                 listOfNotNull(body.title, body.detail)
                     .filter { it.isNotBlank() }
-                    .joinToString { ": " }
+                    .joinToString(separator = ": ")
             }
 
             val fallback = if (code == 401) {
@@ -212,6 +241,30 @@ class RecipeRepositoryImpl @Inject constructor(
     private suspend fun checkForFoodProducts(ingredient: Ingredient) = withContext(Dispatchers.IO) {
         if (!foodDao.exists(ingredient.foodProduct.id)) {
             foodDao.insert(DbFoodProductMapper.toFoodProductEntity(ingredient.foodProduct))
+        }
+    }
+
+    private suspend fun cacheRemoteRecipe(recipe: Recipe) = withContext(Dispatchers.IO){
+        val incoming = DbRecipeMapper.toRecipeEntity(recipe, false)
+
+        val rowId = recipeDao.insertIgnore(incoming)
+        if (rowId == -1L) {
+            recipeDao.updateIfNotOwner(
+                id = incoming.id,
+                name = incoming.name,
+                instructions = incoming.instructions,
+                calories = incoming.calories,
+                visibility = incoming.visibility
+            )
+        }
+
+        val existing = recipeDao.getRecipeEntityById(incoming.id)
+        if (existing?.visibility != RecipeVisibility.OWNER) {
+            ingredientDao.deleteIngredientsOfRecipe(incoming.id)
+            recipe.ingredients.forEach { ingredient ->
+                checkForFoodProducts(ingredient)
+                ingredientDao.insert(DbIngredientMapper.toIngredientEntity(ingredient))
+            }
         }
     }
 }

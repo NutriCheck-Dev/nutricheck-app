@@ -28,6 +28,8 @@ data class RecipePageState(
     val query: String = "",
     val showReportDialog: Boolean = false,
     val expandedRecipeId: String? = null,
+    val hasSearched: Boolean = false,
+    val lastSearchedQuery: String? = null
 )
 
 sealed interface RecipePageEvent {
@@ -115,6 +117,9 @@ class RecipePageViewModel @Inject constructor(
             setReady()
             return
         }
+
+        _recipePageState.update { it.copy(hasSearched = true, lastSearchedQuery = query) }
+
         viewModelScope.launch {
             recipeRepository
                 .searchRecipes(query)
@@ -148,16 +153,10 @@ class RecipePageViewModel @Inject constructor(
     private fun onDetailsOptionClick(recipe: Recipe, option: DropdownMenuOptions) {
         viewModelScope.launch {
             when (option) {
-                DropdownMenuOptions.DELETE -> {
-                    recipeRepository.deleteRecipe(recipe)
-                    val refreshedList = recipeRepository.getMyRecipes()
-                    _recipePageState.update { it.copy(myRecipes = refreshedList) }
-                }
-                DropdownMenuOptions.DOWNLOAD -> {
-                    recipeRepository.insertRecipe(recipe)
-                    val refreshedList = recipeRepository.getMyRecipes()
-                    _recipePageState.update { it.copy(myRecipes = refreshedList) }
-                }
+                DropdownMenuOptions.DELETE -> recipeRepository.deleteRecipe(recipe)
+
+                DropdownMenuOptions.DOWNLOAD -> recipeRepository.downloadRecipe(recipe)
+
                 DropdownMenuOptions.UPLOAD -> {
                     when (val body = recipeRepository.uploadRecipe(recipe)) {
                         is Result.Success -> _events.emit(RecipePageEvent.RecipeUploaded)

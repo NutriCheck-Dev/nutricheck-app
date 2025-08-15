@@ -191,25 +191,25 @@ fun RecipeOverview(
                 )
             }
             item {
-                Text(
-                    text = "Beschreibung",
-                    style = styles.titleMedium,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
                 if (recipe.instructions.isNotBlank()) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(1.dp, colors.outline)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = recipe.instructions,
-                                style = styles.bodyMedium
-                            )
+                    Text(
+                        text = "Beschreibung",
+                        style = styles.titleMedium,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            border = BorderStroke(1.dp, colors.outline)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = recipe.instructions,
+                                    style = styles.bodyMedium
+                                )
+                            }
                         }
-                    }
                 }
             }
 

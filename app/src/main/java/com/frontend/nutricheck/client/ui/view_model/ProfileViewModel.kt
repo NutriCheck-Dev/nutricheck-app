@@ -34,15 +34,18 @@ sealed interface ProfileEvent {
     object NavigateToPersonalData : ProfileEvent
     object NavigateToAddNewWeight : ProfileEvent
     object NavigateToProfileOverview : ProfileEvent
+    object NavigateToDeleteWeightDialog : ProfileEvent
     object RestartApp : ProfileEvent
     // collected events, which lead to navigation
     object OnPersonalDataClick : ProfileEvent
     object OnAddNewWeightClick : ProfileEvent
     object OnDisplayProfileOverview : ProfileEvent
     object OnRestartApp : ProfileEvent
+    data class OnWeightClick(val weight: Weight) : ProfileEvent
     // collected events, which handle data changes
     object DisplayWeightHistory : ProfileEvent
     object OnSaveClick : ProfileEvent
+    object DeleteWeight : ProfileEvent
     data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
     data class UpdateUserNameDraft(val username: String) : ProfileEvent
@@ -96,6 +99,9 @@ class ProfileViewModel @Inject constructor(
     private val _weightData = MutableStateFlow<List<Weight>>(emptyList())
     val weightData: StateFlow<List<Weight>> = _weightData.asStateFlow()
 
+    private val _selectedWeight = MutableStateFlow<Weight?>(null)
+    val selectedWeight: StateFlow<Weight?> = _selectedWeight.asStateFlow()
+
     /**
      * Handles profile events and updates the state accordingly.
      * @param event The profile event to handle.
@@ -118,6 +124,11 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.UpdateUserWeightGoalDraft ->
                 {updateUserWeightGoalDraft(event.weightGoal)}
             is ProfileEvent.UpdateUserGenderDraft -> {updateUserGenderDraft(event.gender)}
+            is ProfileEvent.DeleteWeight -> { deleteWeight() }
+            is ProfileEvent.OnWeightClick -> {
+                _selectedWeight.value = event.weight
+                emitEvent(ProfileEvent.NavigateToDeleteWeightDialog)
+            }
             //Ui Events, which are being handled by emitting a new event by the ViewModel
             is ProfileEvent.OnPersonalDataClick -> { emitEvent(ProfileEvent.NavigateToPersonalData) }
             is ProfileEvent.OnAddNewWeightClick -> { emitEvent(ProfileEvent.NavigateToAddNewWeight) }
@@ -232,6 +243,15 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             appSettingRepository.setTheme(isDarkMode)
         }
+    }
+    private fun deleteWeight() {
+        if (selectedWeight.value != null) {
+            viewModelScope.launch {
+                userDataRepository.deleteWeight(selectedWeight.value!!)
+                _weightData.value = userDataRepository.getWeightHistory()
+            }
+        }
+        _selectedWeight.value = null
     }
     private fun persistDataWithCalculation () {
         if (uiState.value is UiState.Error) return

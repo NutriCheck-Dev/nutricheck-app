@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.dp
 
 /**
  * A top bar for views, typically displaying a title and optional navigation and action icons.
- *
- * @param modifier Modifier to be applied to the top bar.
  * @param tonalElevation The elevation of the top bar, affecting its shadow.
  * @param shape The shape of the top bar's corners.
  * @param navigationIcon Composable for the navigation icon, typically a back button or menu.

@@ -5,6 +5,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import java.util.Date
 
@@ -45,4 +46,6 @@ interface HistoryRepository {
     suspend fun updateMealFoodItem(mealFoodItem: MealFoodItem)
     suspend fun getMealFoodItemById(mealId: String, foodProductId: String): MealFoodItem
     suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem)
+    suspend fun observeMealsForDay(date: Date): Flow<List<Meal>>
+    suspend fun observeCaloriesOfDay(date: Date): Flow<Int>
 }

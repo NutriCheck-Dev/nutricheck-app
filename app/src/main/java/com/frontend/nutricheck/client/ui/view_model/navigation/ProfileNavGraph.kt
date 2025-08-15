@@ -15,6 +15,7 @@ import com.frontend.nutricheck.client.ui.view.app_views.PersonalDataPage
 import com.frontend.nutricheck.client.ui.view.app_views.ProfilePage
 import com.frontend.nutricheck.client.ui.view.app_views.WeightHistoryPage
 import com.frontend.nutricheck.client.ui.view.dialogs.AddWeightDialog
+import com.frontend.nutricheck.client.ui.view.dialogs.DeleteWeightDialog
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.ProfileViewModel
 
@@ -23,6 +24,7 @@ sealed class ProfileScreens(val route: String) {
     object WeightHistoryPage : ProfileScreens("weight_history_page_route")
     object PersonalDataPage : ProfileScreens("personal_data_page_route")
     object AddWeightDialog : ProfileScreens("add_weight_dialog_route")
+    object DeleteWeightDialog : ProfileScreens("delete_weight_dialog_route")
 
 }
 
@@ -34,6 +36,7 @@ fun ProfilePageNavGraph() {
     val uiState by profileViewModel.uiState.collectAsState()
     val userDataDraft by profileViewModel.dataDraft.collectAsState()
     val weightState by profileViewModel.weightData.collectAsState()
+    val selectedWeight by profileViewModel.selectedWeight.collectAsState()
     val context = LocalContext.current
 
 
@@ -57,6 +60,11 @@ fun ProfilePageNavGraph() {
                 }
                 is  ProfileEvent.NavigateToAddNewWeight -> {
                     profileNavController.navigate(ProfileScreens.AddWeightDialog.route) {
+                        launchSingleTop = true
+                    }
+                }
+                is ProfileEvent.NavigateToDeleteWeightDialog -> {
+                    profileNavController.navigate(ProfileScreens.DeleteWeightDialog.route) {
                         launchSingleTop = true
                     }
                 }
@@ -96,6 +104,13 @@ fun ProfilePageNavGraph() {
                 errorState = uiState,
                 onEvent = profileViewModel::onEvent,
                 onDismissRequest = { profileNavController.popBackStack() }
+            )
+        }
+        dialog(ProfileScreens.DeleteWeightDialog.route) {
+            DeleteWeightDialog(
+                onDismissRequest = { profileNavController.popBackStack() },
+                onEvent = profileViewModel::onEvent,
+                selectedWeight = selectedWeight
             )
         }
     }
