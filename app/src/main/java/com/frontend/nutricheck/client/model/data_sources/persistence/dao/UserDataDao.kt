@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 /**
- * Data Access Object (DAO) for performing database operations on UserData entities.
+ * Data Access Object for performing database operations on UserData entities.
  */
 @Dao
 interface UserDataDao : BaseDao<UserData> {
