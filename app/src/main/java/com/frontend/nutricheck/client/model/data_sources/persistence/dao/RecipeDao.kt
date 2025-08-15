@@ -43,13 +43,6 @@ interface RecipeDao : BaseDao<RecipeEntity> {
 
     @Query("SELECT EXISTS(SELECT 1 FROM recipes WHERE id = :id)")
     suspend fun exists(id: String): Boolean
-  
-    @Transaction
-    @Query("SELECT * " +
-            "FROM recipes " +
-            "WHERE name LIKE '%' || :name || '%' " +
-            "AND id NOT IN (SELECT recipeId FROM recipe_search_index)ORDER BY name ASC")
-    fun getRecipesByName(name: String): Flow<List<RecipeWithIngredients>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIgnore(recipe: RecipeEntity): Long

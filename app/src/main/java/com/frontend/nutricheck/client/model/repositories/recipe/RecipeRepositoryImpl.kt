@@ -39,7 +39,7 @@ class RecipeRepositoryImpl @Inject constructor(
     private val foodDao: FoodDao,
     private val api: RemoteApi
 ) : RecipeRepository {
-    private val timeToLive = TimeUnit.MINUTES.toMillis(30)
+    private val timeToLive = TimeUnit.MINUTES.toMillis(15)
 
     override suspend fun searchRecipes(recipeName: String): Flow<Result<List<Recipe>>> = flow {
         val cached = recipeSearchDao.resultsFor(recipeName)
@@ -211,7 +211,6 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    //Necessary?
     override suspend fun getIngredientById(
         recipeId: String,
         foodProductId: String
@@ -223,11 +222,6 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun updateIngredient(ingredient: Ingredient) = withContext(Dispatchers.IO) {
         val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
         ingredientDao.update(ingredientEntity)
-    }
-
-    override suspend fun getRecipesByName(recipeName: String): List<Recipe> = withContext(Dispatchers.IO) {
-        val recipeWithIngredients = recipeDao.getRecipesByName(recipeName).first()
-        recipeWithIngredients.map { DbRecipeMapper.toRecipe(it) }
     }
 
     override fun observeRecipeById(recipeId: String): Flow<Recipe> =

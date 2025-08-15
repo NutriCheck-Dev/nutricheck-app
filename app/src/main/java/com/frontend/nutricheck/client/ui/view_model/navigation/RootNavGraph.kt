@@ -1,21 +1,12 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
-import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
-import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
-import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import java.util.Date
 
 sealed class Screen(val route: String) {

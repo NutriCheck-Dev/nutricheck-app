@@ -3,10 +3,9 @@ package com.frontend.nutricheck.client
 import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.Constraints
@@ -14,6 +13,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.repositories.CachePruneWorker
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.Module
@@ -29,6 +29,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+
 /**
  * The main Application class for the NutriCheck app.
  * It initializes Hilt for dependency injection and sets up an observer for the

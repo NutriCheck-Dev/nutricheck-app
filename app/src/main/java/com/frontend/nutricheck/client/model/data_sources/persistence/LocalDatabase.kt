@@ -37,7 +37,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.sear
         FoodSearchEntity::class,
         RecipeSearchEntity::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

@@ -20,7 +20,7 @@ class CachePruneWorker @AssistedInject constructor(
     private val foodDao: FoodDao,
     private val recipeDao: RecipeDao
 ): CoroutineWorker(context, workerParams) {
-    private val timeToLive = TimeUnit.MINUTES.toMillis(30)
+    private val timeToLive = TimeUnit.MINUTES.toMillis(15)
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val cutoff = System.currentTimeMillis() - timeToLive
