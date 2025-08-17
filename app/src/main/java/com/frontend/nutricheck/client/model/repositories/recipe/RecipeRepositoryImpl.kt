@@ -93,7 +93,7 @@ class RecipeRepositoryImpl @Inject constructor(
                     emit(Result.Error(message = "Unknown error"))
                 }
             } catch (io: okio.IOException) {
-                emit(Result.Error(message = "Oops, an error has occurred. Please check your internet connection."))
+                emit(Result.Error(message = "Please check your internet connection."))
             }
         }
     }.flowOn(Dispatchers.IO)
@@ -166,23 +166,14 @@ class RecipeRepositoryImpl @Inject constructor(
                 return@withContext Result.Success(RecipeMapper.toData(dto))
             }
             val code = response.code()
-            val rawError = response.errorBody()?.use { it.string() }
 
-            val parsed = rawError
-                ?.takeIf { it.isNotBlank() }
-                ?.let { runCatching { Gson().fromJson(it, ErrorResponseDTO::class.java) }.getOrNull() }
-
-            val serverMessage = parsed?.body?.let { body ->
-                listOfNotNull(body.title, body.detail)
-                    .filter { it.isNotBlank() }
-                    .joinToString(separator = ": ")
+            val errorMessage = when (code) {
+                409 -> "Upload failed: The Recipe you are trying to upload already exists."
+                401 -> "Upload failed: Unauthorized. Please log in."
+                else -> "Upload failed"
             }
 
-            val fallback = if (code == 401) {
-                "Upload failed: Recipe already exists."
-            } else { "Upload failed" }
-
-            Result.Error(parsed?.body?.status ?: code, message = serverMessage ?: fallback)
+            Result.Error(code, message = errorMessage)
         } catch (io: IOException) {
             Result.Error(message = "Connection issue")
         }
