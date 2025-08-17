@@ -64,15 +64,16 @@ fun BottomSheetSearch(
                         query = query,
                         onQueryChange = { onQueryChange(it) },
                         onSearch = { onSearch() },
-
                         )
 
                     if (showTabRow) {
+                        val option1 = stringResource(R.string.search_tab_all)
+                        val option2 = stringResource(R.string.search_tab_my_recipes)
                         CustomTabRow(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp),
-                            options = listOf("Alle", "Meine Rezepte"),
+                            options = listOf(option1, option2),
                             selectedOption = selectedTab,
                             onSelect = { onSelectTab(it) }
                         )

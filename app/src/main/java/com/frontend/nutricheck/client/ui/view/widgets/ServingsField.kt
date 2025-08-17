@@ -26,7 +26,6 @@ fun ServingsField(
     Box(
         modifier = Modifier
             .width(180.dp)
-            //.clip(RoundedCornerShape(8.dp))
             .background(colors.surfaceVariant, RoundedCornerShape(8.dp))
             .border(1.dp, colors.outline, RoundedCornerShape(8.dp)),
         contentAlignment = Alignment.Center

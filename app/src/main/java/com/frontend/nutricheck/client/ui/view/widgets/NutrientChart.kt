@@ -116,17 +116,3 @@ fun NutrientChart(
         }
     }
 }
-
-@Preview
-@Composable
-fun NutrientChartPreview() {
-    AppTheme {
-        NutrientChart(
-            nutrient = "Protein",
-            subtitle = "grams",
-            actualValue = 275,
-            totalValue = 500,
-            modifier = Modifier.size(200.dp)
-        )
-    }
-}

@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
 
@@ -34,8 +36,7 @@ fun FoodComponentSearchBar(
     query: String = "",
     onQueryChange: (String) -> Unit = {},
     onSearch: (String) -> Unit = {},
-    //onSearchBarClicked: () -> Unit = {},
-    placeholder: @Composable () -> Unit = { Text("Search") },
+    placeholder: @Composable () -> Unit = { Text(stringResource(R.string.searchbar_placeholder_regular)) },
     trailingIcon: @Composable (() -> Unit)? = { Icon(Icons.Default.Search, contentDescription = "Search") },
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -43,12 +44,6 @@ fun FoodComponentSearchBar(
     Box(
         modifier
             .fillMaxWidth()
-            /**.clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                onSearchBarClicked()
-            }**/
             .padding(horizontal = 16.dp)
     ) {
         OutlinedTextField(
@@ -74,19 +69,5 @@ fun FoodComponentSearchBar(
             ),
             shape = RoundedCornerShape(28.dp)
         )
-    }
-}
-
-@Preview
-@Composable
-fun FoodComponentSearchBarPreview() {
-    AppTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-        ) {
-            FoodComponentSearchBar()
-        }
     }
 }
