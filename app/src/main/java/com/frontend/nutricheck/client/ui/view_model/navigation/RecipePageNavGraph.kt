@@ -21,7 +21,6 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewMod
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 
@@ -102,7 +101,6 @@ fun RecipePageNavGraph(
                 }
                 val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(graphEntry)
                 val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(graphEntry)
-                val searchViewModel: FoodSearchViewModel = hiltViewModel(graphEntry)
                 LaunchedEffect(recipeOverviewViewModel) {
                     recipeOverviewViewModel.events.collect { event ->
                         if (event is RecipeOverviewEvent.NavigateToEditRecipe) {
@@ -124,7 +122,6 @@ fun RecipePageNavGraph(
                             )
                         )
                     },
-                    searchViewModel = searchViewModel,
                     onPersist = { recipePageNavController.popBackStack() },
                     onBack = { recipePageNavController.popBackStack() }
                 )

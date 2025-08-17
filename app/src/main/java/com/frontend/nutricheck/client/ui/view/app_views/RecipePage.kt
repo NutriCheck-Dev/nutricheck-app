@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -194,6 +195,9 @@ Surface(
                         }
 
                         else -> {
+                            val ownedIds = remember(recipePageState.myRecipes) {
+                                recipePageState.myRecipes.map { it.id }.toSet()
+                            }
                             LazyColumn(modifier = Modifier.fillMaxSize()) {
                                 item {
                                     FoodComponentList(
@@ -203,9 +207,11 @@ Surface(
                                         },
                                         trailingContent = { foodComponent ->
                                             val recipe = foodComponent as Recipe
+                                            val owned = recipe.id in ownedIds
                                             CustomDetailsButton(
                                                 dishItemButton = true,
-                                                publicRecipe = true,
+                                                ownedRecipe = owned,
+                                                publicRecipe = !owned,
                                                 onOptionClick = { option ->
                                                     if (option == DropdownMenuOptions.REPORT) {
                                                         reportRecipeViewModel.onEvent(

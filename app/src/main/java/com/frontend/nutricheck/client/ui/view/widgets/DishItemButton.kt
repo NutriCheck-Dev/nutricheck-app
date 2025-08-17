@@ -22,8 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 
@@ -75,7 +77,9 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${foodComponent.servings * foodComponent.calories} cal, Portions ${foodComponent.servings}",
+                    text = "${foodComponent.servings * foodComponent.calories} " +
+                            stringResource(R.string.dishitem_button_portions) +
+                            "${foodComponent.servings}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -145,8 +149,9 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)} cal, " +
-                            "Portions ${ingredient.servings}",
+                    text = "${ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)} " +
+                            stringResource(R.string.dishitem_button_portions) +
+                            "${ingredient.servings}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -211,7 +216,9 @@ fun DishItemMealButton(
                 )
 
                 Text(
-                    text = "${calories.toInt()} cal, Portions: $quantity",
+                    text = "${calories.toInt()} " +
+                            stringResource(R.string.dishitem_button_portions) +
+                            "$quantity",
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,
