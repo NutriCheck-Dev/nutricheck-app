@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.model.data
+package com.nutricheck.frontend.model.data_sources.data
 
 import android.content.Context
 import com.frontend.nutricheck.client.R

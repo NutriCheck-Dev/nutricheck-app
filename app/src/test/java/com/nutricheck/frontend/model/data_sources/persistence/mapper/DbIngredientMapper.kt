@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.model.dbmapper
+package com.nutricheck.frontend.model.data_sources.persistence.mapper
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient

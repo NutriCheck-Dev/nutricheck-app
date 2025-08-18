@@ -48,7 +48,10 @@ kover {
 
                 packages(
                     "com.frontend.nutricheck.client.ui.theme",
-                    "dagger.hilt.internal.aggregatedroot.codegen"
+                    "dagger.hilt.internal.aggregatedroot.codegen",
+                    "com.frontend.nutricheck.client.ui.view_model.navigation",
+                    "com.frontend.nutricheck.client.model.data_sources.persistence.dao"
+
                 )
             }
         }
@@ -56,7 +59,7 @@ kover {
 }
 android {
     namespace = "com.frontend.nutricheck.client"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.frontend.nutricheck.client"
