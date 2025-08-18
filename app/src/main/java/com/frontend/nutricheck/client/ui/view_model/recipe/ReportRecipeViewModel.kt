@@ -68,6 +68,6 @@ class ReportRecipeViewModel @Inject constructor(
             description = _reportRecipeState.value.inputText
         )
         recipeRepository.reportRecipe(recipeReport)
-        _reportRecipeState.update { it.copy(reporting = false, inputText = "") }
+        _reportRecipeState.update { it.copy(recipe = null, reporting = false, inputText = "") }
     }
 }
