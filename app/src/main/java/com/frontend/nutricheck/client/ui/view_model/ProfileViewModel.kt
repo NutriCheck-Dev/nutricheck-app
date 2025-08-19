@@ -1,4 +1,4 @@
- package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
