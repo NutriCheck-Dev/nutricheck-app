@@ -15,6 +15,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -70,8 +71,9 @@ class RecipeEditorViewModel @Inject constructor(
     private val recipeRepo: RecipeRepository,
     private val appSettingRepository: AppSettingRepository,
     private val foodProductRepository: FoodProductRepository,
+    private val snackbarManager: SnackbarManager,
     private val combinedSearchListStore: CombinedSearchListStore,
-    @ApplicationContext private val appContext: Context,
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -193,11 +195,11 @@ class RecipeEditorViewModel @Inject constructor(
         viewModelScope.launch {
         val draft = _draft.value
         if (draft.title.isBlank()) {
-            setError(appContext.getString(R.string.error_no_recipe_name))
+            setError(context.getString(R.string.error_no_recipe_name))
             return@launch
         }
         if (draft.ingredients.size < 2) {
-            setError(appContext.getString(R.string.error_not_enough_ingredients))
+            setError(context.getString(R.string.error_not_enough_ingredients))
             return@launch
         }
         setReady()
@@ -239,10 +241,12 @@ class RecipeEditorViewModel @Inject constructor(
                 is RecipeMode.Create -> {
                     recipeRepo.insertRecipe(recipe)
                     _events.emit(RecipeEditorEvent.RecipeSaved)
+                    snackbarManager.show(context.getString(R.string.snackbar_message_recipe_saved))
                 }
                 is RecipeMode.Edit -> {
                     recipeRepo.updateRecipe(recipe)
                     _events.emit(RecipeEditorEvent.RecipeSaved)
+                    snackbarManager.show(context.getString(R.string.snackbar_message_recipe_updated))
                 }
             }
         }

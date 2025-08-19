@@ -102,10 +102,13 @@ fun RecipePageNavGraph(
                 val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(graphEntry)
                 LaunchedEffect(recipeOverviewViewModel) {
                     recipeOverviewViewModel.events.collect { event ->
-                        if (event is RecipeOverviewEvent.NavigateToEditRecipe) {
-                            recipePageNavController.navigate(
-                                RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
-                            )
+                        when(event) {
+                            is RecipeOverviewEvent.NavigateToEditRecipe ->
+                                recipePageNavController.navigate(
+                                    RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
+                                )
+                            is RecipeOverviewEvent.RecipeDeleted -> recipePageNavController.popBackStack()
+                            else -> null
                         }
 
                     }

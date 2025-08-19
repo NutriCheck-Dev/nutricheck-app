@@ -174,4 +174,11 @@
     <string name="meal_item_menu_text">Möchtest du dieses Gericht entfernen?</string>
     <string name="meal_item_menu_remove">Entfernen</string>
     <string name="meal_item_menu_cancel">Abbrechen</string>
+    <string name="snackbar_message_recipe_saved">Rezept gespeichert</string>
+    <string name="snackbar_message_recipe_updated">Rezept aktualisiert</string>
+    <string name="snackbar_message_meal_saved">Mahlzeit hinzugefügt</string>
+    <string name="snackbar_message_recipe_reported">Rezept gemeldet</string>
+    <string name="snackbar_message_recipe_uploaded">Rezept hochgeladen</string>
+    <string name="snackbar_message_recipe_downloaded">Rezept heruntergeladen</string>
+    <string name="snackbar_message_recipe_deleted">Rezept gelöscht</string>
 </resources>

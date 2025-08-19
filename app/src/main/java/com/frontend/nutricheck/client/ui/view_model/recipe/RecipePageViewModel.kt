@@ -1,12 +1,16 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,8 +49,10 @@ sealed interface RecipePageEvent {
 
 @HiltViewModel
 class RecipePageViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository
-) : BaseViewModel() {
+    private val recipeRepository: RecipeRepository,
+    private val snackbarManager: SnackbarManager,
+    @ApplicationContext private val context: Context
+    ) : BaseViewModel() {
 
     private val _recipePageState = MutableStateFlow(RecipePageState())
     val recipePageState: StateFlow<RecipePageState> = _recipePageState.asStateFlow()
@@ -140,13 +146,22 @@ class RecipePageViewModel @Inject constructor(
     private fun onDetailsOptionClick(recipe: Recipe, option: DropdownMenuOptions) {
         viewModelScope.launch {
             when (option) {
-                DropdownMenuOptions.DELETE -> recipeRepository.deleteRecipe(recipe)
+                DropdownMenuOptions.DELETE -> {
+                    recipeRepository.deleteRecipe(recipe)
+                    snackbarManager.show(context.getString(R.string.snackbar_message_recipe_deleted))
+                }
 
-                DropdownMenuOptions.DOWNLOAD -> recipeRepository.downloadRecipe(recipe)
+                DropdownMenuOptions.DOWNLOAD -> {
+                    recipeRepository.downloadRecipe(recipe)
+                    snackbarManager.show(context.getString(R.string.snackbar_message_recipe_downloaded))
+                }
 
                 DropdownMenuOptions.UPLOAD -> {
                     when (val body = recipeRepository.uploadRecipe(recipe)) {
-                        is Result.Success -> _events.emit(RecipePageEvent.RecipeUploaded)
+                        is Result.Success -> {
+                            _events.emit(RecipePageEvent.RecipeUploaded)
+                            snackbarManager.show(context.getString(R.string.snackbar_message_recipe_uploaded))
+                        }
                         is Result.Error ->  setError(body.message!!)
                     }
                 }

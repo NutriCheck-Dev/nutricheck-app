@@ -144,4 +144,11 @@
     <string name="meal_item_menu_text">Do you want to remove this dish?</string>
     <string name="meal_item_menu_remove">" Remove"</string>
     <string name="meal_item_menu_cancel">" Cancel"</string>
+    <string name="snackbar_message_recipe_saved">Recipe saved</string>
+    <string name="snackbar_message_recipe_updated">Recipe updated</string>
+    <string name="snackbar_message_meal_saved">Meal added</string>
+    <string name="snackbar_message_recipe_reported">Recipe reported</string>
+    <string name="snackbar_message_recipe_uploaded">Recipe uploaded</string>
+    <string name="snackbar_message_recipe_downloaded">Recipe downloaded</string>
+    <string name="snackbar_message_recipe_deleted">Recipe deleted</string>
 </resources>

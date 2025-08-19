@@ -105,7 +105,7 @@ class FoodSearchViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val combinedSearchListStore: CombinedSearchListStore,
     private val snackbarManager: SnackbarManager,
-    @ApplicationContext private val appContext: Context,
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -207,7 +207,7 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.ClickSearchAll -> onSearchAllClick()
             is SearchEvent.ClickSearchMyRecipes -> onSearchMyRecipesClick()
             is SearchEvent.ResetErrorState -> setReady()
-            is SearchEvent.MealSaved -> snackbarManager.show("Meal gespeichert ")
+            is SearchEvent.MealSaved -> snackbarManager.show(context.getString(R.string.snackbar_message_meal_saved))
         }
     }
 
@@ -400,7 +400,7 @@ class FoodSearchViewModel @Inject constructor(
         if (state !is SearchUiState.AddComponentsToMealState) return
 
         if (state.dayTime == null) {
-            setError(appContext.getString(R.string.error_missing_dayTime))
+            setError(context.getString(R.string.error_missing_dayTime))
             return
         }
 
@@ -422,7 +422,7 @@ class FoodSearchViewModel @Inject constructor(
         }
 
         if (mealFoodItems.isEmpty() && mealRecipeItems.isEmpty()) {
-            setError(appContext.getString(R.string.error_create_meal_missing_foodComponent))
+            setError(context.getString(R.string.error_create_meal_missing_foodComponent))
             return
         }
 
@@ -458,7 +458,7 @@ class FoodSearchViewModel @Inject constructor(
                     _events.emit(SearchEvent.MealSaved)
                 }
                 setReady()
-                snackbarManager.show("Meal gespeichert ")
+                snackbarManager.show(context.getString(R.string.snackbar_message_meal_saved))
             } catch (e: Exception) {
                 setError("Failed to save meal: ${e.message}")
             }
