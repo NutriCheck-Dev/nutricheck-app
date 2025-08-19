@@ -74,7 +74,7 @@ fun DiaryNavGraph(
         ) {
             when (selectedTab) {
                 DiaryTab.HISTORY -> HistoryPageNavGraph(mainNavController, historyPageNavController)
-                DiaryTab.RECIPES -> RecipePageNavGraph(mainNavController, recipePageNavController)
+                DiaryTab.RECIPES -> RecipePageNavGraph(recipePageNavController)
             }
         }
     }

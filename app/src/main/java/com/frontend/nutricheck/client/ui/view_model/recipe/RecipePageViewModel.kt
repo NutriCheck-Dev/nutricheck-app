@@ -1,6 +1,5 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe
 
-import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
@@ -8,9 +7,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenu
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,8 +16,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,8 +34,6 @@ data class RecipePageState(
 sealed interface RecipePageEvent {
     data object ClickMyRecipes : RecipePageEvent
     data object ClickOnlineRecipes : RecipePageEvent
-    data class ClickSaveRecipe(val recipe: Recipe) : RecipePageEvent
-    data class ClickDeleteRecipe(val recipe: Recipe) : RecipePageEvent
     data class QueryChanged(val query: String) : RecipePageEvent
     data class ClickDetailsOption(val recipe: Recipe, val option: DropdownMenuOptions) : RecipePageEvent
     data class NavigateToEditRecipe(val recipeId: String) : RecipePageEvent
@@ -52,7 +45,6 @@ sealed interface RecipePageEvent {
 
 @HiltViewModel
 class RecipePageViewModel @Inject constructor(
-    @ApplicationContext private val appContext: Context,
     private val recipeRepository: RecipeRepository
 ) : BaseViewModel() {
 
@@ -64,13 +56,12 @@ class RecipePageViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 recipeRepository.observeMyRecipes(),
-                queryFlow.debounce(150)
+                queryFlow
             ) { list, query ->
                 filterAndSort(list, query)
-            }.flowOn(Dispatchers.Default)
-                .collect { filtered ->
-                    _recipePageState.update { it.copy(myRecipes = filtered) }
-                }
+            }.collect { filtered ->
+                _recipePageState.update { it.copy(myRecipes = filtered) }
+            }
         }
         _recipePageState.update { it.copy(onlineRecipes = emptyList(), selectedTab = 0, query = "") }
     }
@@ -82,8 +73,6 @@ class RecipePageViewModel @Inject constructor(
         when(event) {
             is RecipePageEvent.ClickMyRecipes -> onMyRecipesClick()
             is RecipePageEvent.ClickOnlineRecipes -> onOnlineRecipesClick()
-            is RecipePageEvent.ClickSaveRecipe -> viewModelScope.launch { onSaveRecipeClick(event.recipe) }
-            is RecipePageEvent.ClickDeleteRecipe -> viewModelScope.launch { onDeleteRecipeClick(event.recipe) }
             is RecipePageEvent.QueryChanged -> {
                 _recipePageState.update { it.copy(query = event.query) }
                 queryFlow.value = event.query
@@ -100,21 +89,10 @@ class RecipePageViewModel @Inject constructor(
 
     private fun onMyRecipesClick() {
         _recipePageState.update { it.copy(selectedTab = 0) }
-        emitEvent(RecipePageEvent.ClickMyRecipes)
     }
 
     private fun onOnlineRecipesClick() {
         _recipePageState.update { it.copy(selectedTab = 1) }
-        emitEvent(RecipePageEvent.ClickOnlineRecipes)
-    }
-
-
-    private suspend fun onSaveRecipeClick(recipe: Recipe) {
-        recipeRepository.insertRecipe(recipe)
-    }
-
-    private suspend fun onDeleteRecipeClick(recipe: Recipe) {
-        recipeRepository.deleteRecipe(recipe)
     }
 
     private fun emitEvent(event: RecipePageEvent) = viewModelScope.launch { _events.emit(event) }

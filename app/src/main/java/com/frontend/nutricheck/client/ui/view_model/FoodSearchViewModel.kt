@@ -29,9 +29,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
@@ -78,7 +80,7 @@ sealed class SearchUiState {
     }
 }
 
-sealed interface  SearchEvent {
+sealed interface SearchEvent {
     data class DayTimeChanged(val dayTime: DayTime) : SearchEvent
     data class QueryChanged(val query: String) : SearchEvent
     data class AddFoodComponent(val foodComponent: FoodComponent) : SearchEvent
@@ -158,18 +160,22 @@ class FoodSearchViewModel @Inject constructor(
                         }
                     }
                 }
+            appSettingRepository.language
+                .onEach { language ->
+                    _searchState.update { state ->
+                        state.updateParams(state.parameters.copy(language = language.code))
+                    }
+                }
+                .launchIn(viewModelScope)
+
             savedStateHandle
                 .getStateFlow<FoodComponent?>("newComponent", null)
                 .filterNotNull()
-                .collect { component ->
+                .onEach { component ->
                     onEvent(SearchEvent.AddFoodComponent(component))
                     savedStateHandle.remove<Pair<Double, FoodComponent>>("newComponent")
                 }
-            appSettingRepository.language.collect { language ->
-                _searchState.update { uiState ->
-                    uiState.updateParams(uiState.parameters.copy(language = language.code))
-                }
-            }
+                .launchIn(viewModelScope)
         }
     }
 
@@ -426,11 +432,11 @@ class FoodSearchViewModel @Inject constructor(
             try {
                 if (mode is SearchMode.ComponentsForMeal) {
                     val originalMeal = historyRepository.getMealById(state.mealId)
-                    originalMeal.copy(
+                    val updated = originalMeal.copy(
                         mealFoodItems = originalMeal.mealFoodItems + mealFoodItems,
                         mealRecipeItems = originalMeal.mealRecipeItems + mealRecipeItems
                     )
-                    historyRepository.updateMeal(originalMeal)
+                    historyRepository.updateMeal(updated)
                 } else {
                     val newMeal = Meal(
                         id = state.mealId,

@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
+import android.content.Context
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.dto.ReportDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
@@ -19,6 +21,7 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.mapper.RecipeMapper
 import com.frontend.nutricheck.client.model.repositories.mapper.ReportMapper
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -33,6 +36,7 @@ import javax.inject.Inject
 import kotlin.jvm.java
 
 class RecipeRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val recipeDao: RecipeDao,
     private val recipeSearchDao: RecipeSearchDao,
     private val ingredientDao: IngredientDao,
@@ -90,10 +94,10 @@ class RecipeRepositoryImpl @Inject constructor(
                     val message = errorResponse.body.title + ": " + errorResponse.body.detail
                     emit(Result.Error(errorResponse.body.status, message))
                 } else {
-                    emit(Result.Error(message = "Unknown error"))
+                    emit(Result.Error(message = context.getString(R.string.unknown_error_message)))
                 }
             } catch (io: okio.IOException) {
-                emit(Result.Error(message = "Please check your internet connection."))
+                emit(Result.Error(message = context.getString(R.string.io_exception_message)))
             }
         }
     }.flowOn(Dispatchers.IO)
@@ -168,14 +172,14 @@ class RecipeRepositoryImpl @Inject constructor(
             val code = response.code()
 
             val errorMessage = when (code) {
-                409 -> "Upload failed: The Recipe you are trying to upload already exists."
-                401 -> "Upload failed: Unauthorized. Please log in."
-                else -> "Upload failed"
+                409 -> context.getString(R.string.upload_recipe_409_error_message)
+                401 -> context.getString(R.string.upload_recipe_401_error_message)
+                else -> context.getString(R.string.upload_recipe_general_error_message)
             }
 
             Result.Error(code, message = errorMessage)
         } catch (io: IOException) {
-            Result.Error(message = "Connection issue")
+            Result.Error(message = context.getString(R.string.io_exception_message))
         }
     }
 
@@ -195,10 +199,10 @@ class RecipeRepositoryImpl @Inject constructor(
                 val message = errorResponse.body.title + ": "+ errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {
-                Result.Error(message = "Unknown server error")
+                Result.Error(message = context.getString(R.string.unknown_error_message))
             }
         } catch (io: IOException) {
-            Result.Error(message = "Connection issue")
+            Result.Error(message = context.getString(R.string.io_exception_message))
         }
     }
 

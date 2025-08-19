@@ -1,5 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.history
 
+import android.content.Context
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
@@ -18,6 +20,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMe
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -29,6 +32,7 @@ import java.util.Date
 import javax.inject.Inject
 
 class HistoryRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val mealDao: MealDao,
     private val mealFoodItemDao: MealFoodItemDao,
     private val mealRecipeItemDao: MealRecipeItemDao,
@@ -68,10 +72,10 @@ class HistoryRepositoryImpl @Inject constructor(
                 val message = errorResponse.body.title + ": "+ errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {
-                Result.Error(message = "Unknown error")
+                Result.Error(message = context.getString(R.string.unknown_error_message))
             }
         } catch (e: IOException) {
-            Result.Error(message = "Connection issue>")
+            Result.Error(message = context.getString(R.string.io_exception_message))
         }
     }
 
