@@ -1,17 +1,16 @@
 package com.frontend.nutricheck.client.model.repositories.foodproducts
 
 import android.content.Context
-import androidx.compose.ui.res.stringResource
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.FoodSearchDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.FoodSearchEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.mapper.FoodProductMapper
-import com.frontend.nutricheck.client.model.data_sources.data.Result
-import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.FoodSearchDao
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.FoodSearchEntity
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

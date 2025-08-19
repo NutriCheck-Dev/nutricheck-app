@@ -10,7 +10,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Language
-import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
