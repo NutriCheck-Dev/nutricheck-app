@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.model.repositories
+package com.frontend.nutricheck.client.model.repositories.history
 
 import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
@@ -15,9 +15,8 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMe
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.repositories.history.HistoryRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
-import com.nutricheck.frontend.TestDataFactory
+import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -31,7 +30,7 @@ import okhttp3.MultipartBody
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions
 import retrofit2.Response
 import java.util.Date
 
@@ -81,14 +80,17 @@ class HistoryRepositoryImplTest {
     }
 
     @Test
-    fun `get calories of the day`() = runTest{
+    fun `get calories of the day`() = runTest {
         every { DbMealMapper.toMeal(mealWithAll) } returns meal
         coEvery { mealDao.getMealsWithAllForDay(Date()) } returns listOf(mealWithAll)
 
         val calories = repository.getCaloriesOfDay(Date())
 
-        assertEquals(meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories } +
-                meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }.toInt(), calories.toDouble())
+        Assertions.assertEquals(
+            meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories } +
+                    meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }.toInt(),
+            calories.toDouble()
+        )
     }
 
     @Test
@@ -102,7 +104,7 @@ class HistoryRepositoryImplTest {
         val result = repository.requestAiMeal(file)
 
         if (result is Result.Success) {
-            assertEquals(meal, result.data)
+            Assertions.assertEquals(meal, result.data)
         }
     }
 
@@ -127,7 +129,7 @@ class HistoryRepositoryImplTest {
         every { DbMealMapper.toMealEntity(meal) } returns mealEntity
         coEvery { mealDao.update(mealEntity) } just Runs
 
-        coEvery {foodDao.exists(meal.mealFoodItems.first().foodProduct.id)} returns false
+        coEvery { foodDao.exists(meal.mealFoodItems.first().foodProduct.id) } returns false
         coEvery { foodDao.insert(foodProductEntity) } just Runs
 
         coEvery { recipeDao.exists(meal.mealRecipeItems.first().recipe.id) } returns false
@@ -160,8 +162,8 @@ class HistoryRepositoryImplTest {
 
         val meals = repository.getMealsForDay(date)
 
-        assertEquals(meal.id, meals.first().id)
-        assertEquals(meal.calories, meals.first().calories, 0.0)
+        Assertions.assertEquals(meal.id, meals.first().id)
+        Assertions.assertEquals(meal.calories, meals.first().calories, 0.0)
     }
 
     @Test
@@ -172,8 +174,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealById(mealId)
 
-        assertEquals(meal.id, result.id)
-        assertEquals(meal.calories, result.calories, 0.0)
+        Assertions.assertEquals(meal.id, result.id)
+        Assertions.assertEquals(meal.calories, result.calories, 0.0)
     }
 
     //exception?
@@ -206,18 +208,18 @@ class HistoryRepositoryImplTest {
         coVerify { mealRecipeItemDao.insertAll(any()) }
     }
 
-//    @Test
-//    fun `get daily macros`() = runTest {
-//        val date = Date()
-//        coEvery { mealDao.getMealsWithAllForDay(date) } returns listOf(mealWithAll)
-//        every { DbMealMapper.toMeal(mealWithAll) } returns meal
-//
-//        val macros = repository.getDailyMacros()
-//
-//        assertEquals(meal.fat.toInt(), macros[2] )
-//        assertEquals(meal.carbohydrates.toInt(), macros[0] )
-//        assertEquals(meal.protein.toInt(), macros[1] )
-//    }
+    @Test
+    fun `get daily macros`() = runTest {
+        val date = Date()
+        coEvery { mealDao.getMealsWithAllForDay(date) } returns listOf(mealWithAll)
+        every { DbMealMapper.toMeal(mealWithAll) } returns meal
+
+        val macros = repository.getDailyMacros()
+
+        Assertions.assertEquals(meal.fat.toInt(), macros[2])
+        Assertions.assertEquals(meal.carbohydrates.toInt(), macros[0])
+        Assertions.assertEquals(meal.protein.toInt(), macros[1])
+    }
 
     @Test
     fun `get meal food Item by id`() = runTest {
@@ -230,8 +232,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealFoodItemById(mealId, foodProductId)
 
-        assertEquals(mealId, result.mealId)
-        assertEquals(foodProductId, result.foodProduct.id)
+        Assertions.assertEquals(mealId, result.mealId)
+        Assertions.assertEquals(foodProductId, result.foodProduct.id)
     }
 
     @Test
@@ -257,19 +259,19 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealRecipeItemById(mealId, recipeId)
 
-        assertEquals(mealId, result.mealId)
-        assertEquals(recipeId, result.recipe.id)
+        Assertions.assertEquals(mealId, result.mealId)
+        Assertions.assertEquals(recipeId, result.recipe.id)
     }
 
      @Test
     fun `update meal recipe item`() = runTest {
-        val mealRecipeItem = TestDataFactory.createDefaultMealRecipeItem()
-        val mealRecipeItemEntity = TestDataFactory.createDefaultMealRecipeItemEntity()
-        every { DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem) } returns mealRecipeItemEntity
-        coEvery { mealRecipeItemDao.update(mealRecipeItemEntity) } just Runs
+         val mealRecipeItem = TestDataFactory.createDefaultMealRecipeItem()
+         val mealRecipeItemEntity = TestDataFactory.createDefaultMealRecipeItemEntity()
+         every { DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem) } returns mealRecipeItemEntity
+         coEvery { mealRecipeItemDao.update(mealRecipeItemEntity) } just Runs
 
-        repository.updateMealRecipeItem(mealRecipeItem)
+         repository.updateMealRecipeItem(mealRecipeItem)
 
-        coVerify { mealRecipeItemDao.update(mealRecipeItemEntity) }
-    }
+         coVerify { mealRecipeItemDao.update(mealRecipeItemEntity) }
+     }
 }

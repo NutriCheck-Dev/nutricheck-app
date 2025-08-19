@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.model.repositories
+package com.frontend.nutricheck.client.model.repositories.user
 
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
@@ -7,7 +7,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.UserDat
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.WeightDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
-import com.frontend.nutricheck.client.model.repositories.user.UserDataRepositoryImpl
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -56,7 +55,8 @@ class UserDataRepositoryImplTest {
     private val weightList = listOf(
         Weight(value = 75.0, date = Date(1104537600000L)), // 2005-01-01
         Weight(value = 76.0, date = Date(1199145600000L)), // 2008-01-01
-        Weight(value = 74.5, date = Date(1420070400000L) // 2015-01-01
+        Weight(
+            value = 74.5, date = Date(1420070400000L) // 2015-01-01
         )
     )
 

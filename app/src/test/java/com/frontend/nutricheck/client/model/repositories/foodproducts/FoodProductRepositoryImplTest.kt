@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.model.repositories
+package com.frontend.nutricheck.client.model.repositories.foodproducts
 
 import android.content.Context
 import com.frontend.nutricheck.client.dto.FoodProductDTO
@@ -9,9 +9,8 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepositoryImpl
 import com.frontend.nutricheck.client.model.repositories.mapper.FoodProductMapper
-import com.nutricheck.frontend.TestDataFactory
+import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -108,7 +107,8 @@ class FoodProductRepositoryImplTest {
         coEvery { api.searchFoodProduct(query, "en") } returns Response.error(
             400,
             TestDataFactory.createDefaultErrorMessage()
-                .toResponseBody("application/json".toMediaTypeOrNull()))
+                .toResponseBody("application/json".toMediaTypeOrNull())
+        )
 
         val result = repository.searchFoodProducts(query, "en").first()
         assert(result is Result.Error)

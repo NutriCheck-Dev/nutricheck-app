@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels.recipe
+package com.frontend.nutricheck.client.ui.view_model.recipe
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
