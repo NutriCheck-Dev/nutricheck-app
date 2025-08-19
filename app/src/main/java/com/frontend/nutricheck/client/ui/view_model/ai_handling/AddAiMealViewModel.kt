@@ -72,7 +72,10 @@ class AddAiMealViewModel @Inject constructor(
     fun onEvent(event: AddAiMealEvent) {
         when (event) {
             is AddAiMealEvent.OnRetakePhoto -> retakePhoto()
-            is AddAiMealEvent.OnSubmitPhoto -> submitPhoto()
+            is AddAiMealEvent.OnSubmitPhoto ->  {
+                setLoading()
+                submitPhoto()
+            }
             is AddAiMealEvent.OnTakePhoto -> takePhoto()
             is AddAiMealEvent.ResetErrorState -> setReady()
             else -> { /* other events are emitted by the ViewModel */ }
@@ -101,7 +104,6 @@ class AddAiMealViewModel @Inject constructor(
      * Also validates the meal data received from the backend.
      */
     private fun submitPhoto() {
-        setLoading()
         viewModelScope.launch {
             val multipartBody = imageProcessor.convertUriToMultipartBody(_photoUri.value)
             if (multipartBody == null) {
@@ -135,7 +137,7 @@ class AddAiMealViewModel @Inject constructor(
                 }
             }
             is Result.Error -> {
-                setError(appContext.getString(R.string.error_encoding_image))
+                setError(appContext.getString(R.string.error_ai_server_response))
                 _photoUri.value = null
             }
         }

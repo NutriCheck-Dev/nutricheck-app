@@ -164,4 +164,5 @@
     <string name="searchbar_placeholder_regular">Suche</string>
     <string name="search_tab_all">Alle</string>
     <string name="search_tab_my_recipes">Meine Rezepte</string>
+    <string name="error_ai_server_response">Die Antwort des Servers ist fehlerhaft, bitte versuche es erneut</string>
 </resources>

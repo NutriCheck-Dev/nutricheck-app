@@ -135,4 +135,5 @@
     <string name="searchbar_placeholder_regular">Search</string>
     <string name="search_tab_all">All</string>
     <string name="search_tab_my_recipes">My Recipes</string>
+    <string name="error_ai_server_response">The response of the server contains an error, please try again</string>
 </resources>
