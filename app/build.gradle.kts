@@ -59,7 +59,7 @@ kover {
 }
 android {
     namespace = "com.frontend.nutricheck.client"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.frontend.nutricheck.client"
