@@ -17,6 +17,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFo
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealFoodItemMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealRecipeItemMapper
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbRecipeMapper
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
@@ -216,7 +217,7 @@ class HistoryRepositoryImpl @Inject constructor(
     private suspend fun checkForRecipes(mealRecipeItems: List<MealRecipeItem>) = withContext(Dispatchers.IO) {
         for (mealRecipeItem in mealRecipeItems) {
             if (!recipeDao.exists(mealRecipeItem.recipe.id)) {
-                mealRecipeItemDao.insert(DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem))
+                recipeDao.insert(DbRecipeMapper.toRecipeEntity(mealRecipeItem.recipe, false))
             }
         }
     }
