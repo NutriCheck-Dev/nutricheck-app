@@ -1,10 +1,12 @@
 package com.nutricheck.frontend.viewmodels.recipe
 
+import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
 import io.mockk.coEvery
@@ -36,18 +38,20 @@ class RecipePageViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val testScope = TestScope(dispatcher)
     private lateinit var repository: RecipeRepository
-
+    private lateinit var snackbarManager: SnackbarManager
+    private lateinit var context: Context
     private val recipe1 = Recipe(id = "r1", name = "Apple Pie", calories = 300.0, carbohydrates = 40.0, protein = 10.0, fat = 10.0, servings = 2)
     private val recipe2= Recipe(id = "r2", name = "Pie Apple", calories = 250.0, carbohydrates = 35.0, protein = 8.0, fat = 9.0, servings = 1)
     private val recipe3 = Recipe(id = "r3", name = "Pineapple Tart", calories = 200.0, carbohydrates = 30.0, protein = 5.0, fat = 7.0, servings = 1)
 
-    private fun makeViewModel() = RecipePageViewModel(repository)
+    private fun makeViewModel() = RecipePageViewModel(repository, snackbarManager, context)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         repository = mockk(relaxed = true)
-
+        snackbarManager = mockk(relaxed = true)
+        context = mockk(relaxed = true)
         coEvery { repository.observeMyRecipes() } returns flowOf(listOf(recipe1, recipe2, recipe3))
     }
 

@@ -1,5 +1,6 @@
 package com.nutricheck.frontend.viewmodels.recipe
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
@@ -13,6 +14,7 @@ import com.frontend.nutricheck.client.model.repositories.history.HistoryReposito
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import io.mockk.coEvery
@@ -42,7 +44,9 @@ class RecipeOverviewViewModelTest {
 
     private lateinit var recipeRepository: RecipeRepository
     private lateinit var historyRepository: HistoryRepository
+    private lateinit var snackbarManager: SnackbarManager
     private lateinit var combinedSearchListStore: CombinedSearchListStore
+    private lateinit var context: Context
 
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
@@ -93,7 +97,7 @@ class RecipeOverviewViewModelTest {
     )
 
     private fun makeViewModel(handle: SavedStateHandle): RecipeOverviewViewModel =
-        RecipeOverviewViewModel(recipeRepository, historyRepository, combinedSearchListStore, handle)
+        RecipeOverviewViewModel(recipeRepository, historyRepository, snackbarManager, combinedSearchListStore, context, handle)
 
     @Before
     fun setup() {
@@ -102,6 +106,8 @@ class RecipeOverviewViewModelTest {
         recipeRepository = mockk(relaxed = true)
         historyRepository = mockk(relaxed = true)
         combinedSearchListStore = mockk(relaxed = true)
+        snackbarManager = mockk(relaxed = true)
+        context = mockk(relaxed = true)
 
         every { combinedSearchListStore.state } returns MutableStateFlow(emptyList())
     }

@@ -13,6 +13,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import io.mockk.coEvery
@@ -47,6 +48,7 @@ class RecipeEditorViewModelTest {
     private lateinit var recipeRepository: RecipeRepository
     private lateinit var appSettings: AppSettingRepository
     private lateinit var foodProductRepository: FoodProductRepository
+    private lateinit var snackbarManager: SnackbarManager
     private lateinit var combinedSearchListStore: CombinedSearchListStore
     private lateinit var context: Context
 
@@ -88,6 +90,7 @@ class RecipeEditorViewModelTest {
             recipeRepository,
             appSettings,
             foodProductRepository,
+            snackbarManager,
             combinedSearchListStore,
             context,
             SavedStateHandle()
@@ -98,6 +101,7 @@ class RecipeEditorViewModelTest {
             recipeRepository,
             appSettings,
             foodProductRepository,
+            snackbarManager,
             combinedSearchListStore,
             context,
             SavedStateHandle(mapOf("recipeId" to recipeId))
@@ -110,6 +114,7 @@ class RecipeEditorViewModelTest {
         recipeRepository = mockk(relaxed = true)
         appSettings = mockk(relaxed = true)
         foodProductRepository = mockk(relaxed = true)
+        snackbarManager = mockk(relaxed = true)
         combinedSearchListStore = mockk(relaxed = true)
         context = mockk(relaxed = true)
 
