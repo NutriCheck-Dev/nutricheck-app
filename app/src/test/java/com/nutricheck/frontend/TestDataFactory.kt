@@ -287,7 +287,7 @@ object TestDataFactory {
     fun createDefaultReportJson(): String {
         return "{\n" +
                 "  \"description\":\"test report\",\n" +
-                "  \"recipeId\":\"testRecipeId\",\n" +
+                "  \"recipeId\":\"testRecipeId\"\n" +
                 "}"
     }
 
