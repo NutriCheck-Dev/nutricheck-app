@@ -73,6 +73,7 @@ fun ProfilePage(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column (
             modifier = Modifier

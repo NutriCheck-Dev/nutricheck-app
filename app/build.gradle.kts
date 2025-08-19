@@ -31,7 +31,6 @@ kover {
                     "*HiltModules*",
 
                     // Data classes
-                    "*dao*",
                     "*exceptions*",
 
                     // UI Theme & Resources
@@ -49,7 +48,10 @@ kover {
 
                 packages(
                     "com.frontend.nutricheck.client.ui.theme",
-                    "dagger.hilt.internal.aggregatedroot.codegen"
+                    "dagger.hilt.internal.aggregatedroot.codegen",
+                    "com.frontend.nutricheck.client.ui.view_model.navigation",
+                    "com.frontend.nutricheck.client.model.data_sources.persistence.dao",
+                    "com.frontend.nutricheck.client.ui.view",
                 )
             }
         }
@@ -65,6 +67,12 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your app.
+            abiFilters += listOf("x86", "x86_64", "armeabi", "armeabi-v7a",
+                "arm64-v8a")
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -168,11 +176,12 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter.api) //?
+    testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
 }

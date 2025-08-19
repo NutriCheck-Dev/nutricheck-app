@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels
+package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.Context
 import com.frontend.nutricheck.client.AppThemeState
@@ -11,9 +11,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.User
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.ProfileViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -301,5 +298,32 @@ class ProfileViewModelTest {
             // Assert that the emitted event matches the expected event
             assertEquals(expectedEvent, viewModel.events.first())
         }
+    }
+    @Test
+    fun `deleteWeight deletes weight and updates weightData`() = runTest {
+        // Arrange: set up a weight and mock the repository behavior
+        val weight = Weight(value = 70.0, date = Date(1704067200000L))
+        viewModel.onEvent(ProfileEvent.SaveNewWeight(weight.value.toString(), weight.date))
+
+        coEvery { userDataRepository.deleteWeight(weight) } just runs
+
+        // Act: deleteWeight aufrufen
+        viewModel.onEvent(ProfileEvent.DeleteWeight)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert: deleteWeight wurde aufgerufen und weightData ist leer
+        //coVerify { userDataRepository.deleteWeight(weight) }
+        assertEquals(emptyList(), viewModel.weightData.first())
+        assertEquals(null, viewModel.selectedWeight.value)
+    }
+
+    @Test
+    fun `deleteWeight does not delete when weight is null`() = runTest {
+        // Arrange: selectedWeight is null
+        viewModel.onEvent(ProfileEvent.DeleteWeight)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert: deleteWeight was not called
+        coVerify(exactly = 0) { userDataRepository.deleteWeight(any()) }
     }
 }

@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels
+package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
@@ -8,16 +8,12 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.User
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.OnboardingEvent
-import com.frontend.nutricheck.client.ui.view_model.OnboardingViewModel
 import com.google.common.truth.Truth.assertThat
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every 
-import io.mockk.impl.annotations.MockK 
-import io.mockk.verify 
+import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

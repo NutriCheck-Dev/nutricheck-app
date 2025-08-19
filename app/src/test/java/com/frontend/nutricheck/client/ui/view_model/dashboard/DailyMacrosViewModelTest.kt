@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository

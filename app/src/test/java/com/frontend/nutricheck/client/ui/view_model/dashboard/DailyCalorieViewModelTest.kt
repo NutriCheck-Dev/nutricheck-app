@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
@@ -202,7 +202,8 @@ class DailyCalorieViewModelTest {
         viewModel = DailyCalorieViewModel(mockUserDataRepository, mockHistoryRepository)
 
         // Verify that the captured date represents today
-        val expectedDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
+        val expectedDate =
+            Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val capturedDate = dateSlot.captured
 
         // Allow for small time differences (test execution time)

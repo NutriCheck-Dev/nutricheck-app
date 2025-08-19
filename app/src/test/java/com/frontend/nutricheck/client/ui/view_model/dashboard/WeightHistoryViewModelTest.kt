@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
@@ -94,10 +94,14 @@ class WeightHistoryViewModelTest {
         assertEquals(targetWeight, state.weightGoal)
 
         // Verify entries are sorted by date (oldest first)
-        assertTrue(state.weightData[0].date.before(state.weightData[1].date) ||
-                state.weightData[0].date == state.weightData[1].date)
-        assertTrue(state.weightData[1].date.before(state.weightData[2].date) ||
-                state.weightData[1].date == state.weightData[2].date)
+        assertTrue(
+            state.weightData[0].date.before(state.weightData[1].date) ||
+                    state.weightData[0].date == state.weightData[1].date
+        )
+        assertTrue(
+            state.weightData[1].date.before(state.weightData[2].date) ||
+                    state.weightData[1].date == state.weightData[2].date
+        )
 
         coVerify { mockUserDataRepository.getWeightHistory() }
         coVerify { mockUserDataRepository.getTargetWeight() }

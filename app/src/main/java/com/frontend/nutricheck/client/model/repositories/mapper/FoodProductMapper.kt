@@ -5,13 +5,13 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 
 object FoodProductMapper {
-    fun toDTO(foodProductEntity: FoodProduct) : FoodProductDTO = FoodProductDTO(
-        id = foodProductEntity.id,
-        name = foodProductEntity.name,
-        calories = foodProductEntity.calories,
-        carbohydrates = foodProductEntity.carbohydrates,
-        protein = foodProductEntity.protein,
-        fat = foodProductEntity.fat
+    fun toDTO(foodProduct: FoodProduct) : FoodProductDTO = FoodProductDTO(
+        id = foodProduct.id,
+        name = foodProduct.name,
+        calories = foodProduct.calories,
+        carbohydrates = foodProduct.carbohydrates,
+        protein = foodProduct.protein,
+        fat = foodProduct.fat
     )
 
     fun toData(foodProductDTO: FoodProductDTO): FoodProduct =
