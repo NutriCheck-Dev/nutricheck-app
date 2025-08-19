@@ -169,4 +169,9 @@
     <string name="upload_recipe_401_error_message">Hochladen fehlgeschlagen: Fehlende Authorizierung. Bitte melden Sie sich an.</string>
     <string name="upload_recipe_general_error_message">Hochladen fehlgeschlagen</string>
     <string name="unknown_error_message">Unbekannter Server Fehler.</string>
+
+    <string name="meal_item_menu_title">Aktion auswählen</string>
+    <string name="meal_item_menu_text">Möchtest du dieses Gericht entfernen?</string>
+    <string name="meal_item_menu_remove">Entfernen</string>
+    <string name="meal_item_menu_cancel">Abbrechen</string>
 </resources>
