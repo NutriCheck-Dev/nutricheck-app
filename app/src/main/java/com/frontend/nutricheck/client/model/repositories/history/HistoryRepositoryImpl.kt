@@ -57,9 +57,10 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal> = withContext(Dispatchers.IO) {
+    override suspend fun requestAiMeal(file: MultipartBody.Part, language : String): Result<Meal> =
+        withContext(Dispatchers.IO) {
         try {
-            val response = api.estimateMeal(file)
+            val response = api.estimateMeal(file, language)
             val body = response.body()
             val errorBody = response.errorBody()
 

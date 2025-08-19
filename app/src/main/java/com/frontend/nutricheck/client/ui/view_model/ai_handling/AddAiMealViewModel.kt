@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.Binds
@@ -43,6 +44,7 @@ sealed interface AddAiMealEvent {
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
     application: Application,
+    private val appSettingRepository: AppSettingRepository,
     private val historyRepository: HistoryRepository,
     private val imageProcessor: ImageProcessor,
     private val cameraController: CameraController
@@ -64,6 +66,19 @@ class AddAiMealViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<AddAiMealEvent>()
     val events: SharedFlow<AddAiMealEvent> = _events.asSharedFlow()
+
+    private lateinit var _languageCode: String
+
+    /**
+     * Set the language code based on the user's app settings.
+     */
+    init {
+        viewModelScope.launch {
+            appSettingRepository.language.collect { language ->
+                _languageCode = language.code
+            }
+        }
+    }
     /**
      * Handles UI events which need to be processed by the ViewModel.
      *
@@ -111,7 +126,7 @@ class AddAiMealViewModel @Inject constructor(
                 _photoUri.value = null
                 return@launch
             }
-            val response = historyRepository.requestAiMeal(multipartBody)
+            val response = historyRepository.requestAiMeal(multipartBody, _languageCode)
             handleApiResponse(response)
         }
     }

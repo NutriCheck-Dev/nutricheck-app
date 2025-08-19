@@ -100,10 +100,11 @@ class RetrofitTest {
         val response = MockResponse()
             .setResponseCode(200)
             .setBody(mealJson)
+        val languageCode = "en"
 
         mockWebServer.enqueue(response)
         val file = TestDataFactory.createDefaultMultipartBody()
-        val result = api.estimateMeal(file)
+        val result = api.estimateMeal(file, languageCode)
 
         assertEquals(200, result.code())
         assertEquals(mealDTO, result.body())
