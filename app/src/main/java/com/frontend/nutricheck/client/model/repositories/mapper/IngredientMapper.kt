@@ -6,12 +6,12 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import kotlin.math.absoluteValue
 
 object IngredientMapper {
-    fun toDTO(ingredients: Ingredient) : IngredientDTO =
+    fun toDTO(ingredient: Ingredient) : IngredientDTO =
         IngredientDTO(
-            recipeId = ingredients.recipeId,
-            foodProductId = ingredients.foodProduct.id,
-            foodProduct = FoodProductMapper.toDTO(ingredients.foodProduct),
-            quantity = ingredients.quantity
+            recipeId = ingredient.recipeId,
+            foodProductId = ingredient.foodProduct.id,
+            foodProduct = FoodProductMapper.toDTO(ingredient.foodProduct),
+            quantity = ingredient.quantity
     )
 
     fun toData(ingredientDTO: IngredientDTO): Ingredient {
