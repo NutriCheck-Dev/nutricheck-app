@@ -30,6 +30,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
 import java.util.Date
+import kotlin.math.floor
 
 enum class WeightRange(val id: String, val labelResId: Int) {
     LAST_1_MONTH("1M", R.string.range_1_month),
@@ -114,20 +115,28 @@ fun WeightLineChart(
     val daysInRange = ((now.time - startDate.time) / (24 * 60 * 60 * 1000)).toInt() + 1
 
     val weightByDay = data.associateBy {
-        // Key = nur Datumsteil (Jahr/Monat/Tag)
         it.date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
     }
 
     val dates = (0 until daysInRange).map { offset ->
-        startDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().plusDays(offset.toLong())
+        startDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+            .plusDays(offset.toLong())
     }
 
-    val maxValue = data.maxOf { it.value }
-    val minValue = data.minOf { it.value }
+    // --- Chart-Bereich berechnen ---
+    val rawMin = data.minOf { it.value }
+    val rawMax = data.maxOf { it.value }
 
-    val steps = 3
-    val yStep = (maxValue - minValue) / steps
-    val yLabels = (0..steps).map { i -> minValue + i * yStep }
+    val minRange = 4.0
+    val range = (rawMax - rawMin).coerceAtLeast(minRange)
+
+    val chartMin = floor(rawMin)
+    val chartMax = chartMin + range
+
+    // Immer 4 Intervalle -> 5 Labels
+    val steps = 4
+    val yStep = (chartMax - chartMin) / steps
+    val yLabels = (0..steps).map { i -> chartMin + i * yStep }
 
     val labelPositions = when (selectedRange) {
         WeightRange.LAST_1_MONTH -> listOf(
@@ -147,8 +156,6 @@ fun WeightLineChart(
         )
     }
 
-
-
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -159,22 +166,22 @@ fun WeightLineChart(
                 .height(70.dp)
                 .padding(horizontal = 30.dp)
         ) {
-            val heightRatio = size.height / (maxValue - minValue).coerceAtLeast(1.0)
+            val heightRatio = size.height / (chartMax - chartMin).toFloat()
             val dayWidth = size.width / daysInRange.coerceAtLeast(1)
 
-            // Y-Achse
+            // --- Y-Achse ---
             yLabels.forEach { yValue ->
-                val y = size.height - (yValue - minValue) * heightRatio
+                val y = size.height - ((yValue - chartMin) * heightRatio).toFloat()
                 drawLine(
                     color = gridColor,
-                    start = Offset(0f, y.toFloat()),
-                    end = Offset(size.width, y.toFloat()),
+                    start = Offset(0f, y),
+                    end = Offset(size.width, y),
                     strokeWidth = 2f
                 )
                 drawContext.canvas.nativeCanvas.drawText(
-                    "%.0f".format(yValue),
-                    -4.5f,
-                    y.toFloat() + 12f,
+                    if (yValue % 1.0 == 0.0) "%.0f".format(yValue) else "%.1f".format(yValue),
+                    -10f,
+                    y + 12f,
                     android.graphics.Paint().apply {
                         color = textColor
                         textSize = 30f
@@ -184,19 +191,19 @@ fun WeightLineChart(
                 )
             }
 
+            // --- Datenpunkte ---
             val points = dates.mapIndexedNotNull { index, localDate ->
                 val weight = weightByDay[localDate]
                 if (weight != null) {
                     val x = index * dayWidth
-                    val y = size.height - (weight.value - minValue) * heightRatio
-                    x to Offset(x, y.toFloat())
+                    val y = size.height - ((weight.value - chartMin) * heightRatio).toFloat()
+                    x to Offset(x, y)
                 } else null
             }
 
             for (i in 0 until points.size - 1) {
                 val (_, p1) = points[i]
                 val (_, p2) = points[i + 1]
-
                 drawLine(
                     color = lineColor,
                     start = p1,
@@ -204,6 +211,8 @@ fun WeightLineChart(
                     strokeWidth = 4f
                 )
             }
+
+            // --- X-Achsen Labels ---
             labelPositions.forEach { (relativePos, label) ->
                 val x = size.width * relativePos
                 drawContext.canvas.nativeCanvas.drawText(
