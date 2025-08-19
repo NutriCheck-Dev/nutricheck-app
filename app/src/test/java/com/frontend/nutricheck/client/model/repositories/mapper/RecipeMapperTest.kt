@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.mapper
 
-import com.nutricheck.frontend.TestDataFactory
+import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject

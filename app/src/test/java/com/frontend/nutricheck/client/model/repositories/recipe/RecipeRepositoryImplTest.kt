@@ -16,7 +16,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.relations.R
 import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.mapper.RecipeMapper
 import com.frontend.nutricheck.client.model.repositories.mapper.ReportMapper
-import com.nutricheck.frontend.TestDataFactory
+import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify

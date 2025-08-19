@@ -1,7 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.mapper
 
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
-import com.nutricheck.frontend.TestDataFactory
+import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject

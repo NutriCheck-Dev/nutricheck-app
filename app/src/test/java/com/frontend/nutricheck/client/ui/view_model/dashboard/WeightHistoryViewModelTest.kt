@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels.dashboard
+package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository

@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.model.data_sources.persistence.mapper
 
-import com.nutricheck.frontend.TestDataFactory
+import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
 

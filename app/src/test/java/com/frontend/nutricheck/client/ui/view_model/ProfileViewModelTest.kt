@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.viewmodels
+package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.Context
 import com.frontend.nutricheck.client.AppThemeState
@@ -11,9 +11,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.User
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
-import com.frontend.nutricheck.client.ui.view_model.ProfileViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

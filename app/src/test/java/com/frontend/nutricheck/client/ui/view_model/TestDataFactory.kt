@@ -1,4 +1,4 @@
-package com.nutricheck.frontend
+package com.frontend.nutricheck.client.ui.view_model
 
 import com.frontend.nutricheck.client.dto.FoodProductDTO
 import com.frontend.nutricheck.client.dto.IngredientDTO
@@ -50,7 +50,7 @@ object TestDataFactory {
         carbohydrates = 1.0,
         protein = 2.0,
         fat = 3.0,
-        servings =  1,
+        servings = 1,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -163,14 +163,14 @@ object TestDataFactory {
         ingredient = createDefaultIngredientEntity(),
         foodProduct = createDefaultFoodProductEntity()
     )
-    
+
     fun createDefaultReport() = RecipeReport(
         description = "test report",
         recipeId = "testRecipeId",
         recipeName = "testRecipe",
         recipeInstructions = "test instructions",
     )
-    
+
     fun createDefaultReportDTO() = ReportDTO(
         description = "test report",
         recipeId = "testRecipeId"
@@ -212,7 +212,7 @@ object TestDataFactory {
         protein = 2.0,
         fat = 3.0,
         date = Date(),
-        dayTime = DayTime.dateToDayTime(Date()),
+        dayTime = DayTime.Companion.dateToDayTime(Date()),
         mealFoodItems = listOf(createDefaultMealItem()),
         mealRecipeItems = listOf(createDefaultMealRecipeItem())
     )
@@ -220,7 +220,7 @@ object TestDataFactory {
     fun createDefaultMealEntity() = MealEntity(
         id = "testMealId",
         historyDayDate = Date(),
-        dayTime = DayTime.dateToDayTime(Date()),
+        dayTime = DayTime.Companion.dateToDayTime(Date()),
         calories = 0.0,
         carbohydrates = 1.0,
         protein = 2.0,

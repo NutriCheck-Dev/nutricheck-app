@@ -1,7 +1,6 @@
-package com.nutricheck.frontend.model
+package com.frontend.nutricheck.client.model.data_sources.remote
 
-import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
-import com.nutricheck.frontend.TestDataFactory
+import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
