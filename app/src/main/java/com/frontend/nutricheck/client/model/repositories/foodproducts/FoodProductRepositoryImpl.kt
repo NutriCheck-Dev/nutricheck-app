@@ -1,5 +1,8 @@
 package com.frontend.nutricheck.client.model.repositories.foodproducts
 
+import android.content.Context
+import androidx.compose.ui.res.stringResource
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
@@ -10,6 +13,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.FoodSearchDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.search.FoodSearchEntity
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -20,6 +24,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class FoodProductRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val foodDao: FoodDao,
     private val foodSearchDao: FoodSearchDao,
     private val api: RemoteApi
@@ -57,10 +62,10 @@ class FoodProductRepositoryImpl @Inject constructor(
                         val message = errorResponse.body.title + ": " + errorResponse.body.detail
                         emit(Result.Error(errorResponse.body.status, message))
                     } else {
-                        emit(Result.Error(message = "Unknown error"))
+                        emit(Result.Error(message = context.getString(R.string.unknown_error_message)))
                     }
                 } catch (io: okio.IOException) {
-                    emit(Result.Error(message = "Oops, an error has occurred. Please check your internet connection."))
+                    emit(Result.Error(message = context.getString(R.string.io_exception_message)))
                 }
             }
     }.flowOn(Dispatchers.IO)
