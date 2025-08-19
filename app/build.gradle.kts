@@ -50,8 +50,8 @@ kover {
                     "com.frontend.nutricheck.client.ui.theme",
                     "dagger.hilt.internal.aggregatedroot.codegen",
                     "com.frontend.nutricheck.client.ui.view_model.navigation",
-                    "com.frontend.nutricheck.client.model.data_sources.persistence.dao"
-
+                    "com.frontend.nutricheck.client.model.data_sources.persistence.dao",
+                    "com.frontend.nutricheck.client.ui.view",
                 )
             }
         }

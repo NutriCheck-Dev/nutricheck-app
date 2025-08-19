@@ -20,6 +20,7 @@ import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
 import com.frontend.nutricheck.client.ui.view_model.SearchUiState
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -74,6 +75,7 @@ class FoodSearchViewModelTest {
     private lateinit var recipeRepository: RecipeRepository
     private lateinit var foodProductRepository: FoodProductRepository
     private lateinit var historyRepository: HistoryRepository
+    private lateinit var snackbarManager: SnackbarManager
     private lateinit var combinedStore: CombinedSearchListStore
     private lateinit var context: Context
     private val foodProduct1 = FoodProduct(
@@ -128,6 +130,7 @@ class FoodSearchViewModelTest {
         recipeRepository = mockk()
         foodProductRepository = mockk()
         historyRepository = mockk()
+        snackbarManager = mockk(relaxed = true)
         combinedStore = mockk(relaxed = true)
         context = mockk()
 
@@ -147,6 +150,7 @@ class FoodSearchViewModelTest {
             foodProductRepository,
             historyRepository,
             combinedStore,
+            snackbarManager,
             context,
             handle
         )
