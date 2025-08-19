@@ -101,8 +101,8 @@ class AddAiMealViewModel @Inject constructor(
      * Also validates the meal data received from the backend.
      */
     private fun submitPhoto() {
+        setLoading()
         viewModelScope.launch {
-            setLoading()
             val multipartBody = imageProcessor.convertUriToMultipartBody(_photoUri.value)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
