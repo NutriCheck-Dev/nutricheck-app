@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories
 
+import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
@@ -43,12 +44,14 @@ class HistoryRepositoryImplTest {
     val foodDao: FoodDao = mockk(relaxed = true)
     val recipeDao: RecipeDao = mockk(relaxed = true)
     val api: RemoteApi = mockk(relaxed = true)
+    var context = mockk<Context>(relaxed = true)
     lateinit var meal: Meal
     lateinit var mealWithAll: MealWithAll
 
     @Before
     fun setUp() {
         repository = HistoryRepositoryImpl(
+            context,
             mealDao,
             mealFoodItemDao,
             mealRecipeItemDao,
@@ -206,7 +209,6 @@ class HistoryRepositoryImplTest {
     @Test
     fun `get daily macros`() = runTest {
         val date = Date()
-        coEvery { repository.getMealsForDay(date) } returns listOf(meal)
         coEvery { mealDao.getMealsWithAllForDay(date) } returns listOf(mealWithAll)
         every { DbMealMapper.toMeal(mealWithAll) } returns meal
 

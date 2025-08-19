@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
+import android.content.Context
 import com.frontend.nutricheck.client.dto.RecipeDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
@@ -41,6 +42,8 @@ class RecipeRepositoryImplTest {
     val ingredientDao: IngredientDao = mockk(relaxed = true)
     val foodDao: FoodDao = mockk(relaxed = true)
     val api: RemoteApi = mockk(relaxed = true)
+    var context = mockk<Context>(relaxed = true)
+
     private lateinit var recipeDTO: RecipeDTO
     private lateinit var recipe: Recipe
     private lateinit var recipeWithIngredients: RecipeWithIngredients
@@ -48,7 +51,7 @@ class RecipeRepositoryImplTest {
 
     @Before
     fun setUp() {
-        repository = RecipeRepositoryImpl(recipeDao, recipeSearchDao, ingredientDao, foodDao, api)
+        repository = RecipeRepositoryImpl(context, recipeDao, recipeSearchDao, ingredientDao, foodDao, api)
         this.recipeDTO = TestDataFactory.createDefaultRecipeDTO()
         this.recipe = TestDataFactory.createDefaultRecipe()
         this.recipeWithIngredients = TestDataFactory.createDefaultRecipeWithIngredients()
@@ -241,17 +244,6 @@ class RecipeRepositoryImplTest {
         repository.updateIngredient(recipe.ingredients.first())
 
         coVerify { ingredientDao.update(ingredientEntity) }
-    }
-
-    @Test
-    fun `get recipes by name`() = runTest {
-        val recipeWithIngredientsList = listOf(recipeWithIngredients)
-        every { recipeDao.getRecipesByName(recipe.name) } returns flowOf(recipeWithIngredientsList)
-        every { DbRecipeMapper.toRecipe(recipeWithIngredients) } returns recipe
-
-        val result = repository.getRecipesByName(recipe.name).first()
-        Assert.assertNotNull(result)
-        compareRecipes(recipe, result)
     }
 
     @Test

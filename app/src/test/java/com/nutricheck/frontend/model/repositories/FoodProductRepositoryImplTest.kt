@@ -1,5 +1,6 @@
 package com.nutricheck.frontend.model.repositories
 
+import android.content.Context
 import com.frontend.nutricheck.client.dto.FoodProductDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Result
@@ -32,6 +33,7 @@ class FoodProductRepositoryImplTest {
     val foodSearchDao: FoodSearchDao = mockk(relaxed = true)
     val foodDao: FoodDao = mockk(relaxed = true)
     val api: RemoteApi = mockk(relaxed = true)
+    var context = mockk<Context>(relaxed = true)
     private lateinit var query: String
     private lateinit var foodProductDTO: FoodProductDTO
     private lateinit var foodProduct: FoodProduct
@@ -40,7 +42,7 @@ class FoodProductRepositoryImplTest {
 
     @Before
     fun setUp() {
-        repository = FoodProductRepositoryImpl(foodDao, foodSearchDao, api)
+        repository = FoodProductRepositoryImpl(context, foodDao, foodSearchDao, api)
         this.query = "test"
         this.foodProductDTO = TestDataFactory.createDefaultFoodProductDTO()
         this.foodProduct = TestDataFactory.createDefaultFoodProduct()
