@@ -152,7 +152,7 @@
     <string name="recipe_description">Beschreibung</string>
     <string name="meal_logged_success">Mahlzeit erfolgreich hinzugefügt</string>
     <string name="show_error_message_title">Ups, es ist etwas schief gelaufen</string>
-    <string name="error_not_enough_ingredients">Bitte füge mindestens zwei Zutat hinzu.</string>
+    <string name="error_not_enough_ingredients">Bitte füge mindestens zwei Zutaten hinzu.</string>
     <string name="error_no_recipe_name">Bitte gebe deinem Rezept einen Namen.</string>
     <string name="error_missing_dayTime">Bitte wähle eine Tageszeit für Mahlzeit aus</string>
     <string name="error_create_meal_missing_foodComponent">Bitte füge mindestens ein Lebensmittelprodukt oder Rezept zur Mahlzeit hinzu.</string>
@@ -160,4 +160,8 @@
     <string name="error_search_result_empty">Keine Ergebnisse gefunden</string>
     <string name="label_delete">Löschen</string>
     <string name="delete_weight_dialog_title">"Möchtest du das Gewicht wirklich löschen? "</string>
+    <string name="dishitem_button_portions">"cal, Portionen: "</string>
+    <string name="searchbar_placeholder_regular">Suche</string>
+    <string name="search_tab_all">Alle</string>
+    <string name="search_tab_my_recipes">Meine Rezepte</string>
 </resources>

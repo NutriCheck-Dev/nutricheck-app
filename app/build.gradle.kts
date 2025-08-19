@@ -67,6 +67,12 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your app.
+            abiFilters += listOf("x86", "x86_64", "armeabi", "armeabi-v7a",
+                "arm64-v8a")
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -127,6 +133,10 @@ dependencies {
     implementation(libs.vico.core)
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)

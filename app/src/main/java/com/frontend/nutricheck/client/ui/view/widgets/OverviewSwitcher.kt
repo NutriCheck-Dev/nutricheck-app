@@ -150,17 +150,3 @@ fun Modifier.customTabIndicatorOffset(
         .offset(x = indicatorOffset)
         .width(currentTabWidth)
 }
-
-@Preview(showBackground = true)
-@Composable
-fun OverviewSwitcherPreview() {
-    AppTheme {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-            OverviewSwitcher(
-                options = listOf("Option 1", "Option 2"),
-                selectedOption = "Option 2",
-                onSelect = {}
-            )
-        }
-    }
-}

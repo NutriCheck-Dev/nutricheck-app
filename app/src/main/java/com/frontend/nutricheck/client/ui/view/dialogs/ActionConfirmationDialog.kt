@@ -43,19 +43,3 @@ fun ActionConfirmationDialog(
         }
     )
 }
-
-@Preview
-@Composable
-fun ActionConfirmationPreview() {
-    AppTheme {
-        ActionConfirmationDialog(
-            title = "Aktion Bestätigen",
-            description = "Sind Sie sicher, dass Sie diese Aktion ausführen möchten?",
-            confirmText = "Ja",
-            cancelText = "Nein",
-            icon = Icons.Default.Build,
-            onConfirm = { /* Handle confirm action */ },
-            onCancel = { /* Handle cancel action */ }
-        )
-    }
-}

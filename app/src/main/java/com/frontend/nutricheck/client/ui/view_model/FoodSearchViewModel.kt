@@ -224,19 +224,16 @@ class FoodSearchViewModel @Inject constructor(
                 is SearchMode.ComponentsForMeal,
                      SearchMode.LogNewMeal -> {
                          if (_searchState.value.parameters.selectedTab == 1) {
-                             recipeRepository.getRecipesByName(query).let { recipes ->
-                                 if (recipes.isEmpty()) {
-                                     return@launch
-                                 } else {
-                                     _searchState.update { state ->
-                                         state.updateParams(state.parameters.copy(localRecipesResults = recipes))
-                                     }
-                                     val recipeList = _searchState.value.parameters.localRecipesResults
-                                     combinedSearchListStore.update(recipeList)
-                                     setReady()
-                                     return@launch
+                             setLoading()
+                             recipeRepository.observeMyRecipes().collect { recipes ->
+                                 val results = recipes.filter { it.name.contains(query, ignoreCase = true) }
+                                 _searchState.update { state ->
+                                     state.updateParams(state.parameters.copy(localRecipesResults = results))
                                  }
+                                 combinedSearchListStore.update(results)
+                                 setReady()
                              }
+                             return@launch
                          } else {
                     val foodProductFlow = foodProductRepository
                         .searchFoodProducts(query, language)

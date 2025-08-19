@@ -17,8 +17,8 @@ import com.frontend.nutricheck.client.ui.theme.AppTheme
 @Composable
 fun AutoSizedNutrientChart(
     modifier: Modifier = Modifier,
-    nutrient: String = "Calories",
-    subtitle: String = "kcal",
+    nutrient: String,
+    subtitle: String,
     actualValue: Int = 700,
     totalValue: Int = 2000,
     baseHeight: Dp = 200.dp,
@@ -45,19 +45,5 @@ fun AutoSizedNutrientChart(
                 totalValue = totalValue
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun AutoSizedNutrienChartPreview() {
-    AppTheme {
-        AutoSizedNutrientChart(
-            nutrient = "Calories",
-            subtitle = "kcal",
-            actualValue = 700,
-            totalValue = 2000,
-            baseHeight = 180.dp
-        )
     }
 }

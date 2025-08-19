@@ -41,7 +41,6 @@ fun ServingsPicker(
     value: Int,
     range: IntRange,
     integerList: List<String> = range.map { it.toString() },
-    //fractionList: List<String> = Fractions.entries.map { it.toString() },
     onValueChange: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }

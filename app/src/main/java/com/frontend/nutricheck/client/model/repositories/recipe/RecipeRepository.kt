@@ -44,7 +44,6 @@ interface RecipeRepository {
     suspend fun reportRecipe(recipeReport: RecipeReport): Result<ReportDTO>
     suspend fun getIngredientById(recipeId: String, foodProductId: String): Ingredient
     suspend fun updateIngredient(ingredient: Ingredient)
-    suspend fun getRecipesByName(recipeName: String): List<Recipe>
     fun observeRecipeById(recipeId: String): Flow<Recipe>
     suspend fun observeMyRecipes(): Flow<List<Recipe>>
     suspend fun downloadRecipe(recipe: Recipe)
