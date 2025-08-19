@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
-package com.nutricheck.frontend.viewmodels
+
+package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
@@ -15,12 +16,6 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
-import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
-import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
-import com.frontend.nutricheck.client.ui.view_model.SearchEvent
-import com.frontend.nutricheck.client.ui.view_model.SearchUiState
-import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -50,6 +45,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -400,7 +396,7 @@ class FoodSearchViewModelTest {
     fun `SubmitComponentsToMeal in ComponentsForMeal updates existing meal`() = runTest {
         val existing = Meal(
             id = "m1", calories = 0.0, carbohydrates = 0.0, protein = 0.0, fat = 0.0,
-            date = java.util.Date(), dayTime = DayTime.BREAKFAST,
+            date = Date(), dayTime = DayTime.BREAKFAST,
             mealFoodItems = emptyList(), mealRecipeItems = emptyList()
         )
         coEvery { historyRepository.getMealById("m1") } returns existing

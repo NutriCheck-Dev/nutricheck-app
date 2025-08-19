@@ -151,4 +151,10 @@
     <string name="snackbar_message_recipe_uploaded">Recipe uploaded</string>
     <string name="snackbar_message_recipe_downloaded">Recipe downloaded</string>
     <string name="snackbar_message_recipe_deleted">Recipe deleted</string>
+    <string name="snackbar_message_addmeal_foodproduct_added">Food added</string>
+    <string name="snackbar_message_addmeal_recipe_added">Recipe added</string>
+    <string name="snackbar_message_addmeal_foodproduct_removed">Food removed</string>
+    <string name="snackbar_message_addmeal_recipe_removed">Recipe removed</string>
+    <string name="snackbar_message_ingredient_added">Ingredient added</string>
+    <string name="snackbar_message_ingredient_removed">Ingredient removed</string>
 </resources>

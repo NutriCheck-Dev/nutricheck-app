@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.food
+package com.frontend.nutricheck.client.ui.view_model
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,7 +70,7 @@ class FoodProductOverviewViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val combinedSearchListStore: CombinedSearchListStore,
     savedStateHandle: SavedStateHandle
-) : BaseFoodOverviewViewModel() {
+) : BaseViewModel() {
 
     private val mode: FoodProductOverviewMode = savedStateHandle.run {
         val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
@@ -160,7 +159,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-    override suspend fun onSaveChanges() {
+    private suspend fun onSaveChanges() {
         val state = _state.value
         val commonParams = state.parameters
 
@@ -169,7 +168,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                 val ingredient = Ingredient(
                     recipeId = state.recipeId!!,
                     foodProduct = state.foodProduct,
-                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0),
+                    quantity = commonParams.servings * commonParams.servingSize.getAmount(),
                     servings = commonParams.servings,
                     servingSize = commonParams.servingSize
                 )
@@ -180,7 +179,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                 val mealFoodItem = MealFoodItem(
                     mealId = state.mealId!!,
                     foodProduct = state.foodProduct,
-                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0),
+                    quantity = commonParams.servings * commonParams.servingSize.getAmount(),
                     servings = commonParams.servings,
                     servingSize = commonParams.servingSize
                 )
@@ -191,7 +190,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-    override fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Int) {
         _state.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servings = servings)
@@ -200,7 +199,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         convertNutrients()
     }
 
-    override fun onServingSizeChanged(servingSize: ServingSize) {
+    private fun onServingSizeChanged(servingSize: ServingSize) {
         _state.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servingSize = servingSize)

@@ -174,11 +174,12 @@ class RecipeEditorViewModel @Inject constructor(
                     results = _draft.value.results.filterNot { it.id == foodComponent.id }
                 )
             }
+            snackbarManager.show(context.getString(R.string.snackbar_message_ingredient_added))
             _events.emit(RecipeEditorEvent.IngredientAdded(foodComponent))
         }
     }
 
-    private fun removeIngredient(foodProduct: FoodComponent) =
+    private fun removeIngredient(foodProduct: FoodComponent) {
         _draft.update { draft ->
             val currentIngredients = draft.ingredients
             val newIngredients = currentIngredients.filterNot { it.id == foodProduct.id }
@@ -189,6 +190,8 @@ class RecipeEditorViewModel @Inject constructor(
                 ingredients = newIngredients
             )
         }
+        snackbarManager.show(context.getString(R.string.snackbar_message_ingredient_removed))
+    }
 
 
     private fun saveRecipe() {

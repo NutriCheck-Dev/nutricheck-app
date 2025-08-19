@@ -181,4 +181,10 @@
     <string name="snackbar_message_recipe_uploaded">Rezept hochgeladen</string>
     <string name="snackbar_message_recipe_downloaded">Rezept heruntergeladen</string>
     <string name="snackbar_message_recipe_deleted">Rezept gelöscht</string>
+    <string name="snackbar_message_addmeal_foodproduct_added">Lebensmittel hinzugefügt</string>
+    <string name="snackbar_message_addmeal_recipe_added">Rezept hinzugefügt</string>
+    <string name="snackbar_message_addmeal_foodproduct_removed">Lebensmittel entfernt</string>
+    <string name="snackbar_message_addmeal_recipe_removed">Rezept entfernt</string>
+    <string name="snackbar_message_ingredient_added">Zutat hinzugefügt</string>
+    <string name="snackbar_message_ingredient_removed">Zutat entfernt</string>
 </resources>

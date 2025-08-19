@@ -58,6 +58,7 @@ class FoodProductRepositoryImpl @Inject constructor(
                         val errorResponse = Gson().fromJson(
                             errorBody.string(),
                             ErrorResponseDTO::class.java)
+                        val code = errorResponse.body.status
                         val message = errorResponse.body.title + ": " + errorResponse.body.detail
                         emit(Result.Error(errorResponse.body.status, message))
                     } else {
