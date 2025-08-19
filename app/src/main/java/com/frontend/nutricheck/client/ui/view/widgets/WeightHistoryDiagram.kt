@@ -31,6 +31,10 @@ import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
 import java.util.Date
 import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.max
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 enum class WeightRange(val id: String, val labelResId: Int) {
     LAST_1_MONTH("1M", R.string.range_1_month),
@@ -45,7 +49,7 @@ fun WeightHistoryDiagram(
     onPeriodSelected: (WeightRange) -> Unit
 ) {
     val fullData = weightHistoryState.weightData
-    val currentWeight = fullData.lastOrNull()?.value.toString() ?: "–"
+    val currentWeight = fullData.lastOrNull()?.value?.toString() ?: "–"
     val colors = MaterialTheme.colorScheme
     Column(
         modifier = modifier
@@ -91,6 +95,7 @@ fun WeightHistoryDiagram(
         )
     }
 }
+
 @Composable
 fun WeightLineChart(
     data: List<Weight>,
@@ -123,20 +128,11 @@ fun WeightLineChart(
             .plusDays(offset.toLong())
     }
 
-    // --- Chart-Bereich berechnen ---
-    val rawMin = data.minOf { it.value }
-    val rawMax = data.maxOf { it.value }
+    // --- Y-Achsen Labels berechnen ---
+    val yLabels = calculateNiceYAxis(data.map { it.value })
 
-    val minRange = 4.0
-    val range = (rawMax - rawMin).coerceAtLeast(minRange)
-
-    val chartMin = floor(rawMin)
-    val chartMax = chartMin + range
-
-    // Immer 4 Intervalle -> 5 Labels
-    val steps = 4
-    val yStep = (chartMax - chartMin) / steps
-    val yLabels = (0..steps).map { i -> chartMin + i * yStep }
+    val chartMin = yLabels.first().toDouble()
+    val chartMax = yLabels.last().toDouble()
 
     val labelPositions = when (selectedRange) {
         WeightRange.LAST_1_MONTH -> listOf(
@@ -166,22 +162,22 @@ fun WeightLineChart(
                 .height(70.dp)
                 .padding(horizontal = 30.dp)
         ) {
-            val heightRatio = size.height / (chartMax - chartMin).toFloat()
+            val heightRatio = size.height / (chartMax - chartMin)
             val dayWidth = size.width / daysInRange.coerceAtLeast(1)
 
             // --- Y-Achse ---
             yLabels.forEach { yValue ->
-                val y = size.height - ((yValue - chartMin) * heightRatio).toFloat()
+                val y = size.height - (yValue - chartMin) * heightRatio
                 drawLine(
                     color = gridColor,
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
+                    start = Offset(0f, y.toFloat()),
+                    end = Offset(size.width, y.toFloat()),
                     strokeWidth = 2f
                 )
                 drawContext.canvas.nativeCanvas.drawText(
-                    if (yValue % 1.0 == 0.0) "%.0f".format(yValue) else "%.1f".format(yValue),
+                    yValue.toString(),
                     -10f,
-                    y + 12f,
+                    y.toFloat() + 12f,
                     android.graphics.Paint().apply {
                         color = textColor
                         textSize = 30f
@@ -196,8 +192,8 @@ fun WeightLineChart(
                 val weight = weightByDay[localDate]
                 if (weight != null) {
                     val x = index * dayWidth
-                    val y = size.height - ((weight.value - chartMin) * heightRatio).toFloat()
-                    x to Offset(x, y)
+                    val y = size.height - (weight.value - chartMin) * heightRatio
+                    x to Offset(x, y.toFloat())
                 } else null
             }
 
@@ -229,4 +225,37 @@ fun WeightLineChart(
             }
         }
     }
+}
+
+/**
+ * Utility: Berechnet "schöne" Y-Achsen Labels
+ */
+fun calculateNiceYAxis(values: List<Double>, labelCount: Int = 5): List<Int> {
+    if (values.isEmpty()) return emptyList()
+
+    val rawMin = values.minOrNull() ?: 0.0
+    val rawMax = values.maxOrNull() ?: 0.0
+    val rawRange = max(rawMax - rawMin, 1.0)
+
+    val step = niceStep(rawRange / (labelCount - 1))
+
+    val chartMin = floor(rawMin / step) * step
+
+    return (0 until labelCount).map { i ->
+        (chartMin + i * step).roundToInt()
+    }
+}
+
+private fun niceStep(roughStep: Double): Double {
+    val exponent = floor(log10(roughStep))
+    val fraction = roughStep / 10.0.pow(exponent)
+
+    val niceFraction = when {
+        fraction <= 1 -> 1.0
+        fraction <= 2 -> 2.0
+        fraction <= 5 -> 5.0
+        else -> 10.0
+    }
+
+    return niceFraction * 10.0.pow(exponent)
 }
