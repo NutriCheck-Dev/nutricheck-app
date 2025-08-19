@@ -140,4 +140,8 @@
     <string name="upload_recipe_401_error_message">Upload failed: Missing authorization. Please log in.</string>
     <string name="upload_recipe_general_error_message">Upload failed</string>
     <string name="unknown_error_message">Unknown server error.</string>
+    <string name="meal_item_menu_title">Select action</string>
+    <string name="meal_item_menu_text">Do you want to remove this dish?</string>
+    <string name="meal_item_menu_remove">" Remove"</string>
+    <string name="meal_item_menu_cancel">" Cancel"</string>
 </resources>
