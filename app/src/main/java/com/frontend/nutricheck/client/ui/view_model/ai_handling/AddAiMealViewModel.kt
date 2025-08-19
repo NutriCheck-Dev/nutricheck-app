@@ -168,6 +168,7 @@ class AddAiMealViewModel @Inject constructor(
         } == true
     }
 }
+
 /**
  * Hilt module that provides bindings for camera and image processing dependencies.
  *
