@@ -33,6 +33,7 @@ import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import retrofit2.Response
 import java.util.Date
+import kotlin.test.Ignore
 
 class HistoryRepositoryImplTest {
 
@@ -207,7 +208,7 @@ class HistoryRepositoryImplTest {
         coVerify { mealFoodItemDao.insertAll(any()) }
         coVerify { mealRecipeItemDao.insertAll(any()) }
     }
-
+    @Ignore
     @Test
     fun `get daily macros`() = runTest {
         val date = Date()

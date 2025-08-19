@@ -19,6 +19,13 @@ kover {
         }
         filters {
             excludes {
+                annotatedBy("javax.annotation.Generated")
+                annotatedBy("javax.annotation.processing.Generated")
+                annotatedBy("dagger.internal.DaggerGenerated")
+                annotatedBy("dagger.Module")
+                annotatedBy("dagger.Binds")
+                annotatedBy("androidx.compose.runtime.Composable")
+
                 classes(
                     // Generated code
                     "*.BuildConfig",
@@ -29,6 +36,7 @@ kover {
                     "*ComposableSingletons*",
                     "*hilt_aggregated_deps*",
                     "*HiltModules*",
+                    "*_Impl*",
 
                     // Data classes
                     "*exceptions*",
@@ -38,7 +46,6 @@ kover {
                     "*.ui.view.*",
                     "*.*Theme*",
                     "*.R\$*",
-                    "*Composable*",
 
                     // Test classes
                     "*Test*",
