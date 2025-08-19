@@ -6,12 +6,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,16 +39,6 @@ fun CreateMealPage(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    LaunchedEffect(searchViewModel) {
-        searchViewModel.events.collect { event ->
-            if (event is SearchEvent.MealSaved) {
-                snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.meal_logged_success),
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

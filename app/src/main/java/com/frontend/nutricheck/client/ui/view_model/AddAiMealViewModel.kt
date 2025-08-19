@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.add_components
+package com.frontend.nutricheck.client.ui.view_model
 
 import android.content.ContentResolver
 import android.content.ContentValues
@@ -25,7 +25,6 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
-import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject

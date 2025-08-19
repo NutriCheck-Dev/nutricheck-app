@@ -34,8 +34,8 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.theme.extended
 import com.frontend.nutricheck.client.ui.view.widgets.ExitButton
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealEvent
-import com.frontend.nutricheck.client.ui.view_model.add_components.AddAiMealViewModel
+import com.frontend.nutricheck.client.ui.view_model.AddAiMealEvent
+import com.frontend.nutricheck.client.ui.view_model.AddAiMealViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState

@@ -104,6 +104,7 @@ class FoodSearchViewModel @Inject constructor(
     private val foodProductRepository: FoodProductRepository,
     private val historyRepository: HistoryRepository,
     private val combinedSearchListStore: CombinedSearchListStore,
+    private val snackbarManager: SnackbarManager,
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
@@ -206,7 +207,7 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.ClickSearchAll -> onSearchAllClick()
             is SearchEvent.ClickSearchMyRecipes -> onSearchMyRecipesClick()
             is SearchEvent.ResetErrorState -> setReady()
-            is SearchEvent.MealSaved -> null
+            is SearchEvent.MealSaved -> snackbarManager.show("Meal gespeichert ")
         }
     }
 
@@ -457,6 +458,7 @@ class FoodSearchViewModel @Inject constructor(
                     _events.emit(SearchEvent.MealSaved)
                 }
                 setReady()
+                snackbarManager.show("Meal gespeichert ")
             } catch (e: Exception) {
                 setError("Failed to save meal: ${e.message}")
             }

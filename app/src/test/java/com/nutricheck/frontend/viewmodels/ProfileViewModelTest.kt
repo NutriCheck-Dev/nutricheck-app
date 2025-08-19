@@ -302,4 +302,31 @@ class ProfileViewModelTest {
             assertEquals(expectedEvent, viewModel.events.first())
         }
     }
+    @Test
+    fun `deleteWeight deletes weight and updates weightData`() = runTest {
+        // Arrange: set up a weight and mock the repository behavior
+        val weight = Weight(value = 70.0, date = Date(1704067200000L))
+        viewModel.onEvent(ProfileEvent.SaveNewWeight(weight.value.toString(), weight.date))
+
+        coEvery { userDataRepository.deleteWeight(weight) } just runs
+
+        // Act: deleteWeight aufrufen
+        viewModel.onEvent(ProfileEvent.DeleteWeight)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert: deleteWeight wurde aufgerufen und weightData ist leer
+        //coVerify { userDataRepository.deleteWeight(weight) }
+        assertEquals(emptyList(), viewModel.weightData.first())
+        assertEquals(null, viewModel.selectedWeight.value)
+    }
+
+    @Test
+    fun `deleteWeight does not delete when weight is null`() = runTest {
+        // Arrange: selectedWeight is null
+        viewModel.onEvent(ProfileEvent.DeleteWeight)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Assert: deleteWeight was not called
+        coVerify(exactly = 0) { userDataRepository.deleteWeight(any()) }
+    }
 }

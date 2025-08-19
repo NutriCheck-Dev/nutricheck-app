@@ -30,6 +30,11 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
 import java.util.Date
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.max
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 enum class WeightRange(val id: String, val labelResId: Int) {
     LAST_1_MONTH("1M", R.string.range_1_month),
@@ -44,7 +49,7 @@ fun WeightHistoryDiagram(
     onPeriodSelected: (WeightRange) -> Unit
 ) {
     val fullData = weightHistoryState.weightData
-    val currentWeight = fullData.lastOrNull()?.value.toString() ?: "–"
+    val currentWeight = fullData.lastOrNull()?.value?.toString() ?: "–"
     val colors = MaterialTheme.colorScheme
     Column(
         modifier = modifier
@@ -90,6 +95,7 @@ fun WeightHistoryDiagram(
         )
     }
 }
+
 @Composable
 fun WeightLineChart(
     data: List<Weight>,
@@ -114,20 +120,19 @@ fun WeightLineChart(
     val daysInRange = ((now.time - startDate.time) / (24 * 60 * 60 * 1000)).toInt() + 1
 
     val weightByDay = data.associateBy {
-        // Key = nur Datumsteil (Jahr/Monat/Tag)
         it.date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
     }
 
     val dates = (0 until daysInRange).map { offset ->
-        startDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().plusDays(offset.toLong())
+        startDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+            .plusDays(offset.toLong())
     }
 
-    val maxValue = data.maxOf { it.value }
-    val minValue = data.minOf { it.value }
+    // --- Y-Achsen Labels berechnen ---
+    val yLabels = calculateNiceYAxis(data.map { it.value })
 
-    val steps = 3
-    val yStep = (maxValue - minValue) / steps
-    val yLabels = (0..steps).map { i -> minValue + i * yStep }
+    val chartMin = yLabels.first().toDouble()
+    val chartMax = yLabels.last().toDouble()
 
     val labelPositions = when (selectedRange) {
         WeightRange.LAST_1_MONTH -> listOf(
@@ -147,8 +152,6 @@ fun WeightLineChart(
         )
     }
 
-
-
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -159,12 +162,12 @@ fun WeightLineChart(
                 .height(70.dp)
                 .padding(horizontal = 30.dp)
         ) {
-            val heightRatio = size.height / (maxValue - minValue).coerceAtLeast(1.0)
+            val heightRatio = size.height / (chartMax - chartMin)
             val dayWidth = size.width / daysInRange.coerceAtLeast(1)
 
-            // Y-Achse
+            // --- Y-Achse ---
             yLabels.forEach { yValue ->
-                val y = size.height - (yValue - minValue) * heightRatio
+                val y = size.height - (yValue - chartMin) * heightRatio
                 drawLine(
                     color = gridColor,
                     start = Offset(0f, y.toFloat()),
@@ -172,8 +175,8 @@ fun WeightLineChart(
                     strokeWidth = 2f
                 )
                 drawContext.canvas.nativeCanvas.drawText(
-                    "%.0f".format(yValue),
-                    -4.5f,
+                    yValue.toString(),
+                    -10f,
                     y.toFloat() + 12f,
                     android.graphics.Paint().apply {
                         color = textColor
@@ -184,11 +187,12 @@ fun WeightLineChart(
                 )
             }
 
+            // --- Datenpunkte ---
             val points = dates.mapIndexedNotNull { index, localDate ->
                 val weight = weightByDay[localDate]
                 if (weight != null) {
                     val x = index * dayWidth
-                    val y = size.height - (weight.value - minValue) * heightRatio
+                    val y = size.height - (weight.value - chartMin) * heightRatio
                     x to Offset(x, y.toFloat())
                 } else null
             }
@@ -196,7 +200,6 @@ fun WeightLineChart(
             for (i in 0 until points.size - 1) {
                 val (_, p1) = points[i]
                 val (_, p2) = points[i + 1]
-
                 drawLine(
                     color = lineColor,
                     start = p1,
@@ -204,6 +207,8 @@ fun WeightLineChart(
                     strokeWidth = 4f
                 )
             }
+
+            // --- X-Achsen Labels ---
             labelPositions.forEach { (relativePos, label) ->
                 val x = size.width * relativePos
                 drawContext.canvas.nativeCanvas.drawText(
@@ -220,4 +225,37 @@ fun WeightLineChart(
             }
         }
     }
+}
+
+/**
+ * Utility: Berechnet "schöne" Y-Achsen Labels
+ */
+fun calculateNiceYAxis(values: List<Double>, labelCount: Int = 5): List<Int> {
+    if (values.isEmpty()) return emptyList()
+
+    val rawMin = values.minOrNull() ?: 0.0
+    val rawMax = values.maxOrNull() ?: 0.0
+    val rawRange = max(rawMax - rawMin, 1.0)
+
+    val step = niceStep(rawRange / (labelCount - 1))
+
+    val chartMin = floor(rawMin / step) * step
+
+    return (0 until labelCount).map { i ->
+        (chartMin + i * step).roundToInt()
+    }
+}
+
+private fun niceStep(roughStep: Double): Double {
+    val exponent = floor(log10(roughStep))
+    val fraction = roughStep / 10.0.pow(exponent)
+
+    val niceFraction = when {
+        fraction <= 1 -> 1.0
+        fraction <= 2 -> 2.0
+        fraction <= 5 -> 5.0
+        else -> 10.0
+    }
+
+    return niceFraction * 10.0.pow(exponent)
 }
