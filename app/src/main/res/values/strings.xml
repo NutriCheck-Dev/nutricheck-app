@@ -164,4 +164,9 @@
     <string name="searchbar_placeholder_regular">Suche</string>
     <string name="search_tab_all">Alle</string>
     <string name="search_tab_my_recipes">Meine Rezepte</string>
+    <string name="io_exception_message">Bitte überprüfe deine Internetverbindung</string>
+    <string name="upload_recipe_409_error_message">Hochladen fehlgeschlagen: Das Rezept, das Sie hochladen möchten, existiert bereits.</string>
+    <string name="upload_recipe_401_error_message">Hochladen fehlgeschlagen: Fehlende Authorizierung. Bitte melden Sie sich an.</string>
+    <string name="upload_recipe_general_error_message">Hochladen fehlgeschlagen</string>
+    <string name="unknown_error_message">Unbekannter Server Fehler.</string>
 </resources>

@@ -323,7 +323,7 @@ fun AddNavGraph(
 
         composable(AddScreens.RecipePage.route) {
             val recipePageNavController = rememberNavController()
-            RecipePageNavGraph(mainNavController, recipePageNavController)
+            RecipePageNavGraph(recipePageNavController)
         }
     }
 }

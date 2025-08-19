@@ -36,14 +36,13 @@ sealed class RecipePageScreens(val route: String) {
     object RecipeEditorPage : RecipePageScreens("recipe_editor") {
         const val ARGUMENT = "recipeId"
         const val PATTERN =  "recipe_editor?$ARGUMENT={$ARGUMENT}"
-        fun newRecipe() = "recipe_editor"
+        const val NEW_RECIPE = "recipe_editor"
         fun editRecipe(recipeId: String) = "recipe_editor?$ARGUMENT=$recipeId"
     }
 }
 
 @Composable
 fun RecipePageNavGraph(
-    mainNavController: NavHostController,
     recipePageNavController: NavHostController
 ) {
 
@@ -77,7 +76,7 @@ fun RecipePageNavGraph(
                     recipePageViewModel = recipePageViewModel,
                     reportRecipeViewModel = reportRecipeViewModel,
                     onAddRecipeClick = {
-                        recipePageNavController.navigate(RecipePageScreens.RecipeEditorPage.newRecipe())
+                        recipePageNavController.navigate(RecipePageScreens.RecipeEditorPage.NEW_RECIPE)
                     },
                     onItemClick = { recipe ->
                         recipePageNavController.navigate(
