@@ -25,6 +25,7 @@ kover {
                 annotatedBy("dagger.Module")
                 annotatedBy("dagger.Binds")
                 annotatedBy("androidx.compose.runtime.Composable")
+                annotatedBy("dagger.hilt.InstallIn")
 
                 classes(
                     // Generated code
