@@ -56,7 +56,7 @@ class AddAiMealViewModelTest {
     private val appContext: Context = mockk(relaxed = true)
     private val appSettingRepository: AppSettingRepository = mockk(relaxed = true)
     private val historyRepository: HistoryRepository = mockk(relaxed = true)
-    private val imageProcessor: ImageProcessor = mockk(relaxed = true)
+    private val imageProcessor: AndroidImageProcessor = mockk(relaxed = true)
     private val cameraController: CameraController = mockk(relaxed = true)
     private val lifecycleOwner: LifecycleOwner = mockk(relaxed = true)
 

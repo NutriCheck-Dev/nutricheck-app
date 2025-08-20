@@ -12,11 +12,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -46,7 +42,7 @@ class AddAiMealViewModel @Inject constructor(
     application: Application,
     private val appSettingRepository: AppSettingRepository,
     private val historyRepository: HistoryRepository,
-    private val imageProcessor: ImageProcessor,
+    private val imageProcessor: AndroidImageProcessor,
     private val cameraController: CameraController
 ) : BaseViewModel() {
 
@@ -184,25 +180,4 @@ class AddAiMealViewModel @Inject constructor(
                     product.fat > MIN_NUTRITIONAL_VALUE
         } == true
     }
-}
-
-/**
- * Hilt module that provides bindings for camera and image processing dependencies.
- *
- * This module binds the Android-specific implementations to their respective interfaces,
- * enabling dependency injection throughout the application.
- */
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class CameraModule {
-
-    @Binds
-    abstract fun bindImageProcessor(
-        androidImageProcessor: AndroidImageProcessor
-    ): ImageProcessor
-
-    @Binds
-    abstract fun bindCameraController(
-        androidCameraController: AndroidCameraController
-    ): CameraController
 }
