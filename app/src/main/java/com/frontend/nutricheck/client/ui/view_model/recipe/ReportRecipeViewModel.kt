@@ -1,11 +1,15 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +35,8 @@ sealed interface ReportRecipeEvent {
 @HiltViewModel
 class ReportRecipeViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
+    private val snackbarManager: SnackbarManager,
+    @ApplicationContext private val context: Context
 ) : BaseViewModel() {
     private val _reportRecipeState = MutableStateFlow(ReportRecipeState())
     val reportRecipeState = _reportRecipeState.asStateFlow()
@@ -69,5 +75,6 @@ class ReportRecipeViewModel @Inject constructor(
         )
         recipeRepository.reportRecipe(recipeReport)
         _reportRecipeState.update { it.copy(recipe = null, reporting = false, inputText = "") }
+        snackbarManager.show(context.getString(R.string.snackbar_message_recipe_reported))
     }
 }

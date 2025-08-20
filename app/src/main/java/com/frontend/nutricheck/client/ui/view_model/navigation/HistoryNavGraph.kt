@@ -21,8 +21,8 @@ import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOver
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 

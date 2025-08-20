@@ -62,13 +62,6 @@ data class CommonSearchParameters(
 sealed class SearchUiState {
     abstract val parameters: CommonSearchParameters
     abstract fun updateParams(params: CommonSearchParameters): SearchUiState
-    data class AddIngredientState(
-        val recipeId: String,
-        override val parameters: CommonSearchParameters,
-    ) : SearchUiState() {
-        override fun updateParams(params: CommonSearchParameters): SearchUiState =
-            copy(parameters = params)
-    }
     data class AddComponentsToMealState(
         val mealId: String,
         val dayTime: DayTime? = null,
@@ -86,7 +79,6 @@ sealed interface SearchEvent {
     data class AddFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     data class RemoveFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     object Search : SearchEvent
-    object Retry : SearchEvent
     object Clear : SearchEvent
     object ClickSearchAll : SearchEvent
     object ClickSearchMyRecipes : SearchEvent
@@ -105,7 +97,7 @@ class FoodSearchViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val combinedSearchListStore: CombinedSearchListStore,
     private val snackbarManager: SnackbarManager,
-    @ApplicationContext private val appContext: Context,
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -194,7 +186,6 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.AddFoodComponent -> onClickAddFoodComponent(event.foodComponent)
             is SearchEvent.RemoveFoodComponent -> onClickRemoveFoodComponent(event.foodComponent)
             is SearchEvent.Search -> onClickSearchFoodComponent()
-            is SearchEvent.Retry -> onClickSearchFoodComponent()
             is SearchEvent.Clear -> cancelSearch()
             is SearchEvent.SubmitComponentsToMeal -> submitComponentsToMeal()
             is SearchEvent.MealSelectorClick -> onClickMealSelector()
@@ -207,7 +198,7 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.ClickSearchAll -> onSearchAllClick()
             is SearchEvent.ClickSearchMyRecipes -> onSearchMyRecipesClick()
             is SearchEvent.ResetErrorState -> setReady()
-            is SearchEvent.MealSaved -> snackbarManager.show("Meal gespeichert ")
+            is SearchEvent.MealSaved -> null
         }
     }
 
@@ -341,6 +332,11 @@ class FoodSearchViewModel @Inject constructor(
             combinedSearchListStore.update(combinedList)
             state.updateParams(newParams)
         }
+        val snackbarMessage = when(foodComponent) {
+            is FoodProduct -> context.getString(R.string.snackbar_message_addmeal_foodproduct_added)
+            is Recipe -> context.getString(R.string.snackbar_message_addmeal_recipe_added)
+        }
+        snackbarManager.show(snackbarMessage)
         viewModelScope.launch {
             _events.emit(SearchEvent.AddFoodComponent(foodComponent))
         }
@@ -356,6 +352,11 @@ class FoodSearchViewModel @Inject constructor(
                 )
             val combinedList = newParams.generalResults + newParams.addedComponents
             combinedSearchListStore.update(combinedList)
+            val snackbarMessage = when(foodComponent) {
+                is FoodProduct -> context.getString(R.string.snackbar_message_addmeal_foodproduct_removed)
+                is Recipe -> context.getString(R.string.snackbar_message_addmeal_recipe_removed)
+            }
+            snackbarManager.show(snackbarMessage)
             state.updateParams(newParams)
         }
 
@@ -400,7 +401,7 @@ class FoodSearchViewModel @Inject constructor(
         if (state !is SearchUiState.AddComponentsToMealState) return
 
         if (state.dayTime == null) {
-            setError(appContext.getString(R.string.error_missing_dayTime))
+            setError(context.getString(R.string.error_missing_dayTime))
             return
         }
 
@@ -422,7 +423,7 @@ class FoodSearchViewModel @Inject constructor(
         }
 
         if (mealFoodItems.isEmpty() && mealRecipeItems.isEmpty()) {
-            setError(appContext.getString(R.string.error_create_meal_missing_foodComponent))
+            setError(context.getString(R.string.error_create_meal_missing_foodComponent))
             return
         }
 
@@ -455,10 +456,10 @@ class FoodSearchViewModel @Inject constructor(
 
                     )
                     historyRepository.addMeal(newMeal)
+                    snackbarManager.show(context.getString(R.string.snackbar_message_meal_saved))
                     _events.emit(SearchEvent.MealSaved)
                 }
                 setReady()
-                snackbarManager.show("Meal gespeichert ")
             } catch (e: Exception) {
                 setError("Failed to save meal: ${e.message}")
             }

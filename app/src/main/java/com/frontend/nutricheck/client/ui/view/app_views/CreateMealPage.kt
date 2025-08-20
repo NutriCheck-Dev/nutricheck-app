@@ -6,15 +6,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
@@ -36,13 +32,8 @@ fun CreateMealPage(
     val uiState by searchViewModel.uiState.collectAsState()
     val searchState by searchViewModel.searchState.collectAsState()
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
-
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             MealSelector(
                 dayTime = (searchState as? SearchUiState.AddComponentsToMealState)?.dayTime,
@@ -53,7 +44,10 @@ fun CreateMealPage(
                         searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal)
                     }
                                   },
-                onBack = { onBack() },
+                onBack = {
+                    onBack()
+                    searchViewModel.onEvent(SearchEvent.Clear)
+                         },
                 onMealSelected = { daytime ->
                     searchViewModel.onEvent(SearchEvent.DayTimeChanged(daytime))
                 }

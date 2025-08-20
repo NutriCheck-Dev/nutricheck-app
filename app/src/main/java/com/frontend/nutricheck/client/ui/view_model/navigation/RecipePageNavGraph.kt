@@ -14,14 +14,14 @@ import com.frontend.nutricheck.client.ui.view.app_views.RecipeEditorPage
 import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 
 sealed class RecipePageScreens(val route: String) {
@@ -102,10 +102,13 @@ fun RecipePageNavGraph(
                 val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(graphEntry)
                 LaunchedEffect(recipeOverviewViewModel) {
                     recipeOverviewViewModel.events.collect { event ->
-                        if (event is RecipeOverviewEvent.NavigateToEditRecipe) {
-                            recipePageNavController.navigate(
-                                RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
-                            )
+                        when(event) {
+                            is RecipeOverviewEvent.NavigateToEditRecipe ->
+                                recipePageNavController.navigate(
+                                    RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
+                                )
+                            is RecipeOverviewEvent.RecipeDeleted -> recipePageNavController.popBackStack()
+                            else -> null
                         }
 
                     }

@@ -1,11 +1,13 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe
 
+import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 import io.mockk.coEvery
@@ -32,6 +34,8 @@ class ReportRecipeViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val testScope = TestScope(dispatcher)
     private lateinit var repository: RecipeRepository
+    private lateinit var snackbarManager: SnackbarManager
+    private lateinit var context: Context
     private val recipe = Recipe(
         id = "r1",
         name = "Pasta Pesto",
@@ -77,12 +81,14 @@ class ReportRecipeViewModelTest {
         )
     )
 
-    private fun makeViewModel() = ReportRecipeViewModel(repository)
+    private fun makeViewModel() = ReportRecipeViewModel(repository, snackbarManager, context)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         repository = mockk(relaxed = true)
+        snackbarManager = mockk(relaxed = true)
+        context = mockk(relaxed = true)
     }
 
     @After

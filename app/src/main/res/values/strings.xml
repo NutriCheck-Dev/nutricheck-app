@@ -164,14 +164,27 @@
     <string name="searchbar_placeholder_regular">Suche</string>
     <string name="search_tab_all">Alle</string>
     <string name="search_tab_my_recipes">Meine Rezepte</string>
+    <string name="error_ai_server_response">Die Antwort des Servers ist fehlerhaft, bitte versuche es erneut</string>
     <string name="io_exception_message">Bitte überprüfe deine Internetverbindung</string>
     <string name="upload_recipe_409_error_message">Hochladen fehlgeschlagen: Das Rezept, das Sie hochladen möchten, existiert bereits.</string>
     <string name="upload_recipe_401_error_message">Hochladen fehlgeschlagen: Fehlende Authorizierung. Bitte melden Sie sich an.</string>
     <string name="upload_recipe_general_error_message">Hochladen fehlgeschlagen</string>
     <string name="unknown_error_message">Unbekannter Server Fehler.</string>
-
     <string name="meal_item_menu_title">Aktion auswählen</string>
     <string name="meal_item_menu_text">Möchtest du dieses Gericht entfernen?</string>
     <string name="meal_item_menu_remove">Entfernen</string>
     <string name="meal_item_menu_cancel">Abbrechen</string>
+    <string name="snackbar_message_recipe_saved">Rezept gespeichert</string>
+    <string name="snackbar_message_recipe_updated">Rezept aktualisiert</string>
+    <string name="snackbar_message_meal_saved">Mahlzeit hinzugefügt</string>
+    <string name="snackbar_message_recipe_reported">Rezept gemeldet</string>
+    <string name="snackbar_message_recipe_uploaded">Rezept hochgeladen</string>
+    <string name="snackbar_message_recipe_downloaded">Rezept heruntergeladen</string>
+    <string name="snackbar_message_recipe_deleted">Rezept gelöscht</string>
+    <string name="snackbar_message_addmeal_foodproduct_added">Lebensmittel hinzugefügt</string>
+    <string name="snackbar_message_addmeal_recipe_added">Rezept hinzugefügt</string>
+    <string name="snackbar_message_addmeal_foodproduct_removed">Lebensmittel entfernt</string>
+    <string name="snackbar_message_addmeal_recipe_removed">Rezept entfernt</string>
+    <string name="snackbar_message_ingredient_added">Zutat hinzugefügt</string>
+    <string name="snackbar_message_ingredient_removed">Zutat entfernt</string>
 </resources>
