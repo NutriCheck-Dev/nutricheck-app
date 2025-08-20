@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
@@ -63,6 +64,7 @@ sealed interface RecipeOverviewEvent {
     data object ClickDetails : RecipeOverviewEvent
     data object RecipeUploaded : RecipeOverviewEvent
     data object ResetErrorState : RecipeOverviewEvent
+    data object UpdateMealRecipeItem : RecipeOverviewEvent
     data object RecipeDeleted : RecipeOverviewEvent
 }
 
@@ -145,7 +147,7 @@ class RecipeOverviewViewModel @Inject constructor(
                             protein = recipe.protein,
                             carbohydrates = recipe.carbohydrates,
                             fat = recipe.fat,
-                            servings = recipe.servings
+                            servings = meal.quantity.toInt()
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
@@ -172,6 +174,7 @@ class RecipeOverviewViewModel @Inject constructor(
             is RecipeOverviewEvent.RecipeUploaded -> null
             is RecipeOverviewEvent.ResetErrorState -> setReady()
             is RecipeOverviewEvent.RecipeDeleted -> null
+            is RecipeOverviewEvent.UpdateMealRecipeItem -> viewModelScope.launch { updateMealRecipeItem() }
         }
     }
 
@@ -203,6 +206,18 @@ class RecipeOverviewViewModel @Inject constructor(
                 carbohydrates = servings * initialRecipe.carbohydrates,
                 fat = servings * initialRecipe.fat)
             )
+        }
+    }
+
+    private suspend fun updateMealRecipeItem() {
+        if (mode is RecipeOverviewMode.FromMeal) {
+            val mealRecipeItem = MealRecipeItem(
+                mealId = mode.mealId,
+                recipe = _recipeOverviewState.value.recipe,
+                servings = _recipeOverviewState.value.parameters.servings,
+                quantity = _recipeOverviewState.value.parameters.servings.toDouble(),
+            )
+            historyRepository.updateMealRecipeItem(mealRecipeItem)
         }
     }
 
