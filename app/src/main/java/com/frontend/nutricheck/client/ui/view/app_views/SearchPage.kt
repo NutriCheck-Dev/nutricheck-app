@@ -26,25 +26,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchPage(
     modifier: Modifier = Modifier,
-    selectedTab: Int = 0,
-    onSelectTab: (Int) -> Unit = {},
     onItemClick: (FoodComponent) -> Unit = {},
-    query: String,
-    onSearchClick: () -> Unit,
-    onQueryChange: (String) -> Unit,
-    addFoodComponent: (FoodComponent) -> Unit,
     removeFoodComponent: (FoodComponent) -> Unit,
-    addedComponents: List<FoodComponent>,
-    searchResults: List<FoodComponent>,
-    expand: Boolean = false,
-    showTabRow: Boolean = true,
-    isLoading: Boolean,
-    showEmptyState: Boolean
+    showBottomSheet: () -> Unit,
+    addedComponents: List<FoodComponent>
 ) {
     val styles = MaterialTheme.typography
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(expand) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -66,35 +53,7 @@ fun SearchPage(
                 onItemClick(item)
             },
             editing = true,
-            onAddButtonClick = {
-                showBottomSheet = true
-                scope.launch { sheetState.show() }
-            }
-        )
-
-        BottomSheetSearch(
-            query = query,
-            onSearch = { onSearchClick() },
-            onQueryChange = { onQueryChange(it) },
-            foodComponents = searchResults,
-            trailingContent = { item ->
-                CustomAddButton {
-                    addFoodComponent(item)
-                }
-            },
-            onItemClick = { item ->
-                onItemClick(item)
-            },
-            showBottomSheet = showBottomSheet,
-            onDismiss = {
-                showBottomSheet = false
-                scope.launch { sheetState.show() }
-            },
-            selectedTab = selectedTab,
-            onSelectTab = { onSelectTab(it) },
-            showTabRow = showTabRow,
-            isLoading = isLoading,
-            showEmptyState = showEmptyState
+            onAddButtonClick = { showBottomSheet() }
         )
     }
 }

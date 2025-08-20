@@ -53,7 +53,7 @@ data class CommonSearchParameters(
     val generalResults: List<FoodComponent> = emptyList(),
     val localRecipesResults: List<Recipe> = emptyList(),
     val addedComponents: List<FoodComponent> = emptyList(),
-    val expanded: Boolean = false,
+    val mealSelectorExpanded: Boolean = false,
     val bottomSheetExpanded: Boolean = false,
     val hasSearched: Boolean = false,
     val lastSearchedQuery: String? = null
@@ -84,7 +84,8 @@ sealed interface SearchEvent {
     object ClickSearchMyRecipes : SearchEvent
     object SubmitComponentsToMeal : SearchEvent
     object MealSelectorClick: SearchEvent
-    object ExpandBottomSheet : SearchEvent
+    object ShowBottomSheet : SearchEvent
+    object HideBottomSheet : SearchEvent
     object ResetErrorState : SearchEvent
     data object MealSaved : SearchEvent
 }
@@ -189,9 +190,15 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.Clear -> cancelSearch()
             is SearchEvent.SubmitComponentsToMeal -> submitComponentsToMeal()
             is SearchEvent.MealSelectorClick -> onClickMealSelector()
-            is SearchEvent.ExpandBottomSheet -> {
+            is SearchEvent.ShowBottomSheet -> {
                 _searchState.update { state ->
-                    val newParams = state.parameters.copy(bottomSheetExpanded = !state.parameters.bottomSheetExpanded)
+                    val newParams = state.parameters.copy(bottomSheetExpanded = true)
+                    state.updateParams(newParams)
+                }
+            }
+            is SearchEvent.HideBottomSheet -> {
+                _searchState.update { state ->
+                    val newParams = state.parameters.copy(bottomSheetExpanded = false)
                     state.updateParams(newParams)
                 }
             }
@@ -382,7 +389,7 @@ class FoodSearchViewModel @Inject constructor(
 
     private fun onClickMealSelector() {
         _searchState.update { state ->
-            val newParams = state.parameters.copy(expanded = !state.parameters.expanded)
+            val newParams = state.parameters.copy(mealSelectorExpanded = !state.parameters.mealSelectorExpanded)
             state.updateParams(newParams)
         }
     }
