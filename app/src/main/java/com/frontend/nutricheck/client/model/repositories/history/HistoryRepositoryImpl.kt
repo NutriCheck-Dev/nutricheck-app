@@ -46,7 +46,7 @@ class HistoryRepositoryImpl @Inject constructor(
         val meals = mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
         meals.sumOf { meal ->
             val foodItemsCalories = meal.mealFoodItems.sumOf { ingredient ->
-                ingredient.quantity * ingredient.foodProduct.calories
+                ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)
             }
 
             val recipeItemsCalories = meal.mealRecipeItems.sumOf { recipe ->
@@ -196,7 +196,7 @@ class HistoryRepositoryImpl @Inject constructor(
                 val meals = dbMeals.map { DbMealMapper.toMeal(it) }
                 meals.sumOf { meal ->
                     val foodItemsCalories = meal.mealFoodItems.sumOf { ingredient ->
-                        ingredient.quantity * ingredient.foodProduct.calories
+                        ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)
                     }
                     val recipeItemsCalories = meal.mealRecipeItems.sumOf { recipe ->
                         recipe.quantity * recipe.recipe.calories

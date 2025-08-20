@@ -27,7 +27,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 
 @Composable
 fun DishItemButton(
@@ -77,9 +79,10 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${foodComponent.servings * foodComponent.calories} " +
-                            stringResource(R.string.dishitem_button_portions) +
-                            "${foodComponent.servings}",
+                    text = when (foodComponent) {
+                        is Recipe -> "${foodComponent.servings * foodComponent.calories} "
+                        is FoodProduct -> "${foodComponent.servings * foodComponent.calories * (foodComponent.servingSize.getAmount() / 100)} "
+                    } + stringResource(R.string.dishitem_button_portions) + "${foodComponent.servings}",
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -178,7 +181,7 @@ fun DishItemMealButton(
     modifier: Modifier = Modifier,
     title: String,
     calories: Double,
-    quantity: Double,
+    quantity: Int,
     onClick: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
@@ -218,7 +221,7 @@ fun DishItemMealButton(
                 Text(
                     text = "$calories " +
                             stringResource(R.string.dishitem_button_portions) +
-                            "${quantity.toInt()}",
+                            "$quantity",
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,

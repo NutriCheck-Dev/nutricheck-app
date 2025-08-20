@@ -119,8 +119,8 @@ fun MealBlock(
                         DishItemMealButton(
                             modifier = Modifier.weight(1f), // gibt Platz frei für die drei Punkte
                             title = item.foodProduct.name,
-                            quantity = item.quantity,
-                            calories = item.quantity * item.foodProduct.calories,
+                            quantity = item.servings,
+                            calories = item.servings * item.foodProduct.calories * (item.servingSize.getAmount() / 100),
                             onClick = { onItemClick(item) }
                         )
                     }
@@ -129,7 +129,7 @@ fun MealBlock(
                         DishItemMealButton(
                             modifier = Modifier.weight(1f),
                             title = item.recipe.name,
-                            quantity = item.quantity,
+                            quantity = item.quantity.toInt(),
                             calories = item.quantity * item.recipe.calories,
                             onClick = { onItemClick(item) }
                         )
