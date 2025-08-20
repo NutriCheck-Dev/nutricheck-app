@@ -210,15 +210,14 @@ class HistoryRepositoryImplTest {
 
     @Test
     fun `get daily macros`() = runTest {
-        val date = Date()
-        coEvery { mealDao.getMealsWithAllForDay(date) } returns listOf(mealWithAll)
+        coEvery { mealDao.getMealsWithAllForDay(any()) } returns listOf(mealWithAll)
         every { DbMealMapper.toMeal(mealWithAll) } returns meal
 
         val macros = repository.getDailyMacros()
 
-        Assertions.assertEquals(meal.fat.toInt(), macros[2])
         Assertions.assertEquals(meal.carbohydrates.toInt(), macros[0])
         Assertions.assertEquals(meal.protein.toInt(), macros[1])
+        Assertions.assertEquals(meal.fat.toInt(), macros[2])
     }
 
     @Test
