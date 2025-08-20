@@ -46,11 +46,7 @@ fun HistoryPage(
     historyNavController: NavHostController
 ) {
     val state by historyViewModel.historyState.collectAsState()
-    LaunchedEffect(Unit) {
-        historyViewModel.selectDate(Date())
-    }
-    val date = state.selectedDate
-    var selectedDate by remember { mutableStateOf(date) }
+    var selectedDate by remember { mutableStateOf(state.selectedDate) }
     var showDatePicker by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 

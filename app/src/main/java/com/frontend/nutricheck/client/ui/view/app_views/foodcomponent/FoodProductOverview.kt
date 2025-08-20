@@ -25,6 +25,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsWidget
 import com.frontend.nutricheck.client.ui.view.widgets.ServingSizeDropdown
+import com.frontend.nutricheck.client.ui.view.widgets.ServingsField
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
@@ -66,15 +67,17 @@ fun FoodProductOverview(
                     )
                 },
                 actions = {
-                    CustomPersistButton {
-                       if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
-                           foodSearchViewModel?.onEvent(SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
-                               ?: recipeEditorViewModel?.onEvent(
-                               RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
-                           )
-                       } else {
-                           foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
-                       }
+                    if (foodProductState.parameters.editable) {
+                        CustomPersistButton {
+                            if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
+                                foodSearchViewModel?.onEvent(SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                                    ?: recipeEditorViewModel?.onEvent(
+                                        RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
+                                    )
+                            } else {
+                                foodProductOverviewViewModel.onEvent(FoodProductOverviewEvent.SaveAndAddClick)
+                            }
+                        }
                     }
                 }
 
@@ -127,14 +130,21 @@ fun FoodProductOverview(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        ServingSizeDropdown(
-                            currentServingSize = foodProductState.parameters.servingSize,
-                            onValueChange = {
-                                foodProductOverviewViewModel.onEvent(
-                                    FoodProductOverviewEvent.ServingSizeChanged(it)
-                                )
-                            }
-                        )
+                        if (foodProductState.parameters.editable) {
+                            ServingSizeDropdown(
+                                currentServingSize = foodProductState.parameters.servingSize,
+                                onValueChange = {
+                                    foodProductOverviewViewModel.onEvent(
+                                        FoodProductOverviewEvent.ServingSizeChanged(it)
+                                    )
+                                }
+                            )
+                        } else {
+                            /**ServingsField(
+                                value = foodProductState.parameters.servingSize,
+                            )**/
+
+                        }
                     }
 
                     Row(
@@ -149,15 +159,21 @@ fun FoodProductOverview(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        ServingsPicker(
-                            value = foodProductState.parameters.servings,
-                            range = 1..200,
-                            onValueChange = {
-                                foodProductOverviewViewModel.onEvent(
-                                    FoodProductOverviewEvent.ServingsChanged(it)
-                                )
-                            }
-                        )
+                        if (foodProductState.parameters.editable) {
+                            ServingsPicker(
+                                value = foodProductState.parameters.servings,
+                                range = 1..200,
+                                onValueChange = {
+                                    foodProductOverviewViewModel.onEvent(
+                                        FoodProductOverviewEvent.ServingsChanged(it)
+                                    )
+                                }
+                            )
+                        } else {
+                            ServingsField(
+                                value = foodProductState.parameters.servings
+                            )
+                        }
                     }
                 }
             }

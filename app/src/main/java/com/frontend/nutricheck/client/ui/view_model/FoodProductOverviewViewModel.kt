@@ -35,7 +35,8 @@ data class CommonFoodProductOverviewParams(
     val fat: Double = 0.0,
     val servings: Int = 1,
     val servingSize: ServingSize = ServingSize.ONEHOUNDREDGRAMS,
-    val servingSizeDropDownExpanded: Boolean = false
+    val servingSizeDropDownExpanded: Boolean = false,
+    val editable: Boolean = true
 )
 
 data class FoodProductOverviewState (
@@ -93,7 +94,7 @@ class FoodProductOverviewViewModel @Inject constructor(
             else -> { throw IllegalArgumentException("Invalid state arguments for FoodProductOverviewViewModel") } //Temporary solution
         }
     }
-
+    val editable: Boolean = savedStateHandle["editable"] ?: true
     private val initialParams = CommonFoodProductOverviewParams()
     private val initialFoodProduct = FoodProduct()
     private val initialState = FoodProductOverviewState(
@@ -136,7 +137,8 @@ class FoodProductOverviewViewModel @Inject constructor(
                 carbohydrates = foodProduct.carbohydrates,
                 fat = foodProduct.fat,
                 servings = servingsPair.first,
-                servingSize = servingsPair.second
+                servingSize = servingsPair.second,
+                editable = editable,
             )
             _state.update { it.copy(foodProduct = (foodProduct as FoodProduct), parameters = newParams) }
             convertNutrients()
