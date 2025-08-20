@@ -43,9 +43,8 @@ fun SheetScaffold(
     content: @Composable (PaddingValues) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val configuration = LocalConfiguration.current
-    val halfHeight = configuration.screenHeightDp.dp * 0.5f
-    val maxHeight = configuration.screenHeightDp.dp * 0.75f
+    val halfHeight = with(LocalConfiguration.current) {(screenHeightDp.dp * 0.5f)}
+    val maxHeight = with(LocalConfiguration.current) {(screenHeightDp.dp * 0.75f)}
 
     var allowHide by remember { mutableStateOf(false) }
 

@@ -108,12 +108,21 @@ fun RecipeOverview(
                         )
                     } else {
                         CustomPersistButton {
-                            searchViewModel?.onEvent(
-                                SearchEvent.AddFoodComponent(
-                                    recipeOverviewState.submitRecipe()
-                                )
-                            )
-                            onPersist()
+                            when(recipeOverviewState.mode) {
+                                is RecipeOverviewMode.FromSearch -> {
+                                    searchViewModel?.onEvent(
+                                        SearchEvent.AddFoodComponent(
+                                            recipeOverviewState.submitRecipe()
+                                        )
+                                    )
+                                    onPersist()
+                                }
+                                is RecipeOverviewMode.FromMeal -> {
+                                    recipeOverviewViewModel.onEvent(RecipeOverviewEvent.UpdateMealRecipeItem)
+                                    onPersist()
+                                }
+                                else -> null
+                            }
                         }
                     }
                 }

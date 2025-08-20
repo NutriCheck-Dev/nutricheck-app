@@ -216,9 +216,9 @@ fun DishItemMealButton(
                 )
 
                 Text(
-                    text = "${calories.toInt()} " +
+                    text = "$calories " +
                             stringResource(R.string.dishitem_button_portions) +
-                            "$quantity",
+                            "${quantity.toInt()}",
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,
