@@ -1,212 +1,138 @@
 package com.frontend.nutricheck.client.ui.view_model.ai_handling
 
-import android.content.ContentResolver
-import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
-import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okio.BufferedSink
-import java.io.IOException
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- *  Implementation of [ImageProcessor], providing methods to process images,
- *  including handling EXIF rotation and converting to PNG.
+ * Utility class for converting image URIs to multipart bodies for API uploads.
+ * Handles image processing including rotation correction.
  */
 @Singleton
 class AndroidImageProcessor @Inject constructor(
-    @ApplicationContext private val appContext: Context
-) : ImageProcessor {
-
-    companion object {
-        private const val MIME_TYPE_JPEG = "image/jpeg"
-        private const val MIME_TYPE_PNG = "image/png"
+    @ApplicationContext private val context: Context
+) {
+    /**
+     * Converts an image URI to a MultipartBody.Part for API upload.
+     *
+     * @param uri The URI of the image to convert
+     * @return MultipartBody.Part containing the image data, or null if conversion fails
+     */
+     fun convertUriToMultipartBody(uri: Uri?): MultipartBody.Part? {
+        return uri?.let {
+            runCatching {
+                val processedBytes = processImage(it) ?: return null
+                val fileName = getFileName(it) ?: "image.jpg"
+                val requestBody = processedBytes.toRequestBody("image/jpeg".toMediaType())
+                MultipartBody.Part.createFormData("file", fileName, requestBody)
+            }.onFailure {
+                Log.e("ImageProcessor", "Error converting URI", it)
+            }.getOrNull()
+        }
     }
     /**
-     * Processes JPEG images by applying EXIF rotation and converting to PNG.
-     * This ensures consistent image orientation regardless of device rotation.
+     * Processes an image from URI, applying rotation correction if needed.
      *
-     * @param uri The original image URI
-     * @return Processed image URI or null if processing fails
+     * @param uri The URI of the image to process
+     * @return Processed image as byte array, or null if processing fails
      */
-    override fun processImageWithRotation(uri: Uri): Uri? {
-        return try {
-            val contentResolver = appContext.contentResolver
-
-            // Load the bitmap from URI
-            val originalBitmap = contentResolver.openInputStream(uri)?.use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
-            } ?: return null
-
-            // Get EXIF orientation from the image
-            val orientation = contentResolver.openInputStream(uri)?.use { inputStream ->
-                val exif = ExifInterface(inputStream)
-                exif.getAttributeInt(
+    private fun processImage(uri: Uri): ByteArray? {
+        return runCatching {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val rotation = getRotationFromExif(uri)
+                // check if the image needs rotation, else read it directly
+                if (rotation == 0f) {
+                    inputStream.readBytes()
+                } else {
+                    val bitmap = BitmapFactory.decodeStream(inputStream) ?: return null
+                    val rotatedBitmap = rotateBitmap(bitmap, rotation)
+                    compressBitmapToBytes(bitmap, rotatedBitmap)
+                }
+            }
+        }.onFailure {
+            Log.e("ImageProcessor", "Error processing image", it)
+        }.getOrNull()
+    }
+    /**
+     * Extracts rotation angle from EXIF orientation data.
+     *
+     * @param uri The URI of the image to check
+     * @return Rotation angle in degrees
+     */
+    private fun getRotationFromExif(uri: Uri): Float {
+        return runCatching {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val orientation = ExifInterface(inputStream).getAttributeInt(
                     ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL
                 )
-            } ?: ExifInterface.ORIENTATION_NORMAL
-
-            // Apply rotation if needed
-            val rotatedBitmap = when (orientation) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(originalBitmap, 90f)
-                ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(originalBitmap, 180f)
-                ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(originalBitmap, 270f)
-                else -> originalBitmap
-            }
-
-            // Save as PNG to avoid quality loss
-            val pngUri = saveBitmapAsPng(rotatedBitmap, contentResolver)
-
-            // Clean up memory
-            if (rotatedBitmap != originalBitmap) {
-                originalBitmap.recycle()
-            }
-            rotatedBitmap.recycle()
-
-            pngUri
-        } catch (e: Exception) {
-            Log.e("AndroidImageProcessor", "Error processing image with rotation: $uri", e)
-            null
-        }
+                when (orientation) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                    ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                    ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                    else -> 0f
+                }
+            } ?: 0f
+        }.getOrElse { 0f }
     }
     /**
-     * Converts a URI to MultipartBody.Part for API transmission.
-     * Handles image processing including format conversion and rotation correction.
+     * Rotates a bitmap by the specified angle using a transformation matrix.
      *
-     * @param uri The image URI to convert
-     * @return MultipartBody.Part or null if conversion fails
+     * @param originalBitmap The bitmap to rotate
+     * @param rotation The rotation angle in degrees
+     * @return New rotated bitmap instance
      */
-    override fun convertUriToMultipartBody(uri: Uri?): MultipartBody.Part? {
-        if (uri == null) return null
-        return try {
-            val contentResolver = appContext.contentResolver
-            val mimeType = contentResolver.getType(uri) ?: MIME_TYPE_JPEG
-
-            // Process image based on type
-            val (processedUri, finalMimeType) = when {
-                mimeType == MIME_TYPE_PNG -> {
-                    // PNG files don't need processing
-                    Pair(uri, MIME_TYPE_PNG)
-                }
-                mimeType.startsWith("image/") -> {
-                    // Process JPEG and other image formats
-                    val processedUri = processImageWithRotation(uri)
-                    Pair(processedUri ?: uri, if (processedUri != null) MIME_TYPE_PNG else mimeType)
-                }
-                else -> {
-                    // Fallback for unknown types
-                    Pair(uri, mimeType)
-                }
-            }
-            createMultipartBodyPart(processedUri, finalMimeType, contentResolver)
-        } catch (e: Exception) {
-            Log.e("AndroidImageProcessor", "Error converting URI to MultipartBody: $uri", e)
-            null
-        }
+    private fun rotateBitmap(originalBitmap: Bitmap, rotation: Float): Bitmap {
+        val matrix = Matrix().apply { postRotate(rotation) }
+        return Bitmap.createBitmap(
+            originalBitmap, 0, 0,
+            originalBitmap.width, originalBitmap.height,
+            matrix, true
+        )
     }
     /**
-     * Rotates a bitmap by the specified degrees.
+     * Compresses bitmap to JPEG format and returns as byte array.
+     * Automatically handles memory cleanup by recycling bitmap resources.
+     *
+     * @param originalBitmap The original bitmap to recycle
+     * @param rotatedBitmap The bitmap to compress (may be the same as originalBitmap)
+     * @return Compressed image as byte array
      */
-    private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
-        val matrix = Matrix().apply { postRotate(degrees) }
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    }
-    /**
-     * Saves a bitmap as PNG to MediaStore.
-     * @param bitmap The bitmap to save
-     * @param contentResolver ContentResolver for access
-     * @return URI of saved image or null if failed
-     */
-    private fun saveBitmapAsPng(bitmap: Bitmap, contentResolver: ContentResolver): Uri? {
-        val name = "${System.currentTimeMillis()}.png"
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, MIME_TYPE_PNG)
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
+    private fun compressBitmapToBytes(originalBitmap: Bitmap, rotatedBitmap: Bitmap): ByteArray {
+        return ByteArrayOutputStream().use { output ->
+            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+            originalBitmap.recycle()
+            if (rotatedBitmap != originalBitmap) rotatedBitmap.recycle()
+            output.toByteArray()
         }
-
-        return contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )?.also { pngUri ->
-            contentResolver.openOutputStream(pngUri)?.use { outputStream ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-            }
-        }
-    }
-    /**
-     * Creates a MultipartBody.Part from URI and MIME type for API transmission.
-     * @param uri The image URI
-     * @param mimeType The MIME type of the image
-     * @param contentResolver ContentResolver for accessing the image
-     * @return MultipartBody.Part or null if creation fails
-     */
-    private fun createMultipartBodyPart(
-        uri: Uri,
-        mimeType: String,
-        contentResolver: ContentResolver
-    ): MultipartBody.Part? {
-        val partName = "file"
-        val fileName = getFileNameFromUri(uri, contentResolver)
-            ?: "upload.${getFileExtension(mimeType)}"
-
-        // Creates a RequestBody from URI for multipart upload
-        val requestBody = object : RequestBody() {
-            override fun contentType() = mimeType.toMediaTypeOrNull()
-                ?: "application/octet-stream".toMediaType()
-
-            override fun contentLength(): Long =
-                contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                    if (cursor.moveToFirst()) {
-                        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-                        if (sizeIndex != -1) cursor.getLong(sizeIndex) else -1
-                    } else -1
-                } ?: -1
-
-            override fun writeTo(sink: BufferedSink) {
-                contentResolver.openInputStream(uri)?.use { inputStream ->
-                    inputStream.copyTo(sink.outputStream())
-                } ?: throw IOException("Failed to open InputStream for URI: $uri")
-            }
-        }
-
-        return MultipartBody.Part.createFormData(partName, fileName, requestBody)
     }
     /**
      * Gets the display name of a file from its URI.
+     *
      * @param uri The file URI
-     * @param contentResolver ContentResolver for access
      * @return File name or null if not available
-    */
-    private fun getFileNameFromUri(uri: Uri, contentResolver: ContentResolver): String? {
-        return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (nameIndex != -1) cursor.getString(nameIndex) else null
-            } else null
-        }
-    }
-    /**
-     * Gets appropriate file extension for MIME type.
-     * @param mimeType The MIME type
-     * @return File extension without dot
      */
-    private fun getFileExtension(mimeType: String): String = when (mimeType) {
-        MIME_TYPE_PNG -> "png"
-        MIME_TYPE_JPEG, "image/jpg" -> "jpg"
-        else -> "jpg"
+    private fun getFileName(uri: Uri): String? {
+        return runCatching {
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                cursor.takeIf { it.moveToFirst() }
+                    ?.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    ?.takeIf { it >= 0 }
+                    ?.let { cursor.getString(it) }
+            }
+        }.getOrNull()
     }
+
 }

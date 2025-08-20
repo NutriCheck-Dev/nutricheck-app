@@ -17,7 +17,7 @@ interface HistoryRepository {
     /**
      * Requests the AI to estimate the nutriments of a meal based on a photo.
      */
-    suspend fun requestAiMeal(file: MultipartBody.Part): Result<Meal>
+    suspend fun requestAiMeal(file: MultipartBody.Part, language: String): Result<Meal>
     /**
      * Deletes a meal from the database.
      */

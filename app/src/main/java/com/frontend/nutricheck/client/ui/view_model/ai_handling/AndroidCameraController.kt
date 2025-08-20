@@ -112,3 +112,20 @@ class AndroidCameraController @Inject constructor(
         )
     }
 }
+
+
+/**
+ * Hilt module that provides bindings for camera and image processing dependencies.
+ *
+ * This module binds the Android-specific implementations to their respective interfaces,
+ * enabling dependency injection throughout the application.
+ */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class CameraModule {
+
+    @Binds
+    abstract fun bindCameraController(
+        androidCameraController: AndroidCameraController
+    ): CameraController
+}
