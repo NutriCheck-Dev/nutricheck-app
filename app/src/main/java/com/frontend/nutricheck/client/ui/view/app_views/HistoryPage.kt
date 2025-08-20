@@ -43,10 +43,12 @@ import java.util.Date
 @Composable
 fun HistoryPage(
     historyViewModel: HistoryViewModel,
-    mainNavController: NavHostController,
     historyNavController: NavHostController
 ) {
     val state by historyViewModel.historyState.collectAsState()
+    LaunchedEffect(Unit) {
+        historyViewModel.selectDate(Date())
+    }
     val date = state.selectedDate
     var selectedDate by remember { mutableStateOf(date) }
     var showDatePicker by remember { mutableStateOf(false) }

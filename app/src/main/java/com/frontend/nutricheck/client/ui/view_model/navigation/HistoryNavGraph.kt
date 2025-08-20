@@ -60,7 +60,6 @@ sealed class HistoryPageScreens(val route: String) {
 
 @Composable
 fun HistoryPageNavGraph(
-    mainNavController: NavHostController,
     historyPageNavController: NavHostController
 ) {
 
@@ -78,7 +77,6 @@ fun HistoryPageNavGraph(
             val hiltViewModel: HistoryViewModel = hiltViewModel()
             HistoryPage(
                 historyViewModel = hiltViewModel,
-                mainNavController = mainNavController,
                 historyNavController = historyPageNavController,
             )
         }
