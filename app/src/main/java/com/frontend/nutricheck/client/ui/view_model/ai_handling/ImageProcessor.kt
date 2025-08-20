@@ -12,7 +12,7 @@ import okhttp3.MultipartBody
 interface ImageProcessor {
 
     /**
-     * Processes an image by applying EXIF rotation correction and converting to PNG format.
+     * Processes an image by applying EXIF rotation correction.
      *
      * @param uri The URI of the original image to process
      * @return The URI of the processed image, or null if processing fails

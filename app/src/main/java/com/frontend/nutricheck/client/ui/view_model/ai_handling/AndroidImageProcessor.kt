@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 /**
  *  Implementation of [ImageProcessor], providing methods to process images,
- *  including handling EXIF rotation and converting to PNG.
+ *  including handling EXIF rotation
  */
 @Singleton
 class AndroidImageProcessor @Inject constructor(
@@ -32,8 +32,31 @@ class AndroidImageProcessor @Inject constructor(
 
     companion object {
         private const val MIME_TYPE_JPEG = "image/jpeg"
-        private const val MIME_TYPE_PNG = "image/png"
     }
+
+    /**
+     * Converts a URI to MultipartBody.Part for API transmission.
+     * Handles image processing including format conversion and rotation correction.
+     *
+     * @param uri The image URI to convert
+     * @return MultipartBody.Part or null if conversion fails
+     */
+    override fun convertUriToMultipartBody(uri: Uri?): MultipartBody.Part? {
+        if (uri == null) return null
+        return try {
+            val contentResolver = appContext.contentResolver
+            val mimeType = contentResolver.getType(uri) ?: MIME_TYPE_JPEG
+
+            val processedUri = processImageWithRotation(uri) ?: uri
+
+            createMultipartBodyPart(processedUri, mimeType, contentResolver)
+        } catch (e: Exception) {
+            Log.e("AndroidImageProcessor", "Error converting URI to MultipartBody: $uri", e)
+            null
+        }
+    }
+
+
     /**
      * Processes JPEG images by applying EXIF rotation and converting to PNG.
      * This ensures consistent image orientation regardless of device rotation.
@@ -67,8 +90,7 @@ class AndroidImageProcessor @Inject constructor(
                 else -> originalBitmap
             }
 
-            // Save as PNG to avoid quality loss
-            val pngUri = saveBitmapAsPng(rotatedBitmap, contentResolver)
+            val jpegUri = saveBitmapAsJpeg(rotatedBitmap, contentResolver)
 
             // Clean up memory
             if (rotatedBitmap != originalBitmap) {
@@ -76,44 +98,9 @@ class AndroidImageProcessor @Inject constructor(
             }
             rotatedBitmap.recycle()
 
-            pngUri
+            jpegUri
         } catch (e: Exception) {
             Log.e("AndroidImageProcessor", "Error processing image with rotation: $uri", e)
-            null
-        }
-    }
-    /**
-     * Converts a URI to MultipartBody.Part for API transmission.
-     * Handles image processing including format conversion and rotation correction.
-     *
-     * @param uri The image URI to convert
-     * @return MultipartBody.Part or null if conversion fails
-     */
-    override fun convertUriToMultipartBody(uri: Uri?): MultipartBody.Part? {
-        if (uri == null) return null
-        return try {
-            val contentResolver = appContext.contentResolver
-            val mimeType = contentResolver.getType(uri) ?: MIME_TYPE_JPEG
-
-            // Process image based on type
-            val (processedUri, finalMimeType) = when {
-                mimeType == MIME_TYPE_PNG -> {
-                    // PNG files don't need processing
-                    Pair(uri, MIME_TYPE_PNG)
-                }
-                mimeType.startsWith("image/") -> {
-                    // Process JPEG and other image formats
-                    val processedUri = processImageWithRotation(uri)
-                    Pair(processedUri ?: uri, if (processedUri != null) MIME_TYPE_PNG else mimeType)
-                }
-                else -> {
-                    // Fallback for unknown types
-                    Pair(uri, mimeType)
-                }
-            }
-            createMultipartBodyPart(processedUri, finalMimeType, contentResolver)
-        } catch (e: Exception) {
-            Log.e("AndroidImageProcessor", "Error converting URI to MultipartBody: $uri", e)
             null
         }
     }
@@ -130,20 +117,20 @@ class AndroidImageProcessor @Inject constructor(
      * @param contentResolver ContentResolver for access
      * @return URI of saved image or null if failed
      */
-    private fun saveBitmapAsPng(bitmap: Bitmap, contentResolver: ContentResolver): Uri? {
-        val name = "${System.currentTimeMillis()}.png"
+    private fun saveBitmapAsJpeg(bitmap: Bitmap, contentResolver: ContentResolver): Uri? {
+        val name = "${System.currentTimeMillis()}.jpg"
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, MIME_TYPE_PNG)
+            put(MediaStore.MediaColumns.MIME_TYPE, MIME_TYPE_JPEG)
             put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
         }
 
         return contentResolver.insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             contentValues
-        )?.also { pngUri ->
-            contentResolver.openOutputStream(pngUri)?.use { outputStream ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        )?.also { jpegUri ->
+            contentResolver.openOutputStream(jpegUri)?.use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
         }
     }
@@ -161,7 +148,7 @@ class AndroidImageProcessor @Inject constructor(
     ): MultipartBody.Part? {
         val partName = "file"
         val fileName = getFileNameFromUri(uri, contentResolver)
-            ?: "upload.${getFileExtension(mimeType)}"
+            ?: "upload.jpg" // Fallback name if not available
 
         // Creates a RequestBody from URI for multipart upload
         val requestBody = object : RequestBody() {
@@ -198,15 +185,5 @@ class AndroidImageProcessor @Inject constructor(
                 if (nameIndex != -1) cursor.getString(nameIndex) else null
             } else null
         }
-    }
-    /**
-     * Gets appropriate file extension for MIME type.
-     * @param mimeType The MIME type
-     * @return File extension without dot
-     */
-    private fun getFileExtension(mimeType: String): String = when (mimeType) {
-        MIME_TYPE_PNG -> "png"
-        MIME_TYPE_JPEG, "image/jpg" -> "jpg"
-        else -> "jpg"
     }
 }
