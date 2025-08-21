@@ -25,6 +25,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodProductNutrientChartsWidget
 import com.frontend.nutricheck.client.ui.view.widgets.ServingSizeDropdown
+import com.frontend.nutricheck.client.ui.view.widgets.ServingSizeField
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsField
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
@@ -140,10 +141,9 @@ fun FoodProductOverview(
                                 }
                             )
                         } else {
-                            /**ServingsField(
-                                value = foodProductState.parameters.servingSize,
-                            )**/
-
+                            ServingSizeField(
+                                servingSize = foodProductState.parameters.servingSize
+                            )
                         }
                     }
 

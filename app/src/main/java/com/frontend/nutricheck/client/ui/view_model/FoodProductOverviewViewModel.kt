@@ -234,7 +234,6 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-
     private fun deleteAiMeal() {
         viewModelScope.launch {
             when(mode) {
