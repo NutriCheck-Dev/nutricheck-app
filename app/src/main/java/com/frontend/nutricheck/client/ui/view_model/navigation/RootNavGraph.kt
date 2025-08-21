@@ -1,8 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -13,7 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
-import com.frontend.nutricheck.client.ui.view_model.UiEventViewModel
+import com.frontend.nutricheck.client.ui.view_model.snackbar.AppSnackbarHost
+import com.frontend.nutricheck.client.ui.view_model.snackbar.UiEventViewModel
 import java.util.Date
 
 sealed class Screen(val route: String) {
@@ -41,7 +41,7 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { AppSnackbarHost(snackbarHostState = snackbarHostState) }
     ) { _ ->
     NavHost(
             navController = mainNavController,

@@ -17,6 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.ui.theme.extended
 
+/**
+ * A composable function that displays a dialog for reporting a recipe.
+ *
+ * @param title The title of the dialog.
+ * @param confirmText The text for the confirm button.
+ * @param cancelText The text for the cancel button.
+ * @param onConfirm Callback function to be invoked when the confirm button is clicked.
+ * @param onCancel Callback function to be invoked when the cancel button is clicked.
+ * @param onDismiss Callback function to be invoked when the dialog is dismissed.
+ * @param onValueChange Callback function to handle changes in the input text field.
+ * @param inputText The current text in the input field.
+ * @param reportTextPlaceholder Placeholder text for the input field.
+ */
 @Composable
 fun ReportRecipeDialog(
     title: String = "Report",
@@ -26,7 +39,8 @@ fun ReportRecipeDialog(
     onCancel: () -> Unit = {},
     onDismiss: () -> Unit = {},
     onValueChange: (String) -> Unit = {},
-    reportText: String = "This is a test report."
+    inputText: String,
+    reportTextPlaceholder: String = "This is a test report."
 ) {
     val colors = MaterialTheme.colorScheme
     val extendedColors = MaterialTheme.extended
@@ -44,10 +58,10 @@ fun ReportRecipeDialog(
                 border = BorderStroke(1.dp, colors.outline)
             ) {
                 TextField(
-                    value = reportText,
+                    value = inputText,
                     placeholder = {
                         Text(
-                            text = "Please describe the issue with this recipe.",
+                            text = reportTextPlaceholder,
                         )
                     },
                     onValueChange = onValueChange,

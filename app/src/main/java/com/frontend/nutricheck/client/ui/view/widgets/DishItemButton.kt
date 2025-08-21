@@ -31,6 +31,15 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 
+/**
+ * A composable function that displays a button for a food component
+ * It includes the name, calories, and servings of the food component, and allows for trailing content.
+ *
+ * @param modifier Modifier to be applied to the button.
+ * @param trailingContent Optional trailing content to display alongside the food component.
+ * @param foodComponent The food component to display in the button.
+ * @param onClick Callback function to handle button clicks.
+ */
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
@@ -104,6 +113,15 @@ fun DishItemButton(
     }
 }
 
+/**
+ * A composable function that displays a button for an ingredient
+ * It includes the name, calories, and servings of the ingredient, and allows for trailing content.
+ *
+ * @param modifier Modifier to be applied to the button.
+ * @param trailingContent Optional trailing content to display alongside the ingredient.
+ * @param ingredient The ingredient to display in the button.
+ * @param onClick Callback function to handle button clicks.
+ */
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
@@ -176,6 +194,16 @@ fun DishItemButton(
     }
 }
 
+/**
+ * A composable function that displays a button for a meal dish item
+ * It includes the title, calories, and quantity of the dish, and allows for click actions.
+ *
+ * @param modifier Modifier to be applied to the button.
+ * @param title The title of the dish.
+ * @param calories The calorie count of the dish.
+ * @param quantity The quantity of the dish.
+ * @param onClick Callback function to handle button clicks.
+ */
 @Composable
 fun DishItemMealButton(
     modifier: Modifier = Modifier,

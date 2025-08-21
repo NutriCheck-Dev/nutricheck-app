@@ -17,6 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 
+/**
+ * A composable function that displays a servings field.
+ *
+ * @param value The number of servings to display.
+ */
 @Composable
 fun ServingsField(
     value: Int
@@ -46,6 +51,11 @@ fun ServingsField(
     }
 }
 
+/**
+ * A composable function that displays a serving size field.
+ *
+ * @param servingSize The serving size to display.
+ */
 @Composable
 fun ServingSizeField(
     servingSize: ServingSize

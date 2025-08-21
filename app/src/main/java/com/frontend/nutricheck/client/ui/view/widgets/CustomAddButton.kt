@@ -9,7 +9,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.frontend.nutricheck.client.R
 
+/**
+ * A custom add button that can be used in various parts of the application.
+ *
+ * @param onClick A lambda function that is called when the button is clicked.
+ */
 @Composable
 fun CustomAddButton(onClick: () -> Unit = {}) {
     val colors = MaterialTheme.colorScheme
@@ -23,7 +30,7 @@ fun CustomAddButton(onClick: () -> Unit = {}) {
     ) {
         Icon(
             imageVector = Icons.Default.Add,
-            contentDescription = "Hinzufügen",
+            contentDescription = stringResource(R.string.navigation_bar_label_add),
             tint = colors.surface
         )
     }

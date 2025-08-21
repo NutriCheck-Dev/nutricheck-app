@@ -24,11 +24,24 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.ui.theme.extended
 
+/**
+ * A data class that implements the Density interface to provide custom density values.
+ *
+ * @property density The scale factor for the density.
+ * @property fontScale The scale factor for the font size.
+ */
 private data class ScaleDensity(
     override val density: Float,
     override val fontScale: Float
 ) : Density
 
+
+/**
+ * A composable function that scales its content based on the provided scale factor.
+ *
+ * @param scale The scale factor to apply to the content.
+ * @param content The composable content to be scaled.
+ */
 @Composable
 fun ScalableContent(
     scale: Float,
@@ -45,6 +58,15 @@ fun ScalableContent(
 }
 
 
+/**
+ * A composable function that displays a nutrient chart with a circular progress indicator.
+ *
+ * @param modifier Modifier to customize the appearance and behavior of the chart.
+ * @param nutrient The name of the nutrient to display.
+ * @param subtitle The subtitle to display below the nutrient name.
+ * @param actualValue The actual value of the nutrient.
+ * @param totalValue The total value of the nutrient, used to calculate the progress.
+ */
 @Composable
 fun NutrientChart(
     modifier: Modifier = Modifier,

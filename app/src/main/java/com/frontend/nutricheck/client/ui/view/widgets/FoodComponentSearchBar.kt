@@ -23,7 +23,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 
-
+/**
+ * A composable search bar for food components.
+ *
+ * @param modifier Modifier to be applied to the search bar.
+ * @param query The current search query.
+ * @param onQueryChange Callback invoked when the query changes.
+ * @param onSearch Callback invoked when the search action is triggered.
+ * @param placeholder Composable content to display as a placeholder in the search bar.
+ * @param trailingIcon Optional trailing icon for the search bar.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodComponentSearchBar(
@@ -32,7 +41,7 @@ fun FoodComponentSearchBar(
     onQueryChange: (String) -> Unit = {},
     onSearch: (String) -> Unit = {},
     placeholder: @Composable () -> Unit = { Text(stringResource(R.string.searchbar_placeholder_regular)) },
-    trailingIcon: @Composable (() -> Unit)? = { Icon(Icons.Default.Search, contentDescription = "Search") },
+    trailingIcon: @Composable (() -> Unit)? = { Icon(Icons.Default.Search, contentDescription = stringResource(R.string.save)) },
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -51,7 +60,12 @@ fun FoodComponentSearchBar(
             singleLine = true,
             placeholder = placeholder,
             trailingIcon = {
-                IconButton(onClick = { onSearch(query) }) {
+                IconButton(
+                    onClick = {
+                        onSearch(query)
+                        keyboardController?.hide()
+                    }
+                ) {
                     trailingIcon?.invoke()
                 }
             },

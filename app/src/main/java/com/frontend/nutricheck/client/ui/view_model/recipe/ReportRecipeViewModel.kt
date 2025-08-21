@@ -7,7 +7,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.RecipeReport
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -32,6 +32,18 @@ sealed interface ReportRecipeEvent {
     data object SendReport : ReportRecipeEvent
 }
 
+/**
+ * ViewModel for handling recipe reporting functionality.
+ * This ViewModel manages the state of the reporting dialog,
+ * including the recipe being reported, the input text for the report,
+ * and the reporting status. It provides methods to handle user interactions
+ * such as changing the input text, clicking the report button, dismissing the dialog,
+ * and sending the report to the repository.
+ *
+ * @property recipeRepository Repository for accessing recipe data and reporting functionality.
+ * @property snackbarManager Manager for displaying snackbars to the user.
+ * @property context Application context for resource access.
+ */
 @HiltViewModel
 class ReportRecipeViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,

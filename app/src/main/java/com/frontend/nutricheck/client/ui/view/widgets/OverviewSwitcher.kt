@@ -37,6 +37,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that displays a switcher for selecting between different overview options.
+ *
+ * @param options List of strings representing the overview options.
+ * @param selectedOption The currently selected overview option.
+ * @param onSelect Callback function to be invoked when an option is selected.
+ * @param tonalElevation The elevation of the switcher, used for shadow effects.
+ * @param shape The shape of the switcher, defaulting to a rounded corner shape.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverviewSwitcher(

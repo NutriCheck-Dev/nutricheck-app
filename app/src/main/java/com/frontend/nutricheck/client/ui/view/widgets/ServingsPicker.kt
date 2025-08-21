@@ -36,6 +36,14 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import kotlin.math.roundToInt
 
+/**
+ * A composable function that displays a servings picker.
+ *
+ * @param value The current number of servings selected.
+ * @param range The range of valid servings that can be selected.
+ * @param integerList A list of strings representing the valid servings, defaults to the range converted to strings.
+ * @param onValueChange Callback function to be invoked when the selected number of servings
+ */
 @Composable
 fun ServingsPicker(
     value: Int,

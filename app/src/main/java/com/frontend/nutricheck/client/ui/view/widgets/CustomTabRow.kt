@@ -21,6 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+/**
+ * A custom tab row that displays a list of options as tabs.
+ *
+ * @param modifier Modifier to customize the appearance and behavior of the tab row.
+ * @param options List of strings representing the tab labels.
+ * @param selectedOption The index of the currently selected tab.
+ * @param onSelect Callback function to be invoked when a tab is selected.
+ */
 @Composable
 fun CustomTabRow(
     modifier: Modifier = Modifier,

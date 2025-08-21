@@ -50,6 +50,16 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewMod
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 
+/**
+ * Displays an overview of a recipe, including its nutritional information, ingredients, and instructions.
+ *
+ * @param recipeOverviewViewModel The ViewModel that manages the recipe overview state.
+ * @param searchViewModel Optional ViewModel for food search functionality.
+ * @param reportRecipeViewModel ViewModel for handling recipe reporting.
+ * @param onItemClick Callback function to handle item clicks on ingredients.
+ * @param onPersist Callback function to handle persistence actions.
+ * @param onBack Callback function to handle back navigation.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeOverview(
@@ -168,7 +178,7 @@ fun RecipeOverview(
                         .wrapContentHeight()
                 ) {
                     Text(
-                        text = "Servings:",
+                        text = stringResource(R.string.foodcomponent_servings_label),
                         style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = colors.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.CenterVertically)
@@ -191,7 +201,7 @@ fun RecipeOverview(
 
             item {
                 Text(
-                    text = "Zutaten",
+                    text = stringResource(R.string.label_ingredients),
                     style = styles.titleMedium,
                     color = colors.onSurfaceVariant
                 )
@@ -210,7 +220,7 @@ fun RecipeOverview(
             item {
                 if (recipe.instructions.isNotBlank()) {
                     Text(
-                        text = "Beschreibung",
+                        text = stringResource(R.string.recipe_description),
                         style = styles.titleMedium,
                     )
                     Spacer(modifier = Modifier.height(10.dp))
@@ -233,15 +243,16 @@ fun RecipeOverview(
             if (reportRecipeState.reporting) {
                 item {
                     ReportRecipeDialog(
-                        title = "Report",
-                        confirmText = "Send",
-                        cancelText = "Cancel",
+                        title = stringResource(R.string.report_dialog_title),
+                        confirmText = stringResource(R.string.report_dialog_persist),
+                        cancelText = stringResource(R.string.cancel),
                         onConfirm = { reportRecipeViewModel.onEvent(ReportRecipeEvent.SendReport) },
                         onDismiss = {
                             reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog)
                         },
                         onCancel = { reportRecipeViewModel.onEvent(ReportRecipeEvent.DismissDialog) },
-                        reportText = "Please provide a reason for reporting this recipe.",
+                        inputText = reportRecipeState.inputText,
+                        reportTextPlaceholder = stringResource(R.string.report_text_placeholder),
                         onValueChange = {
                             reportRecipeViewModel.onEvent(
                                 ReportRecipeEvent.InputTextChanged(
