@@ -53,10 +53,11 @@ interface MealFoodItemDao : BaseDao<MealFoodItemEntity> {
 
     /**
      * Deletes meal food items by meal ID.
-     * @param id The meal ID
+     * @param mealId the ID of the meal
+     * @param foodProductId the ID of the food product
      */
-    @Query("DELETE FROM meal_food_items WHERE mealId = :id")
-    suspend fun deleteById(id: String)
+    @Query("DELETE FROM meal_food_items WHERE mealId = :mealId AND foodProductId = :foodProductId")
+    suspend fun deleteItemOfMeal(mealId: String, foodProductId: String)
 
     /**
      * Gets meal food item with product data by meal and food product ID.

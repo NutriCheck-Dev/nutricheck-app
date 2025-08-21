@@ -116,8 +116,8 @@ class HistoryRepositoryImpl @Inject constructor(
             mealDao.deleteById(mealId)
         } else {
             when (mealItem) {
-                is MealFoodItem -> mealFoodItemDao.deleteById(mealItem.mealId)
-                is MealRecipeItem -> mealRecipeItemDao.deleteById(mealItem.mealId)
+                is MealFoodItem -> mealFoodItemDao.deleteItemOfMeal(mealItem.mealId, mealItem.foodProduct.id)
+                is MealRecipeItem -> mealRecipeItemDao.deleteItemOfMeal(mealItem.mealId, mealItem.recipe.id)
             }
         }
     }

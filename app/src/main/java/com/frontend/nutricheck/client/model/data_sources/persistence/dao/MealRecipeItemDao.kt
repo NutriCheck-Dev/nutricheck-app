@@ -61,10 +61,11 @@ interface MealRecipeItemDao : BaseDao<MealRecipeItemEntity> {
 
     /**
      * Deletes meal recipe items by meal ID.
-     * @param id The meal ID
+     * @param mealId The ID of the meal
+     * @param recipeId The ID of the recipe
      */
-    @Query("DELETE FROM meal_recipe_items WHERE mealId = :id")
-    suspend fun deleteById(id: String)
+    @Query("DELETE FROM meal_recipe_items WHERE mealId = :mealId AND recipeId = :recipeId")
+    suspend fun deleteItemOfMeal(mealId: String, recipeId: String)
 
     /**
      * Gets meal recipe item with complete recipe data by meal ID.
