@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -14,14 +15,14 @@ import com.frontend.nutricheck.client.ui.view.app_views.RecipeEditorPage
 import com.frontend.nutricheck.client.ui.view.app_views.RecipePage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 
 sealed class RecipePageScreens(val route: String) {
@@ -29,9 +30,10 @@ sealed class RecipePageScreens(val route: String) {
     object RecipeOverview : RecipePageScreens("recipe_overview/{recipeId}") {
         fun createRoute(recipeId: String) = "recipe_overview/$recipeId"
     }
-    object FoodProductOverview : AddScreens("food_product_overview/{foodProductId}?recipeId={recipeId}") {
-        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
-        fun fromIngredient(recipeId: String, foodProductId: String) = "food_product_overview/$foodProductId?recipeId=$recipeId"
+    object FoodProductOverview : AddScreens("food_product_overview/{foodProductId}?recipeId={recipeId}&editable={editable}") {
+        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId?editable=true"
+        fun fromIngredient(recipeId: String, foodProductId: String) =
+            "food_product_overview/$foodProductId?recipeId=$recipeId&editable=false"
     }
     object RecipeEditorPage : RecipePageScreens("recipe_editor") {
         const val ARGUMENT = "recipeId"
@@ -102,10 +104,13 @@ fun RecipePageNavGraph(
                 val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(graphEntry)
                 LaunchedEffect(recipeOverviewViewModel) {
                     recipeOverviewViewModel.events.collect { event ->
-                        if (event is RecipeOverviewEvent.NavigateToEditRecipe) {
-                            recipePageNavController.navigate(
-                                RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
-                            )
+                        when(event) {
+                            is RecipeOverviewEvent.NavigateToEditRecipe ->
+                                recipePageNavController.navigate(
+                                    RecipePageScreens.RecipeEditorPage.editRecipe(event.recipeId)
+                                )
+                            is RecipeOverviewEvent.RecipeDeleted -> recipePageNavController.popBackStack()
+                            else -> null
                         }
 
                     }
@@ -134,19 +139,28 @@ fun RecipePageNavGraph(
                 navArgument("recipeId") {
                     type = NavType.StringType
                     nullable = true
+                },
+                navArgument("editable") {
+                    type = NavType.StringType
+                    defaultValue = "true"
                 }
             )
         ) { backStack ->
+            Log.v("RecipePageNavGraph", "FoodProductOverview called with arguments: ${backStack.arguments}")
             val foodProductId = backStack.arguments!!.getString("foodProductId")!!
-            val recipeId = backStack.arguments?.getString("recipeId")!!
+            val recipeId = backStack.arguments?.getString("recipeId")
+            val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
+
             val graphEntry = remember(backStack) {
                 recipePageNavController.getBackStackEntry(
-                    AddScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
+                    if (recipeId != null)
+                        RecipePageScreens.FoodProductOverview.fromIngredient(recipeId, foodProductId)
+                    else
+                        RecipePageScreens.FoodProductOverview.fromSearch(foodProductId)
                 )
             }
-            val foodProductOverviewViewModel: FoodProductOverviewViewModel =
-                hiltViewModel(graphEntry)
 
+            val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
             LaunchedEffect(foodProductOverviewViewModel) {
                 foodProductOverviewViewModel.events.collect { event ->
                     if (event is FoodProductOverviewEvent.UpdateIngredient) {

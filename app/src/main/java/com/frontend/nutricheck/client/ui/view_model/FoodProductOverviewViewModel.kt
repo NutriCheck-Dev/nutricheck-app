@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model.food
+package com.frontend.nutricheck.client.ui.view_model
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +35,8 @@ data class CommonFoodProductOverviewParams(
     val fat: Double = 0.0,
     val servings: Int = 1,
     val servingSize: ServingSize = ServingSize.ONEHOUNDREDGRAMS,
-    val servingSizeDropDownExpanded: Boolean = false
+    val servingSizeDropDownExpanded: Boolean = false,
+    val editable: Boolean = true
 )
 
 data class FoodProductOverviewState (
@@ -71,7 +71,7 @@ class FoodProductOverviewViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val combinedSearchListStore: CombinedSearchListStore,
     savedStateHandle: SavedStateHandle
-) : BaseFoodOverviewViewModel() {
+) : BaseViewModel() {
 
     private val mode: FoodProductOverviewMode = savedStateHandle.run {
         val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
@@ -94,7 +94,7 @@ class FoodProductOverviewViewModel @Inject constructor(
             else -> { throw IllegalArgumentException("Invalid state arguments for FoodProductOverviewViewModel") } //Temporary solution
         }
     }
-
+    val editable: Boolean = savedStateHandle.get<String>("editable")?.toBoolean() ?: true
     private val initialParams = CommonFoodProductOverviewParams()
     private val initialFoodProduct = FoodProduct()
     private val initialState = FoodProductOverviewState(
@@ -137,7 +137,8 @@ class FoodProductOverviewViewModel @Inject constructor(
                 carbohydrates = foodProduct.carbohydrates,
                 fat = foodProduct.fat,
                 servings = servingsPair.first,
-                servingSize = servingsPair.second
+                servingSize = servingsPair.second,
+                editable = editable,
             )
             _state.update { it.copy(foodProduct = (foodProduct as FoodProduct), parameters = newParams) }
             convertNutrients()
@@ -160,7 +161,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-    override suspend fun onSaveChanges() {
+    private suspend fun onSaveChanges() {
         val state = _state.value
         val commonParams = state.parameters
 
@@ -169,7 +170,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                 val ingredient = Ingredient(
                     recipeId = state.recipeId!!,
                     foodProduct = state.foodProduct,
-                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0),
+                    quantity = commonParams.servings * commonParams.servingSize.getAmount(),
                     servings = commonParams.servings,
                     servingSize = commonParams.servingSize
                 )
@@ -180,7 +181,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                 val mealFoodItem = MealFoodItem(
                     mealId = state.mealId!!,
                     foodProduct = state.foodProduct,
-                    quantity = commonParams.servings * (commonParams.servingSize.getAmount() / 100.0),
+                    quantity = commonParams.servings * commonParams.servingSize.getAmount(),
                     servings = commonParams.servings,
                     servingSize = commonParams.servingSize
                 )
@@ -191,7 +192,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-    override fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Int) {
         _state.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servings = servings)
@@ -200,7 +201,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         convertNutrients()
     }
 
-    override fun onServingSizeChanged(servingSize: ServingSize) {
+    private fun onServingSizeChanged(servingSize: ServingSize) {
         _state.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servingSize = servingSize)
@@ -232,7 +233,6 @@ class FoodProductOverviewViewModel @Inject constructor(
             )
         }
     }
-
 
     private fun deleteAiMeal() {
         viewModelScope.launch {

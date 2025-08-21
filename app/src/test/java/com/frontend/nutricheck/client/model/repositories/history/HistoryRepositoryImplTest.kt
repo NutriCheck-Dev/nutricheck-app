@@ -98,11 +98,12 @@ class HistoryRepositoryImplTest {
     fun `request AI meal`() = runTest {
         val file = mockk<MultipartBody.Part>()
         val mealDTO = TestDataFactory.createDefaultMealDTO()
+        val languageCode = "en"
 
-        coEvery { api.estimateMeal(file) } returns Response.success(mealDTO)
+        coEvery { api.estimateMeal(file, languageCode) } returns Response.success(mealDTO)
         every { MealMapper.toData(mealDTO) } returns meal
 
-        val result = repository.requestAiMeal(file)
+        val result = repository.requestAiMeal(file, languageCode)
 
         if (result is Result.Success) {
             Assertions.assertEquals(meal, result.data)
@@ -207,18 +208,17 @@ class HistoryRepositoryImplTest {
         coVerify { mealFoodItemDao.insertAll(any()) }
         coVerify { mealRecipeItemDao.insertAll(any()) }
     }
-    
+
     @Test
     fun `get daily macros`() = runTest {
-        val date = Date()
-        coEvery { mealDao.getMealsWithAllForDay(date) } returns listOf(mealWithAll)
+        coEvery { mealDao.getMealsWithAllForDay(any()) } returns listOf(mealWithAll)
         every { DbMealMapper.toMeal(mealWithAll) } returns meal
 
         val macros = repository.getDailyMacros()
 
-        Assertions.assertEquals(meal.fat.toInt(), macros[2])
         Assertions.assertEquals(meal.carbohydrates.toInt(), macros[0])
         Assertions.assertEquals(meal.protein.toInt(), macros[1])
+        Assertions.assertEquals(meal.fat.toInt(), macros[2])
     }
 
     @Test

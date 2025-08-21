@@ -135,6 +135,7 @@
     <string name="searchbar_placeholder_regular">Search</string>
     <string name="search_tab_all">All</string>
     <string name="search_tab_my_recipes">My Recipes</string>
+    <string name="error_ai_server_response">The response of the server contains an error, please try again</string>
     <string name="io_exception_message">Please check your internet connection</string>
     <string name="upload_recipe_409_error_message">Upload failed: The Recipe you are trying to upload already exists.</string>
     <string name="upload_recipe_401_error_message">Upload failed: Missing authorization. Please log in.</string>
@@ -144,4 +145,17 @@
     <string name="meal_item_menu_text">Do you want to remove this dish?</string>
     <string name="meal_item_menu_remove">" Remove"</string>
     <string name="meal_item_menu_cancel">" Cancel"</string>
+    <string name="snackbar_message_recipe_saved">Recipe saved</string>
+    <string name="snackbar_message_recipe_updated">Recipe updated</string>
+    <string name="snackbar_message_meal_saved">Meal added</string>
+    <string name="snackbar_message_recipe_reported">Recipe reported</string>
+    <string name="snackbar_message_recipe_uploaded">Recipe uploaded</string>
+    <string name="snackbar_message_recipe_downloaded">Recipe downloaded</string>
+    <string name="snackbar_message_recipe_deleted">Recipe deleted</string>
+    <string name="snackbar_message_addmeal_foodproduct_added">Food added</string>
+    <string name="snackbar_message_addmeal_recipe_added">Recipe added</string>
+    <string name="snackbar_message_addmeal_foodproduct_removed">Food removed</string>
+    <string name="snackbar_message_addmeal_recipe_removed">Recipe removed</string>
+    <string name="snackbar_message_ingredient_added">Ingredient added</string>
+    <string name="snackbar_message_ingredient_removed">Ingredient removed</string>
 </resources>

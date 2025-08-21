@@ -43,12 +43,10 @@ import java.util.Date
 @Composable
 fun HistoryPage(
     historyViewModel: HistoryViewModel,
-    mainNavController: NavHostController,
     historyNavController: NavHostController
 ) {
     val state by historyViewModel.historyState.collectAsState()
-    val date = state.selectedDate
-    var selectedDate by remember { mutableStateOf(date) }
+    var selectedDate by remember { mutableStateOf(state.selectedDate) }
     var showDatePicker by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
@@ -56,28 +54,28 @@ fun HistoryPage(
 
     val breakfastItems = mealsGrouped[DayTime.BREAKFAST] ?: emptyList()
     val breakfastCalories = breakfastItems.sumOf { meal ->
-        val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
+        val foodCalories = meal.mealFoodItems.sumOf { it.servings * it.foodProduct.calories * (it.servingSize.getAmount() / 100) }
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
     }
     val breakfastComponents = breakfastItems.flatMap { it.mealFoodItems + it.mealRecipeItems }
     val lunchItems = mealsGrouped[DayTime.LUNCH] ?: emptyList()
     val lunchCalories = lunchItems.sumOf { meal ->
-        val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
+        val foodCalories = meal.mealFoodItems.sumOf { it.servings * it.foodProduct.calories * (it.servingSize.getAmount() / 100) }
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
     }
     val lunchComponents = lunchItems.flatMap { it.mealFoodItems + it.mealRecipeItems }
     val dinnerItems = mealsGrouped[DayTime.DINNER] ?: emptyList()
     val dinnerCalories = dinnerItems.sumOf { meal ->
-        val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
+        val foodCalories = meal.mealFoodItems.sumOf { it.servings * it.foodProduct.calories * (it.servingSize.getAmount() / 100) }
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
     }
     val dinnerComponents = dinnerItems.flatMap { it.mealFoodItems + it.mealRecipeItems }
     val snackItems = mealsGrouped[DayTime.SNACK] ?: emptyList()
     val snackCalories = snackItems.sumOf { meal ->
-        val foodCalories = meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories }
+        val foodCalories = meal.mealFoodItems.sumOf { it.servings * it.foodProduct.calories * (it.servingSize.getAmount() / 100)}
         val recipeCalories = meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }
         foodCalories + recipeCalories
     }

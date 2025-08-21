@@ -68,6 +68,10 @@ class HistoryViewModel @Inject constructor(
     private val _events = MutableSharedFlow<HistoryEvent>()
     val events: SharedFlow<HistoryEvent> = _events.asSharedFlow()
 
+    init {
+        observeMeals()
+        observeCalories()
+    }
     /**
      * Handles incoming events and delegates to appropriate handler methods
      *
@@ -84,10 +88,6 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-    init {
-        // Initialize with current date
-        selectDate(Date())
-    }
 
     /**
      * Handles the add entry button click
@@ -159,8 +159,6 @@ class HistoryViewModel @Inject constructor(
         _historyState.update {
             it.copy(selectedDate = day)
         }
-        observeMeals()
-        observeCalories()
     }
 
     /**

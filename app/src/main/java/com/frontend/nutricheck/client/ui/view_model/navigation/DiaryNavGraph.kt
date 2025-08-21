@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.frontend.nutricheck.client.R
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -30,7 +29,6 @@ enum class DiaryTab(val stringResId: Int) {
 }
 @Composable
 fun DiaryNavGraph(
-    mainNavController: NavHostController
 ) {
     val context = LocalContext.current
     val historyPageNavController = rememberNavController()
@@ -73,7 +71,7 @@ fun DiaryNavGraph(
                 .fillMaxSize()
         ) {
             when (selectedTab) {
-                DiaryTab.HISTORY -> HistoryPageNavGraph(mainNavController, historyPageNavController)
+                DiaryTab.HISTORY -> HistoryPageNavGraph(historyPageNavController)
                 DiaryTab.RECIPES -> RecipePageNavGraph(recipePageNavController)
             }
         }

@@ -8,9 +8,9 @@ enum class ServingSize(private val amount: Double) {
 
     fun getDisplayName(): String {
         return if (this == ONEGRAM) {
-            "$amount gram"
+            "${amount.toInt()} gram"
         } else {
-            "$amount grams"
+            "${amount.toInt()} grams"
         }
     }
     fun getAmount(): Double {

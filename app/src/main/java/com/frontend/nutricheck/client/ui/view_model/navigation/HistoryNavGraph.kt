@@ -21,8 +21,8 @@ import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOver
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.HistoryViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 
@@ -34,11 +34,11 @@ sealed class HistoryPageScreens(val route: String) {
         }
     }
     object FoodOverview : HistoryPageScreens(
-        "food_product_overview/{foodProductId}" +
-                "?recipeId={recipeId}") {
-        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
+        "food_product_overview/{foodProductId}?recipeId={recipeId}&editable={editable}"
+    ) {
+        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId?editable=true"
         fun fromIngredient(recipeId: String, foodProductId: String) =
-            "food_product_overview/$foodProductId?recipeId=$recipeId"
+            "food_product_overview/$foodProductId?recipeId=$recipeId&editable=false"
     }
 
     object RecipeOverview : HistoryPageScreens("recipe_overview/{recipeId}?fromSearch={fromSearch}") {
@@ -60,7 +60,6 @@ sealed class HistoryPageScreens(val route: String) {
 
 @Composable
 fun HistoryPageNavGraph(
-    mainNavController: NavHostController,
     historyPageNavController: NavHostController
 ) {
 
@@ -78,7 +77,6 @@ fun HistoryPageNavGraph(
             val hiltViewModel: HistoryViewModel = hiltViewModel()
             HistoryPage(
                 historyViewModel = hiltViewModel,
-                mainNavController = mainNavController,
                 historyNavController = historyPageNavController,
             )
         }
@@ -164,14 +162,22 @@ fun HistoryPageNavGraph(
                         nullable = true
                         defaultValue = null
                     },
+                    navArgument("editable") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = "true"
+                    }
                 )
             ) { backStack ->
                 val foodProductId = backStack.arguments!!.getString("foodProductId")!!
                 val recipeId = backStack.arguments!!.getString("recipeId")
+                val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
+
                 val mode = when {
                     recipeId != null -> HistoryPageScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
                     else -> HistoryPageScreens.FoodOverview.fromSearch(foodProductId)
                 }
+
                 val graphEntry = remember(backStack) {
                     historyPageNavController.getBackStackEntry(mode)
                 }
@@ -181,20 +187,13 @@ fun HistoryPageNavGraph(
                 val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
                 val foodSearchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
 
-                LaunchedEffect(foodSearchViewModel) {
-                    foodSearchViewModel.events.collect { event ->
-                        if (event is SearchEvent.AddFoodComponent) {
-                            historyPageNavController.popBackStack()
-                        }
-                    }
-                }
-
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     foodSearchViewModel = foodSearchViewModel,
                     onBack = { historyPageNavController.popBackStack() }
                 )
             }
+
             composable(
                 route = "food_details?mealId={mealId}&foodProductId={foodProductId}",
                 arguments = listOf(
@@ -216,6 +215,7 @@ fun HistoryPageNavGraph(
                         }
                     }
                 }
+
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     onBack = { historyPageNavController.popBackStack() }
@@ -241,6 +241,14 @@ fun HistoryPageNavGraph(
                     recipeOverviewViewModel = recipeOverviewViewModel,
                     reportRecipeViewModel = reportRecipeViewModel,
                     searchViewModel = searchViewModel,
+                    onItemClick = { ingredient ->
+                        historyPageNavController.navigate(
+                            HistoryPageScreens.FoodOverview.fromIngredient(
+                                ingredient.recipeId,
+                                ingredient.foodProduct.id
+                            )
+                        )
+                    },
                     onPersist = { historyPageNavController.popBackStack() },
                     onBack = { historyPageNavController.popBackStack() }
                 )

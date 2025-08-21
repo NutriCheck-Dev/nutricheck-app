@@ -1,8 +1,11 @@
 package com.frontend.nutricheck.client.ui.view_model.recipe
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
@@ -10,7 +13,9 @@ import com.frontend.nutricheck.client.model.repositories.history.HistoryReposito
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -59,13 +64,17 @@ sealed interface RecipeOverviewEvent {
     data object ClickDetails : RecipeOverviewEvent
     data object RecipeUploaded : RecipeOverviewEvent
     data object ResetErrorState : RecipeOverviewEvent
+    data object UpdateMealRecipeItem : RecipeOverviewEvent
+    data object RecipeDeleted : RecipeOverviewEvent
 }
 
 @HiltViewModel
 class RecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val historyRepository: HistoryRepository,
+    private val snackbarManager: SnackbarManager,
     private val combinedSearchListStore: CombinedSearchListStore,
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ): BaseViewModel() {
     private val mode: RecipeOverviewMode = savedStateHandle.run {
@@ -138,7 +147,7 @@ class RecipeOverviewViewModel @Inject constructor(
                             protein = recipe.protein,
                             carbohydrates = recipe.carbohydrates,
                             fat = recipe.fat,
-                            servings = recipe.servings
+                            servings = meal.quantity.toInt()
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
@@ -164,6 +173,8 @@ class RecipeOverviewViewModel @Inject constructor(
             }
             is RecipeOverviewEvent.RecipeUploaded -> null
             is RecipeOverviewEvent.ResetErrorState -> setReady()
+            is RecipeOverviewEvent.RecipeDeleted -> null
+            is RecipeOverviewEvent.UpdateMealRecipeItem -> viewModelScope.launch { updateMealRecipeItem() }
         }
     }
 
@@ -198,15 +209,39 @@ class RecipeOverviewViewModel @Inject constructor(
         }
     }
 
+    private suspend fun updateMealRecipeItem() {
+        if (mode is RecipeOverviewMode.FromMeal) {
+            val mealRecipeItem = MealRecipeItem(
+                mealId = mode.mealId,
+                recipe = _recipeOverviewState.value.recipe,
+                servings = _recipeOverviewState.value.parameters.servings,
+                quantity = _recipeOverviewState.value.parameters.servings.toDouble(),
+            )
+            historyRepository.updateMealRecipeItem(mealRecipeItem)
+        }
+    }
+
     private fun onDetailsOptionClick(option: DropdownMenuOptions) {
         viewModelScope.launch {
             when (option) {
-                DropdownMenuOptions.DELETE -> recipeRepository.deleteRecipe(_recipeOverviewState.value.recipe)
-                DropdownMenuOptions.DOWNLOAD -> recipeRepository.downloadRecipe(_recipeOverviewState.value.recipe)
+                DropdownMenuOptions.DELETE -> {
+                    recipeRepository.deleteRecipe(_recipeOverviewState.value.recipe)
+                    _events.emit(RecipeOverviewEvent.RecipeDeleted)
+                    snackbarManager.show(context.getString(R.string.snackbar_message_recipe_deleted))
+
+                }
+                DropdownMenuOptions.DOWNLOAD -> {
+                    recipeRepository.downloadRecipe(_recipeOverviewState.value.recipe)
+                    snackbarManager.show(context.getString(R.string.snackbar_message_recipe_downloaded))
+
+                }
                 DropdownMenuOptions.UPLOAD -> {
                     when (val body = recipeRepository.uploadRecipe(_recipeOverviewState.value.recipe)) {
-                        is Result.Success -> _events.emit(RecipeOverviewEvent.RecipeUploaded)
-                        is Result.Error ->  setError(body.message!!)
+                        is Result.Success -> {
+                            _events.emit(RecipeOverviewEvent.RecipeUploaded)
+                            snackbarManager.show(context.getString(R.string.snackbar_message_recipe_uploaded))
+                        }
+                        is Result.Error -> setError(body.message!!)
                     }
                 }
                 DropdownMenuOptions.REPORT -> _recipeOverviewState.update { it.copy(parameters = it.parameters.copy(showReportDialog = !it.parameters.showReportDialog)) }

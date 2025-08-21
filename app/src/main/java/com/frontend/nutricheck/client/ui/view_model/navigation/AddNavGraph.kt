@@ -19,13 +19,13 @@ import com.frontend.nutricheck.client.ui.view.app_views.CreateMealPage
 import com.frontend.nutricheck.client.ui.view.app_views.RecipeEditorPage
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.FoodProductOverview
 import com.frontend.nutricheck.client.ui.view.app_views.foodcomponent.RecipeOverview
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewViewModel
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
-import com.frontend.nutricheck.client.ui.view_model.food.FoodProductOverviewEvent
+import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 
 sealed class AddScreens(val route: String) {
@@ -39,13 +39,16 @@ sealed class AddScreens(val route: String) {
     object AddRecipe : AddScreens("add_recipe")
     object RecipePage : AddScreens("recipe_page")
     object FoodOverview : AddScreens(
-        "food_product_overview/{foodProductId}" +
-                "?recipeId={recipeId}&mealId={mealId}") {
-        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
+        "food_product_overview/{foodProductId}?recipeId={recipeId}&mealId={mealId}&editable={editable}"
+    ) {
+        fun fromSearch(foodProductId: String) =
+            "food_product_overview/$foodProductId?editable=true"
+
         fun fromIngredient(recipeId: String, foodProductId: String) =
-            "food_product_overview/$foodProductId?recipeId=$recipeId"
+            "food_product_overview/$foodProductId?recipeId=$recipeId&editable=false"
+
         fun fromAiMeal(mealId: String, foodProductId: String) =
-            "food_product_overview/$foodProductId?mealId=$mealId"
+            "food_product_overview/$foodProductId?mealId=$mealId&editable=true"
     }
     object RecipeOverview : AddScreens("recipe_overview/{recipeId}?fromSearch={fromSearch}") {
         fun createRoute(recipeId: String, fromSearch: Boolean) =
@@ -165,12 +168,18 @@ fun AddNavGraph(
                         type = NavType.StringType
                         nullable = true
                         defaultValue = null
+                    },
+                    navArgument("editable") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = "true"
                     }
                 )
             ) { backStack ->
                 val foodProductId = backStack.arguments!!.getString("foodProductId")!!
                 val recipeId = backStack.arguments!!.getString("recipeId")
                 val mealId = backStack.arguments!!.getString("mealId")
+                val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
                 val mode = when {
                     recipeId != null -> AddScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
                     mealId != null -> AddScreens.FoodOverview.fromAiMeal(mealId, foodProductId)
