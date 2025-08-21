@@ -94,7 +94,7 @@ class FoodProductOverviewViewModel @Inject constructor(
             else -> { throw IllegalArgumentException("Invalid state arguments for FoodProductOverviewViewModel") } //Temporary solution
         }
     }
-    val editable: Boolean = savedStateHandle["editable"] ?: true
+    val editable: Boolean = savedStateHandle.get<String>("editable")?.toBoolean() ?: true
     private val initialParams = CommonFoodProductOverviewParams()
     private val initialFoodProduct = FoodProduct()
     private val initialState = FoodProductOverviewState(
