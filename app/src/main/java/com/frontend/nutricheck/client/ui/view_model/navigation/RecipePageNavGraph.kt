@@ -29,9 +29,10 @@ sealed class RecipePageScreens(val route: String) {
     object RecipeOverview : RecipePageScreens("recipe_overview/{recipeId}") {
         fun createRoute(recipeId: String) = "recipe_overview/$recipeId"
     }
-    object FoodProductOverview : AddScreens("food_product_overview/{foodProductId}?recipeId={recipeId}") {
-        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
-        fun fromIngredient(recipeId: String, foodProductId: String) = "food_product_overview/$foodProductId?recipeId=$recipeId"
+    object FoodProductOverview : AddScreens("food_product_overview/{foodProductId}?recipeId={recipeId}&editable={editable}") {
+        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId?editable=true"
+        fun fromIngredient(recipeId: String, foodProductId: String) =
+            "food_product_overview/$foodProductId?recipeId=$recipeId&editable=false"
     }
     object RecipeEditorPage : RecipePageScreens("recipe_editor") {
         const val ARGUMENT = "recipeId"
@@ -137,26 +138,28 @@ fun RecipePageNavGraph(
                 navArgument("recipeId") {
                     type = NavType.StringType
                     nullable = true
+                },
+                navArgument("editable") {
+                    type = NavType.StringType
+                    defaultValue = "true"
                 }
             )
         ) { backStack ->
             val foodProductId = backStack.arguments!!.getString("foodProductId")!!
-            val recipeId = backStack.arguments?.getString("recipeId")!!
+            val recipeId = backStack.arguments?.getString("recipeId")
+            val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
+
             val graphEntry = remember(backStack) {
                 recipePageNavController.getBackStackEntry(
-                    AddScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
+                    if (recipeId != null)
+                        RecipePageScreens.FoodProductOverview.fromIngredient(recipeId, foodProductId)
+                    else
+                        RecipePageScreens.FoodProductOverview.fromSearch(foodProductId)
                 )
             }
-            val foodProductOverviewViewModel: FoodProductOverviewViewModel =
-                hiltViewModel(graphEntry)
 
-            LaunchedEffect(foodProductOverviewViewModel) {
-                foodProductOverviewViewModel.events.collect { event ->
-                    if (event is FoodProductOverviewEvent.UpdateIngredient) {
-                        recipePageNavController.popBackStack()
-                    }
-                }
-            }
+            val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
+
             FoodProductOverview(
                 foodProductOverviewViewModel = foodProductOverviewViewModel,
                 onBack = { recipePageNavController.popBackStack() }
