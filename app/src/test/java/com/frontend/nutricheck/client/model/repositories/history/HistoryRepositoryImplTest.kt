@@ -180,7 +180,6 @@ class HistoryRepositoryImplTest {
         Assertions.assertEquals(meal.calories, result.calories, 0.0)
     }
 
-    //exception?
     @Test
     fun `add meal`() = runTest {
         val mealEntity = TestDataFactory.createDefaultMealEntity()
@@ -209,7 +208,7 @@ class HistoryRepositoryImplTest {
         coVerify { mealFoodItemDao.insertAll(any()) }
         coVerify { mealRecipeItemDao.insertAll(any()) }
     }
-    @Ignore
+
     @Test
     fun `get daily macros`() = runTest {
         coEvery { mealDao.getMealsWithAllForDay(any()) } returns listOf(mealWithAll)
