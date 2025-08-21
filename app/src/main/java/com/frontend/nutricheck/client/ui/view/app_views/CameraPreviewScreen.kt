@@ -168,10 +168,12 @@ fun CameraPreviewScreen(
                         .background(MaterialTheme.colorScheme.background),
                     horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnRetakePhoto) }) {
+                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnRetakePhoto) },
+                        enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.retake_photo))
                     }
-                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) }) {
+                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) },
+                        enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.submit_photo))
                     }
                 }
