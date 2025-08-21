@@ -163,14 +163,15 @@ fun HistoryPageNavGraph(
                         defaultValue = null
                     },
                     navArgument("editable") {
-                        type = NavType.BoolType
-                        defaultValue = true
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = "true"
                     }
                 )
             ) { backStack ->
                 val foodProductId = backStack.arguments!!.getString("foodProductId")!!
                 val recipeId = backStack.arguments!!.getString("recipeId")
-                val editable = backStack.arguments!!.getBoolean("editable")
+                val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
 
                 val mode = when {
                     recipeId != null -> HistoryPageScreens.FoodOverview.fromIngredient(recipeId, foodProductId)

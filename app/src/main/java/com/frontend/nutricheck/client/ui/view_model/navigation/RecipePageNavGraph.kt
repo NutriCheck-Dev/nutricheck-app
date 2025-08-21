@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -145,6 +146,7 @@ fun RecipePageNavGraph(
                 }
             )
         ) { backStack ->
+            Log.v("RecipePageNavGraph", "FoodProductOverview called with arguments: ${backStack.arguments}")
             val foodProductId = backStack.arguments!!.getString("foodProductId")!!
             val recipeId = backStack.arguments?.getString("recipeId")
             val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
@@ -159,7 +161,13 @@ fun RecipePageNavGraph(
             }
 
             val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
-
+            LaunchedEffect(foodProductOverviewViewModel) {
+                foodProductOverviewViewModel.events.collect { event ->
+                    if (event is FoodProductOverviewEvent.UpdateIngredient) {
+                        recipePageNavController.popBackStack()
+                    }
+                }
+            }
             FoodProductOverview(
                 foodProductOverviewViewModel = foodProductOverviewViewModel,
                 onBack = { recipePageNavController.popBackStack() }
