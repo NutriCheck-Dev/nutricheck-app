@@ -11,7 +11,9 @@ import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
+/**
+ * Dialog to confirm the deletion of a weight entry.
+ */
 @Composable
 fun DeleteWeightDialog(
     selectedWeight: Weight?,

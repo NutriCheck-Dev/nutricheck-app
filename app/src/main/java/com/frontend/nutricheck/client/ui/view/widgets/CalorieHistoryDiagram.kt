@@ -38,6 +38,10 @@ enum class CalorieRange(val id: String, val labelResId: Int) {
     LAST_30_DAYS("30d", R.string.range_30_days),
     LAST_60_DAYS("60d", R.string.range_60_days)
 }
+
+/**
+ * Composable function that displays a calorie history diagram with a bar chart and a range switcher.
+ */
 @Composable
 fun CalorieHistoryDiagram(
     modifier: Modifier = Modifier,
@@ -129,17 +133,16 @@ fun CalorieBarChart(
         ) {
             val barWidth = 12.dp.toPx()
 
-            // Dynamische untere Y-Achsenbegrenzung, alles mit Int!
             val visualMin = if (range < 400) {
                 (rawMin - 100).coerceAtLeast(0)
             } else {
-                (rawMin * 90 / 100).coerceAtLeast(0) // 0.9 als Int-Operation
+                (rawMin * 90 / 100).coerceAtLeast(0)
             }
 
             val visualMax = maxOf(rawMax, calorieGoal)
-            val heightRatio = if (visualMax - visualMin == 0) 1f else size.height / (visualMax - visualMin).toFloat()
+            val heightRatio = if (visualMax - visualMin == 0) 1f else size.height /
+                    (visualMax - visualMin).toFloat()
 
-            // Balken
             val totalSpacing = size.width - (data.size * barWidth)
             val spacingBar = if (data.size > 1) totalSpacing / (data.size - 1) else 0f
 
@@ -152,15 +155,16 @@ fun CalorieBarChart(
                     size = Size(barWidth, barHeight)
                 )
             }
-            // Ziel-Linie
-            val goalY = size.height - ((calorieGoal - visualMin).toFloat() / (visualMax - visualMin).toFloat()) * size.height
+
+            val goalY = size.height - ((calorieGoal - visualMin).toFloat() /
+                    (visualMax - visualMin).toFloat()) * size.height
             drawLine(
                 color = Color.Green,
                 start = Offset(0f, goalY),
                 end = Offset(size.width, goalY),
                 strokeWidth = 3f
             )
-            // Ziel-Label
+
             drawContext.canvas.nativeCanvas.drawText(
                 "$calorieGoal",
                 -4.5f,
@@ -173,7 +177,6 @@ fun CalorieBarChart(
                 }
             )
 
-            // X-Achse Labels
             labelMap.forEach { (index, label) ->
                 val x = index * (barWidth + spacingBar) + barWidth / 2
                 drawContext.canvas.nativeCanvas.drawText(

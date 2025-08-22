@@ -24,8 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
-// ChartRangeSwitcher is a composable that allows users to switch between different time periods for chart data.
+/**
+ * ChartRangeSwitcher is a composable that allows users to switch
+ * between different time periods for chart data.
+ */
 @Composable
 fun ChartRangeSwitcher(
     modifier: Modifier = Modifier,
@@ -63,7 +65,8 @@ fun ChartRangeSwitcher(
             options.forEachIndexed { index, label ->
                 val selected = index == selectedOption
                 val bgColor by animateColorAsState(if (selected) selectedBg else Color.Transparent)
-                val textColor by animateColorAsState(if (selected) selectedTextColor else unselectedTextColor)
+                val textColor by animateColorAsState(if (selected) selectedTextColor else
+                    unselectedTextColor)
 
                 Box(
                     modifier = Modifier

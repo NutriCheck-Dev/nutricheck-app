@@ -90,7 +90,8 @@ fun DishItemButton(
                 Text(
                     text = when (foodComponent) {
                         is Recipe -> "${foodComponent.servings * foodComponent.calories} "
-                        is FoodProduct -> "${foodComponent.servings * foodComponent.calories * (foodComponent.servingSize.getAmount() / 100)} "
+                        is FoodProduct -> "${foodComponent.servings * foodComponent.calories * 
+                                (foodComponent.servingSize.getAmount() / 100)} "
                     } + stringResource(R.string.dishitem_button_portions) + "${foodComponent.servings}",
                     style = styles.bodyLarge,
                     maxLines = 1,
@@ -170,7 +171,8 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)} " +
+                    text = "${ingredient.servings * ingredient.foodProduct.calories * 
+                            (ingredient.servingSize.getAmount() / 100)} " +
                             stringResource(R.string.dishitem_button_portions) +
                             "${ingredient.servings}",
                     style = styles.bodyLarge,
