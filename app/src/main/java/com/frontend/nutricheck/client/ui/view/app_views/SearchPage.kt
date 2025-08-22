@@ -59,7 +59,8 @@ fun SearchPage(
     expand: Boolean = false,
     showTabRow: Boolean = true,
     isLoading: Boolean,
-    showEmptyState: Boolean
+    showEmptyState: Boolean,
+    toggleExpand: () -> Unit
 ) {
     val styles = MaterialTheme.typography
     val sheetState = rememberModalBottomSheetState()
@@ -89,6 +90,7 @@ fun SearchPage(
             onAddButtonClick = {
                 showBottomSheet = true
                 scope.launch { sheetState.show() }
+                toggleExpand()
             }
         )
 
@@ -100,8 +102,6 @@ fun SearchPage(
             trailingContent = { item ->
                 CustomAddButton {
                     addFoodComponent(item)
-                    showBottomSheet = false
-                    scope.launch { sheetState.hide() }
                 }
             },
             onItemClick = { item ->
@@ -111,6 +111,7 @@ fun SearchPage(
             onDismiss = {
                 showBottomSheet = false
                 scope.launch { sheetState.hide() }
+                toggleExpand()
             },
             selectedTab = selectedTab,
             onSelectTab = { onSelectTab(it) },

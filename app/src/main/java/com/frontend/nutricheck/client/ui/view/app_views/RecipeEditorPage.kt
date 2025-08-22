@@ -212,7 +212,8 @@ fun RecipeEditorPage(
                     },
                     showTabRow = false,
                     isLoading = uiState == BaseViewModel.UiState.Loading,
-                    showEmptyState = draft.hasSearched && draft.lastSearchedQuery == draft.query
+                    showEmptyState = draft.hasSearched && draft.lastSearchedQuery == draft.query,
+                    toggleExpand = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet) }
                 )
             }
         }

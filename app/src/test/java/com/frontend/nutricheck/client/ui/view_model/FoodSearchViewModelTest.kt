@@ -182,7 +182,7 @@ class FoodSearchViewModelTest {
         var state = searchViewModel.searchState.value
         assertEquals("pa", state.parameters.query)
 
-        searchViewModel.onEvent(SearchEvent.ShowBottomSheet)
+        searchViewModel.onEvent(SearchEvent.ExpandBottomSheet)
         advanceUntilIdle()
         state = searchViewModel.searchState.value
         assertTrue(state.parameters.bottomSheetExpanded)
