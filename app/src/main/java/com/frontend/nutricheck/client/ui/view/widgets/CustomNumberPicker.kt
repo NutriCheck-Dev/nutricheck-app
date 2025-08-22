@@ -38,6 +38,18 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 
+/**
+ * A custom number picker component that allows users to select a value from a list of strings.
+ *
+ * @param modifier Modifier to customize the appearance and behavior of the picker.
+ * @param list The list of strings to display in the picker.
+ * @param textStyle The style to apply to the text displayed in the picker.
+ * @param state The state of the lazy list used for displaying the items.
+ * @param flingBehavior The fling behavior to apply to the lazy list.
+ * @param visibleCount The number of items to display at once in the picker.
+ * @param onSelectedIndexChange Callback function to be invoked when the selected index changes.
+ * @param selectedInitialIndex The initial index to scroll to when the picker is first displayed.
+ */
 @Composable
 fun CustomNumberPicker(
     modifier: Modifier = Modifier,

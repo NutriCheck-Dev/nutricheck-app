@@ -94,7 +94,8 @@ fun CreateMealPage(
                     },
                     isLoading = uiState == BaseViewModel.UiState.Loading,
                     showEmptyState = searchState.parameters.hasSearched &&
-                    searchState.parameters.lastSearchedQuery == searchState.parameters.query
+                    searchState.parameters.lastSearchedQuery == searchState.parameters.query,
+                    toggleExpand = { searchViewModel.onEvent(SearchEvent.ExpandBottomSheet) }
                 )
             }
         }

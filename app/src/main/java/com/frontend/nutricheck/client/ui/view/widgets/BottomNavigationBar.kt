@@ -33,7 +33,7 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
-            selected = currentDestination == Screen.DiaryPage.route,
+            selected = currentDestination == Screen.DiaryPage.createRoute(null),
             onClick = { onClickDiary() },
             icon = { Icon(Icons.Default.DateRange,
                    contentDescription = stringResource(id = R.string.navigation_bar_label_diary)) },

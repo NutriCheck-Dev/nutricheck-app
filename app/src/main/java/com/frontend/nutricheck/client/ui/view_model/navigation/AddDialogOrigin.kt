@@ -5,5 +5,5 @@ enum class AddDialogOrigin {
     BOTTOM_NAV_BAR_ADD_RECIPE,
     BOTTOM_NAV_BAR_ADD_AI_MEAL,
     RECIPE_PAGE,
-    HISTORY_PAGE,
+    HISTORY_PAGE;
 }

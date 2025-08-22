@@ -37,7 +37,6 @@ sealed class AddScreens(val route: String) {
         const val DEFAULT = "add_meal"
     }
     object AddRecipe : AddScreens("add_recipe")
-    object RecipePage : AddScreens("recipe_page")
     object FoodOverview : AddScreens(
         "food_product_overview/{foodProductId}?recipeId={recipeId}&mealId={mealId}&editable={editable}"
     ) {
@@ -108,7 +107,7 @@ fun AddNavGraph(
                 LaunchedEffect(searchViewModel) {
                     searchViewModel.events.collect { event ->
                         if (event is SearchEvent.MealSaved) {
-                            mainNavController.navigate(Screen.DiaryPage.route) {
+                            mainNavController.navigate(Screen.DiaryPage.createRoute(null)) {
                                 popUpTo(Screen.Add.route) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -231,7 +230,8 @@ fun AddNavGraph(
                 LaunchedEffect(createRecipeViewModel) {
                     createRecipeViewModel.events.collect { event ->
                         if (event is RecipeEditorEvent.RecipeSaved) {
-                            addNavController.navigate(AddScreens.RecipePage.route) {
+                            mainNavController.navigate(Screen.DiaryPage.createRoute(
+                                DiaryGraphDestination.RECIPE_RELATED)) {
                                 popUpTo(Screen.Add.route) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -313,7 +313,7 @@ fun AddNavGraph(
                 LaunchedEffect(foodProductOverviewViewModel) {
                     foodProductOverviewViewModel.events.collect { event ->
                         if (event is FoodProductOverviewEvent.SubmitMealItem) {
-                            mainNavController.navigate(Screen.DiaryPage.route) {
+                            mainNavController.navigate(Screen.DiaryPage.createRoute(null)) {
                                 popUpTo(Screen.Add.route) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -330,10 +330,6 @@ fun AddNavGraph(
             }
         }
 
-        composable(AddScreens.RecipePage.route) {
-            val recipePageNavController = rememberNavController()
-            RecipePageNavGraph(recipePageNavController)
-        }
     }
 }
 

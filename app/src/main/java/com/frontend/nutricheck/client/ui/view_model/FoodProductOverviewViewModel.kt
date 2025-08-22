@@ -64,6 +64,19 @@ sealed interface FoodProductOverviewEvent {
     data object UpdateIngredient : FoodProductOverviewEvent
 }
 
+/**
+ * ViewModel for managing the overview of a food product.
+ * This ViewModel handles different modes of viewing a food product,
+ * such as from a recipe ingredient, a meal, or a search result.
+ * It provides functionality to update servings, serving sizes,
+ * and save changes to the food product.
+ *
+ * @property foodProductRepository Repository for accessing food product data.
+ * @property recipeRepository Repository for accessing recipe data.
+ * @property historyRepository Repository for accessing meal history data.
+ * @property combinedSearchListStore Store for managing the combined search list state.
+ * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ */
 @HiltViewModel
 class FoodProductOverviewViewModel @Inject constructor(
     private val foodProductRepository: FoodProductRepository,

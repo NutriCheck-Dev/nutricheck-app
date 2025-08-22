@@ -22,6 +22,24 @@ import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 
+/**
+ * A composable function that displays a bottom sheet for searching food components.
+ * It includes a search bar, tab row for filtering results, and a list of food components.
+ *
+ * @param foodComponents The list of food components to display in the bottom sheet.
+ * @param selectedTab The currently selected tab index.
+ * @param onSelectTab Callback function to handle tab selection changes.
+ * @param trailingContent Optional trailing content to display alongside each food component.
+ * @param showBottomSheet Whether to show the bottom sheet.
+ * @param onDismiss Callback function to handle bottom sheet dismissal.
+ * @param onItemClick Callback function to handle item clicks in the food component list.
+ * @param query The current search query.
+ * @param onQueryChange Callback function to handle changes in the search query.
+ * @param onSearch Callback function to handle search button clicks.
+ * @param showTabRow Whether to show the tab row for selecting different categories.
+ * @param isLoading Whether the search results are currently loading.
+ * @param showEmptyState Whether to show an empty state when there are no search results.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetSearch(
