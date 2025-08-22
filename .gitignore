@@ -1,6 +1,8 @@
 *.iml
 .gradle
 .idea
+.kotlin
+.vscode
 /local.properties
 .DS_Store
 /build
