@@ -22,6 +22,9 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * Implementation of [FoodProductRepository] that handles searching and retrieving food products.
+ */
 class FoodProductRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val foodDao: FoodDao,

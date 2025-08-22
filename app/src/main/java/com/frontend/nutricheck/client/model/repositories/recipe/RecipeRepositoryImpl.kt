@@ -35,6 +35,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.jvm.java
 
+/**
+ * Implementation of [RecipeRepository] that interacts with the local database and remote API.
+ */
 class RecipeRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val recipeDao: RecipeDao,

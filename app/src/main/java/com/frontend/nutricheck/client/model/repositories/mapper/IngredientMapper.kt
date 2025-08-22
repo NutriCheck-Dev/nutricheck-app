@@ -5,6 +5,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import kotlin.math.absoluteValue
 
+/**
+ * Mapper for converting between [Ingredient] and [IngredientDTO].
+ */
 object IngredientMapper {
     fun toDTO(ingredient: Ingredient) : IngredientDTO =
         IngredientDTO(

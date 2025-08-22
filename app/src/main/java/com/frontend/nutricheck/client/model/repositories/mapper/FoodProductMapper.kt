@@ -4,6 +4,9 @@ import com.frontend.nutricheck.client.dto.FoodProductDTO
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 
+/**
+ * Mapper for converting between [FoodProduct] and [FoodProductDTO].
+ */
 object FoodProductMapper {
     fun toDTO(foodProduct: FoodProduct) : FoodProductDTO = FoodProductDTO(
         id = foodProduct.id,
