@@ -23,6 +23,26 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomCloseButton
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import kotlinx.coroutines.launch
 
+/**
+ * A composable function that displays a search page for food components.
+ * It allows users to search for food components, add them to a list, and remove them as needed.
+ *
+ * @param modifier The modifier to be applied to the root composable.
+ * @param selectedTab The currently selected tab index.
+ * @param onSelectTab Callback function to handle tab selection changes.
+ * @param onItemClick Callback function to handle item clicks in the food component list.
+ * @param query The current search query.
+ * @param onSearchClick Callback function to handle search button clicks.
+ * @param onQueryChange Callback function to handle changes in the search query.
+ * @param addFoodComponent Callback function to add a food component to the list.
+ * @param removeFoodComponent Callback function to remove a food component from the list.
+ * @param addedComponents The list of food components that have been added.
+ * @param searchResults The list of food components that match the search query.
+ * @param expand Whether to expand the bottom sheet for searching food components.
+ * @param showTabRow Whether to show the tab row for selecting different categories.
+ * @param isLoading Whether the search results are currently loading.
+ * @param showEmptyState Whether to show an empty state when there are no search results.
+ */
 @Composable
 fun SearchPage(
     modifier: Modifier = Modifier,
@@ -39,7 +59,8 @@ fun SearchPage(
     expand: Boolean = false,
     showTabRow: Boolean = true,
     isLoading: Boolean,
-    showEmptyState: Boolean
+    showEmptyState: Boolean,
+    toggleExpand: () -> Unit
 ) {
     val styles = MaterialTheme.typography
     val sheetState = rememberModalBottomSheetState()
@@ -69,6 +90,7 @@ fun SearchPage(
             onAddButtonClick = {
                 showBottomSheet = true
                 scope.launch { sheetState.show() }
+                toggleExpand()
             }
         )
 
@@ -88,7 +110,8 @@ fun SearchPage(
             showBottomSheet = showBottomSheet,
             onDismiss = {
                 showBottomSheet = false
-                scope.launch { sheetState.show() }
+                scope.launch { sheetState.hide() }
+                toggleExpand()
             },
             selectedTab = selectedTab,
             onSelectTab = { onSelectTab(it) },

@@ -8,7 +8,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -47,6 +47,13 @@ sealed interface RecipePageEvent {
     object ResetErrorState : RecipePageEvent
 }
 
+/**
+ * ViewModel for managing the recipe page state and handling user interactions.
+ *
+ * @property recipeRepository Repository for accessing recipe data.
+ * @property snackbarManager Manager for displaying snackbars.
+ * @property context Application context for resource access.
+ */
 @HiltViewModel
 class RecipePageViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,

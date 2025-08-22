@@ -17,6 +17,7 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -89,6 +90,18 @@ sealed interface SearchEvent {
     data object MealSaved : SearchEvent
 }
 
+/**
+ * ViewModel for managing food search functionality in the application.
+ *
+ * @property appSettingRepository Repository for accessing application settings, such as language.
+ * @property recipeRepository Repository for accessing recipe data.
+ * @property foodProductRepository Repository for accessing food product data.
+ * @property historyRepository Repository for managing meal history.
+ * @property combinedSearchListStore Store for managing the combined search list state.
+ * @property snackbarManager Manager for displaying snackbars to the user.
+ * @property context Application context for resource access.
+ * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ */
 @HiltViewModel
 class FoodSearchViewModel @Inject constructor(
     private val appSettingRepository : AppSettingRepository,

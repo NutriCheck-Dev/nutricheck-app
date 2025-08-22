@@ -132,10 +132,10 @@ object UserDataUtilsLogic {
             10 * userData.weight + (6.25 * userData.height) - (5 * userData.age) - 161
         }
         val pal = when (userData.activityLevel) {
-            ActivityLevel.NEVER -> 1.3
-            ActivityLevel.OCCASIONALLY -> 1.6
-            ActivityLevel.REGULARLY -> 1.9
-            ActivityLevel.FREQUENTLY -> 2.2
+            ActivityLevel.NEVER -> 1.2
+            ActivityLevel.OCCASIONALLY -> 1.4
+            ActivityLevel.REGULARLY -> 1.6
+            ActivityLevel.FREQUENTLY -> 1.9
         }
         val calorieDiffOnGoal = when (userData.weightGoal) {
             WeightGoal.LOSE_WEIGHT -> -500

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,11 +30,19 @@ enum class DiaryTab(val stringResId: Int) {
 }
 @Composable
 fun DiaryNavGraph(
+    destination: DiaryGraphDestination = DiaryGraphDestination.HISTORY_RELATED
 ) {
     val context = LocalContext.current
     val historyPageNavController = rememberNavController()
     val recipePageNavController = rememberNavController()
     var selectedTab by rememberSaveable { mutableStateOf(DiaryTab.HISTORY) }
+
+    LaunchedEffect(destination) {
+        selectedTab = when (destination) {
+            DiaryGraphDestination.RECIPE_RELATED -> DiaryTab.RECIPES
+            DiaryGraphDestination.HISTORY_RELATED -> DiaryTab.HISTORY
+        }
+    }
 
     val headerVisibleRoutes = remember {
         setOf(

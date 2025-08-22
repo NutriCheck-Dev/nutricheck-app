@@ -15,7 +15,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
-import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -66,6 +66,19 @@ sealed interface RecipeEditorEvent {
     object ResetErrorState : RecipeEditorEvent
 }
 
+/**
+ * ViewModel for managing the recipe editor state and actions.
+ * Handles creating and editing recipes, managing ingredients
+ * and interacting with repositories for data operations.
+ *
+ * @property recipeRepo Repository for managing recipes.
+ * @property appSettingRepository Repository for managing app settings.
+ * @property foodProductRepository Repository for managing food products.
+ * @property snackbarManager Manager for displaying snackbars.
+ * @property combinedSearchListStore Store for managing the combined search list of ingredients.
+ * @property context Application context for accessing resources.
+ * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ */
 @HiltViewModel
 class RecipeEditorViewModel @Inject constructor(
     private val recipeRepo: RecipeRepository,

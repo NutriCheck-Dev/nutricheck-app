@@ -37,6 +37,13 @@ import androidx.compose.ui.window.Popup
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import kotlin.math.roundToInt
 
+/**
+ * A composable function that displays a dropdown for selecting a serving size.
+ *
+ * @param options List of available serving sizes to choose from.
+ * @param currentServingSize The currently selected serving size.
+ * @param onValueChange Callback function to be invoked when the selected serving size changes.
+ */
 @Composable
 fun ServingSizeDropdown(
     options: List<ServingSize> = ServingSize.entries.toList(),

@@ -11,6 +11,18 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable that automatically sizes a NutrientChart based on the available constraints.
+ * It scales the chart to fit within the specified base dimensions while maintaining its aspect ratio.
+ *
+ * @param modifier Modifier to be applied to the chart.
+ * @param nutrient The nutrient to be displayed in the chart.
+ * @param subtitle The subtitle for the chart.
+ * @param actualValue The actual value of the nutrient.
+ * @param totalValue The total value of the nutrient.
+ * @param baseHeight The base height of the chart, used for scaling.
+ * @param baseWidth The base width of the chart, used for scaling.
+ */
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun AutoSizedNutrientChart(

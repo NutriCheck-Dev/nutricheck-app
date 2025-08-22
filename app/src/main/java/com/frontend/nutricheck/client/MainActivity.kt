@@ -70,7 +70,7 @@ fun MainScreen(
                         currentDestination = currentDestination,
                         onClickAdd = { mainNavController.navigate(Screen.AddButton.route) },
                         onClickHome = { mainNavController.navigate(Screen.HomePage.route) },
-                        onClickDiary = { mainNavController.navigate(Screen.DiaryPage.route) },
+                        onClickDiary = { mainNavController.navigate(Screen.DiaryPage.createRoute(null)) },
                         onClickProfile = { mainNavController.navigate(Screen.ProfilePage.route) }
                     )
                 }
