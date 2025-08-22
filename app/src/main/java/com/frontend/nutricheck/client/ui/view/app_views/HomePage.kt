@@ -22,6 +22,7 @@ import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryView
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyMacrosViewModel
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryViewModel
+import java.time.LocalDate
 
 @Composable
 fun HomePage(
@@ -95,6 +96,7 @@ fun HomePage(
         CalorieHistoryDiagram(
             modifier = Modifier,
             calorieHistoryState = calorieHistoryState,
+            referenceDate = LocalDate.now(),
             selectedRange = selectedCalorieRange,
             onPeriodSelected = { selectedCalorieRange = it }
         )

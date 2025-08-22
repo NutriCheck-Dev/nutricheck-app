@@ -2,14 +2,7 @@ package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +15,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,15 +32,18 @@ enum class CalorieRange(val id: String, val labelResId: Int) {
     LAST_30_DAYS("30d", R.string.range_30_days),
     LAST_60_DAYS("60d", R.string.range_60_days)
 }
+
 @Composable
 fun CalorieHistoryDiagram(
     modifier: Modifier = Modifier,
     calorieHistoryState: CalorieHistoryState,
     selectedRange: CalorieRange,
+    referenceDate: LocalDate,
     onPeriodSelected: (CalorieRange) -> Unit = {},
 ) {
     val calorieGoal = calorieHistoryState.calorieGoal
     val calorieData = calorieHistoryState.calorieHistory
+
     val options = CalorieRange.entries
 
     val colors = MaterialTheme.colorScheme
@@ -76,7 +73,12 @@ fun CalorieHistoryDiagram(
         }
 
         Spacer(modifier = Modifier.height(25.dp))
-        CalorieBarChart(calorieData, selectedRange, calorieGoal)
+        CalorieBarChart(
+            data = calorieData,
+            selectedRange = selectedRange,
+            calorieGoal = calorieGoal,
+            referenceDate = referenceDate
+        )
     }
 }
 
@@ -85,6 +87,7 @@ fun CalorieBarChart(
     data: List<Int>,
     selectedRange: CalorieRange,
     calorieGoal: Int,
+    referenceDate: LocalDate,
     modifier: Modifier = Modifier
 ) {
     val colors = MaterialTheme.colorScheme
@@ -93,12 +96,15 @@ fun CalorieBarChart(
     val rawMin = data.minOrNull() ?: 0
     val rawMax = data.maxOrNull() ?: 1
     val range = rawMax - rawMin
-    val today = LocalDate.now()
-    val locale = Locale.GERMAN
+
+    // Sprache vom Gerät holen, nur de/en
+    val configuration = LocalConfiguration.current
+    val language = configuration.locales[0].language
+    val locale = if (language == "de") Locale.GERMAN else Locale.ENGLISH
 
     val labelMap = when (selectedRange) {
         CalorieRange.LAST_7_DAYS -> data.indices.associateWith { i ->
-            val day = today.minusDays((data.size - 1 - i).toLong())
+            val day = referenceDate.minusDays((data.size - 1 - i).toLong())
             day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale).take(2)
         }
 
@@ -108,13 +114,13 @@ fun CalorieBarChart(
             (data.size * 2 / 4) to "2W",
             (data.size * 3 / 4) to "1W"
         )
+
         CalorieRange.LAST_60_DAYS -> mapOf(
             0 to "3M",
             (data.size * 1 / 4) to "9W",
             (data.size * 2 / 4) to "6W",
             (data.size * 3 / 4) to "3W"
         )
-
     }
 
     Box(
@@ -129,15 +135,16 @@ fun CalorieBarChart(
         ) {
             val barWidth = 12.dp.toPx()
 
-            // Dynamische untere Y-Achsenbegrenzung, alles mit Int!
+            // Dynamische untere Y-Achsenbegrenzung
             val visualMin = if (range < 400) {
                 (rawMin - 100).coerceAtLeast(0)
             } else {
-                (rawMin * 90 / 100).coerceAtLeast(0) // 0.9 als Int-Operation
+                (rawMin * 90 / 100).coerceAtLeast(0)
             }
 
             val visualMax = maxOf(rawMax, calorieGoal)
-            val heightRatio = if (visualMax - visualMin == 0) 1f else size.height / (visualMax - visualMin).toFloat()
+            val heightRatio = if (visualMax - visualMin == 0) 1f
+            else size.height / (visualMax - visualMin).toFloat()
 
             // Balken
             val totalSpacing = size.width - (data.size * barWidth)
@@ -152,6 +159,7 @@ fun CalorieBarChart(
                     size = Size(barWidth, barHeight)
                 )
             }
+
             // Ziel-Linie
             val goalY = size.height - ((calorieGoal - visualMin).toFloat() / (visualMax - visualMin).toFloat()) * size.height
             drawLine(
@@ -160,6 +168,7 @@ fun CalorieBarChart(
                 end = Offset(size.width, goalY),
                 strokeWidth = 3f
             )
+
             // Ziel-Label
             drawContext.canvas.nativeCanvas.drawText(
                 "$calorieGoal",
@@ -191,4 +200,3 @@ fun CalorieBarChart(
         }
     }
 }
-
