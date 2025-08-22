@@ -39,6 +39,10 @@ kover {
                     "*HiltModules*",
                     "*_Impl*",
 
+                    //Android Classes
+                    "*AndroidCameraController*",
+                    "*AndroidImageProcessor*",
+
                     // Data classes
                     "*exceptions*",
 
