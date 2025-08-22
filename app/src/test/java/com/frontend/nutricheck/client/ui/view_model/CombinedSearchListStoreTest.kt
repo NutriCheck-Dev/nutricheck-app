@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -26,7 +27,8 @@ class CombinedSearchListStoreTest {
     )
 
     @Before
-    fun setUp() { store = CombinedSearchListStore() }
+    fun setUp() { store = CombinedSearchListStore()
+    }
 
     @Test
     fun `state emits initial empty then updated list`() = runTest {

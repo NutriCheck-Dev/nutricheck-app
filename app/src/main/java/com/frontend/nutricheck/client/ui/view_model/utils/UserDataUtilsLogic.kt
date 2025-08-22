@@ -1,10 +1,10 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.utils
 
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Period
@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 
 /**
  * A utility object containing logic for validating and processing user data.
- * Used in [ProfileViewModel] and [OnboardingViewModel].
+ * Used in [com.frontend.nutricheck.client.ui.view_model.ProfileViewModel] and [com.frontend.nutricheck.client.ui.view_model.OnboardingViewModel].
  */
 object UserDataUtilsLogic {
     /**
@@ -104,7 +104,7 @@ object UserDataUtilsLogic {
      * @param birthdate The user's date of birth.
      * @return The user's age in years.
      */
-    fun calculateAge(birthdate:  Date) : Int {
+    fun calculateAge(birthdate: Date) : Int {
         val localBirthdate = Instant.ofEpochMilli(birthdate.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
@@ -123,7 +123,7 @@ object UserDataUtilsLogic {
      * - Daily Fats goal: 25% of daily calories, divided by 9 (1g of fat = 9.3 calories)
      * - Daily Carbs goal: Remaining calories after protein and fats, divided by 4 (1g of carbs = 4.1 calories)
      * @param userData The complete user data.
-     * @return An updated [UserData] object with the calculated nutritional goals.
+     * @return An updated [com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData] object with the calculated nutritional goals.
      */
     fun calculateNutrition(userData : UserData) : UserData {
         val bmr = if (userData.gender == Gender.MALE) {

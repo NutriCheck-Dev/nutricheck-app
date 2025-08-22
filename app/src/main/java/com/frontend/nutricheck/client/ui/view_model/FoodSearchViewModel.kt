@@ -18,6 +18,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject

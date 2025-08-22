@@ -17,6 +17,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery

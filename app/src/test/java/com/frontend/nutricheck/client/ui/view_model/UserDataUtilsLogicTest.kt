@@ -4,6 +4,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLeve
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
+import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
@@ -12,13 +13,13 @@ import java.util.Calendar
 import java.util.Date
 
 /**
- * Unit tests for the [UserDataUtilsLogic] class using the MockK framework.
+ * Unit tests for the [com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic] class using the MockK framework.
  */
 class UserDataUtilsLogicTest {
 
     private val calendar: Calendar = mockk()
     /**
-     * Tests that [UserDataUtilsLogic.isNameInvalid] returns null for a valid name.
+     * Tests that [com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic.isNameInvalid] returns null for a valid name.
      */
     @Test
     fun `isNameInvalid with valid name returns null`() {
