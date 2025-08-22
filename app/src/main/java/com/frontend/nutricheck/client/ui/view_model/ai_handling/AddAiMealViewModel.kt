@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 sealed interface AddAiMealEvent {
@@ -119,13 +120,26 @@ class AddAiMealViewModel @Inject constructor(
             val multipartBody = imageProcessor.convertUriToMultipartBody(_photoUri.value)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
-                _photoUri.value = null
+                retakePhoto()
                 return@launch
             }
             val response = historyRepository.requestAiMeal(multipartBody, _languageCode)
             handleApiResponse(response)
         }
     }
+    /**
+     * Deletes the temporary file associated with the given URI.
+     * @param uri The URI of the temporary file to delete.
+     */
+    private fun deleteTempFile(uri: Uri?) {
+        uri?.path?.let { path ->
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+    }
+
     /**
      * Handles the API response from the AI meal estimation request.
      * @param response The result of the API call containing the meal data or an error.
@@ -137,6 +151,7 @@ class AddAiMealViewModel @Inject constructor(
                 if (isFoodDetected(meal)) {
                     historyRepository.addMeal(meal)
                     setReady()
+                    deleteTempFile(_photoUri.value)
                     emitEvent(
                         AddAiMealEvent.ShowMealOverview(
                             meal.id, meal.mealFoodItems.first().foodProduct.id
@@ -144,12 +159,12 @@ class AddAiMealViewModel @Inject constructor(
                     )
                 } else {
                     setError(appContext.getString(R.string.error_no_food_detected))
-                    _photoUri.value = null
+                    retakePhoto()
                 }
             }
             is Result.Error -> {
                 setError(appContext.getString(R.string.error_ai_server_response))
-                _photoUri.value = null
+                retakePhoto()
             }
         }
     }
@@ -157,6 +172,7 @@ class AddAiMealViewModel @Inject constructor(
      * Resets the photo URI to allow retaking the photo.
      */
     private fun retakePhoto() {
+        deleteTempFile(_photoUri.value)
         _photoUri.value = null
     }
     /**
