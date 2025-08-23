@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
@@ -64,6 +65,7 @@ fun RecipePage(
 
 Surface(
     modifier = modifier.fillMaxSize()
+        .then(Modifier.testTag(stringResource(R.string.androidtest_tag_recipepage)))
 ) {
     Column(
         modifier = modifier.fillMaxSize(),

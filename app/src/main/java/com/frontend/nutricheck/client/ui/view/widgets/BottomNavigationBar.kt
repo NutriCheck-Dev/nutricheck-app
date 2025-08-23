@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
@@ -49,6 +51,7 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
+            modifier = Modifier.testTag(stringResource(R.string.androidtest_tag_bottom_nav_add)),
             selected = currentDestination == "add",
             onClick = { onClickAdd() },
             icon = { Icon(Icons.Default.AddCircle,

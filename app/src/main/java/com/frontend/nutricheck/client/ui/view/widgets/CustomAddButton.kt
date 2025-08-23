@@ -9,6 +9,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.frontend.nutricheck.client.R
 
@@ -26,7 +27,8 @@ fun CustomAddButton(onClick: () -> Unit = {}) {
             .background(
                 color = colors.onSurfaceVariant,
                 shape = CircleShape
-            ),
+            )
+            .then(Modifier.testTag(stringResource(R.string.androidtest_tag_dishitem_add))),
     ) {
         Icon(
             imageVector = Icons.Default.Add,

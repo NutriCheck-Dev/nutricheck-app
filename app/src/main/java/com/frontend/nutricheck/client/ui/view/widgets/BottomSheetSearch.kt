@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
@@ -60,6 +61,7 @@ fun BottomSheetSearch(
 
     if (showBottomSheet) {
         ModalBottomSheet(
+            modifier = Modifier.testTag(stringResource(R.string.androidtest_tag_ingredient_search_sheet)),
             onDismissRequest = { onDismiss() },
         ) {
             Box(
@@ -82,6 +84,7 @@ fun BottomSheetSearch(
                         query = query,
                         onQueryChange = { onQueryChange(it) },
                         onSearch = { onSearch() },
+                        modifier = Modifier.testTag(stringResource(R.string.androidtest_tag_ingredient_search_query))
                         )
 
                     if (showTabRow) {

@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.ui.view.widgets.AddOptionButton
@@ -75,6 +76,7 @@ fun AddDialog(
                     )
                 }
                 AddOptionButton(
+                    modifier = Modifier.testTag(stringResource(R.string.androidtest_tag_add_dialog_add_recipe)),
                     icon = Icons.Default.Create,
                     label = stringResource(id = R.string.add_dialog_recipe_title),
                     onClick = { onAddRecipeClick() }

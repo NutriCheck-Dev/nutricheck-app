@@ -7,6 +7,7 @@ core = "1.13.0"
 coreTesting = "2.2.0"
 datastorePreferences = "1.1.7"
 desugar_jdk_libs = "2.1.5"
+hiltAndroidTesting = "2.57.1"
 kover = "0.9.1"
 gson = "2.11.0"
 hilt = "2.56.2"
@@ -61,6 +62,7 @@ androidx-material-icons-extended = { module = "androidx.compose.material:materia
 androidx-material-icons-extended-android = { module = "androidx.compose.material:material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiter" }

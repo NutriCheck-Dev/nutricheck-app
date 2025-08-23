@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -67,7 +68,8 @@ fun RecipeEditorPage(
     Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.background),
+            .background(colors.background)
+            .then(Modifier.testTag(stringResource(R.string.androidtest_tag_recipe_editor_page))),
         topBar = {
             ViewsTopBar(
                 navigationIcon = { NavigateBackButton{ onBack() } },
@@ -78,7 +80,8 @@ fun RecipeEditorPage(
                             text = if (draft.original != null) draft.original!!.name else
                                 stringResource(R.string.recipe_name_placeholder),
                             style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                            color = colors.onSurfaceVariant
+                            color = colors.onSurfaceVariant,
+                            modifier = Modifier.testTag(stringResource(R.string.androidtest_tag_recipe_editor_name))
                         )
                     },
                     onValueChange = { new ->
@@ -179,6 +182,7 @@ fun RecipeEditorPage(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .then(Modifier.testTag(stringResource(R.string.androidtest_tag_recipe_editor_description)))
                     )
                 }
             }

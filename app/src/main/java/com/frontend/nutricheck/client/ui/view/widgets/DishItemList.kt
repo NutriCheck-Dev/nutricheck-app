@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
@@ -54,7 +55,8 @@ fun FoodComponentList(
                 onClick = { onAddButtonClick() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 64.dp),
+                    .heightIn(min = 64.dp)
+                    .then(Modifier.testTag(stringResource(R.string.androidtest_tag_ingredient_list_addbutton))),
                 shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(1.dp, colors.outline),
                 contentPadding = PaddingValues(0.dp),
