@@ -79,7 +79,7 @@
     <string name="error_no_photo_taken">No photo was taken, please take a new one</string>
      <string name="label_weightHistory">Weighthistory</string>
     <string name="calorie_history">Caloriehistory</string>
-     <string name="label_calories">calories</string>
+     <string name="label_calories">Calories</string>
     <string name="label_retry">Try again</string>
     <string name="label_search_recipe">Search recipe</string>
     <string name="search_page_label_online_recipes">Online recipes</string>
@@ -131,7 +131,7 @@
     <string name="error_search_result_empty">No results found</string>
     <string name="label_delete">Delete</string>
     <string name="delete_weight_dialog_title">"Do you really want to delete the weight? "</string>
-    <string name="dishitem_button_portions">"cal, Servings: "</string>
+    <string name="dishitem_button_portions">"kcal, Servings: "</string>
     <string name="searchbar_placeholder_regular">Search</string>
     <string name="search_tab_all">All</string>
     <string name="search_tab_my_recipes">My Recipes</string>

@@ -160,7 +160,7 @@
     <string name="error_search_result_empty">Keine Ergebnisse gefunden</string>
     <string name="label_delete">Löschen</string>
     <string name="delete_weight_dialog_title">"Möchtest du das Gewicht wirklich löschen? "</string>
-    <string name="dishitem_button_portions">"cal, Portionen: "</string>
+    <string name="dishitem_button_portions">"kcal, Portionen: "</string>
     <string name="searchbar_placeholder_regular">Suche</string>
     <string name="search_tab_all">Alle</string>
     <string name="search_tab_my_recipes">Meine Rezepte</string>

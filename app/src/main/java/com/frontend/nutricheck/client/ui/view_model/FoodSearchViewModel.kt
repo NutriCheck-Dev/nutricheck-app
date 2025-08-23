@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -142,6 +143,8 @@ class FoodSearchViewModel @Inject constructor(
     private var _searchState = MutableStateFlow(initialState)
     val searchState: StateFlow<SearchUiState> = _searchState.asStateFlow()
 
+    private val queryFlow = MutableStateFlow("")
+
     init {
         viewModelScope.launch {
             savedStateHandle.get<String>("dayTime")
@@ -173,14 +176,18 @@ class FoodSearchViewModel @Inject constructor(
                 }
                 .launchIn(viewModelScope)
 
-            savedStateHandle
-                .getStateFlow<FoodComponent?>("newComponent", null)
-                .filterNotNull()
-                .onEach { component ->
-                    onEvent(SearchEvent.AddFoodComponent(component))
-                    savedStateHandle.remove<Pair<Double, FoodComponent>>("newComponent")
+            combine(
+                recipeRepository.observeMyRecipes(),
+                queryFlow
+            ) { list, query ->
+                filterAndSort(list, query)
+            }.collect { filtered ->
+                _searchState.update { state ->
+                    state.updateParams(
+                        state.parameters.copy(localRecipesResults = filtered)
+                    )
                 }
-                .launchIn(viewModelScope)
+            }
         }
     }
 
@@ -191,6 +198,7 @@ class FoodSearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.QueryChanged -> {
                 changeQuery(event.query)
+                queryFlow.value = event.query
             }
 
             is SearchEvent.DayTimeChanged -> {
@@ -233,64 +241,53 @@ class FoodSearchViewModel @Inject constructor(
             when (mode) {
                 is SearchMode.ComponentsForMeal,
                      SearchMode.LogNewMeal -> {
-                         if (_searchState.value.parameters.selectedTab == 1) {
-                             setLoading()
-                             recipeRepository.observeMyRecipes().collect { recipes ->
-                                 val results = recipes.filter { it.name.contains(query, ignoreCase = true) }
-                                 _searchState.update { state ->
-                                     state.updateParams(state.parameters.copy(localRecipesResults = results))
-                                 }
-                                 combinedSearchListStore.update(results)
-                                 setReady()
-                             }
-                             return@launch
-                         } else {
-                    val foodProductFlow = foodProductRepository
-                        .searchFoodProducts(query, language)
+                         if (_searchState.value.parameters.selectedTab == 0) {
+                            val foodProductFlow = foodProductRepository
+                                .searchFoodProducts(query, language)
 
-                    val recipeFlow = recipeRepository
-                        .searchRecipes(query)
+                            val recipeFlow = recipeRepository
+                                .searchRecipes(query)
 
-                    val merged: Flow<Result<List<FoodComponent>>> =
-                        merge(foodProductFlow, recipeFlow)
-                            .onStart { setLoading() }
-                            .scan(emptyList<FoodComponent>()) { acc, search ->
-                                when (search) {
-                                    is Result.Success -> {
-                                        val newAcc = acc + search.data
-                                        newAcc
+                            val merged: Flow<Result<List<FoodComponent>>> =
+                                merge(foodProductFlow, recipeFlow)
+                                    .onStart { setLoading() }
+                                    .scan(emptyList<FoodComponent>()) { acc, search ->
+                                        when (search) {
+                                            is Result.Success -> {
+                                                val newAcc = acc + search.data
+                                                newAcc
+                                            }
+
+                                            is Result.Error -> {
+                                                acc
+                                            }
+                                        }
                                     }
+                                    .map { Result.Success(it) }
+                            merged
+                                .onStart { setLoading() }
+                                .onCompletion { setReady() }
+                                .catch { setError(it.message!!) }
+                                .collect { result ->
+                                    when (result) {
+                                        is Result.Success -> {
+                                            _searchState.update { state ->
+                                                state.updateParams(
+                                                    state.parameters.copy(
+                                                        generalResults = result.data
+                                                    )
+                                                )
+                                            }
+                                        }
 
-                                    is Result.Error -> {
-                                        acc
+                                        is Result.Error -> {
+                                            setError(result.message!!)
+                                        }
                                     }
-                                }
-                            }
-                            .map { Result.Success(it) }
-                    merged
-                        .onStart { setLoading() }
-                        .onCompletion { setReady() }
-                        .catch { setError(it.message!!) }
-                        .collect { result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    _searchState.update { state ->
-                                        state.updateParams(
-                                            state.parameters.copy(
-                                                generalResults = result.data
-                                            )
-                                        )
-                                    }
-                                }
-
-                                is Result.Error -> {
-                                    setError(result.message!!)
-                                }
-                            }
-                            val combinedList = _searchState.value.parameters.generalResults +
-                                    _searchState.value.parameters.addedComponents
-                            combinedSearchListStore.update(combinedList)
-                        } }
+                                    val combinedList = _searchState.value.parameters.generalResults +
+                                            _searchState.value.parameters.addedComponents
+                                    combinedSearchListStore.update(combinedList)
+                                } }
                 }
             }
         }
@@ -488,4 +485,34 @@ class FoodSearchViewModel @Inject constructor(
         _searchState.update { state ->
             state.updateParams(state.parameters.copy(selectedTab = 1))
         }
+
+    private fun String.norm() =
+        lowercase().trim().replace(Regex("\\s+"), " ")
+
+    private data class SortKey(val rank: Int, val position: Int, val name: String)
+
+    private fun sortKeyFor(name: String, query: String): SortKey {
+        val normedName = name.norm()
+        if (query.isBlank()) return SortKey(9, 0, normedName)
+        val i = normedName.indexOf(query)
+        if (i < 0) return SortKey(Int.MAX_VALUE, Int.MAX_VALUE, normedName)
+        val rank = when {
+            i == 0 -> 0
+            i > 0 && normedName[i - 1].isWhitespace() -> 1
+            else -> 2
+        }
+        return SortKey(rank, i, normedName)
+    }
+
+    private fun filterAndSort(list: List<Recipe>, query: String): List<Recipe> {
+        val normedQuery = query.norm()
+        if (query.isBlank()) return list.sortedBy { it.name.lowercase() }
+
+        return list.asSequence()
+            .map { it to sortKeyFor(it.name, normedQuery) }
+            .filter { it.second.rank != Int.MAX_VALUE }
+            .sortedWith(compareBy({ it.second.rank }, { it.second.position }, { it.second.name }))
+            .map { it.first }
+            .toList()
+    }
 }
