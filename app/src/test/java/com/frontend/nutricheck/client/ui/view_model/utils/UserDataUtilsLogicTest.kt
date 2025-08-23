@@ -1,10 +1,11 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.utils
 
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.google.common.truth.Truth.assertThat
+import com.frontend.nutricheck.client.ui.view_model.UserDataUtilsLogic
+import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -29,7 +30,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isNameInvalid(validName)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -44,7 +45,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isNameInvalid(blankName)
 
         // Then the result should indicate a required error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -59,7 +60,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isNameInvalid(whitespaceName)
 
         // Then the result should indicate a required error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -74,7 +75,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isNameInvalid(shortName)
 
         // Then the result should indicate a too short error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -89,7 +90,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isNameInvalid(minName)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -104,7 +105,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isNameInvalid(maxName)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -119,7 +120,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isNameInvalid(longName)
 
         // Then the result should indicate a too long error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
     /**
      * Tests that the [UserDataUtilsLogic.isBirthdateInvalid] method returns `null`
@@ -134,7 +135,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isBirthdateInvalid(validBirthdate)
 
         // Then the result should be null, indicating no error
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -149,7 +150,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isBirthdateInvalid(nullBirthdate)
 
         // Then the result should indicate a required error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -165,7 +166,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isBirthdateInvalid(invalidBirthdate)
 
         // Then the result should not be null, indicating an error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -181,7 +182,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isBirthdateInvalid(invalidBirthdate)
 
         // Then the result should not be null, indicating an error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -198,7 +199,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isBirthdateInvalid(hundredYearsAgo)
 
         // Then the result should be null (valid)
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
     /**
      * Tests that [UserDataUtilsLogic.isHeightInvalid] returns null for valid height.
@@ -212,7 +213,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isHeightInvalid(validHeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -227,7 +228,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isHeightInvalid(nullHeight)
 
         // Then the result should indicate a required error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -242,7 +243,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isHeightInvalid(shortHeight)
 
         // Then the result should indicate a too short error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -257,7 +258,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isHeightInvalid(minHeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -272,7 +273,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isHeightInvalid(maxHeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -287,7 +288,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isHeightInvalid(tallHeight)
 
         // Then the result should indicate a too tall error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
     /**
      * Tests that [UserDataUtilsLogic.isWeightInvalid] returns null for valid weight.
@@ -301,7 +302,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isWeightInvalid(validWeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -316,7 +317,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isWeightInvalid(nullWeight)
 
         // Then the result should indicate a required error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -331,7 +332,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isWeightInvalid(lowWeight)
 
         // Then the result should indicate a too low error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -346,7 +347,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isWeightInvalid(minWeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -361,7 +362,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isWeightInvalid(maxWeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -376,7 +377,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isWeightInvalid(highWeight)
 
         // Then the result should indicate a too high error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -391,7 +392,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isTargetWeightInvalid(validTargetWeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -406,7 +407,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isTargetWeightInvalid(nullTargetWeight)
 
         // Then the result should indicate a required error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -421,7 +422,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isTargetWeightInvalid(lowTargetWeight)
 
         // Then the result should indicate a too low error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -436,7 +437,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isTargetWeightInvalid(minTargetWeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -451,7 +452,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isTargetWeightInvalid(maxTargetWeight)
 
         // Then the result should be null
-        assertThat(result).isNull()
+        Truth.assertThat(result).isNull()
     }
 
     /**
@@ -466,7 +467,7 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.isTargetWeightInvalid(highTargetWeight)
 
         // Then the result should indicate a too high error
-        assertThat(result).isNotNull()
+        Truth.assertThat(result).isNotNull()
     }
 
     /**
@@ -483,7 +484,7 @@ class UserDataUtilsLogicTest {
         val age = UserDataUtilsLogic.calculateAge(birthdate)
 
         // Then the age should be the difference between the years
-        assertThat(age).isEqualTo(35)
+        Truth.assertThat(age).isEqualTo(35)
     }
 
     /**
@@ -499,7 +500,7 @@ class UserDataUtilsLogicTest {
         val age = UserDataUtilsLogic.calculateAge(birthdate)
 
         // Then the age should be 0
-        assertThat(age).isEqualTo(0)
+        Truth.assertThat(age).isEqualTo(0)
     }
 
     /**
@@ -514,7 +515,7 @@ class UserDataUtilsLogicTest {
         val age = UserDataUtilsLogic.calculateAge(today)
 
         // Then the age should be 0
-        assertThat(age).isEqualTo(0)
+        Truth.assertThat(age).isEqualTo(0)
     }
 
     /**
@@ -531,7 +532,7 @@ class UserDataUtilsLogicTest {
         val age = UserDataUtilsLogic.calculateAge(birthdate)
 
         // Then the age should account for birthday not having occurred
-        assertThat(age).isAtLeast(34) // Should be either 34 or 35 depending on current date
+        Truth.assertThat(age).isAtLeast(34) // Should be either 34 or 35 depending on current date
     }
     /**
      * Tests that the [UserDataUtilsLogic.calculateNutrition] method returns the
@@ -560,10 +561,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(2633)
-        assertThat(result.proteinGoal).isEqualTo(126)
-        assertThat(result.fatsGoal).isEqualTo(71)
-        assertThat(result.carbsGoal).isEqualTo(355)
+        Truth.assertThat(result.dailyCaloriesGoal).isEqualTo(2138)
+        Truth.assertThat(result.proteinGoal).isEqualTo(126)
+        Truth.assertThat(result.fatsGoal).isEqualTo(57)
+        Truth.assertThat(result.carbsGoal).isEqualTo(266)
     }
 
     /**
@@ -593,10 +594,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(1749)
-        assertThat(result.proteinGoal).isEqualTo(108)
-        assertThat(result.fatsGoal).isEqualTo(47)
-        assertThat(result.carbsGoal).isEqualTo(212)
+        Truth.assertThat(result.dailyCaloriesGoal).isEqualTo(1614)
+        Truth.assertThat(result.proteinGoal).isEqualTo(108)
+        Truth.assertThat(result.fatsGoal).isEqualTo(43)
+        Truth.assertThat(result.carbsGoal).isEqualTo(188)
     }
 
     /**
@@ -627,10 +628,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(1930)
-        assertThat(result.proteinGoal).isEqualTo(99)
-        assertThat(result.fatsGoal).isEqualTo(52)
-        assertThat(result.carbsGoal).isEqualTo(254)
+        Truth.assertThat(result.dailyCaloriesGoal).isEqualTo(1546)
+        Truth.assertThat(result.proteinGoal).isEqualTo(99)
+        Truth.assertThat(result.fatsGoal).isEqualTo(42)
+        Truth.assertThat(result.carbsGoal).isEqualTo(183)
     }
 
     /**
@@ -659,10 +660,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should be calculated with +500 calorie surplus
-        assertThat(result.dailyCaloriesGoal).isGreaterThan(2500) // Should include surplus
-        assertThat(result.proteinGoal).isEqualTo(117) // 65 * 1.8 = 117
-        assertThat(result.fatsGoal).isGreaterThan(0)
-        assertThat(result.carbsGoal).isGreaterThan(0)
+        Truth.assertThat(result.dailyCaloriesGoal).isEqualTo(2817)
+        Truth.assertThat(result.proteinGoal).isEqualTo(117)
+        Truth.assertThat(result.fatsGoal).isEqualTo(76)
+        Truth.assertThat(result.carbsGoal).isEqualTo(398)
     }
 
     /**
@@ -691,10 +692,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should reflect high activity level (PAL = 2.2)
-        assertThat(result.dailyCaloriesGoal).isGreaterThan(2200) // High activity should give more calories
-        assertThat(result.proteinGoal).isEqualTo(117) // 65 * 1.8 = 117
-        assertThat(result.fatsGoal).isGreaterThan(0)
-        assertThat(result.carbsGoal).isGreaterThan(0)
+        Truth.assertThat(result.dailyCaloriesGoal).isEqualTo(2682)
+        Truth.assertThat(result.proteinGoal).isEqualTo(117)
+        Truth.assertThat(result.fatsGoal).isEqualTo(72)
+        Truth.assertThat(result.carbsGoal).isEqualTo(374)
     }
 
     /**
@@ -734,11 +735,11 @@ class UserDataUtilsLogicTest {
         )
 
         // Then calories should increase with activity level
-        assertThat(neverActive.dailyCaloriesGoal)
+        Truth.assertThat(neverActive.dailyCaloriesGoal)
             .isLessThan(occasionallyActive.dailyCaloriesGoal)
-        assertThat(occasionallyActive.dailyCaloriesGoal)
+        Truth.assertThat(occasionallyActive.dailyCaloriesGoal)
             .isLessThan(regularlyActive.dailyCaloriesGoal)
-        assertThat(regularlyActive.dailyCaloriesGoal)
+        Truth.assertThat(regularlyActive.dailyCaloriesGoal)
             .isLessThan(frequentlyActive.dailyCaloriesGoal)
     }
 }
