@@ -48,7 +48,6 @@ class FoodProductRepositoryImplTest {
         this.foodProductEntity = TestDataFactory.createDefaultFoodProductEntity()
     }
 
-    //test: cache, api, error, exception?
     @Test
     fun `search in api with empty cache`() = runTest {
         mockkObject(FoodProductMapper)
