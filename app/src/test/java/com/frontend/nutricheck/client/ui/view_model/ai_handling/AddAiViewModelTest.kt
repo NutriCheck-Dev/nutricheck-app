@@ -173,10 +173,10 @@ class AddAiMealViewModelTest {
     }
 
     /**
-     * Tests successful photo submission with valid meal data emits ShowMealOverview event.
+     * Tests successful photo submission with valid meal data.
      */
     @Test
-    fun `onEvent OnSubmitPhoto with successful AI response and valid food adds meal and emits event`() = runTest {
+    fun `onEvent OnSubmitPhoto with successful AI response and valid food adds meal`() = runTest {
         // Given
         val mockUri = mockk<Uri> {
             every { path } returns "/test/path/image.jpg"
