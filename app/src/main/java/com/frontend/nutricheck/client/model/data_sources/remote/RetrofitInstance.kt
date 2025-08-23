@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.model.data_sources.remote
 
+import com.frontend.nutricheck.client.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,8 +9,8 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
 
-    private const val BASE_URL =
-        "https://1d25b66e-2926-4996-bb00-2d7fe74c098f.ka.bw-cloud-instance.org"
+    private const val BASE_URL = BuildConfig.BASE_URL
+
 
     private val okHttpClient: OkHttpClient by lazy {
         val loggingInterceptor = HttpLoggingInterceptor().apply {

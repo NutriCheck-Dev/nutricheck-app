@@ -102,6 +102,19 @@ android {
             )
         }
     }
+
+    flavorDimensions += "version"
+    productFlavors {
+        create("prod") {
+            dimension = "version"
+            buildConfigField("String", "BASE_URL","\"https://1d25b66e-2926-4996-bb00-2d7fe74c098f.ka.bw-cloud-instance.org\"")
+        }
+        create("dev") {
+            dimension = "version"
+            buildConfigField("String", "BASE_URL","\"http://10.0.2.2:8080\"")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -114,13 +127,13 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
         }
     }
-
 }
 configurations.all {
     exclude(group = "com.intellij", module = "annotations")
