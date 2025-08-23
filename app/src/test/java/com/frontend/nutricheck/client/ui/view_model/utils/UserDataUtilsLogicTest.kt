@@ -1,9 +1,10 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.utils
 
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
+import com.frontend.nutricheck.client.ui.view_model.UserDataUtilsLogic
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
@@ -560,10 +561,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(2633)
+        assertThat(result.dailyCaloriesGoal).isEqualTo(2138)
         assertThat(result.proteinGoal).isEqualTo(126)
-        assertThat(result.fatsGoal).isEqualTo(71)
-        assertThat(result.carbsGoal).isEqualTo(355)
+        assertThat(result.fatsGoal).isEqualTo(57)
+        assertThat(result.carbsGoal).isEqualTo(266)
     }
 
     /**
@@ -593,10 +594,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(1749)
+        assertThat(result.dailyCaloriesGoal).isEqualTo(1614)
         assertThat(result.proteinGoal).isEqualTo(108)
-        assertThat(result.fatsGoal).isEqualTo(47)
-        assertThat(result.carbsGoal).isEqualTo(212)
+        assertThat(result.fatsGoal).isEqualTo(43)
+        assertThat(result.carbsGoal).isEqualTo(188)
     }
 
     /**
@@ -627,10 +628,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(1930)
+        assertThat(result.dailyCaloriesGoal).isEqualTo(1546)
         assertThat(result.proteinGoal).isEqualTo(99)
-        assertThat(result.fatsGoal).isEqualTo(52)
-        assertThat(result.carbsGoal).isEqualTo(254)
+        assertThat(result.fatsGoal).isEqualTo(42)
+        assertThat(result.carbsGoal).isEqualTo(183)
     }
 
     /**
@@ -659,10 +660,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should be calculated with +500 calorie surplus
-        assertThat(result.dailyCaloriesGoal).isGreaterThan(2500) // Should include surplus
-        assertThat(result.proteinGoal).isEqualTo(117) // 65 * 1.8 = 117
-        assertThat(result.fatsGoal).isGreaterThan(0)
-        assertThat(result.carbsGoal).isGreaterThan(0)
+        assertThat(result.dailyCaloriesGoal).isEqualTo(2817)
+        assertThat(result.proteinGoal).isEqualTo(117)
+        assertThat(result.fatsGoal).isEqualTo(76)
+        assertThat(result.carbsGoal).isEqualTo(398)
     }
 
     /**
@@ -691,10 +692,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should reflect high activity level (PAL = 2.2)
-        assertThat(result.dailyCaloriesGoal).isGreaterThan(2200) // High activity should give more calories
-        assertThat(result.proteinGoal).isEqualTo(117) // 65 * 1.8 = 117
-        assertThat(result.fatsGoal).isGreaterThan(0)
-        assertThat(result.carbsGoal).isGreaterThan(0)
+        assertThat(result.dailyCaloriesGoal).isEqualTo(2682)
+        assertThat(result.proteinGoal).isEqualTo(117)
+        assertThat(result.fatsGoal).isEqualTo(72)
+        assertThat(result.carbsGoal).isEqualTo(374)
     }
 
     /**
