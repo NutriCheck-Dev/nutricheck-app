@@ -1,6 +1,8 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +50,7 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
     }
 
     Scaffold(
-        snackbarHost = { AppSnackbarHost(snackbarHostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { _ ->
     NavHost(
             navController = mainNavController,

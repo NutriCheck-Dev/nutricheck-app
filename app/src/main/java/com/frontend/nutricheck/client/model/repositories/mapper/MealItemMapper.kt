@@ -10,7 +10,7 @@ object MealItemMapper {
             mealId = mealId,
             foodProduct = FoodProductMapper.toData(mealItemDTO.foodProduct),
             quantity = 1.0,
-            servings = 1,
+            servings = 1.0,
             servingSize = ServingSize.ONEHOUNDREDGRAMS
         )
 }

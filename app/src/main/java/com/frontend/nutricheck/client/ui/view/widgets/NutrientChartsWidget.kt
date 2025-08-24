@@ -115,7 +115,7 @@ fun RecipeNutrientChartsWidget(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val selected = colors.primary
-            val unselected = colors.onSurface.copy(alpha = 0.3f) //colors.onSurfaceVariant
+            val unselected = colors.onSurface.copy(alpha = 0.3f)
             repeat(pagerState.pageCount) { dotIndex ->
                 val color = if (pagerState.currentPage == dotIndex) selected else unselected
                 Box(

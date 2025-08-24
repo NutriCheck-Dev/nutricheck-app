@@ -1,5 +1,6 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,6 +51,7 @@ fun ViewsTopBar(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
+            .background(colors.background)
     ) {
         CenterAlignedTopAppBar(
             navigationIcon = { navigationIcon?.invoke() },

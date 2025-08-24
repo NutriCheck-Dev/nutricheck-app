@@ -68,14 +68,13 @@ class HistoryRepositoryImpl @Inject constructor(
             val response = api.estimateMeal(file, language)
             val body = response.body()
             val errorBody = response.errorBody()
-
+            val errorResponse = Gson().fromJson(
+                errorBody?.string(),
+                ErrorResponseDTO::class.java)
             if (response.isSuccessful && body != null) {
                 val meal = MealMapper.toData(body)
                 Result.Success(meal)
-            } else if (errorBody != null) {
-                val errorResponse = Gson().fromJson(
-                    errorBody.string(),
-                    ErrorResponseDTO::class.java)
+            } else if (errorResponse != null) {
                 val message = errorResponse.body.title + ": "+ errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {

@@ -40,7 +40,7 @@ data class CommonRecipeOverviewParams(
     val protein: Double = 0.0,
     val carbohydrates: Double = 0.0,
     val fat: Double = 0.0,
-    val servings: Int = 1,
+    val servings: Double = 1.0,
     val showDetails: Boolean = false,
     val showReportDialog: Boolean = false
 )
@@ -59,7 +59,7 @@ data class RecipeOverviewState (
 }
 sealed interface RecipeOverviewEvent {
     data class ClickDetailsOption(val option: DropdownMenuOptions) : RecipeOverviewEvent
-    data class ServingsChanged(val servings: Int) : RecipeOverviewEvent
+    data class ServingsChanged(val servings: Double) : RecipeOverviewEvent
     data class NavigateToEditRecipe(val recipeId: String) : RecipeOverviewEvent
     data object ClickDetails : RecipeOverviewEvent
     data object RecipeUploaded : RecipeOverviewEvent
@@ -160,7 +160,7 @@ class RecipeOverviewViewModel @Inject constructor(
                             protein = recipe.protein,
                             carbohydrates = recipe.carbohydrates,
                             fat = recipe.fat,
-                            servings = meal.quantity.toInt()
+                            servings = meal.quantity
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
@@ -191,7 +191,7 @@ class RecipeOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Double) {
         _recipeOverviewState.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servings = servings)

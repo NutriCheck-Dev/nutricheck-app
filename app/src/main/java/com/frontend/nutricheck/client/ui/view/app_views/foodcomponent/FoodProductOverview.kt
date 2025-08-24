@@ -174,7 +174,6 @@ fun FoodProductOverview(
                         if (foodProductState.parameters.editable) {
                             ServingsPicker(
                                 value = foodProductState.parameters.servings,
-                                range = 1..200,
                                 onValueChange = {
                                     foodProductOverviewViewModel.onEvent(
                                         FoodProductOverviewEvent.ServingsChanged(it)

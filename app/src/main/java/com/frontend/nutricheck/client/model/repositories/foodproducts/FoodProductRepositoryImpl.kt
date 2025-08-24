@@ -43,6 +43,9 @@ class FoodProductRepositoryImpl @Inject constructor(
                     val response = api.searchFoodProduct(foodProductName, language)
                     val body = response.body()
                     val errorBody = response.errorBody()
+                    val errorResponse = Gson().fromJson(
+                        errorBody?.string(),
+                        ErrorResponseDTO::class.java)
                     if (response.isSuccessful && body != null) {
                         val now = System.currentTimeMillis()
                         val foodProducts = body.map { FoodProductMapper.toData(it) }
@@ -54,11 +57,7 @@ class FoodProductRepositoryImpl @Inject constructor(
                             FoodSearchEntity(foodProductName, it.id, now)
                         })
                         emit(Result.Success(foodProducts))
-                    } else if (errorBody != null) {
-                        val errorResponse = Gson().fromJson(
-                            errorBody.string(),
-                            ErrorResponseDTO::class.java)
-                        val code = errorResponse.body.status
+                    } else if (errorResponse != null) {
                         val message = errorResponse.body.title + ": " + errorResponse.body.detail
                         emit(Result.Error(errorResponse.body.status, message))
                     } else {
