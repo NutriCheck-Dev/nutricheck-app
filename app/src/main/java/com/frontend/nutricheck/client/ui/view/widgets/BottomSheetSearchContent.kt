@@ -39,23 +39,8 @@ fun ColumnScope.BottomSheetSearchContent(
     onSearch: () -> Unit,
     showTabRow: Boolean,
     isLoading: Boolean,
-    showEmptyState: Boolean,
-    onClose: () -> Unit = {}
+    showEmptyState: Boolean
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        IconButton(onClick = { onClose() }) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Close",
-                tint = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(24.dp)

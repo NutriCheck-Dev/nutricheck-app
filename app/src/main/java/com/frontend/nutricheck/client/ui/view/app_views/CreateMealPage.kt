@@ -1,6 +1,9 @@
 package com.frontend.nutricheck.client.ui.view.app_views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
@@ -81,18 +85,22 @@ fun CreateMealPage(
                 showTabRow = true,
                 isLoading = uiState == BaseViewModel.UiState.Loading,
                 showEmptyState = searchState.parameters.hasSearched &&
-                        searchState.parameters.lastSearchedQuery == searchState.parameters.query,
-                onClose = {
-                    searchViewModel.onEvent(SearchEvent.HideBottomSheet)
-                    val bottomSheetState = null
-                }
+                        searchState.parameters.lastSearchedQuery == searchState.parameters.query
             )
         }
     ) { innerPadding ->
+        val direction = LocalLayoutDirection.current
+
+        val noBottomPadding = PaddingValues(
+            start = innerPadding.calculateStartPadding(direction),
+            top = innerPadding.calculateTopPadding(),
+            end = innerPadding.calculateEndPadding(direction),
+            bottom = 0.dp
+        )
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(noBottomPadding)
                 .padding(16.dp)
         ) {
             if (uiState is BaseViewModel.UiState.Error) {

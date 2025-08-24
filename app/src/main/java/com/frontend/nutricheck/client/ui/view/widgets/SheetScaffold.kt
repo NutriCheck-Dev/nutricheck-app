@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -14,22 +13,18 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,17 +38,13 @@ fun SheetScaffold(
     content: @Composable (PaddingValues) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val halfHeight = with(LocalConfiguration.current) {(screenHeightDp.dp * 0.5f)}
-    val maxHeight = with(LocalConfiguration.current) {(screenHeightDp.dp * 0.75f)}
-
-    var allowHide by remember { mutableStateOf(false) }
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val peekHeight = screenHeight * 0.5f
+    val maxHeight = screenHeight * 0.75f
 
     val bottomSheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.Hidden,
-        skipHiddenState = false,
-        confirmValueChange = { target ->
-            !(target == SheetValue.Hidden && !allowHide)
-        }
+        skipHiddenState = false
     )
 
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState)
@@ -61,29 +52,39 @@ fun SheetScaffold(
 
     LaunchedEffect(showSheet) {
         if (showSheet) {
-            bottomSheetState.partialExpand()
+            if (bottomSheetState.hasPartiallyExpandedState) {
+                bottomSheetState.partialExpand()
+            } else {
+                bottomSheetState.expand()
+            }
         } else {
-            allowHide = true
             bottomSheetState.hide()
-            allowHide = false
         }
     }
     LaunchedEffect(bottomSheetState) {
-        snapshotFlow { bottomSheetState.currentValue == SheetValue.Hidden }
+        snapshotFlow { bottomSheetState.currentValue }
             .distinctUntilChanged()
             .drop(1)
-            .collect { hidden -> if (hidden) onSheetHidden() }
+            .collect { if (it == SheetValue.Hidden) onSheetHidden() }
     }
 
     BottomSheetScaffold(
         modifier = modifier,
         scaffoldState = scaffoldState,
-        topBar = { topBar() },
+        topBar = {
+            Surface(
+                color = MaterialTheme.colorScheme.background,
+                tonalElevation = 0.dp,
+                shadowElevation = 0.dp
+            ) {
+                topBar()
+            }
+                 },
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
         sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        sheetPeekHeight = halfHeight,
-        sheetDragHandle = null,
+        sheetPeekHeight = peekHeight,
+        sheetDragHandle = { BottomSheetDefaults.DragHandle() },
         sheetSwipeEnabled = true,
         sheetContent = {
             Box(
@@ -106,10 +107,7 @@ fun SheetScaffold(
 
     BackHandler(enabled = bottomSheetState.currentValue != SheetValue.Hidden) {
         scope.launch {
-            allowHide = true
             bottomSheetState.hide()
-            allowHide = false
-            onSheetHidden()
         }
     }
 }

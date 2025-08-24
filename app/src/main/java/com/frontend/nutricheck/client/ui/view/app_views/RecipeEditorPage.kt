@@ -3,8 +3,11 @@ package com.frontend.nutricheck.client.ui.view.app_views
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -133,10 +137,18 @@ fun RecipeEditorPage(
             )
         }
     ) { innerPadding ->
+        val direction = LocalLayoutDirection.current
+
+        val noBottomPadding = PaddingValues(
+            start = innerPadding.calculateStartPadding(direction),
+            top = innerPadding.calculateTopPadding(),
+            end = innerPadding.calculateEndPadding(direction),
+            bottom = 0.dp
+        )
         LazyColumn (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(innerPadding)
+                .padding(noBottomPadding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
@@ -215,10 +227,6 @@ fun RecipeEditorPage(
                         )
                     },
                     showBottomSheet = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet) }
-                    showTabRow = false,
-                    isLoading = uiState == BaseViewModel.UiState.Loading,
-                    showEmptyState = draft.hasSearched && draft.lastSearchedQuery == draft.query,
-                    toggleExpand = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet) }
                 )
             }
         }
