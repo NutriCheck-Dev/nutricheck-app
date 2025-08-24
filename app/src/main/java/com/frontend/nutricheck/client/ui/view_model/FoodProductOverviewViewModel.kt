@@ -33,7 +33,7 @@ data class CommonFoodProductOverviewParams(
     val protein: Double = 0.0,
     val carbohydrates: Double = 0.0,
     val fat: Double = 0.0,
-    val servings: Int = 1,
+    val servings: Double = 1.0,
     val servingSize: ServingSize = ServingSize.ONEHOUNDREDGRAMS,
     val servingSizeDropDownExpanded: Boolean = false,
     val editable: Boolean = true
@@ -55,7 +55,7 @@ data class FoodProductOverviewState (
 }
 
 sealed interface FoodProductOverviewEvent {
-    data class ServingsChanged(val servings: Int) : FoodProductOverviewEvent
+    data class ServingsChanged(val servings: Double) : FoodProductOverviewEvent
     data class ServingSizeChanged(val servingSize: ServingSize) : FoodProductOverviewEvent
     data object SaveAndAddClick : FoodProductOverviewEvent
     data object ServingSizeDropDownClick : FoodProductOverviewEvent
@@ -205,7 +205,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Double) {
         _state.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servings = servings)

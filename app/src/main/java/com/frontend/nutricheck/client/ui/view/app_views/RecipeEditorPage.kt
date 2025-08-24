@@ -144,7 +144,6 @@ fun RecipeEditorPage(
                     Spacer(modifier = Modifier.weight(1f))
                     ServingsPicker(
                         value = draft.servings,
-                        range = 1..200,
                         onValueChange = {
                             recipeEditorViewModel.onEvent(
                                 RecipeEditorEvent.ServingsChanged(

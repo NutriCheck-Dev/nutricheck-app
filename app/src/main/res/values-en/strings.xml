@@ -163,4 +163,5 @@
     <string name="report_dialog_title">Report</string>
     <string name="report_dialog_persist">Send</string>
     <string name="report_text_placeholder">Please provide a reason for reporting this recipe.</string>
+    <string name="error_servings_range">Please choose a value between %1$s and %2$s.</string>
 </resources>

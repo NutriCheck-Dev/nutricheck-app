@@ -22,7 +22,7 @@ object FoodProductMapper {
             carbohydrates = foodProductDTO.carbohydrates,
             protein = foodProductDTO.protein,
             fat = foodProductDTO.fat,
-            servings = 1,
+            servings = 1.0,
             servingSize = ServingSize.ONEHOUNDREDGRAMS
         )
 }

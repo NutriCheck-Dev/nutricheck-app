@@ -194,4 +194,5 @@
     <string name="report_text_placeholder">Bitte geben Sie einen Grund für die Meldung dieses Rezepts an.</string>
     <string name="save_recipe_content_description" translatable="false">save recipe</string>
     <string name="details" translatable="false">Details</string>
+    <string name="error_servings_range">Bitte wähle einen Wert zwischen %1$s und %2$s.</string>
 </resources>

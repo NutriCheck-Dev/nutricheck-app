@@ -33,7 +33,7 @@ object DatabaseModule {
             LocalDatabase::class.java,
             "nutricheck_database"
         )
-            .addMigrations(Migrations.MIGRATION_15_16)
+            .addMigrations(Migrations.MIGRATION_15_16, Migrations.MIGRATION_16_17)
             .build()
     }
 

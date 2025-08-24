@@ -40,7 +40,7 @@ data class RecipeDraft(
     val id: String,
     val title: String,
     val description: String,
-    val servings: Int,
+    val servings: Double,
     val ingredients: List<FoodComponent> = emptyList(),
     val expanded: Boolean = false,
     val language: String = "",
@@ -54,7 +54,7 @@ data class RecipeDraft(
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
-    data class ServingsChanged(val servings: Int) : RecipeEditorEvent
+    data class ServingsChanged(val servings: Double) : RecipeEditorEvent
     data class IngredientAdded(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
@@ -102,7 +102,7 @@ class RecipeEditorViewModel @Inject constructor(
             id = UUID.randomUUID().toString(),
             title = "",
             description = "",
-            servings = 1
+            servings = 1.0
         )
     )
     val draft = _draft.asStateFlow()
@@ -316,7 +316,7 @@ class RecipeEditorViewModel @Inject constructor(
             draft.copy(query = query)
         }
 
-    private fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Double) {
         _draft.update { draft ->
             draft.copy(servings = servings)
         }

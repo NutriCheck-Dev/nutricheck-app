@@ -129,7 +129,7 @@ fun MealBlock(
                         DishItemMealButton(
                             modifier = Modifier.weight(1f),
                             title = item.recipe.name,
-                            quantity = item.quantity.toInt(),
+                            quantity = item.quantity,
                             calories = item.quantity * item.recipe.calories,
                             onClick = { onItemClick(item) }
                         )

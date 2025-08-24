@@ -6,6 +6,6 @@ data class MealFoodItem(
     override val mealId: String,
     val foodProduct: FoodProduct,
     override val quantity: Double = foodProduct.servings * (foodProduct.servingSize.getAmount() / 100),
-    override val servings: Int = foodProduct.servings,
+    override val servings: Double = foodProduct.servings,
     val servingSize: ServingSize = foodProduct.servingSize
 ) : MealItem

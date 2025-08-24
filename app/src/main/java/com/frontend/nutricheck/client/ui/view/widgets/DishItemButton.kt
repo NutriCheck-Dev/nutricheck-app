@@ -209,7 +209,7 @@ fun DishItemMealButton(
     modifier: Modifier = Modifier,
     title: String,
     calories: Double,
-    quantity: Int,
+    quantity: Double,
     onClick: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme

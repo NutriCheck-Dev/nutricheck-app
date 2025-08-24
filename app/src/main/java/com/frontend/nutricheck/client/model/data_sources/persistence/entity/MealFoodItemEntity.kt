@@ -31,6 +31,6 @@ data class MealFoodItemEntity(
     val mealId: String,
     val foodProductId: String,
     val quantity: Double,
-    val servings: Int,
+    val servings: Double,
     val servingSize: ServingSize
 )
