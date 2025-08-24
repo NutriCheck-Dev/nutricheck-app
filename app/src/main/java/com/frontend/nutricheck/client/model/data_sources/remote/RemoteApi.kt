@@ -11,7 +11,6 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -47,8 +46,8 @@ interface RemoteApi {
      * @param language The language in which the results should be returned.
      * @return A Response containing a list of FoodProductDTO matching the search criteria.
      */
-    @GET("/user/search/products/{name}")
-    suspend fun searchFoodProduct(@Path("name") name: String,
+    @GET("/user/search/products")
+    suspend fun searchFoodProduct(@Query("name") name: String,
                                   @Query("language") language: String): Response<List<FoodProductDTO>>
 
     /**
@@ -57,9 +56,8 @@ interface RemoteApi {
      * @param name The name of the recipe to search for.
      * @return A Response containing a list of RecipeDTO matching the search criteria.
      */
-    @GET("/user/search/recipes/{name}")
-    suspend fun searchRecipes(@Path("name") name: String): Response<List<RecipeDTO>>
-
+    @GET("/user/search/recipes")
+    suspend fun searchRecipes(@Query("name") name: String): Response<List<RecipeDTO>>
     /**
      * Estimates a meal based on an uploaded image.
      *
