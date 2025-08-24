@@ -12,6 +12,7 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic.toDoubleOrNullFlexible
 import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -170,7 +171,7 @@ class ProfileViewModel @Inject constructor(
         _dataDraft.value = _dataDraft.value.copy(birthdate = birthdate)
     }
     private fun updateUserHeightDraft(height: String) {
-        val heightValue = height.toDoubleOrNull()
+        val heightValue = height.toDoubleOrNullFlexible()
         val errorMessage = UserDataUtilsLogic.isHeightInvalid(heightValue)
         if (errorMessage != null) {
             setError(appContext.getString(errorMessage))
@@ -180,7 +181,7 @@ class ProfileViewModel @Inject constructor(
         _dataDraft.value = _dataDraft.value.copy(height = heightValue!!)
     }
     private fun updateUserWeightDraft(weight: String) {
-        val weightValue = weight.toDoubleOrNull()
+        val weightValue = weight.toDoubleOrNullFlexible()
         val errorMessage = UserDataUtilsLogic.isWeightInvalid(weightValue)
         if (errorMessage != null) {
             setError(appContext.getString(errorMessage))
@@ -190,7 +191,7 @@ class ProfileViewModel @Inject constructor(
         _dataDraft.value = _dataDraft.value.copy(weight = weightValue!!)
     }
     private fun updateUserTargetWeightDraft(targetWeight: String) {
-        val targetWeightValue = targetWeight.toDoubleOrNull()
+        val targetWeightValue = targetWeight.toDoubleOrNullFlexible()
         val errorMessage = UserDataUtilsLogic.isTargetWeightInvalid(targetWeightValue)
         if (errorMessage != null) {
             setError(appContext.getString(errorMessage))
@@ -215,7 +216,7 @@ class ProfileViewModel @Inject constructor(
         emitEvent(ProfileEvent.DisplayWeightHistory)
     }
     private fun saveNewWeight(weight: String, date: Date) {
-        val weightValue = weight.toDoubleOrNull()
+        val weightValue = weight.toDoubleOrNullFlexible()
         if (weightValue == null || weightValue <= 0) {
             setError(appContext.getString(R.string.userData_error_weight_required))
             return

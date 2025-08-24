@@ -63,6 +63,9 @@ class RecipeRepositoryImpl @Inject constructor(
                 val response = api.searchRecipes(recipeName)
                 val body = response.body()
                 val errorBody = response.errorBody()
+                val errorResponse = Gson().fromJson(
+                    errorBody?.string(),
+                    ErrorResponseDTO::class.java)
 
                 if (response.isSuccessful && body != null) {
                     val now = System.currentTimeMillis()
@@ -90,10 +93,7 @@ class RecipeRepositoryImpl @Inject constructor(
                         RecipeSearchEntity(recipeName, it.id, now)
                     })
                     emit(Result.Success(merged))
-                } else if (errorBody != null) {
-                    val errorResponse = Gson().fromJson(
-                    errorBody.string(),
-                    ErrorResponseDTO::class.java)
+                } else if (errorResponse != null) {
                     val message = errorResponse.body.title + ": " + errorResponse.body.detail
                     emit(Result.Error(errorResponse.body.status, message))
                 } else {
@@ -192,13 +192,12 @@ class RecipeRepositoryImpl @Inject constructor(
             val response = api.reportRecipe(ReportMapper.toDto(recipeReport))
             val body = response.body()
             val errorBody = response.errorBody()
-
+            val errorResponse = Gson().fromJson(
+                errorBody?.string(),
+                ErrorResponseDTO::class.java)
             if (response.isSuccessful && body != null) {
                 Result.Success(body)
-            } else if (errorBody != null) {
-                val errorResponse = Gson().fromJson(
-                    errorBody.string(),
-                    ErrorResponseDTO::class.java)
+            } else if (errorResponse != null) {
                 val message = errorResponse.body.title + ": "+ errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {

@@ -98,7 +98,10 @@ fun CalorieBarChart(
     val rawMax = data.maxOrNull() ?: 1
     val range = rawMax - rawMin
     val today = LocalDate.now()
-    val locale = Locale.GERMAN
+    val locale = when(Locale.getDefault().language) {
+        "de" -> Locale.GERMAN
+        else -> Locale.ENGLISH
+    }
 
     val labelMap = when (selectedRange) {
         CalorieRange.LAST_7_DAYS -> data.indices.associateWith { i ->
@@ -108,15 +111,15 @@ fun CalorieBarChart(
 
         CalorieRange.LAST_30_DAYS -> mapOf(
             0 to "1M",
-            (data.size * 1 / 4) to "3W",
-            (data.size * 2 / 4) to "2W",
-            (data.size * 3 / 4) to "1W"
+            (data.size * 1 / 4) to stringResource(R.string.label_3_weeks),
+            (data.size * 2 / 4) to stringResource(R.string.label_2_weeks),
+            (data.size * 3 / 4) to stringResource(R.string.label_1_week)
         )
         CalorieRange.LAST_60_DAYS -> mapOf(
             0 to "3M",
-            (data.size * 1 / 4) to "9W",
-            (data.size * 2 / 4) to "6W",
-            (data.size * 3 / 4) to "3W"
+            (data.size * 1 / 4) to stringResource(R.string.label_9_weeks),
+            (data.size * 2 / 4) to stringResource(R.string.label_6_weeks),
+            (data.size * 3 / 4) to stringResource(R.string.label_3_weeks)
         )
 
     }

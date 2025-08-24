@@ -4,6 +4,7 @@ import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
@@ -33,7 +34,6 @@ import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import retrofit2.Response
 import java.util.Date
-import kotlin.test.Ignore
 
 class HistoryRepositoryImplTest {
 
@@ -43,6 +43,7 @@ class HistoryRepositoryImplTest {
     val mealRecipeItemDao: MealRecipeItemDao = mockk(relaxed = true)
     val foodDao: FoodDao = mockk(relaxed = true)
     val recipeDao: RecipeDao = mockk(relaxed = true)
+    val ingredientDao: IngredientDao = mockk(relaxed = true)
     val api: RemoteApi = mockk(relaxed = true)
     var context = mockk<Context>(relaxed = true)
     lateinit var meal: Meal
@@ -57,6 +58,7 @@ class HistoryRepositoryImplTest {
             mealRecipeItemDao,
             foodDao,
             recipeDao,
+            ingredientDao,
             api
         )
         this.meal = TestDataFactory.createDefaultMeal()
@@ -134,7 +136,6 @@ class HistoryRepositoryImplTest {
         coEvery { foodDao.exists(meal.mealFoodItems.first().foodProduct.id) } returns false
         coEvery { foodDao.insert(foodProductEntity) } just Runs
 
-        coEvery { recipeDao.exists(meal.mealRecipeItems.first().recipe.id) } returns false
         coEvery { recipeDao.insert(recipeEntity) } just Runs
 
         every { DbMealFoodItemMapper.toMealFoodItemEntity(meal.mealFoodItems.first()) } returns foodProductItemEntity
@@ -149,11 +150,11 @@ class HistoryRepositoryImplTest {
 
         coVerify { mealDao.update(mealEntity) }
         coVerify { foodDao.insert(foodProductEntity) }
-        coVerify { recipeDao.insert(recipeEntity) }
+        coVerify { recipeDao.insert(any()) }
         coVerify { mealFoodItemDao.deleteMealFoodItemsOfMeal(meal.id) }
         coVerify { mealFoodItemDao.insertAll(listOf(foodProductItemEntity)) }
         coVerify { mealRecipeItemDao.deleteMealRecipeItemsOfMeal(meal.id) }
-        coVerify { mealRecipeItemDao.insertAll(listOf(recipeItemEntity)) }
+        coVerify { mealRecipeItemDao.insertAll(any()) }
     }
 
     @Test

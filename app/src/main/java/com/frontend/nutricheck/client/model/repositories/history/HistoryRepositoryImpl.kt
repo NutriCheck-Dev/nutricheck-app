@@ -3,17 +3,20 @@ package com.frontend.nutricheck.client.model.repositories.history
 import android.content.Context
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
+import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbFoodProductMapper
+import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbIngredientMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealFoodItemMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealMapper
 import com.frontend.nutricheck.client.model.data_sources.persistence.mapper.DbMealRecipeItemMapper
@@ -30,6 +33,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import java.io.IOException
 import java.util.Date
+import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -42,6 +46,7 @@ class HistoryRepositoryImpl @Inject constructor(
     private val mealRecipeItemDao: MealRecipeItemDao,
     private val foodDao: FoodDao,
     private val recipeDao: RecipeDao,
+    private val ingredientDao: IngredientDao,
     private val api: RemoteApi
 ) : HistoryRepository {
 
@@ -66,14 +71,13 @@ class HistoryRepositoryImpl @Inject constructor(
             val response = api.estimateMeal(file, language)
             val body = response.body()
             val errorBody = response.errorBody()
-
+            val errorResponse = Gson().fromJson(
+                errorBody?.string(),
+                ErrorResponseDTO::class.java)
             if (response.isSuccessful && body != null) {
                 val meal = MealMapper.toData(body)
                 Result.Success(meal)
-            } else if (errorBody != null) {
-                val errorResponse = Gson().fromJson(
-                    errorBody.string(),
-                    ErrorResponseDTO::class.java)
+            } else if (errorResponse != null) {
                 val message = errorResponse.body.title + ": "+ errorResponse.body.detail
                 Result.Error(errorResponse.body.status, message)
             } else {
@@ -98,9 +102,8 @@ class HistoryRepositoryImpl @Inject constructor(
         mealFoodItemDao.deleteMealFoodItemsOfMeal(meal.id)
         mealFoodItemDao.insertAll(mealFoodItemsEntities)
 
-        checkForRecipes(meal.mealRecipeItems)
         val mealRecipeItemEntities =
-            meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+            meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(copyRecipe(it)) }
         mealRecipeItemDao.deleteMealRecipeItemsOfMeal(meal.id)
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
@@ -146,9 +149,8 @@ class HistoryRepositoryImpl @Inject constructor(
             )
         })
 
-        checkForRecipes(meal.mealRecipeItems)
         val mealRecipeItemEntities =
-            meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(it) }
+            meal.mealRecipeItems.map { DbMealRecipeItemMapper.toMealRecipeItemEntity(copyRecipe(it)) }
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
 
@@ -218,11 +220,29 @@ class HistoryRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun checkForRecipes(mealRecipeItems: List<MealRecipeItem>) = withContext(Dispatchers.IO) {
-        for (mealRecipeItem in mealRecipeItems) {
-            if (!recipeDao.exists(mealRecipeItem.recipe.id)) {
-                recipeDao.insert(DbRecipeMapper.toRecipeEntity(mealRecipeItem.recipe, false))
-            }
+    private suspend fun checkForFoodProducts(ingredient: Ingredient) = withContext(Dispatchers.IO) {
+        if (!foodDao.exists(ingredient.foodProduct.id)) {
+            foodDao.insert(DbFoodProductMapper.toFoodProductEntity(ingredient.foodProduct))
         }
+    }
+
+    private suspend fun copyRecipe(mealRecipeItem: MealRecipeItem) : MealRecipeItem = withContext(Dispatchers.IO) {
+        val recipe = mealRecipeItem.recipe
+        val id = UUID.randomUUID().toString()
+        val copiedRecipe = recipe.copy(
+            id = id,
+            ingredients = recipe.ingredients.map { it.copy(recipeId = id) }
+        )
+        val copiedRecipeEntity = DbRecipeMapper.toRecipeEntity(copiedRecipe, true)
+        recipeDao.insert(copiedRecipeEntity)
+
+        copiedRecipe.ingredients.forEach { ingredient ->
+            val ingredientEntity = DbIngredientMapper.toIngredientEntity(ingredient)
+            checkForFoodProducts(ingredient)
+            ingredientDao.insert(ingredientEntity)
+        }
+        mealRecipeItem.copy(
+            recipe = copiedRecipe
+        )
     }
 }

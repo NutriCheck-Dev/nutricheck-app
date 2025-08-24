@@ -25,7 +25,6 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -154,7 +153,9 @@ class AddAiMealViewModelTest {
     @Test
     fun `onEvent OnRetakePhoto resets photoUri to null`() = runTest {
         // Given - set initial photo URI
-        val mockUri = mockk<Uri>()
+        val mockUri = mockk<Uri> {
+            every { path } returns "/test/path/image.jpg"
+        }
         every {
             cameraController.takePhoto(any(), any())
         } answers {
@@ -177,7 +178,9 @@ class AddAiMealViewModelTest {
     @Test
     fun `onEvent OnSubmitPhoto with successful AI response and valid food adds meal`() = runTest {
         // Given
-        val mockUri = mockk<Uri>()
+        val mockUri = mockk<Uri> {
+            every { path } returns "/test/path/image.jpg"
+        }
         val mockMultipartBody = mockk<MultipartBody.Part>()
         val validMeal = createValidMeal()
         val languageCode = "en"
@@ -208,14 +211,16 @@ class AddAiMealViewModelTest {
         coVerify { historyRepository.requestAiMeal(mockMultipartBody, languageCode) }
         coVerify { historyRepository.addMeal(validMeal) }
     }
-
     /**
      * Tests photo submission with invalid meal data (no food detected).
+     * Updated to check the new validation logic that requires ALL nutritional values > 0.
      */
     @Test
     fun `onEvent OnSubmitPhoto with invalid meal data sets error state`() = runTest {
         // Given
-        val mockUri = mockk<Uri>()
+        val mockUri = mockk<Uri> {
+            every { path } returns "/test/path/image.jpg"
+        }
         val mockMultipartBody = mockk<MultipartBody.Part>()
         val invalidMeal = createInvalidMeal() // All nutritional values are 0
         val languageCode = "en"
@@ -248,12 +253,55 @@ class AddAiMealViewModelTest {
     }
 
     /**
+     * Tests photo submission with partially invalid meal data (some values are 0).
+     * This tests the updated validation logic that requires ALL values > 0.
+     */
+    @Test
+    fun `onEvent OnSubmitPhoto with partially invalid meal data sets error state`() = runTest {
+        // Given
+        val mockUri = mockk<Uri> {
+            every { path } returns "/test/path/image.jpg"
+        }
+        val mockMultipartBody = mockk<MultipartBody.Part>()
+        val partiallyInvalidMeal = createPartiallyInvalidMeal() // Some values are 0
+        val languageCode = "en"
+
+        // Set up photo URI
+        every {
+            cameraController.takePhoto(any(), any())
+        } answers {
+            firstArg<(Uri?) -> Unit>().invoke(mockUri)
+        }
+        viewModel.onEvent(AddAiMealEvent.OnTakePhoto)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Mock image processing
+        every { imageProcessor.convertUriToMultipartBody(mockUri) } returns mockMultipartBody
+
+        // Mock API response with partially invalid meal
+        coEvery { historyRepository.requestAiMeal(mockMultipartBody, languageCode) } returns
+                Result.Success(partiallyInvalidMeal)
+
+        // When
+        viewModel.onEvent(AddAiMealEvent.OnSubmitPhoto)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then
+        assertTrue(viewModel.uiState.first() is BaseViewModel.UiState.Error)
+        assertNull(viewModel.photoUri.first()) // Should reset photoUri on error
+        coVerify { historyRepository.requestAiMeal(mockMultipartBody, languageCode) }
+        coVerify(exactly = 0) { historyRepository.addMeal(any()) }
+    }
+
+    /**
      * Tests photo submission with API error response.
      */
     @Test
     fun `onEvent OnSubmitPhoto with API error sets error state`() = runTest {
         // Given
-        val mockUri = mockk<Uri>()
+        val mockUri = mockk<Uri> {
+            every { path } returns "/test/path/image.jpg"
+        }
         val mockMultipartBody = mockk<MultipartBody.Part>()
         val languageCode = "en"
 
@@ -290,7 +338,9 @@ class AddAiMealViewModelTest {
     @Test
     fun `onEvent OnSubmitPhoto with null multipart body sets error state`() = runTest {
         // Given
-        val mockUri = mockk<Uri>()
+        val mockUri = mockk<Uri> {
+            every { path } returns "/test/path/image.jpg"
+        }
 
         // Set up photo URI
         every {
@@ -374,6 +424,46 @@ class AddAiMealViewModelTest {
     }
 
     /**
+     * Tests that meal with empty mealFoodItems list is considered invalid.
+     */
+    @Test
+    fun `onEvent OnSubmitPhoto with empty mealFoodItems sets error state`() = runTest {
+        // Given
+        val mockUri = mockk<Uri> {
+            every { path } returns "/test/path/image.jpg"
+        }
+        val mockMultipartBody = mockk<MultipartBody.Part>()
+        val emptyMeal = createEmptyMeal()
+        val languageCode = "en"
+
+        // Set up photo URI
+        every {
+            cameraController.takePhoto(any(), any())
+        } answers {
+            firstArg<(Uri?) -> Unit>().invoke(mockUri)
+        }
+        viewModel.onEvent(AddAiMealEvent.OnTakePhoto)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Mock image processing
+        every { imageProcessor.convertUriToMultipartBody(mockUri) } returns mockMultipartBody
+
+        // Mock API response with empty meal
+        coEvery { historyRepository.requestAiMeal(mockMultipartBody, languageCode) } returns
+                Result.Success(emptyMeal)
+
+        // When
+        viewModel.onEvent(AddAiMealEvent.OnSubmitPhoto)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then
+        assertTrue(viewModel.uiState.first() is BaseViewModel.UiState.Error)
+        assertNull(viewModel.photoUri.first()) // Should reset photoUri on error
+        coVerify { historyRepository.requestAiMeal(mockMultipartBody, languageCode) }
+        coVerify(exactly = 0) { historyRepository.addMeal(any()) }
+    }
+
+    /**
      * Creates a valid meal object with proper nutritional values for testing.
      */
     private fun createValidMeal(): Meal {
@@ -437,6 +527,57 @@ class AddAiMealViewModelTest {
             date = Date(),
             dayTime = DayTime.LUNCH,
             mealFoodItems = listOf(mealFoodItem),
+            mealRecipeItems = emptyList()
+        )
+    }
+
+    /**
+     * Creates a partially invalid meal object with some zero nutritional values for testing.
+     */
+    private fun createPartiallyInvalidMeal(): Meal {
+        val foodProduct = FoodProduct(
+            id = "food1",
+            name = "Test Food",
+            calories = 100.0,
+            carbohydrates = 25.0,
+            protein = 0.0, // This is 0, making the meal invalid
+            fat = 5.0,
+            servings = 1
+        )
+
+        val mealFoodItem = MealFoodItem(
+            mealId = "meal1",
+            foodProduct = foodProduct,
+            quantity = 100.0,
+            servings = 1
+        )
+
+        return Meal(
+            id = "meal1",
+            calories = 100.0,
+            carbohydrates = 25.0,
+            protein = 0.0,
+            fat = 5.0,
+            date = Date(),
+            dayTime = DayTime.LUNCH,
+            mealFoodItems = listOf(mealFoodItem),
+            mealRecipeItems = emptyList()
+        )
+    }
+
+    /**
+     * Creates a meal object with empty mealFoodItems list for testing.
+     */
+    private fun createEmptyMeal(): Meal {
+        return Meal(
+            id = "meal1",
+            calories = 0.0,
+            carbohydrates = 0.0,
+            protein = 0.0,
+            fat = 0.0,
+            date = Date(),
+            dayTime = DayTime.LUNCH,
+            mealFoodItems = emptyList(), // Empty list
             mealRecipeItems = emptyList()
         )
     }
