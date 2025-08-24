@@ -5,6 +5,9 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 
+/**
+ * Represents a many-to-many relationship between recipes and food products.
+ */
 @Entity(
     tableName = "ingredients",
     primaryKeys = ["recipeId", "foodProductId"],

@@ -64,13 +64,16 @@ fun CustomNumberPicker(
     val colors = MaterialTheme.colorScheme
 
     val rowHeight = with(LocalDensity.current) { (textStyle.fontSize.toDp() + 8.dp).roundToPx() }
-    val viewPortHeight = with(LocalDensity.current) { (textStyle.fontSize.toDp() + 8.dp) * visibleCount }
-    val centerPadding = with(LocalDensity.current) { (viewPortHeight / 2f - (rowHeight / 2f).toDp()) }
+    val viewPortHeight = with(LocalDensity.current) { (textStyle.fontSize.toDp() + 8.dp) *
+            visibleCount }
+    val centerPadding = with(LocalDensity.current) { (viewPortHeight / 2f -
+            (rowHeight / 2f).toDp()) }
 
     var didInitialScroll by remember { mutableStateOf(false) }
     LaunchedEffect(selectedInitialIndex, didInitialScroll) {
         if (!didInitialScroll) {
-            snapshotFlow { state.layoutInfo.viewportEndOffset - state.layoutInfo.viewportStartOffset }
+            snapshotFlow { state.layoutInfo.viewportEndOffset -
+                    state.layoutInfo.viewportStartOffset }
                 .first { it > 0 }
             state.scrollToItem(selectedInitialIndex)
             didInitialScroll = true

@@ -7,6 +7,9 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
+/**
+ * Dagger Hilt Module for providing network-related dependencies.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {

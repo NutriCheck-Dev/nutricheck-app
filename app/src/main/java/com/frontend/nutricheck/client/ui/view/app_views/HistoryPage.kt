@@ -39,7 +39,10 @@ import com.frontend.nutricheck.client.ui.view_model.navigation.HistoryPageScreen
 import java.util.Calendar
 import java.util.Date
 
-
+/**
+ * HistoryPage is a composable function that displays the history of meals for a selected date.
+ * It allows users to view their meals grouped by time of day.
+ */
 @Composable
 fun HistoryPage(
     historyViewModel: HistoryViewModel,

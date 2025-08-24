@@ -10,7 +10,8 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.UserDataUtilsLogic.toDoubleOrNullFlexible
+import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic.toDoubleOrNullFlexible
+import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow

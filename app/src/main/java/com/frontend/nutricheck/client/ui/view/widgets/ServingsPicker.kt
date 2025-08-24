@@ -41,7 +41,7 @@ import kotlin.math.roundToInt
  *
  * @param value The current number of servings selected.
  * @param range The range of valid servings that can be selected.
- * @param integerList A list of strings representing the valid servings, defaults to the range converted to strings.
+ * @param integerList A list of strings representing the valid servings.
  * @param onValueChange Callback function to be invoked when the selected number of servings
  */
 @Composable
@@ -89,7 +89,8 @@ fun ServingsPicker(
             )
             Spacer(Modifier.weight(1f))
             Icon(
-                imageVector = if (!expanded) Icons.Default.ArrowDropDown else Icons.Default.ArrowDropUp,
+                imageVector = if (!expanded) Icons.Default.ArrowDropDown else
+                    Icons.Default.ArrowDropUp,
                 tint = colors.onSurfaceVariant,
                 contentDescription = null,
                 )

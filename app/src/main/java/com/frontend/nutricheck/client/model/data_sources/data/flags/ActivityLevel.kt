@@ -3,6 +3,9 @@ package com.frontend.nutricheck.client.model.data_sources.data.flags
 import android.content.Context
 import com.frontend.nutricheck.client.R
 
+/**
+ * Enum representing different levels of activity.
+ */
 enum class ActivityLevel(val stringResId: Int) {
     NEVER(R.string.userData_label_activity_level_never),
     OCCASIONALLY(R.string.userData_label_activity_level_occasionally),

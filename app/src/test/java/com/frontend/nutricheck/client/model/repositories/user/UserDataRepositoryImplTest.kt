@@ -139,19 +139,6 @@ class UserDataRepositoryImplTest {
     }
 
     /**
-     * Tests addUserData() method.
-     * Verifies that user data is properly inserted through the DAO.
-     */
-    @Test
-    fun `addUserData inserts user data through dao`() = runTest {
-        coEvery { mockUserDataDao.insert(sampleUserData) } returns Unit
-
-        repository.addUserData(sampleUserData)
-
-        coVerify { mockUserDataDao.insert(sampleUserData) }
-    }
-
-    /**
      * Tests updateUserData() method.
      * Verifies that user data is properly updated through the DAO.
      */

@@ -41,6 +41,10 @@ enum class WeightRange(val id: String, val labelResId: Int) {
     LAST_6_MONTHS("6M", R.string.range_6_months),
     LAST_12_MONTHS("12M", R.string.range_12_months)
 }
+
+/**
+ * A composable that displays a weight history diagram with a line chart and a range selector.
+ */
 @Composable
 fun WeightHistoryDiagram(
     modifier: Modifier = Modifier,
@@ -128,7 +132,7 @@ fun WeightLineChart(
             .plusDays(offset.toLong())
     }
 
-    // --- Y-Achsen Labels berechnen ---
+    // calculate y-axis labels
     val yLabels = calculateNiceYAxis(data.map { it.value })
 
     val chartMin = yLabels.first().toDouble()
@@ -165,7 +169,7 @@ fun WeightLineChart(
             val heightRatio = size.height / (chartMax - chartMin)
             val dayWidth = size.width / daysInRange.coerceAtLeast(1)
 
-            // --- Y-Achse ---
+            // y-axis
             yLabels.forEach { yValue ->
                 val y = size.height - (yValue - chartMin) * heightRatio
                 drawLine(
@@ -187,7 +191,7 @@ fun WeightLineChart(
                 )
             }
 
-            // --- Datenpunkte ---
+            // value line
             val points = dates.mapIndexedNotNull { index, localDate ->
                 val weight = weightByDay[localDate]
                 if (weight != null) {
@@ -208,7 +212,7 @@ fun WeightLineChart(
                 )
             }
 
-            // --- X-Achsen Labels ---
+            // x-axis
             labelPositions.forEach { (relativePos, label) ->
                 val x = size.width * relativePos
                 drawContext.canvas.nativeCanvas.drawText(
@@ -228,7 +232,7 @@ fun WeightLineChart(
 }
 
 /**
- * Utility: Berechnet "schöne" Y-Achsen Labels
+ * Utility: calculate nice y-axis labels for a chart.
  */
 fun calculateNiceYAxis(values: List<Double>, labelCount: Int = 5): List<Int> {
     if (values.isEmpty()) return emptyList()

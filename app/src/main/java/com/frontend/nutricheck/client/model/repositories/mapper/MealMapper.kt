@@ -6,6 +6,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import java.util.Date
 import java.util.UUID
 
+/**
+ * Mapper for converting [MealDTO] to [Meal].
+ */
 object MealMapper {
     fun toData(mealDTO: MealDTO): Meal {
         val id = UUID.randomUUID().toString()

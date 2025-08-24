@@ -12,7 +12,7 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel

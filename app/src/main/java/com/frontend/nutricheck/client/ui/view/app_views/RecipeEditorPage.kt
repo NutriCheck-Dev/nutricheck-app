@@ -14,8 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,12 +36,16 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
+import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 
+
 /**
  * A composable function that displays a recipe editor page.
+ * This page allows users to create or edit a recipe by providing a title, description,
+ * servings, and ingredients.
  *
  * @param modifier The modifier to be applied to the root composable.
  * @param recipeEditorViewModel The ViewModel that manages the recipe editor state.
@@ -218,22 +220,4 @@ fun RecipeEditorPage(
             }
         }
     }
-}
-
-@Composable
-private fun ShowErrorMessage(
-    title: String = stringResource(R.string.show_error_message_title),
-    error: String,
-    onClick: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = { onClick() },
-        title = { Text(title) },
-        text = { Text(error) },
-        confirmButton = {
-            Button(onClick = { onClick() }) {
-                Text(stringResource(R.string.label_ok))
-            }
-        }
-    )
 }

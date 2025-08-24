@@ -19,7 +19,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
+/**
+ * A composable function that displays a selectable option in the onboarding process.
+ *
+ * @param text The text to display for the option.
+ * @param onClick The callback to invoke when the option is clicked.
+ * @param selected Indicates whether the option is currently selected.
+ */
 @Composable
 fun SelectOption(text: String, onClick: () -> Unit, selected: Boolean) {
     Row(

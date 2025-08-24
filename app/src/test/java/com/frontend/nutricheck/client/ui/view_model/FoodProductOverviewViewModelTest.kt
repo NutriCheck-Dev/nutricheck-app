@@ -12,6 +12,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery

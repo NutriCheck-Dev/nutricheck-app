@@ -88,7 +88,8 @@ fun ServingSizeDropdown(
             )
             Spacer(Modifier.weight(1f))
             Icon(
-                imageVector = if (!expanded) Icons.Default.ArrowDropDown else Icons.Default.ArrowDropUp,
+                imageVector = if (!expanded) Icons.Default.ArrowDropDown else
+                    Icons.Default.ArrowDropUp,
                 tint = colors.onSurfaceVariant,
                 contentDescription = null,
             )
