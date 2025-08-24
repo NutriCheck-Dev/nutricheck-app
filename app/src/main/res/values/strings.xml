@@ -156,11 +156,11 @@
     <string name="error_no_recipe_name">Bitte gebe deinem Rezept einen Namen.</string>
     <string name="error_missing_dayTime">Bitte wähle eine Tageszeit für Mahlzeit aus</string>
     <string name="error_create_meal_missing_foodComponent">Bitte füge mindestens ein Lebensmittelprodukt oder Rezept zur Mahlzeit hinzu.</string>
-    <string name="label_select_meal">Tageszeit auswählen</string>
+    <string name="label_select_meal">Tageszeit</string>
     <string name="error_search_result_empty">Keine Ergebnisse gefunden</string>
     <string name="label_delete">Löschen</string>
     <string name="delete_weight_dialog_title">"Möchtest du das Gewicht wirklich löschen? "</string>
-    <string name="dishitem_button_portions">"cal, Portionen: "</string>
+    <string name="kilocalories">kcal</string>
     <string name="searchbar_placeholder_regular">Suche</string>
     <string name="search_tab_all">Alle</string>
     <string name="search_tab_my_recipes">Meine Rezepte</string>
@@ -187,4 +187,12 @@
     <string name="snackbar_message_addmeal_recipe_removed">Rezept entfernt</string>
     <string name="snackbar_message_ingredient_added">Zutat hinzugefügt</string>
     <string name="snackbar_message_ingredient_removed">Zutat entfernt</string>
+    <string name="foodcomponent_servings_label">Portionen:</string>
+    <string name="foodproduct_servingsize_label">Portionsgröße</string>
+    <string name="report_dialog_title">Melden</string>
+    <string name="report_dialog_persist">Senden</string>
+    <string name="report_text_placeholder">Bitte geben Sie einen Grund für die Meldung dieses Rezepts an.</string>
+    <string name="save_recipe_content_description" translatable="false">save recipe</string>
+    <string name="details" translatable="false">Details</string>
+    <string name="error_servings_range">Bitte wähle einen Wert zwischen %1$s und %2$s.</string>
 </resources>

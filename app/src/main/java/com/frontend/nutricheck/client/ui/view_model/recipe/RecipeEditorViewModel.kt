@@ -15,7 +15,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
-import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,7 +40,7 @@ data class RecipeDraft(
     val id: String,
     val title: String,
     val description: String,
-    val servings: Int,
+    val servings: Double,
     val ingredients: List<FoodComponent> = emptyList(),
     val expanded: Boolean = false,
     val language: String = "",
@@ -54,7 +54,7 @@ data class RecipeDraft(
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
-    data class ServingsChanged(val servings: Int) : RecipeEditorEvent
+    data class ServingsChanged(val servings: Double) : RecipeEditorEvent
     data class IngredientAdded(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
@@ -66,6 +66,19 @@ sealed interface RecipeEditorEvent {
     object ResetErrorState : RecipeEditorEvent
 }
 
+/**
+ * ViewModel for managing the recipe editor state and actions.
+ * Handles creating and editing recipes, managing ingredients
+ * and interacting with repositories for data operations.
+ *
+ * @property recipeRepo Repository for managing recipes.
+ * @property appSettingRepository Repository for managing app settings.
+ * @property foodProductRepository Repository for managing food products.
+ * @property snackbarManager Manager for displaying snackbars.
+ * @property combinedSearchListStore Store for managing the combined search list of ingredients.
+ * @property context Application context for accessing resources.
+ * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ */
 @HiltViewModel
 class RecipeEditorViewModel @Inject constructor(
     private val recipeRepo: RecipeRepository,
@@ -89,7 +102,7 @@ class RecipeEditorViewModel @Inject constructor(
             id = UUID.randomUUID().toString(),
             title = "",
             description = "",
-            servings = 1
+            servings = 1.0
         )
     )
     val draft = _draft.asStateFlow()
@@ -303,7 +316,7 @@ class RecipeEditorViewModel @Inject constructor(
             draft.copy(query = query)
         }
 
-    private fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Double) {
         _draft.update { draft ->
             draft.copy(servings = servings)
         }

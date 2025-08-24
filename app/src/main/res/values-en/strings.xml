@@ -66,11 +66,11 @@
     <string name="userData_error_activity_level_required">Please choose your activitylevel.</string>
     <string name="profile_menu_item_personal_data">Personal data &amp; goal</string>
     <string name="add_weight_entry_description">add new weight button</string>
-    <string name="retake_photo">retake photo</string>
-    <string name="submit_photo">submit photo</string>
-    <string name="take_photo">take photo</string>
+    <string name="retake_photo">Retake photo</string>
+    <string name="submit_photo">Submit photo</string>
+    <string name="take_photo">Take photo</string>
     <string name="label_ok">OK</string>
-    <string name="camera_permission_required">camera permission required</string>
+    <string name="camera_permission_required">Camera permission required</string>
     <string name="error_searching_recipes">Server error when retrieving recipes</string>
     <string name="userData_error_invalid_date">Invalid Date</string>
     <string name="camera_permission_explanation">To take a photo, the app requires permission for the camera</string>
@@ -79,7 +79,7 @@
     <string name="error_no_photo_taken">No photo was taken, please take a new one</string>
      <string name="label_weightHistory">Weighthistory</string>
     <string name="calorie_history">Caloriehistory</string>
-     <string name="label_calories">calories</string>
+     <string name="label_calories">Calories</string>
     <string name="label_retry">Try again</string>
     <string name="label_search_recipe">Search recipe</string>
     <string name="search_page_label_online_recipes">Online recipes</string>
@@ -119,7 +119,7 @@
     <string name="range_60_days">60D</string>
     <string name="range_15_days">15D</string>
     <string name="error_no_food_detected">No meal was detected, please take a new photo</string>
-    <string name="recipe_name_placeholder">recipe name</string>
+    <string name="recipe_name_placeholder">Recipe name</string>
     <string name="recipe_description">Description</string>
     <string name="meal_logged_success">Meal successfully added</string>
     <string name="show_error_message_title">Oops, something went wrong</string>
@@ -127,11 +127,11 @@
     <string name="error_no_recipe_name">Please give your recipe a name</string>
     <string name="error_missing_dayTime">Please select a time of day for the meal</string>
     <string name="error_create_meal_missing_foodComponent">Please add at least one food product or recipe to the meal.</string>
-    <string name="label_select_meal">Select Daytime</string>
+    <string name="label_select_meal">Daytime</string>
     <string name="error_search_result_empty">No results found</string>
     <string name="label_delete">Delete</string>
     <string name="delete_weight_dialog_title">"Do you really want to delete the weight? "</string>
-    <string name="dishitem_button_portions">"cal, Portions: "</string>
+    <string name="kilocalories">kcal</string>
     <string name="searchbar_placeholder_regular">Search</string>
     <string name="search_tab_all">All</string>
     <string name="search_tab_my_recipes">My Recipes</string>
@@ -158,4 +158,10 @@
     <string name="snackbar_message_addmeal_recipe_removed">Recipe removed</string>
     <string name="snackbar_message_ingredient_added">Ingredient added</string>
     <string name="snackbar_message_ingredient_removed">Ingredient removed</string>
+    <string name="foodcomponent_servings_label">Servings:</string>
+    <string name="foodproduct_servingsize_label">Serving size</string>
+    <string name="report_dialog_title">Report</string>
+    <string name="report_dialog_persist">Send</string>
+    <string name="report_text_placeholder">Please provide a reason for reporting this recipe.</string>
+    <string name="error_servings_range">Please choose a value between %1$s and %2$s.</string>
 </resources>

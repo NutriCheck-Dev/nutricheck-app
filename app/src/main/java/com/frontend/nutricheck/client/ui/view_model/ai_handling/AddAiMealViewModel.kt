@@ -9,13 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
+import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -23,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 sealed interface AddAiMealEvent {
@@ -43,8 +41,9 @@ sealed interface AddAiMealEvent {
 @HiltViewModel
 class AddAiMealViewModel @Inject constructor(
     application: Application,
+    private val appSettingRepository: AppSettingRepository,
     private val historyRepository: HistoryRepository,
-    private val imageProcessor: ImageProcessor,
+    private val imageProcessor: AndroidImageProcessor,
     private val cameraController: CameraController
 ) : BaseViewModel() {
 
@@ -64,6 +63,19 @@ class AddAiMealViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<AddAiMealEvent>()
     val events: SharedFlow<AddAiMealEvent> = _events.asSharedFlow()
+
+    private lateinit var _languageCode: String
+
+    /**
+     * Set the language code based on the user's app settings.
+     */
+    init {
+        viewModelScope.launch {
+            appSettingRepository.language.collect { language ->
+                _languageCode = language.code
+            }
+        }
+    }
     /**
      * Handles UI events which need to be processed by the ViewModel.
      *
@@ -108,13 +120,26 @@ class AddAiMealViewModel @Inject constructor(
             val multipartBody = imageProcessor.convertUriToMultipartBody(_photoUri.value)
             if (multipartBody == null) {
                 setError(appContext.getString(R.string.error_encoding_image))
-                _photoUri.value = null
+                retakePhoto()
                 return@launch
             }
-            val response = historyRepository.requestAiMeal(multipartBody)
+            val response = historyRepository.requestAiMeal(multipartBody, _languageCode)
             handleApiResponse(response)
         }
     }
+    /**
+     * Deletes the temporary file associated with the given URI.
+     * @param uri The URI of the temporary file to delete.
+     */
+    private fun deleteTempFile(uri: Uri?) {
+        uri?.path?.let { path ->
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+    }
+
     /**
      * Handles the API response from the AI meal estimation request.
      * @param response The result of the API call containing the meal data or an error.
@@ -126,6 +151,7 @@ class AddAiMealViewModel @Inject constructor(
                 if (isFoodDetected(meal)) {
                     historyRepository.addMeal(meal)
                     setReady()
+                    deleteTempFile(_photoUri.value)
                     emitEvent(
                         AddAiMealEvent.ShowMealOverview(
                             meal.id, meal.mealFoodItems.first().foodProduct.id
@@ -133,12 +159,12 @@ class AddAiMealViewModel @Inject constructor(
                     )
                 } else {
                     setError(appContext.getString(R.string.error_no_food_detected))
-                    _photoUri.value = null
+                    retakePhoto()
                 }
             }
             is Result.Error -> {
                 setError(appContext.getString(R.string.error_ai_server_response))
-                _photoUri.value = null
+                retakePhoto()
             }
         }
     }
@@ -146,6 +172,7 @@ class AddAiMealViewModel @Inject constructor(
      * Resets the photo URI to allow retaking the photo.
      */
     private fun retakePhoto() {
+        deleteTempFile(_photoUri.value)
         _photoUri.value = null
     }
     /**
@@ -169,25 +196,4 @@ class AddAiMealViewModel @Inject constructor(
                     product.fat > MIN_NUTRITIONAL_VALUE
         } == true
     }
-}
-
-/**
- * Hilt module that provides bindings for camera and image processing dependencies.
- *
- * This module binds the Android-specific implementations to their respective interfaces,
- * enabling dependency injection throughout the application.
- */
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class CameraModule {
-
-    @Binds
-    abstract fun bindImageProcessor(
-        androidImageProcessor: AndroidImageProcessor
-    ): ImageProcessor
-
-    @Binds
-    abstract fun bindCameraController(
-        androidCameraController: AndroidCameraController
-    ): CameraController
 }

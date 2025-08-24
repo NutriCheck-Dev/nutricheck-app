@@ -27,8 +27,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import java.math.BigDecimal
+import java.math.RoundingMode
 
+/**
+ * A composable function that displays a button for a food component
+ * It includes the name, calories, and servings of the food component, and allows for trailing content.
+ *
+ * @param modifier Modifier to be applied to the button.
+ * @param trailingContent Optional trailing content to display alongside the food component.
+ * @param foodComponent The food component to display in the button.
+ * @param onClick Callback function to handle button clicks.
+ */
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
@@ -38,6 +51,20 @@ fun DishItemButton(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
+    val roundedCalories = when (foodComponent) {
+        is Recipe -> {
+            val calories = foodComponent.calories * foodComponent.servings
+            BigDecimal.valueOf(calories)
+                .setScale(2, RoundingMode.HALF_UP)
+                .toPlainString()
+        }
+        is FoodProduct -> {
+            val calories = foodComponent.servings * foodComponent.calories * (foodComponent.servingSize.getAmount() / 100)
+            BigDecimal.valueOf(calories)
+                .setScale(2, RoundingMode.HALF_UP)
+                .toPlainString()
+        }
+    }
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -77,9 +104,7 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = "${foodComponent.servings * foodComponent.calories} " +
-                            stringResource(R.string.dishitem_button_portions) +
-                            "${foodComponent.servings}",
+                    text = roundedCalories + stringResource(R.string.kilocalories),
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -101,6 +126,15 @@ fun DishItemButton(
     }
 }
 
+/**
+ * A composable function that displays a button for an ingredient
+ * It includes the name, calories, and servings of the ingredient, and allows for trailing content.
+ *
+ * @param modifier Modifier to be applied to the button.
+ * @param trailingContent Optional trailing content to display alongside the ingredient.
+ * @param ingredient The ingredient to display in the button.
+ * @param onClick Callback function to handle button clicks.
+ */
 @Composable
 fun DishItemButton(
     modifier: Modifier = Modifier,
@@ -110,6 +144,11 @@ fun DishItemButton(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
+    val calories = ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)
+    val roundedCalories = BigDecimal.valueOf(calories)
+        .setScale(2, RoundingMode.HALF_UP)
+        .toPlainString()
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -121,7 +160,7 @@ fun DishItemButton(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 64.dp)
+                .heightIn(max = 64.dp)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -143,15 +182,13 @@ fun DishItemButton(
                 VerticalDivider(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(1.dp)
+                        .width(4.dp)
                         .padding(vertical = 4.dp),
                     color = colors.outline
                 )
 
                 Text(
-                    text = "${ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)} " +
-                            stringResource(R.string.dishitem_button_portions) +
-                            "${ingredient.servings}",
+                    text = roundedCalories + stringResource(R.string.kilocalories),
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -173,15 +210,27 @@ fun DishItemButton(
     }
 }
 
+/**
+ * A composable function that displays a button for a meal dish item
+ * It includes the title, calories, and quantity of the dish, and allows for click actions.
+ *
+ * @param modifier Modifier to be applied to the button.
+ * @param title The title of the dish.
+ * @param calories The calorie count of the dish.
+ * @param onClick Callback function to handle button clicks.
+ */
 @Composable
 fun DishItemMealButton(
     modifier: Modifier = Modifier,
     title: String,
     calories: Double,
-    quantity: Double,
     onClick: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
+    val roundedCalories = BigDecimal.valueOf(calories)
+        .setScale(2, RoundingMode.HALF_UP)
+        .toPlainString()
+
     Surface(
         modifier = modifier
             .height(40.dp)
@@ -216,9 +265,7 @@ fun DishItemMealButton(
                 )
 
                 Text(
-                    text = "$calories " +
-                            stringResource(R.string.dishitem_button_portions) +
-                            "${quantity.toInt()}",
+                    text = roundedCalories + stringResource(R.string.kilocalories),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,

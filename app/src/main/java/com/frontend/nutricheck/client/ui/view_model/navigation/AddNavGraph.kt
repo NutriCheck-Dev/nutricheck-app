@@ -37,15 +37,17 @@ sealed class AddScreens(val route: String) {
         const val DEFAULT = "add_meal"
     }
     object AddRecipe : AddScreens("add_recipe")
-    object RecipePage : AddScreens("recipe_page")
     object FoodOverview : AddScreens(
-        "food_product_overview/{foodProductId}" +
-                "?recipeId={recipeId}&mealId={mealId}") {
-        fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId"
+        "food_product_overview/{foodProductId}?recipeId={recipeId}&mealId={mealId}&editable={editable}"
+    ) {
+        fun fromSearch(foodProductId: String) =
+            "food_product_overview/$foodProductId?editable=true"
+
         fun fromIngredient(recipeId: String, foodProductId: String) =
-            "food_product_overview/$foodProductId?recipeId=$recipeId"
+            "food_product_overview/$foodProductId?recipeId=$recipeId&editable=false"
+
         fun fromAiMeal(mealId: String, foodProductId: String) =
-            "food_product_overview/$foodProductId?mealId=$mealId"
+            "food_product_overview/$foodProductId?mealId=$mealId&editable=true"
     }
     object RecipeOverview : AddScreens("recipe_overview/{recipeId}?fromSearch={fromSearch}") {
         fun createRoute(recipeId: String, fromSearch: Boolean) =
@@ -105,7 +107,7 @@ fun AddNavGraph(
                 LaunchedEffect(searchViewModel) {
                     searchViewModel.events.collect { event ->
                         if (event is SearchEvent.MealSaved) {
-                            mainNavController.navigate(Screen.DiaryPage.route) {
+                            mainNavController.navigate(Screen.DiaryPage.createRoute(null)) {
                                 popUpTo(Screen.Add.route) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -165,12 +167,18 @@ fun AddNavGraph(
                         type = NavType.StringType
                         nullable = true
                         defaultValue = null
+                    },
+                    navArgument("editable") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = "true"
                     }
                 )
             ) { backStack ->
                 val foodProductId = backStack.arguments!!.getString("foodProductId")!!
                 val recipeId = backStack.arguments!!.getString("recipeId")
                 val mealId = backStack.arguments!!.getString("mealId")
+                val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
                 val mode = when {
                     recipeId != null -> AddScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
                     mealId != null -> AddScreens.FoodOverview.fromAiMeal(mealId, foodProductId)
@@ -222,7 +230,8 @@ fun AddNavGraph(
                 LaunchedEffect(createRecipeViewModel) {
                     createRecipeViewModel.events.collect { event ->
                         if (event is RecipeEditorEvent.RecipeSaved) {
-                            addNavController.navigate(AddScreens.RecipePage.route) {
+                            mainNavController.navigate(Screen.DiaryPage.createRoute(
+                                DiaryGraphDestination.RECIPE_RELATED)) {
                                 popUpTo(Screen.Add.route) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -304,7 +313,7 @@ fun AddNavGraph(
                 LaunchedEffect(foodProductOverviewViewModel) {
                     foodProductOverviewViewModel.events.collect { event ->
                         if (event is FoodProductOverviewEvent.SubmitMealItem) {
-                            mainNavController.navigate(Screen.DiaryPage.route) {
+                            mainNavController.navigate(Screen.DiaryPage.createRoute(null)) {
                                 popUpTo(Screen.Add.route) { inclusive = true }
                                 launchSingleTop = true
                             }
@@ -321,10 +330,6 @@ fun AddNavGraph(
             }
         }
 
-        composable(AddScreens.RecipePage.route) {
-            val recipePageNavController = rememberNavController()
-            RecipePageNavGraph(recipePageNavController)
-        }
     }
 }
 

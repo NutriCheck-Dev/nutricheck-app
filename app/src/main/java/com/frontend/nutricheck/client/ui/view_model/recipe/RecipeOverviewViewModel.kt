@@ -13,7 +13,7 @@ import com.frontend.nutricheck.client.model.repositories.history.HistoryReposito
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
-import com.frontend.nutricheck.client.ui.view_model.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,7 +40,7 @@ data class CommonRecipeOverviewParams(
     val protein: Double = 0.0,
     val carbohydrates: Double = 0.0,
     val fat: Double = 0.0,
-    val servings: Int = 1,
+    val servings: Double = 1.0,
     val showDetails: Boolean = false,
     val showReportDialog: Boolean = false
 )
@@ -59,7 +59,7 @@ data class RecipeOverviewState (
 }
 sealed interface RecipeOverviewEvent {
     data class ClickDetailsOption(val option: DropdownMenuOptions) : RecipeOverviewEvent
-    data class ServingsChanged(val servings: Int) : RecipeOverviewEvent
+    data class ServingsChanged(val servings: Double) : RecipeOverviewEvent
     data class NavigateToEditRecipe(val recipeId: String) : RecipeOverviewEvent
     data object ClickDetails : RecipeOverviewEvent
     data object RecipeUploaded : RecipeOverviewEvent
@@ -68,6 +68,19 @@ sealed interface RecipeOverviewEvent {
     data object RecipeDeleted : RecipeOverviewEvent
 }
 
+/**
+ * ViewModel for managing the recipe overview screen.
+ * Handles different modes of recipe display, including general, from meal, and from search.
+ * Provides functionality for updating recipe parameters, handling user interactions
+ * and managing recipe-related events such as deletion, upload, and editing.
+ *
+ * @property recipeRepository Repository for managing recipe data.
+ * @property historyRepository Repository for managing meal history data.
+ * @property snackbarManager Manager for displaying snackbars.
+ * @property combinedSearchListStore Store for managing combined search list state.
+ * @property context Application context for accessing resources and services.
+ * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ */
 @HiltViewModel
 class RecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
@@ -147,7 +160,7 @@ class RecipeOverviewViewModel @Inject constructor(
                             protein = recipe.protein,
                             carbohydrates = recipe.carbohydrates,
                             fat = recipe.fat,
-                            servings = meal.quantity.toInt()
+                            servings = meal.quantity
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
@@ -178,7 +191,7 @@ class RecipeOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Double) {
         _recipeOverviewState.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servings = servings)

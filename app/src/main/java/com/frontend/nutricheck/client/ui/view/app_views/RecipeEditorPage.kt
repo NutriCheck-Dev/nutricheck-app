@@ -44,6 +44,14 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 
+/**
+ * A composable function that displays a recipe editor page.
+ *
+ * @param modifier The modifier to be applied to the root composable.
+ * @param recipeEditorViewModel The ViewModel that manages the recipe editor state.
+ * @param onItemClick Callback function to handle item clicks in the search results.
+ * @param onBack Callback function to handle back navigation.
+ */
 @Composable
 fun RecipeEditorPage(
     modifier: Modifier = Modifier,
@@ -100,7 +108,7 @@ fun RecipeEditorPage(
                     }) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = "Save Recipe",
+                            contentDescription = stringResource(R.string.save_recipe_content_description),
                             tint = colors.onSurface
                         )
                     }
@@ -149,7 +157,7 @@ fun RecipeEditorPage(
                         .wrapContentHeight()
                 ) {
                     Text(
-                        text = "Servings:",
+                        text = stringResource(R.string.foodcomponent_servings_label),
                         style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = colors.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.CenterVertically)
@@ -157,7 +165,6 @@ fun RecipeEditorPage(
                     Spacer(modifier = Modifier.weight(1f))
                     ServingsPicker(
                         value = draft.servings,
-                        range = 1..200,
                         onValueChange = {
                             recipeEditorViewModel.onEvent(
                                 RecipeEditorEvent.ServingsChanged(
@@ -208,6 +215,10 @@ fun RecipeEditorPage(
                         )
                     },
                     showBottomSheet = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet) }
+                    showTabRow = false,
+                    isLoading = uiState == BaseViewModel.UiState.Loading,
+                    showEmptyState = draft.hasSearched && draft.lastSearchedQuery == draft.query,
+                    toggleExpand = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet) }
                 )
             }
         }

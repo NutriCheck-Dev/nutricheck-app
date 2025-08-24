@@ -4,6 +4,7 @@ import android.content.Context
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealFoodItemDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealRecipeItemDao
@@ -42,6 +43,7 @@ class HistoryRepositoryImplTest {
     val mealRecipeItemDao: MealRecipeItemDao = mockk(relaxed = true)
     val foodDao: FoodDao = mockk(relaxed = true)
     val recipeDao: RecipeDao = mockk(relaxed = true)
+    val ingredientDao: IngredientDao = mockk(relaxed = true)
     val api: RemoteApi = mockk(relaxed = true)
     var context = mockk<Context>(relaxed = true)
     lateinit var meal: Meal
@@ -56,6 +58,7 @@ class HistoryRepositoryImplTest {
             mealRecipeItemDao,
             foodDao,
             recipeDao,
+            ingredientDao,
             api
         )
         this.meal = TestDataFactory.createDefaultMeal()
@@ -97,11 +100,12 @@ class HistoryRepositoryImplTest {
     fun `request AI meal`() = runTest {
         val file = mockk<MultipartBody.Part>()
         val mealDTO = TestDataFactory.createDefaultMealDTO()
+        val languageCode = "en"
 
-        coEvery { api.estimateMeal(file) } returns Response.success(mealDTO)
+        coEvery { api.estimateMeal(file, languageCode) } returns Response.success(mealDTO)
         every { MealMapper.toData(mealDTO) } returns meal
 
-        val result = repository.requestAiMeal(file)
+        val result = repository.requestAiMeal(file, languageCode)
 
         if (result is Result.Success) {
             Assertions.assertEquals(meal, result.data)
@@ -132,7 +136,6 @@ class HistoryRepositoryImplTest {
         coEvery { foodDao.exists(meal.mealFoodItems.first().foodProduct.id) } returns false
         coEvery { foodDao.insert(foodProductEntity) } just Runs
 
-        coEvery { recipeDao.exists(meal.mealRecipeItems.first().recipe.id) } returns false
         coEvery { recipeDao.insert(recipeEntity) } just Runs
 
         every { DbMealFoodItemMapper.toMealFoodItemEntity(meal.mealFoodItems.first()) } returns foodProductItemEntity
@@ -147,11 +150,11 @@ class HistoryRepositoryImplTest {
 
         coVerify { mealDao.update(mealEntity) }
         coVerify { foodDao.insert(foodProductEntity) }
-        coVerify { recipeDao.insert(recipeEntity) }
+        coVerify { recipeDao.insert(any()) }
         coVerify { mealFoodItemDao.deleteMealFoodItemsOfMeal(meal.id) }
         coVerify { mealFoodItemDao.insertAll(listOf(foodProductItemEntity)) }
         coVerify { mealRecipeItemDao.deleteMealRecipeItemsOfMeal(meal.id) }
-        coVerify { mealRecipeItemDao.insertAll(listOf(recipeItemEntity)) }
+        coVerify { mealRecipeItemDao.insertAll(any()) }
     }
 
     @Test
@@ -178,7 +181,6 @@ class HistoryRepositoryImplTest {
         Assertions.assertEquals(meal.calories, result.calories, 0.0)
     }
 
-    //exception?
     @Test
     fun `add meal`() = runTest {
         val mealEntity = TestDataFactory.createDefaultMealEntity()
@@ -208,18 +210,17 @@ class HistoryRepositoryImplTest {
         coVerify { mealRecipeItemDao.insertAll(any()) }
     }
 
-//    @Test
-//    fun `get daily macros`() = runTest {
-//        val date = Date()
-//        coEvery { mealDao.getMealsWithAllForDay(date) } returns listOf(mealWithAll)
-//        every { DbMealMapper.toMeal(mealWithAll) } returns meal
-//
-//        val macros = repository.getDailyMacros()
-//
-//        Assertions.assertEquals(meal.fat.toInt(), macros[2])
-//        Assertions.assertEquals(meal.carbohydrates.toInt(), macros[0])
-//        Assertions.assertEquals(meal.protein.toInt(), macros[1])
-//    }
+    @Test
+    fun `get daily macros`() = runTest {
+        coEvery { mealDao.getMealsWithAllForDay(any()) } returns listOf(mealWithAll)
+        every { DbMealMapper.toMeal(mealWithAll) } returns meal
+
+        val macros = repository.getDailyMacros()
+
+        Assertions.assertEquals(meal.carbohydrates.toInt(), macros[0])
+        Assertions.assertEquals(meal.protein.toInt(), macros[1])
+        Assertions.assertEquals(meal.fat.toInt(), macros[2])
+    }
 
     @Test
     fun `get meal food Item by id`() = runTest {

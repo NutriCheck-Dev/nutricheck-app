@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name=".NutriCheckApplication"
+        android:name="com.frontend.nutricheck.client.NutriCheckApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -17,7 +17,7 @@
         android:theme="@style/Theme.NutriCheck"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.frontend.nutricheck.client.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.NutriCheck.Launch">

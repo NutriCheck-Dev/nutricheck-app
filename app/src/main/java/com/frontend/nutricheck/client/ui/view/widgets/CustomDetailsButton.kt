@@ -14,8 +14,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 
+/**
+ * A custom details button that displays a dropdown menu with options based on the context.
+ *
+ * @param dishItemButton Indicates if the button is for a dish item.
+ * @param ownedRecipe Indicates if the recipe is owned by the user.
+ * @param publicRecipe Indicates if the recipe is public.
+ * @param foodItem Indicates if the button is for a food item.
+ * @param ingredientButton Indicates if the button is for an ingredient.
+ * @param onOptionClick Callback function to handle option selection.
+ * @param onDetailsClick Callback function to handle details click.
+ * @param onDismissClick Callback function to handle dismiss action.
+ * @param expanded Indicates if the dropdown menu is expanded.
+ */
 @Composable
 fun CustomDetailsButton(
     dishItemButton: Boolean = false,
@@ -62,12 +77,12 @@ fun CustomDetailsButton(
             if (dishItemButton) {
                 Icon(
                     imageVector = Icons.Filled.MoreHoriz,
-                    contentDescription = "Details"
+                    contentDescription = stringResource(R.string.details)
                 )
             } else {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = "Details"
+                    contentDescription = stringResource(R.string.details)
                 )
             }
         }

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 /**
@@ -75,40 +76,43 @@ class AndroidCameraController @Inject constructor(
     }
 
     override fun takePhoto(onSuccess: (Uri?) -> Unit, onError: (String) -> Unit) {
-        // Generate a unique filename for the photo
-        val name = "${System.currentTimeMillis()}.jpg"
-
-        // Prepare content values for MediaStore
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, MIME_TYPE_JPEG)
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NutriCheck")
-        }
-
-        // Create output options for the image capture
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(
-            appContext.contentResolver,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        ).build()
+        val tempFile = File.createTempFile("photo_${System.currentTimeMillis()}",
+            ".jpg", appContext.cacheDir)
+        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(tempFile).build()
 
         imageCaptureUseCase.takePicture(
-            outputOptions,
+            outputFileOptions,
             ContextCompat.getMainExecutor(appContext),
-            //Creates the callback for handling image capture results
             object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(result: ImageCapture.OutputFileResults) {
-                    val jpegUri = result.savedUri
-                    onSuccess(jpegUri ?: run {
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    val savedUri = outputFileResults.savedUri ?: Uri.fromFile(tempFile)
+                    onSuccess(savedUri ?: run {
                         onError(appContext.getString(R.string.error_no_photo_taken))
                         null
                     })
                 }
-
                 override fun onError(exception: ImageCaptureException) {
+                    tempFile.delete()
                     onError(appContext.getString(R.string.error_no_photo_taken))
                 }
             }
         )
     }
+}
+
+
+/**
+ * Hilt module that provides bindings for camera and image processing dependencies.
+ *
+ * This module binds the Android-specific implementations to their respective interfaces,
+ * enabling dependency injection throughout the application.
+ */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class CameraModule {
+
+    @Binds
+    abstract fun bindCameraController(
+        androidCameraController: AndroidCameraController
+    ): CameraController
 }

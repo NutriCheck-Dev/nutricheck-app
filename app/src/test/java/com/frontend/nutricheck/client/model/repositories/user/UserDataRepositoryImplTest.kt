@@ -262,4 +262,19 @@ class UserDataRepositoryImplTest {
         coVerify { mockUserDataDao.insert(sampleUserData) }
         coVerify { mockWeightDao.insert(sampleWeight) }
     }
+
+    /**
+     * Tests deleteWeight() method.
+     * Verifies that the weight is properly deleted through the DAO.
+     */
+    @Test
+    fun `deleteWeight deletes weight through dao`() = runTest {
+        coEvery { mockWeightDao.delete(sampleWeight) } returns Unit
+
+        repository.deleteWeight(sampleWeight)
+
+        coVerify { mockWeightDao.delete(sampleWeight) }
+    }
+
+
 }

@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.camera.compose.CameraXViewfinder
 import androidx.compose.ui.zIndex
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -124,7 +125,7 @@ fun CameraPreviewScreen(
                 addAiMealViewModel.onEvent(AddAiMealEvent.OnRetakePhoto)
             })
     }
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
             ExitButton(
                 onBack = { onExit() },
                 modifier = Modifier.align(Alignment.TopStart).padding(16.dp).zIndex(2f)
@@ -134,6 +135,7 @@ fun CameraPreviewScreen(
                     CameraXViewfinder(
                         surfaceRequest = request,
                         modifier = Modifier.fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
                     )
                 }
                 IconButton(
@@ -156,18 +158,22 @@ fun CameraPreviewScreen(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
                 )
 
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .background(MaterialTheme.colorScheme.background),
                     horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnRetakePhoto) }) {
+                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnRetakePhoto) },
+                        enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.retake_photo))
                     }
-                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) }) {
+                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) },
+                        enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.submit_photo))
                     }
                 }

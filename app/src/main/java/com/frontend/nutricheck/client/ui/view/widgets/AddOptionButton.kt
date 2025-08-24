@@ -28,6 +28,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
+/**
+ * A customizable button component that displays an icon and a label.
+ *
+ * @param modifier Modifier to customize the button's appearance and behavior.
+ * @param icon The icon to display on the button.
+ * @param label The text label for the button.
+ * @param onClick Callback function to be invoked when the button is clicked.
+ */
 @Composable
 fun AddOptionButton(
     modifier: Modifier = Modifier,
@@ -79,17 +87,5 @@ fun AddOptionButton(
                 color = colors.onSurfaceVariant
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun AddOptionButtonPreview() {
-    AppTheme {
-        AddOptionButton(
-            icon = Icons.Default.Search,
-            label = "Mahlzeit hinzufügen",
-            onClick = {}
-        )
     }
 }

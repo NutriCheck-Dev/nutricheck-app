@@ -33,9 +33,10 @@ data class CommonFoodProductOverviewParams(
     val protein: Double = 0.0,
     val carbohydrates: Double = 0.0,
     val fat: Double = 0.0,
-    val servings: Int = 1,
+    val servings: Double = 1.0,
     val servingSize: ServingSize = ServingSize.ONEHOUNDREDGRAMS,
-    val servingSizeDropDownExpanded: Boolean = false
+    val servingSizeDropDownExpanded: Boolean = false,
+    val editable: Boolean = true
 )
 
 data class FoodProductOverviewState (
@@ -54,7 +55,7 @@ data class FoodProductOverviewState (
 }
 
 sealed interface FoodProductOverviewEvent {
-    data class ServingsChanged(val servings: Int) : FoodProductOverviewEvent
+    data class ServingsChanged(val servings: Double) : FoodProductOverviewEvent
     data class ServingSizeChanged(val servingSize: ServingSize) : FoodProductOverviewEvent
     data object SaveAndAddClick : FoodProductOverviewEvent
     data object ServingSizeDropDownClick : FoodProductOverviewEvent
@@ -63,6 +64,19 @@ sealed interface FoodProductOverviewEvent {
     data object UpdateIngredient : FoodProductOverviewEvent
 }
 
+/**
+ * ViewModel for managing the overview of a food product.
+ * This ViewModel handles different modes of viewing a food product,
+ * such as from a recipe ingredient, a meal, or a search result.
+ * It provides functionality to update servings, serving sizes,
+ * and save changes to the food product.
+ *
+ * @property foodProductRepository Repository for accessing food product data.
+ * @property recipeRepository Repository for accessing recipe data.
+ * @property historyRepository Repository for accessing meal history data.
+ * @property combinedSearchListStore Store for managing the combined search list state.
+ * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ */
 @HiltViewModel
 class FoodProductOverviewViewModel @Inject constructor(
     private val foodProductRepository: FoodProductRepository,
@@ -93,7 +107,7 @@ class FoodProductOverviewViewModel @Inject constructor(
             else -> { throw IllegalArgumentException("Invalid state arguments for FoodProductOverviewViewModel") } //Temporary solution
         }
     }
-
+    val editable: Boolean = savedStateHandle.get<String>("editable")?.toBoolean() ?: true
     private val initialParams = CommonFoodProductOverviewParams()
     private val initialFoodProduct = FoodProduct()
     private val initialState = FoodProductOverviewState(
@@ -136,7 +150,8 @@ class FoodProductOverviewViewModel @Inject constructor(
                 carbohydrates = foodProduct.carbohydrates,
                 fat = foodProduct.fat,
                 servings = servingsPair.first,
-                servingSize = servingsPair.second
+                servingSize = servingsPair.second,
+                editable = editable,
             )
             _state.update { it.copy(foodProduct = (foodProduct as FoodProduct), parameters = newParams) }
             convertNutrients()
@@ -190,7 +205,7 @@ class FoodProductOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Double) {
         _state.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servings = servings)
@@ -231,7 +246,6 @@ class FoodProductOverviewViewModel @Inject constructor(
             )
         }
     }
-
 
     private fun deleteAiMeal() {
         viewModelScope.launch {

@@ -40,6 +40,15 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 
+/**
+ * A composable function that displays a recipe page with search functionality and recipe listings.
+ *
+ * @param modifier The modifier to be applied to the root composable.
+ * @param recipePageViewModel The ViewModel that manages the recipe page state.
+ * @param reportRecipeViewModel The ViewModel that manages the recipe reporting state.
+ * @param onAddRecipeClick Callback function to handle the action when the "Add Recipe" button is clicked.
+ * @param onItemClick Callback function to handle item clicks in the recipe listings.
+ */
 @Composable
 fun RecipePage(
     modifier: Modifier = Modifier,
@@ -262,7 +271,8 @@ Surface(
                                     ReportRecipeEvent.InputTextChanged(it)
                                 )
                             },
-                            reportText = reportRecipeState.inputText
+                            inputText = reportRecipeState.inputText,
+                            reportTextPlaceholder = stringResource(R.string.report_text_placeholder)
                         )
                     }
                 }

@@ -22,6 +22,17 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 
+/**
+ * A composable function that displays a list of food components
+ * It includes an optional add button for editing mode and allows for trailing content.
+ *
+ * @param modifier Modifier to be applied to the list.
+ * @param foodComponents List of food components to display.
+ * @param trailingContent Optional trailing content to display alongside each item.
+ * @param editing Boolean flag to indicate if the list is in editing mode.
+ * @param onAddButtonClick Callback function for when the add button is clicked.
+ * @param onItemClick Callback function for when an item is clicked.
+ */
 @Composable
 fun FoodComponentList(
     modifier: Modifier = Modifier,
@@ -67,6 +78,18 @@ fun FoodComponentList(
     }
 }
 
+
+/**
+ * A composable function that displays a list of ingredients
+ * It includes an optional add button for editing mode and allows for trailing content.
+ *
+ * @param modifier Modifier to be applied to the list.
+ * @param ingredients List of ingredients to display.
+ * @param trailingContent Optional trailing content to display alongside each item.
+ * @param editing Boolean flag to indicate if the list is in editing mode.
+ * @param onAddButtonClick Callback function for when the add button is clicked.
+ * @param onItemClick Callback function for when an item is clicked.
+ */
 @Composable
 fun IngredientList(
     modifier: Modifier = Modifier,
@@ -99,7 +122,7 @@ fun IngredientList(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.AddCircle,
-                    contentDescription = "Hinzufügen"
+                    contentDescription = stringResource(R.string.label_history_add)
                 )
             }
         }

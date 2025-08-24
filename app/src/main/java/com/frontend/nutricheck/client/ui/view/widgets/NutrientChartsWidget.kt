@@ -22,6 +22,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 
+/**
+ * A data class representing a nutrient entry with its label, unit, actual value, and daily value.
+ *
+ * @param label The name of the nutrient (e.g., "Calories", "Protein").
+ * @param unit The unit of measurement for the nutrient (e.g., "kcal", "g").
+ * @param actualValue The actual value of the nutrient consumed.
+ * @param dailyValue The recommended daily value for the nutrient.
+ */
 data class NutrientEntry(
     val label: String,
     val unit: String,
@@ -29,6 +37,20 @@ data class NutrientEntry(
     val dailyValue: Double
 )
 
+/**
+ * A composable function that displays nutrient charts for recipes.
+ * It uses a horizontal pager to show charts for different nutrients.
+ *
+ * @param modifier Modifier to customize the appearance and behavior of the widget.
+ * @param actualCalories Actual calories consumed.
+ * @param actualCarbs Actual carbohydrates consumed.
+ * @param actualProtein Actual protein consumed.
+ * @param actualFat Actual fat consumed.
+ * @param totalCalories Total calories recommended for the day.
+ * @param totalCarbs Total carbohydrates recommended for the day.
+ * @param totalProtein Total protein recommended for the day.
+ * @param totalFat Total fat recommended for the day.
+ */
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun RecipeNutrientChartsWidget(
@@ -93,7 +115,7 @@ fun RecipeNutrientChartsWidget(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val selected = colors.primary
-            val unselected = colors.onSurface.copy(alpha = 0.3f) //colors.onSurfaceVariant
+            val unselected = colors.onSurface.copy(alpha = 0.3f)
             repeat(pagerState.pageCount) { dotIndex ->
                 val color = if (pagerState.currentPage == dotIndex) selected else unselected
                 Box(
@@ -108,6 +130,19 @@ fun RecipeNutrientChartsWidget(
     }
 }
 
+
+/**
+ * A composable function that displays nutrient charts for food products.
+ * It shows the actual and recommended values for calories, carbs, protein, and fat.
+ * @param actualCalories Actual calories consumed.
+ * @param actualCarbs Actual carbohydrates consumed.
+ * @param actualProtein Actual protein consumed.
+ * @param actualFat Actual fat consumed.
+ * @param totalCalories Total calories recommended for the day.
+ * @param totalCarbs Total carbohydrates recommended for the day.
+ * @param totalProtein Total protein recommended for the day.
+ * @param totalFat Total fat recommended for the day.
+ */
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun FoodProductNutrientChartsWidget(
