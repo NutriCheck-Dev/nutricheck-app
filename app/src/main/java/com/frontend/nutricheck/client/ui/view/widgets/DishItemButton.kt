@@ -160,7 +160,7 @@ fun DishItemButton(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 64.dp)
+                .heightIn(max = 64.dp)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -182,7 +182,7 @@ fun DishItemButton(
                 VerticalDivider(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(1.dp)
+                        .width(4.dp)
                         .padding(vertical = 4.dp),
                     color = colors.outline
                 )
