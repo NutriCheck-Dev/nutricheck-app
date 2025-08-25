@@ -40,9 +40,9 @@ class RecipePageViewModelTest {
     private lateinit var repository: RecipeRepository
     private lateinit var snackbarManager: SnackbarManager
     private lateinit var context: Context
-    private val recipe1 = Recipe(id = "r1", name = "Apple Pie", calories = 300.0, carbohydrates = 40.0, protein = 10.0, fat = 10.0, servings = 2)
-    private val recipe2= Recipe(id = "r2", name = "Pie Apple", calories = 250.0, carbohydrates = 35.0, protein = 8.0, fat = 9.0, servings = 1)
-    private val recipe3 = Recipe(id = "r3", name = "Pineapple Tart", calories = 200.0, carbohydrates = 30.0, protein = 5.0, fat = 7.0, servings = 1)
+    private val recipe1 = Recipe(id = "r1", name = "Apple Pie", calories = 300.0, carbohydrates = 40.0, protein = 10.0, fat = 10.0, servings = 2.0)
+    private val recipe2= Recipe(id = "r2", name = "Pie Apple", calories = 250.0, carbohydrates = 35.0, protein = 8.0, fat = 9.0, servings = 1.0)
+    private val recipe3 = Recipe(id = "r3", name = "Pineapple Tart", calories = 200.0, carbohydrates = 30.0, protein = 5.0, fat = 7.0, servings = 1.0)
 
     private fun makeViewModel() = RecipePageViewModel(repository, snackbarManager, context)
 

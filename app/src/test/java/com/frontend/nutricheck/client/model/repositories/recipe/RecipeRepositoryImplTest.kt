@@ -260,7 +260,7 @@ class RecipeRepositoryImplTest {
         Assert.assertEquals(expected.id, actual.id)
         Assert.assertEquals(expected.name, actual.name)
         Assert.assertEquals(expected.instructions, actual.instructions)
-        Assert.assertEquals(expected.servings, actual.servings)
+        Assert.assertEquals(expected.servings, actual.servings, 0.0)
         Assert.assertEquals(expected.calories, actual.calories, 0.0)
         Assert.assertEquals(expected.carbohydrates, actual.carbohydrates, 0.0)
         Assert.assertEquals(expected.protein, actual.protein, 0.0)

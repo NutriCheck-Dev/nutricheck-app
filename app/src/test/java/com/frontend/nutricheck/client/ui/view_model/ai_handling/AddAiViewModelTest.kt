@@ -474,14 +474,14 @@ class AddAiMealViewModelTest {
             carbohydrates = 25.0,
             protein = 10.0,
             fat = 5.0,
-            servings = 1
+            servings = 1.0
         )
 
         val mealFoodItem = MealFoodItem(
             mealId = "meal1",
             foodProduct = foodProduct,
             quantity = 100.0,
-            servings = 1
+            servings = 1.0
         )
 
         return Meal(
@@ -508,14 +508,14 @@ class AddAiMealViewModelTest {
             carbohydrates = 0.0,
             protein = 0.0,
             fat = 0.0,
-            servings = 1
+            servings = 1.0
         )
 
         val mealFoodItem = MealFoodItem(
             mealId = "meal1",
             foodProduct = foodProduct,
             quantity = 0.0,
-            servings = 1
+            servings = 1.0
         )
 
         return Meal(
@@ -542,14 +542,14 @@ class AddAiMealViewModelTest {
             carbohydrates = 25.0,
             protein = 0.0, // This is 0, making the meal invalid
             fat = 5.0,
-            servings = 1
+            servings = 1.0
         )
 
         val mealFoodItem = MealFoodItem(
             mealId = "meal1",
             foodProduct = foodProduct,
             quantity = 100.0,
-            servings = 1
+            servings = 1.0
         )
 
         return Meal(

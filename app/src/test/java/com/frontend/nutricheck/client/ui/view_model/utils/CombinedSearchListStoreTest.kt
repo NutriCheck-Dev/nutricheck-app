@@ -22,7 +22,7 @@ class CombinedSearchListStoreTest {
         carbohydrates = 30.0,
         protein = 10.0,
         fat = 5.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 

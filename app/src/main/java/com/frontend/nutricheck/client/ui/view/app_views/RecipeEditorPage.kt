@@ -77,7 +77,7 @@ fun RecipeEditorPage(
             .fillMaxSize()
             .background(colors.background),
         showSheet = draft.expanded,
-        onSheetHidden = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet) },
+        onSheetHidden = { recipeEditorViewModel.onEvent(RecipeEditorEvent.HideBottomSheet) },
         topBar = {
             ViewsTopBar(
                 navigationIcon = { NavigateBackButton{ onBack() } },
@@ -228,7 +228,7 @@ fun RecipeEditorPage(
                             )
                         )
                     },
-                    showBottomSheet = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet) }
+                    showBottomSheet = { recipeEditorViewModel.onEvent(RecipeEditorEvent.ShowBottomSheet) }
                 )
             }
         }
