@@ -188,7 +188,6 @@ fun RecipeOverview(
                     if (searchViewModel != null) {
                         ServingsPicker(
                             value = recipeOverviewState.parameters.servings,
-                            range = 1..200,
                             onValueChange = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ServingsChanged(it)) }
                         )
                     } else {

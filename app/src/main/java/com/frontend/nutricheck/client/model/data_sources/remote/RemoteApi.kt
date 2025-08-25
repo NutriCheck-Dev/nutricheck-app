@@ -58,6 +58,7 @@ interface RemoteApi {
      */
     @GET("/user/search/recipes")
     suspend fun searchRecipes(@Query("name") name: String): Response<List<RecipeDTO>>
+
     /**
      * Estimates a meal based on an uploaded image.
      *

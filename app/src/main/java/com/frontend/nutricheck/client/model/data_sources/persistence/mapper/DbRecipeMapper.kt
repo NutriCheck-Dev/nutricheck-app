@@ -17,7 +17,7 @@ object DbRecipeMapper {
             carbohydrates = recipe.carbohydrates,
             protein = recipe.protein,
             fat = recipe.fat,
-            servings = recipe.servings.toDouble(),
+            servings = recipe.servings,
             instructions = recipe.instructions,
             visibility = recipe.visibility,
             deleted = delete
@@ -33,7 +33,7 @@ object DbRecipeMapper {
             carbohydrates = recipeEntity.carbohydrates,
             protein = recipeEntity.protein,
             fat = recipeEntity.fat,
-            servings = recipeEntity.servings.toInt(),
+            servings = recipeEntity.servings,
             instructions = recipeEntity.instructions,
             visibility = recipeEntity.visibility,
             ingredients = ingredientEntities.map { ingredientWithFoodProduct ->

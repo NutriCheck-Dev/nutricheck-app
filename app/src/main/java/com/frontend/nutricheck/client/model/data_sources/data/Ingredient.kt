@@ -6,6 +6,6 @@ data class Ingredient(
     val recipeId: String,
     val foodProduct: FoodProduct,
     val quantity: Double = foodProduct.servings * foodProduct.servingSize.getAmount(),
-    val servings: Int = foodProduct.servings,
+    val servings: Double = foodProduct.servings,
     val servingSize: ServingSize = foodProduct.servingSize
 )

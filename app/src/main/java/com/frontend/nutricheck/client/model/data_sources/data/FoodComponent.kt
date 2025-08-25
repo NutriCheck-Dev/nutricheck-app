@@ -37,5 +37,5 @@ sealed interface FoodComponent {
     /**
      * Returns the servings of the food component
      */
-    val servings: Int
+    val servings: Double
 }
