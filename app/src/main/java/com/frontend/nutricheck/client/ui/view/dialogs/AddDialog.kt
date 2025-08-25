@@ -23,9 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.ui.view.widgets.AddOptionButton
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 @Composable
 fun AddDialog(
@@ -76,7 +79,7 @@ fun AddDialog(
                     )
                 }
                 AddOptionButton(
-                    modifier = Modifier.testTag(stringResource(R.string.androidtest_tag_add_dialog_add_recipe)),
+                    modifier = Modifier.semantics { contentDescription = SemanticsTags.ADD_DIALOG_ADD_RECIPE},
                     icon = Icons.Default.Create,
                     label = stringResource(id = R.string.add_dialog_recipe_title),
                     onClick = { onAddRecipeClick() }

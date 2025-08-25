@@ -16,12 +16,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A composable function that displays a list of food components
@@ -45,7 +47,7 @@ fun FoodComponentList(
 ) {
     val colors = MaterialTheme.colorScheme
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -56,7 +58,7 @@ fun FoodComponentList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 64.dp)
-                    .then(Modifier.testTag(stringResource(R.string.androidtest_tag_ingredient_list_addbutton))),
+                    .semantics { contentDescription = SemanticsTags.FOODCOMPONENT_LIST_ADD_BUTTON },
                 shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(1.dp, colors.outline),
                 contentPadding = PaddingValues(0.dp),
@@ -73,6 +75,7 @@ fun FoodComponentList(
         }
         foodComponents.forEach { item ->
             DishItemButton(
+                modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_PREFIX + item.name },
                 foodComponent = item,
                 trailingContent = { trailingContent?.invoke(item) },
                 onClick = { onItemClick(item) })

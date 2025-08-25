@@ -69,8 +69,7 @@ fun DishItemButton(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(6.dp, RoundedCornerShape(16.dp))
-            .then(Modifier.testTag(stringResource(R.string.androidtest_tag_dishitem))),
+            .shadow(6.dp, RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         onClick = { onClick() }

@@ -62,7 +62,6 @@ fun FoodProductOverview(
     val uiState by foodProductOverviewViewModel.uiState.collectAsState()
 
     Scaffold(
-        modifier = Modifier.testTag(stringResource(R.string.androidtest_tag_foodproduct_details)),
         topBar = {
             ViewsTopBar(
                 navigationIcon = {

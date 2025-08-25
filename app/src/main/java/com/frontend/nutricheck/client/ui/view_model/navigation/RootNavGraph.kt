@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -16,7 +15,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
-import com.frontend.nutricheck.client.ui.view_model.snackbar.AppSnackbarHost
 import com.frontend.nutricheck.client.ui.view_model.snackbar.UiEventViewModel
 import java.util.Date
 

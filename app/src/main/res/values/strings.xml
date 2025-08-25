@@ -194,20 +194,6 @@
     <string name="report_text_placeholder">Bitte geben Sie einen Grund für die Meldung dieses Rezepts an.</string>
     <string name="save_recipe_content_description" translatable="false">save recipe</string>
     <string name="details" translatable="false">Details</string>
-    <string name="androidtest_tag_bottom_nav_add" translatable="false">BottomNav_add</string>
-    <string name="androidtest_tag_add_dialog_add_recipe" translatable="false">AddDialog_AddRecipe</string>
-    <string name="androidtest_tag_recipe_editor_page" translatable="false">RecipeEditorPage</string>
-    <string name="androidtest_tag_recipe_editor_name" translatable="false">RecipeEditor_Name</string>
-    <string name="androidtest_tag_recipe_editor_description" translatable="false">RecipeEditor_Description</string>
-    <string name="androidtest_tag_ingredient_list_addbutton" translatable="false">IngredientList_AddButton</string>
-    <string name="androidtest_tag_ingredient_search_sheet" translatable="false">IngredientSearch_Sheet</string>
-    <string name="androidtest_tag_ingredient_search_query" translatable="false">IngredientSearch_Query</string>
-    <string name="androidtest_tag_dishitem" translatable="false">DishItem_%1$s</string>
-    <string name="androidtest_tag_dishitem_add" translatable="false">DishItem_Add_%1$s</string>
-    <string name="androidtest_tag_foodproduct_details" translatable="false">FoodProductDetails</string>
-    <string name="androidtest_tag_foodproduct_details_servings" translatable="false">FoodProductDetails_Servings</string>
-    <string name="androidtest_tag_foodproduct_details_serving_size" translatable="false">FoodProductDetails_ServingSize</string>
-    <string name="androidtest_tag_foodproduct_details_persist" translatable="false">FoodProductDetails_Persist</string>
-    <string name="androidtest_tag_recipepage" translatable="false">RecipePage</string>
     <string name="error_servings_range">Bitte wähle einen Wert zwischen %1$s und %2$s.</string>
+    <string name="persist_description" translatable="false">Persist</string>
 </resources>

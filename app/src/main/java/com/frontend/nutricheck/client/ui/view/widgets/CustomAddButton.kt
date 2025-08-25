@@ -19,7 +19,10 @@ import com.frontend.nutricheck.client.R
  * @param onClick A lambda function that is called when the button is clicked.
  */
 @Composable
-fun CustomAddButton(onClick: () -> Unit = {}) {
+fun CustomAddButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
     val colors = MaterialTheme.colorScheme
     IconButton(
         onClick = { onClick() },
@@ -27,8 +30,7 @@ fun CustomAddButton(onClick: () -> Unit = {}) {
             .background(
                 color = colors.onSurfaceVariant,
                 shape = CircleShape
-            )
-            .then(Modifier.testTag(stringResource(R.string.androidtest_tag_dishitem_add))),
+            ).then(modifier),
     ) {
         Icon(
             imageVector = Icons.Default.Add,

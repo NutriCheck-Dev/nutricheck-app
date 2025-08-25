@@ -19,9 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A composable search bar for food components.
@@ -56,11 +59,13 @@ fun FoodComponentSearchBar(
             modifier = modifier
                 .fillMaxWidth(0.8f)
                 .align(Alignment.Center)
-                .defaultMinSize(minHeight = 56.dp),
+                .defaultMinSize(minHeight = 56.dp)
+                .semantics { contentDescription = SemanticsTags.SEARCH_QUERY },
             singleLine = true,
             placeholder = placeholder,
             trailingIcon = {
                 IconButton(
+                    modifier = Modifier.semantics { contentDescription = SemanticsTags.SEARCH_BUTTON },
                     onClick = {
                         onSearch(query)
                         keyboardController?.hide()
