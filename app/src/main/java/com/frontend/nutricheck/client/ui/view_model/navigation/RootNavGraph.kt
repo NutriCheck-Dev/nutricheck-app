@@ -16,7 +16,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.dialogs.AddDialog
-import com.frontend.nutricheck.client.ui.view_model.snackbar.AppSnackbarHost
 import com.frontend.nutricheck.client.ui.view_model.snackbar.UiEventViewModel
 import java.util.Date
 
@@ -110,27 +109,15 @@ fun RootNavGraph(mainNavController: NavHostController, startDestination: String)
 
             composable(Screen.Add.route) { backStackEntry ->
                 val originArg = backStackEntry.arguments?.getString("origin")
-                val dateArg = backStackEntry.arguments?.getString("date")
-                val dayTimeArg = backStackEntry.arguments?.getString("dayTime")
 
                 val effectiveOriginName = when (originArg) {
                     null, "{origin}" -> AddDialogOrigin.BOTTOM_NAV_BAR_ADD_MEAL.name
                     else -> originArg
                 }
-                val effectiveDateLong = when (dateArg) {
-                    null, "{date}" -> Date().time
-                    else -> dateArg.toLongOrNull() ?: Date().time
-                }
-                val effectiveDayTimeName = when (dayTimeArg) {
-                    null, "{dayTime}" -> DayTime.BREAKFAST.name
-                    else -> dayTimeArg
-                }
 
                 AddNavGraph(
                     mainNavController = mainNavController,
                     origin = AddDialogOrigin.valueOf(effectiveOriginName),
-                    date = effectiveDateLong,
-                    dayTime = DayTime.valueOf(effectiveDayTimeName)
                 )
             }
         }
