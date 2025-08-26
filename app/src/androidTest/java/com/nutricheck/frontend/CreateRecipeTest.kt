@@ -18,8 +18,10 @@ import androidx.test.filters.LargeTest
 import com.frontend.nutricheck.client.MainActivity
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
+import com.nutricheck.frontend.client.DbPersistRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,6 +33,7 @@ import javax.inject.Inject
 @LargeTest
 class CreateRecipeTest {
 
+    @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
     @get:Rule(order = 1) val compose = createAndroidComposeRule<MainActivity>()
 
@@ -40,22 +43,26 @@ class CreateRecipeTest {
         hilt.inject()
     }
 
+    @After fun tearDown() {
+        db.close()
+    }
+
     @Test
     fun createRecipe_viaQuickAdd() {
         val recipeName = "My Awesome Recipe"
 
         openAddDialogThenRecipeEditor()
         openIngredientSearch()
-//        addIngredientViaQuickAdd("apple")
-//        addIngredientViaQuickAdd("banana")
-//        fillAndPersistRecipe(name = recipeName, description = "This is my awesome recipe.")
-//        assertOnRecipePage(name = recipeName)
+        addIngredientViaQuickAdd("Apfel")
+        addIngredientViaQuickAdd("Banane")
+        fillAndPersistRecipe(name = recipeName, description = "This is my awesome recipe.")
+        assertOnRecipePage(name = recipeName)
     }
 
     private fun openAddDialogThenRecipeEditor() {
 
         compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_ADD)
-//            .assertIsDisplayed()
+            .assertIsDisplayed()
             .performClick()
 
         compose.onNodeWithContentDescription(SemanticsTags.ADD_DIALOG_ADD_RECIPE)

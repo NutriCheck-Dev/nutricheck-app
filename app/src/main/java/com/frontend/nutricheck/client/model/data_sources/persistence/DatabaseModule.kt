@@ -23,18 +23,25 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    private var Instance: LocalDatabase? = null
+
     @Singleton
     @Provides
     fun provideDatabase(
         @ApplicationContext context: Context
     ): LocalDatabase {
-        return Room.databaseBuilder(
-            context,
-            LocalDatabase::class.java,
-            "nutricheck_database"
-        )
-            .addMigrations(Migrations.MIGRATION_15_16, Migrations.MIGRATION_16_17)
-            .build()
+        return Instance ?: synchronized(this) {
+            Room.databaseBuilder(
+                context.applicationContext,
+                LocalDatabase::class.java,
+                "nutricheck_database"
+            )
+                .addMigrations(Migrations.MIGRATION_15_16, Migrations.MIGRATION_16_17)
+                .build()
+                .also { Instance = it }
+
+        }
+
     }
 
     @Singleton

@@ -87,6 +87,7 @@ android {
         }
 
         testInstrumentationRunner = "com.nutricheck.frontend.client.CustomHiltTestRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "false"
     }
 
     buildTypes {

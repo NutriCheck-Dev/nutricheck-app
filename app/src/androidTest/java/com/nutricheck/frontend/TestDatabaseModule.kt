@@ -39,15 +39,9 @@ object TestDatabaseModule {
         val seed = File(context.cacheDir, "seed-${System.currentTimeMillis()}.db")
         if (productionDb.exists()) snapshotDatabase(context, productionDb, seed)
 
-        return if (seed.exists())
-            Room.databaseBuilder(context, LocalDatabase::class.java, "test_database")
-                .createFromFile(seed)
-                .allowMainThreadQueries()
-                .build()
-         else
-            Room.inMemoryDatabaseBuilder(context, LocalDatabase::class.java)
-                .allowMainThreadQueries()
-                .build()
+        val builder = Room.databaseBuilder(context, LocalDatabase::class.java,"test_database")
+        if (seed.exists()) builder.createFromFile(seed)
+        return builder.allowMainThreadQueries().build()
     }
 
     @Singleton
