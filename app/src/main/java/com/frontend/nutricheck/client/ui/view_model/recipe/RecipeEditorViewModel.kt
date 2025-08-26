@@ -14,7 +14,7 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,13 +40,12 @@ data class RecipeDraft(
     val id: String,
     val title: String,
     val description: String,
-    val servings: Int,
+    val servings: Double,
     val ingredients: List<FoodComponent> = emptyList(),
     val expanded: Boolean = false,
     val language: String = "",
     val query: String = "",
     val results: List<FoodComponent> = emptyList(),
-    val confirmationDialog : Boolean = false,
     val hasSearched: Boolean = false,
     val lastSearchedQuery: String? = null
 )
@@ -54,15 +53,15 @@ data class RecipeDraft(
 sealed interface RecipeEditorEvent {
     data class TitleChanged(val title: String) : RecipeEditorEvent
     data class DescriptionChanged(val description: String) : RecipeEditorEvent
-    data class ServingsChanged(val servings: Int) : RecipeEditorEvent
+    data class ServingsChanged(val servings: Double) : RecipeEditorEvent
     data class IngredientAdded(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
-    object ShowConfirmationDialog : RecipeEditorEvent
     object SearchIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
     object RecipeSaved : RecipeEditorEvent
-    object ExpandBottomSheet : RecipeEditorEvent
+    object ShowBottomSheet : RecipeEditorEvent
+    object HideBottomSheet : RecipeEditorEvent
     object ResetErrorState : RecipeEditorEvent
 }
 
@@ -102,7 +101,7 @@ class RecipeEditorViewModel @Inject constructor(
             id = UUID.randomUUID().toString(),
             title = "",
             description = "",
-            servings = 1
+            servings = 1.0
         )
     )
     val draft = _draft.asStateFlow()
@@ -147,14 +146,18 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.IngredientAdded -> addIngredients(event.foodProduct)
             is RecipeEditorEvent.IngredientRemoved -> removeIngredient(event.foodProduct)
             is RecipeEditorEvent.SaveRecipe -> saveRecipe()
-            is RecipeEditorEvent.ExpandBottomSheet -> {
+            is RecipeEditorEvent.ShowBottomSheet -> {
                 _draft.update { draft ->
-                    draft.copy(expanded = !draft.expanded)
+                    draft.copy(expanded = true)
+                }
+            }
+            is RecipeEditorEvent.HideBottomSheet -> {
+                _draft.update { draft ->
+                    draft.copy(expanded = false)
                 }
             }
             is RecipeEditorEvent.SearchIngredients -> onSearchIngredients()
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
-            is RecipeEditorEvent.ShowConfirmationDialog -> changeShowConfirmationDialog()
             is RecipeEditorEvent.ResetErrorState -> setReady()
             is RecipeEditorEvent.RecipeSaved -> null
         }
@@ -306,17 +309,13 @@ class RecipeEditorViewModel @Inject constructor(
         }
     }
 
-    private fun changeShowConfirmationDialog() =
-        _draft.update { draft ->
-            draft.copy(confirmationDialog = !_draft.value.confirmationDialog)
-        }
 
     private fun onQueryChanged(query: String) =
         _draft.update { draft ->
             draft.copy(query = query)
         }
 
-    private fun onServingsChanged(servings: Int) {
+    private fun onServingsChanged(servings: Double) {
         _draft.update { draft ->
             draft.copy(servings = servings)
         }

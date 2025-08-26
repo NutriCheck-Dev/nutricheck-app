@@ -187,6 +187,13 @@ fun HistoryPageNavGraph(
                 val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
                 val foodSearchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
 
+                LaunchedEffect(foodSearchViewModel) {
+                    foodSearchViewModel.events.collect { event ->
+                        if (event is SearchEvent.AddFoodComponent) {
+                            historyPageNavController.popBackStack()
+                        }
+                    }
+                }
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     foodSearchViewModel = foodSearchViewModel,

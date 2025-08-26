@@ -50,7 +50,7 @@ object TestDataFactory {
         carbohydrates = 1.0,
         protein = 2.0,
         fat = 3.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -104,7 +104,7 @@ object TestDataFactory {
         id = "testRecipeId",
         name = "testRecipe",
         instructions = "test instructions",
-        servings = 1,
+        servings = 1.0,
         calories = 0.0,
         carbohydrates = 1.0,
         protein = 2.0,
@@ -155,7 +155,7 @@ object TestDataFactory {
         recipeId = "testRecipeId",
         foodProductId = "testFoodProductId",
         quantity = 100.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS,
     )
 
@@ -185,7 +185,7 @@ object TestDataFactory {
         mealId = "testMealId",
         foodProduct = createDefaultFoodProduct(),
         quantity = 1.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -193,7 +193,7 @@ object TestDataFactory {
         mealId = "testMealId",
         recipe = createDefaultRecipe(),
         quantity = 1.0,
-        servings = 1
+        servings = 1.0
     )
 
     fun createDefaultMealDTO() = MealDTO(
@@ -231,7 +231,7 @@ object TestDataFactory {
         mealId = "testMealId",
         foodProductId = "testFoodProductId",
         quantity = 1.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 

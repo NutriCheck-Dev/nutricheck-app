@@ -10,6 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+/**
+ * A composable function that displays an exit button.
+ */
 @Composable
 fun ExitButton(
     onBack: () -> Unit = {},

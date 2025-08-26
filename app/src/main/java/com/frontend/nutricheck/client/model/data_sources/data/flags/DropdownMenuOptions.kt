@@ -8,6 +8,10 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.ui.graphics.vector.ImageVector
 
+/**
+ * Enum class representing options for a dropdown menu.
+ * Each option has a string representation and an associated icon.
+ */
 enum class DropdownMenuOptions(
     private val option: String,
     private val icon: ImageVector

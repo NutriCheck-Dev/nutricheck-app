@@ -27,6 +27,9 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyMacrosState
 
+/**
+ * A composable function that displays a breakdown of daily macronutrients.
+ */
 @Composable
 fun NutrientBreakdown(
     modifier: Modifier = Modifier,

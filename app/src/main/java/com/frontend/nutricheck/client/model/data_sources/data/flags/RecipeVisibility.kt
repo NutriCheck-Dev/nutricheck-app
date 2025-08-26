@@ -1,5 +1,8 @@
 package com.frontend.nutricheck.client.model.data_sources.data.flags
 
+/**
+ * Enum representing the visibility of a recipe.
+ */
 enum class RecipeVisibility {
     PUBLIC,
     OWNER;

@@ -10,6 +10,8 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weig
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic.toDoubleOrNullFlexible
+import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -139,7 +141,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun enterHeight(height: String) {
-        val heightValue = height.toDoubleOrNull()
+        val heightValue = height.toDoubleOrNullFlexible()
         val errorMessage = UserDataUtilsLogic.isHeightInvalid(heightValue)
         if (errorMessage != null) {
             setError(appContext.getString(errorMessage))
@@ -151,7 +153,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun enterWeight(weight: String) {
-        val weightValue = weight.toDoubleOrNull()
+        val weightValue = weight.toDoubleOrNullFlexible()
         val errorMessage = UserDataUtilsLogic.isWeightInvalid(weightValue)
         if (errorMessage != null) {
             setError(appContext.getString(errorMessage))
@@ -183,7 +185,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun enterTargetWeight(targetWeight: String) {
-        val targetWeightValue = targetWeight.toDoubleOrNull()
+        val targetWeightValue = targetWeight.toDoubleOrNullFlexible()
         val errorMessage = UserDataUtilsLogic.isTargetWeightInvalid(targetWeightValue)
         if (errorMessage != null) {
             setError(appContext.getString(errorMessage))

@@ -4,6 +4,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.MealWithAll
 
+/**
+ * Mapper for converting between [Meal] and [MealEntity].
+ */
 object DbMealMapper {
 
     fun toMealEntity(meal: Meal) : MealEntity =

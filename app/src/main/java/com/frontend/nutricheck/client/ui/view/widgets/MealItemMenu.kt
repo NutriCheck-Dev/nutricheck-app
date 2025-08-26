@@ -12,6 +12,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 
+/**
+ * A composable function that displays a menu for a meal item.
+ */
 @Composable
 fun MealItemMenu(
     onRemove: () -> Unit

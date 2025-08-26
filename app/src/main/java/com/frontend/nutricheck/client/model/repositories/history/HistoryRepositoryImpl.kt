@@ -36,6 +36,9 @@ import java.util.Date
 import java.util.UUID
 import javax.inject.Inject
 
+/**
+ * Implementation of [HistoryRepository] that handles meal history operations.
+ */
 class HistoryRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val mealDao: MealDao,

@@ -3,8 +3,12 @@ package com.frontend.nutricheck.client.model.repositories.mapper
 import com.frontend.nutricheck.client.dto.IngredientDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
-import kotlin.math.absoluteValue
+import java.math.BigDecimal
+import java.math.RoundingMode
 
+/**
+ * Mapper for converting between [Ingredient] and [IngredientDTO].
+ */
 object IngredientMapper {
     fun toDTO(ingredient: Ingredient) : IngredientDTO =
         IngredientDTO(
@@ -28,19 +32,39 @@ object IngredientMapper {
     fun mapQuantityToServings(
         quantity: Double,
         servingSizes: List<ServingSize> = ServingSize.entries.toList(),
-        maxServings: Int = 200
-    ): Pair<Int, ServingSize> {
+        minServings: Double = 1.0,
+        maxServings: Double = 200.0,
+        decimals: Int = 2
+    ): Pair<Double, ServingSize> {
+        val quantityBigDecimal = BigDecimal.valueOf(quantity)
+        val minBigDecimal = BigDecimal.valueOf(minServings)
+        val maxBigDecimal = BigDecimal.valueOf(maxServings)
+
         val candidates = servingSizes
-            .map { size -> size to size.getAmount() }
-            .sortedByDescending { it.second }
-        for ((servingSize, sizeInGrams) in candidates) {
-            if ((quantity % sizeInGrams).absoluteValue < 1e-6) {
-                val servings = (quantity / sizeInGrams).toInt()
-                if (servings in 1..maxServings) {
-                    return servings to servingSize
-                }
+            .map { size -> size to BigDecimal.valueOf(size.getAmount()) }
+            .sortedByDescending { (_, gramsBigDecimal) -> gramsBigDecimal }
+
+        val tolerance = BigDecimal.ONE.movePointLeft(decimals + 1)
+
+        for ((size, sizeBigDecimal) in candidates) {
+            if (sizeBigDecimal.signum() <= 0) continue
+
+            var servings = quantityBigDecimal.divide(sizeBigDecimal, decimals, RoundingMode.HALF_UP)
+
+            if (servings < minBigDecimal) servings = minBigDecimal
+            if (servings > maxBigDecimal) servings = maxBigDecimal
+
+            val recon = servings.multiply(sizeBigDecimal)
+            val difference = recon.subtract(quantityBigDecimal).abs()
+
+            if (difference <= tolerance) {
+                return servings.toDouble() to size
             }
         }
-        return quantity.toInt() to ServingSize.ONEGRAM
+
+        var fallbackServings = quantityBigDecimal.setScale(decimals, RoundingMode.HALF_UP)
+        if (fallbackServings < minBigDecimal) fallbackServings = minBigDecimal
+        if (fallbackServings > maxBigDecimal) fallbackServings = maxBigDecimal
+        return fallbackServings.toDouble() to ServingSize.ONEGRAM
     }
 }

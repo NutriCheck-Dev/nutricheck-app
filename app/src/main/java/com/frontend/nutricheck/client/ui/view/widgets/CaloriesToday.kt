@@ -21,6 +21,9 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieState
 
+/**
+ * Composable function that displays today's calorie intake in a circular progress indicator.
+ */
 @Composable
 fun CaloriesToday(
     modifier: Modifier = Modifier,
@@ -44,7 +47,6 @@ fun CaloriesToday(
             .shadow(6.dp, RoundedCornerShape(16.dp))
     ) {
         Box(modifier = Modifier.requiredSize(193.dp)) {
-            // Text: "Heute"
             Text(
                 text = stringResource(id = R.string.homepage_day_description),
                 color = colors.onSurface,
@@ -54,7 +56,6 @@ fun CaloriesToday(
                     .offset(15.dp, 15.dp)
             )
 
-            // Kreis + Werte
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -66,7 +67,7 @@ fun CaloriesToday(
                     val sweepAngle = progress * 360f
                     val stroke = Stroke(width = 25f, cap = StrokeCap.Round)
 
-                    // Hintergrundkreis
+                    // background-circle
                     drawArc(
                         color = colors.outlineVariant,
                         startAngle = -90f,
@@ -75,7 +76,7 @@ fun CaloriesToday(
                         style = stroke
                     )
 
-                    // Fortschrittskreis
+                    // progress-circle
                     drawArc(
                         color = progressColor,
                         startAngle = -90f,
@@ -85,7 +86,6 @@ fun CaloriesToday(
                     )
                 }
 
-                // Kalorienzahl
                 Text(
                     text = dailyCalories.toString(),
                     color = colors.onSurface,
@@ -94,7 +94,6 @@ fun CaloriesToday(
                     fontSize = 36.sp
                 )
 
-                // kcal-Text
                 Text(
                     text = "kcal",
                     color = colors.onSurface.copy(alpha = 0.8f),

@@ -1,5 +1,8 @@
 package com.frontend.nutricheck.client.model.data_sources.data
 
+/**
+ * Represents a food component in the application.
+ */
 sealed interface FoodComponent {
     /**
      * Returns the id of the food component
@@ -34,5 +37,5 @@ sealed interface FoodComponent {
     /**
      * Returns the servings of the food component
      */
-    val servings: Int
+    val servings: Double
 }

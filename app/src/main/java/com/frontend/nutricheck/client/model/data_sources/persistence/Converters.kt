@@ -7,12 +7,10 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
-import com.squareup.moshi.Moshi
 import java.util.Calendar
 import java.util.Date
 
 class Converters {
-    private val moshi = Moshi.Builder().build()
 
     @TypeConverter
     fun fromDate(date: Date): Long? {
@@ -65,10 +63,9 @@ class Converters {
     fun toRecipeVisibility(name: String?): RecipeVisibility? = name?.let { RecipeVisibility.valueOf(it) }
 
     @TypeConverter
-    fun fromServingSize(servingSize: ServingSize?): Int? = servingSize?.ordinal
-
+    fun fromServingSize(servingSize: ServingSize?): String? = servingSize?.name
     @TypeConverter
-    fun toServingSize(ordinal: Int?): ServingSize? = ordinal?.let { ServingSize.entries.getOrNull(it) }
+    fun toServingSize(name: String?): ServingSize? = name?.let { runCatching { enumValueOf<ServingSize>(it) }.getOrNull() }
 
     @TypeConverter
     fun fromDayTime(dayTime: DayTime?): String? = dayTime?.name

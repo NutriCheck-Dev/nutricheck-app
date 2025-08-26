@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
@@ -32,7 +33,10 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.theme.AppTheme
 
-//This file represents the Header for the SearchPage
+/**
+ * A composable function that displays a meal selector with a dropdown menu.
+ * It represents the header for the SearchPage, allowing users to select a meal time.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealSelector(
@@ -73,14 +77,16 @@ fun MealSelector(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = dayTime?.getDescription(context = LocalContext.current) ?: stringResource(R.string.label_select_meal),
+                        text = dayTime?.getDescription(context = LocalContext.current)
+                            ?: stringResource(R.string.label_select_meal),
                         style = styles.headlineMedium,
                         color = colors.onSurfaceVariant,
                         textAlign = TextAlign.Center
                     )
                         Crossfade(targetState = expanded, label = "ArrowIcon") { onExpanded ->
                             Icon(
-                                imageVector = if (!onExpanded) Icons.Default.ArrowDropDown else Icons.Default.ArrowDropUp,
+                                imageVector = if (!onExpanded) Icons.Default.ArrowDropDown else
+                                    Icons.Default.ArrowDropUp,
                                 contentDescription = null,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
@@ -112,12 +118,4 @@ fun MealSelector(
         ),
         actions = { trailingContent?.invoke() }
     )
-}
-
-@Preview
-@Composable
-fun MealSelectorPreview() {
-    AppTheme {
-        MealSelector()
-    }
 }

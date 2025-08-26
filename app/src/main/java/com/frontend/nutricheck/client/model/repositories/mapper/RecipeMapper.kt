@@ -4,6 +4,9 @@ import com.frontend.nutricheck.client.dto.RecipeDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 
+/**
+ * Mapper for converting [RecipeDTO] to [Recipe].
+ */
 object RecipeMapper {
 
     fun toDto(recipe: Recipe): RecipeDTO =
@@ -11,7 +14,7 @@ object RecipeMapper {
             id = recipe.id,
             name = recipe.name,
             instructions = recipe.instructions,
-            servings = recipe.servings,
+            servings = recipe.servings.toInt(),
             calories = recipe.calories,
             carbohydrates = recipe.carbohydrates,
             protein = recipe.protein,
@@ -29,7 +32,7 @@ object RecipeMapper {
             fat = recipeDto.fat,
             ingredients = recipeDto.ingredients.map { IngredientMapper.toData(it) },
             instructions = recipeDto.instructions,
-            servings = recipeDto.servings,
+            servings = recipeDto.servings.toDouble(),
             visibility = RecipeVisibility.PUBLIC
         )
 }

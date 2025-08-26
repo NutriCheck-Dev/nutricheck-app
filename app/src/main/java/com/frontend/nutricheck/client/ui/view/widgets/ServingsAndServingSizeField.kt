@@ -24,7 +24,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
  */
 @Composable
 fun ServingsField(
-    value: Int
+    value: Double
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography

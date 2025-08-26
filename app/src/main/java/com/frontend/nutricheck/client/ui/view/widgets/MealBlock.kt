@@ -25,14 +25,22 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.stringResource
 import com.frontend.nutricheck.client.R
+import java.math.BigDecimal
+import java.math.RoundingMode
 
+/**
+ *
+ */
 @Composable
 fun MealHeader(
-    titel: String,
+    title: String,
     modifier: Modifier = Modifier,
     calorieCount: Double
 ) {
     val colors = MaterialTheme.colorScheme
+    val roundedCalories = BigDecimal.valueOf(calorieCount)
+        .setScale(2, RoundingMode.HALF_UP)
+        .toPlainString()
 
     Row(
         modifier = modifier
@@ -43,14 +51,14 @@ fun MealHeader(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = titel,
+            text = title,
             color = colors.onSurfaceVariant,
             lineHeight = 16.sp,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "$calorieCount",
+            text = roundedCalories,
             color = colors.onSurfaceVariant,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
@@ -119,7 +127,6 @@ fun MealBlock(
                         DishItemMealButton(
                             modifier = Modifier.weight(1f), // gibt Platz frei für die drei Punkte
                             title = item.foodProduct.name,
-                            quantity = item.servings,
                             calories = item.servings * item.foodProduct.calories * (item.servingSize.getAmount() / 100),
                             onClick = { onItemClick(item) }
                         )
@@ -129,7 +136,6 @@ fun MealBlock(
                         DishItemMealButton(
                             modifier = Modifier.weight(1f),
                             title = item.recipe.name,
-                            quantity = item.quantity.toInt(),
                             calories = item.quantity * item.recipe.calories,
                             onClick = { onItemClick(item) }
                         )

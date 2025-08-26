@@ -14,6 +14,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Implementation of the AppSettingRepository interface that uses DataStore for persistent storage.
+ */
 @Singleton
 class AppSettingRepositoryImpl @Inject constructor(
     private val dataStore : DataStore<Preferences>

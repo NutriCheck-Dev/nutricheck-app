@@ -10,8 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,6 +32,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentList
 import com.frontend.nutricheck.client.ui.view.widgets.FoodComponentSearchBar
+import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipePageViewModel
@@ -280,23 +279,4 @@ Surface(
         }
     }
 }
-}
-
-
-@Composable
-private fun ShowErrorMessage(
-    title: String = stringResource(R.string.show_error_message_title),
-    error: String,
-    onClick: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = { onClick() },
-        title = { Text(title) },
-        text = { Text(error) },
-        confirmButton = {
-            Button(onClick = { onClick() }) {
-                Text(stringResource(R.string.label_ok))
-            }
-        }
-    )
 }

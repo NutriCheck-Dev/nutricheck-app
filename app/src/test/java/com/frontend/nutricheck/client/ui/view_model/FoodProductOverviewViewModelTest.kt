@@ -12,6 +12,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -19,23 +20,16 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.params.shadow.com.univocity.parsers.common.Context
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -57,7 +51,7 @@ class FoodProductOverviewViewModelTest {
         carbohydrates = 30.0,
         protein = 10.0,
         fat = 5.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -83,7 +77,7 @@ class FoodProductOverviewViewModelTest {
 
         val state = viewModel.foodProductViewState.value
         assertEquals("Pasta", state.foodProduct.name)
-        assertEquals(1, state.parameters.servings)
+        assertEquals(1.0, state.parameters.servings)
         assertEquals(ServingSize.ONEHOUNDREDGRAMS, state.parameters.servingSize)
         assertEquals(200.0, state.parameters.calories)
         assertEquals(30.0, state.parameters.carbohydrates)
@@ -109,7 +103,7 @@ class FoodProductOverviewViewModelTest {
         val ingredient = Ingredient(
             recipeId = "r1",
             foodProduct = foodProduct,
-            servings = 2,
+            servings = 2.0,
             servingSize = ServingSize.ONEHOUNDREDGRAMS
         )
         coEvery { recipeRepository.getIngredientById("r1", "fp1") } returns ingredient
@@ -120,7 +114,7 @@ class FoodProductOverviewViewModelTest {
 
         val state = viewModel.foodProductViewState.value
         assertEquals("r1", state.recipeId)
-        assertEquals(2, state.parameters.servings)
+        assertEquals(2.0, state.parameters.servings)
         assertEquals(400.0, state.parameters.calories)
     }
 
@@ -129,7 +123,7 @@ class FoodProductOverviewViewModelTest {
         val mealFoodItem= MealFoodItem(
             mealId = "m1",
             foodProduct = foodProduct,
-            servings = 3,
+            servings = 3.0,
             servingSize = ServingSize.ONEHOUNDREDGRAMS
         )
         coEvery { historyRepository.getMealFoodItemById("m1", "fp1") } returns mealFoodItem
@@ -140,7 +134,7 @@ class FoodProductOverviewViewModelTest {
 
         val state = viewModel.foodProductViewState.value
         assertEquals("m1", state.mealId)
-        assertEquals(3, state.parameters.servings)
+        assertEquals(3.0, state.parameters.servings)
         assertEquals(600.0, state.parameters.calories)
     }
 
@@ -150,13 +144,13 @@ class FoodProductOverviewViewModelTest {
         val viewModel = makeViewModel(SavedStateHandle(mapOf("foodProductId" to "fp1")))
         advanceUntilIdle()
 
-        viewModel.onEvent(FoodProductOverviewEvent.ServingsChanged(2))
+        viewModel.onEvent(FoodProductOverviewEvent.ServingsChanged(2.0))
         advanceUntilIdle()
 
         val state = viewModel.foodProductViewState.value
         val grams = state.parameters.servingSize.getAmount()
-        val expected = 2 * grams * (foodProduct.calories / 100)
-        assertEquals(2, state.parameters.servings)
+        val expected = 2.0 * grams * (foodProduct.calories / 100)
+        assertEquals(2.0, state.parameters.servings)
         assertEquals(expected, state.parameters.calories)
     }
 
@@ -194,7 +188,7 @@ class FoodProductOverviewViewModelTest {
         val ingredient = Ingredient(
             recipeId = "r1",
             foodProduct = foodProduct,
-            servings = 2,
+            servings = 2.0,
             servingSize = ServingSize.ONEHOUNDREDGRAMS
         )
         coEvery { recipeRepository.getIngredientById("r1", "fp1") } returns ingredient
@@ -224,7 +218,7 @@ class FoodProductOverviewViewModelTest {
         val mealFoodItem= MealFoodItem(
             mealId = "m1",
             foodProduct = foodProduct,
-            servings = 3,
+            servings = 3.0,
             servingSize = ServingSize.ONEHOUNDREDGRAMS
         )
         coEvery { historyRepository.getMealFoodItemById("m1", "fp1") } returns mealFoodItem

@@ -1,4 +1,4 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.utils
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped

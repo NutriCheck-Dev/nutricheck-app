@@ -2,8 +2,12 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
 
+/**
+ * Entity class representing a [Recipe] in the database.
+ */
 @Entity(tableName = "recipes")
 data class RecipeEntity(
     @PrimaryKey val id: String = "",

@@ -43,7 +43,7 @@ class ReportRecipeViewModelTest {
         carbohydrates = 40.0,
         protein = 15.0,
         fat = 10.0,
-        servings = 2,
+        servings = 2.0,
         instructions = "yummy",
         ingredients = listOf(
             Ingredient(
@@ -55,11 +55,11 @@ class ReportRecipeViewModelTest {
                     carbohydrates = 30.0,
                     protein = 10.0,
                     fat = 5.0,
-                    servings = 1,
+                    servings = 1.0,
                     servingSize = ServingSize.ONEHOUNDREDGRAMS
                 ),
                 quantity = 100.0,
-                servings = 1,
+                servings = 1.0,
                 servingSize = ServingSize.ONEHOUNDREDGRAMS
             ),
             Ingredient(
@@ -71,11 +71,11 @@ class ReportRecipeViewModelTest {
                     carbohydrates = 10.0,
                     protein = 5.0,
                     fat = 5.0,
-                    servings = 1,
+                    servings = 1.0,
                     servingSize = ServingSize.ONEHOUNDREDGRAMS
                 ),
                 quantity = 50.0,
-                servings = 5,
+                servings = 5.0,
                 servingSize = ServingSize.TENGRAMS
             )
         )

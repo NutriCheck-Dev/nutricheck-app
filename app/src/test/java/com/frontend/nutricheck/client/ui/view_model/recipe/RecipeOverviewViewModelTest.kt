@@ -13,7 +13,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
@@ -59,7 +59,7 @@ class RecipeOverviewViewModelTest {
         carbohydrates = 40.0,
         protein = 15.0,
         fat = 10.0,
-        servings = 2,
+        servings = 2.0,
         ingredients = listOf(
             Ingredient(
                 recipeId = "r1",
@@ -70,11 +70,11 @@ class RecipeOverviewViewModelTest {
                     carbohydrates = 30.0,
                     protein = 10.0,
                     fat = 5.0,
-                    servings = 1,
+                    servings = 1.0,
                     servingSize = ServingSize.ONEHOUNDREDGRAMS
                 ),
                 quantity = 100.0,
-                servings = 1,
+                servings = 1.0,
                 servingSize = ServingSize.ONEHOUNDREDGRAMS
             ),
             Ingredient(
@@ -86,11 +86,11 @@ class RecipeOverviewViewModelTest {
                     carbohydrates = 10.0,
                     protein = 5.0,
                     fat = 5.0,
-                    servings = 1,
+                    servings = 1.0,
                     servingSize = ServingSize.ONEHOUNDREDGRAMS
                 ),
                 quantity = 50.0,
-                servings = 5,
+                servings = 5.0,
                 servingSize = ServingSize.TENGRAMS
             )
         )
@@ -160,7 +160,7 @@ class RecipeOverviewViewModelTest {
             mealId = mealId,
             recipe = testRecipe,
             quantity = 1.0,
-            servings = 1
+            servings = 1.0
         )
         coEvery { historyRepository.getMealRecipeItemById(mealId, testRecipe.id) } returns mealItem
 
@@ -184,11 +184,11 @@ class RecipeOverviewViewModelTest {
         val viewModel = makeViewModel(SavedStateHandle(mapOf("recipeId" to testRecipe.id)))
         advanceUntilIdle()
 
-        viewModel.onEvent(RecipeOverviewEvent.ServingsChanged(3))
+        viewModel.onEvent(RecipeOverviewEvent.ServingsChanged(3.0))
         advanceUntilIdle()
 
         val state = viewModel.recipeOverviewState.value
-        assertEquals(3, state.parameters.servings)
+        assertEquals(3.0, state.parameters.servings)
         assertEquals(900.0, state.parameters.calories)
         assertEquals(120.0, state.parameters.carbohydrates)
         assertEquals(45.0, state.parameters.protein)
@@ -216,11 +216,11 @@ class RecipeOverviewViewModelTest {
             SavedStateHandle(mapOf("recipeId" to testRecipe.id)))
         advanceUntilIdle()
 
-        viewModel.onEvent(RecipeOverviewEvent.ServingsChanged(4))
+        viewModel.onEvent(RecipeOverviewEvent.ServingsChanged(4.0))
         advanceUntilIdle()
 
         val submitted = viewModel.recipeOverviewState.value.submitRecipe()
-        assertEquals(4, submitted.servings)
+        assertEquals(4.0, submitted.servings)
     }
 
     @Test

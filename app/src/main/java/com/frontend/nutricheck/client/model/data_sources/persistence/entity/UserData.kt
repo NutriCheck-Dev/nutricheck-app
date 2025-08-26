@@ -7,6 +7,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import java.util.Date
 
+/**
+ * Entity class representing [UserData] in the database.
+ */
 @Entity(tableName = "user_data")
 data class UserData(
     @PrimaryKey val username: String = "",
