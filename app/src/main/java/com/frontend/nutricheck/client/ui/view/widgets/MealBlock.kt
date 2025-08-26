@@ -78,7 +78,8 @@ fun MealFooter(
             .fillMaxWidth()
             .height(40.dp)
             .background(colors.surfaceContainer)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clickable(onClick = onAddClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -87,7 +88,6 @@ fun MealFooter(
             color = colors.primary,
             lineHeight = 16.sp,
             fontSize = 12.sp,
-            modifier = Modifier.clickable(onClick = onAddClick),
         )
     }
 }
@@ -125,7 +125,7 @@ fun MealBlock(
                 when (item) {
                     is MealFoodItem -> {
                         DishItemMealButton(
-                            modifier = Modifier.weight(1f), // gibt Platz frei für die drei Punkte
+                            modifier = Modifier.weight(1f),
                             title = item.foodProduct.name,
                             calories = item.servings * item.foodProduct.calories * (item.servingSize.getAmount() / 100),
                             onClick = { onItemClick(item) }

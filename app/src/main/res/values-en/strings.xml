@@ -9,7 +9,7 @@
     <string name="userData_label_birthdate">Birthdate</string>
     <string name="userData_label_height">Height (cm)</string>
     <string name="userData_label_weight">Weight (kg)</string>
-    <string name="userData_label_target_weight">"TargetWeight (kg) "</string>
+    <string name="userData_label_target_weight">"TargetWeight (kg)"</string>
     <string name="userData_label_gender_male">Male</string>
     <string name="userData_label_gender_female">Female</string>
     <string name="userData_label_gender_diverse">Divers</string>
@@ -17,8 +17,8 @@
     <string name="userData_label_goal_lose_weight">Lose weight</string>
     <string name="userData_label_goal_gain_weight">Gain weight</string>
     <string name="userData_error_goal_required">Please choose your goal.</string>
-    <string name="userData_label_activity_level_occasionally">1-2/week</string>
-    <string name="userData_label_activity_level_regularly">3-4/week</string>
+    <string name="userData_label_activity_level_occasionally">1–2/week</string>
+    <string name="userData_label_activity_level_regularly">3–4/week</string>
     <string name="userData_label_activity_level_frequently">5+/week</string>
     <string name="profile_name">Hi, %1$s</string>
     <string name="profile_menu_age">Age</string>
