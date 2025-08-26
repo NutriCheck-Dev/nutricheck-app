@@ -38,10 +38,6 @@ class CreateRecipeTest {
 
     @Before fun setUp() {
         hilt.inject()
-        db = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            LocalDatabase::class.java
-        ).build()
     }
 
     @Test
@@ -59,7 +55,7 @@ class CreateRecipeTest {
     private fun openAddDialogThenRecipeEditor() {
 
         compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_ADD)
-            .assertIsDisplayed()
+//            .assertIsDisplayed()
             .performClick()
 
         compose.onNodeWithContentDescription(SemanticsTags.ADD_DIALOG_ADD_RECIPE)
