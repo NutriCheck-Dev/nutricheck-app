@@ -41,6 +41,7 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
+            modifier = Modifier.semantics { SemanticsTags.DIARY_PAGE },
             selected = currentDestination == Screen.DiaryPage.createRoute(null),
             onClick = { onClickDiary() },
             icon = { Icon(Icons.Default.DateRange,
