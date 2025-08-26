@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -51,6 +50,7 @@ fun AddDialog(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .semantics { contentDescription = SemanticsTags.ADD_DIALOG }
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
@@ -69,6 +69,7 @@ fun AddDialog(
                     horizontalArrangement = Arrangement.spacedBy(26.dp)
                 ) {
                     AddOptionButton(
+                        modifier = Modifier.semantics { contentDescription = SemanticsTags.ADD_DIALOG_ADD_MEAL },
                         icon = Icons.Default.Search,
                         label = stringResource(id = R.string.add_dialog_meal_title),
                         onClick = {
@@ -76,13 +77,14 @@ fun AddDialog(
                         }
                     )
                     AddOptionButton(
+                        modifier = Modifier.semantics { contentDescription = SemanticsTags.ADD_DIALOG_SCAN_MEAL },
                         icon = Icons.Default.CameraAlt,
                         label = stringResource(id = R.string.add_dialog_scan_title),
                         onClick = { onScanFoodClick() }
                     )
                 }
                 AddOptionButton(
-                    modifier = Modifier.semantics { contentDescription = SemanticsTags.ADD_DIALOG_ADD_RECIPE},
+                    modifier = Modifier.semantics { contentDescription = SemanticsTags.ADD_DIALOG_ADD_RECIPE },
                     icon = Icons.Default.Create,
                     label = stringResource(id = R.string.add_dialog_recipe_title),
                     onClick = { onAddRecipeClick() }

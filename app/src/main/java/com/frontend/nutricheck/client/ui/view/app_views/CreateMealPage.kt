@@ -17,9 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.view.widgets.BottomSheetSearchContent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
@@ -44,7 +47,8 @@ fun CreateMealPage(
     SheetScaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.background),
+            .background(colors.background)
+            .semantics { contentDescription = SemanticsTags.MEAL_EDITOR_PAGE },
         showSheet = searchState.parameters.bottomSheetExpanded,
         onSheetHidden = { searchViewModel.onEvent(SearchEvent.HideBottomSheet) },
         topBar = {

@@ -2,7 +2,11 @@ package com.frontend.nutricheck.client.model.data_sources.data.flags
 
 object SemanticsTags {
     const val BOTTOM_NAV_ADD = "BottomNav_Add"
+    const val ADD_DIALOG = "AddDialog"
+    const val ADD_DIALOG_ADD_MEAL = "AddDialog_Add_Meal"
+    const val ADD_DIALOG_SCAN_MEAL = "AddDialog_Scan_Meal"
     const val ADD_DIALOG_ADD_RECIPE = "AddDialog_Add_Recipe"
+    const val MEAL_EDITOR_PAGE = "MealEditorPage"
     const val RECIPE_EDITOR_PAGE = "RecipeEditorPage"
     const val RECIPE_EDITOR_NAME = "RecipeEditor_Name"
     const val RECIPE_EDITOR_DESCRIPTION = "RecipeEditor_Description"
