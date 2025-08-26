@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
@@ -65,7 +66,7 @@ fun RecipePage(
     val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
 
 Surface(
-    modifier = modifier.fillMaxSize().semantics { SemanticsTags.RECIPE_PAGE }
+    modifier = modifier.fillMaxSize().semantics { contentDescription = SemanticsTags.RECIPE_PAGE }
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
