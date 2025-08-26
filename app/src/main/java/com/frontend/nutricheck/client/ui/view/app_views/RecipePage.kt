@@ -22,11 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomTabRow
@@ -62,7 +65,7 @@ fun RecipePage(
     val reportRecipeState by reportRecipeViewModel.reportRecipeState.collectAsState()
 
 Surface(
-    modifier = modifier.fillMaxSize()
+    modifier = modifier.fillMaxSize().semantics { SemanticsTags.RECIPE_PAGE }
 ) {
     Column(
         modifier = modifier.fillMaxSize(),

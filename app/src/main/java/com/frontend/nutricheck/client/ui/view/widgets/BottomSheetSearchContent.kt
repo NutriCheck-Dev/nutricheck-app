@@ -23,9 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 @Composable
 fun ColumnScope.BottomSheetSearchContent(
@@ -42,7 +45,7 @@ fun ColumnScope.BottomSheetSearchContent(
     showEmptyState: Boolean
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().semantics { contentDescription = SemanticsTags.SEARCH_SHEET },
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         FoodComponentSearchBar(

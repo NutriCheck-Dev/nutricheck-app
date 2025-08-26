@@ -21,10 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.ui.view.widgets.AddOptionButton
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A dialog that allows the user to select an action to add a meal, recipe, or scan food.
@@ -78,6 +82,7 @@ fun AddDialog(
                     )
                 }
                 AddOptionButton(
+                    modifier = Modifier.semantics { contentDescription = SemanticsTags.ADD_DIALOG_ADD_RECIPE},
                     icon = Icons.Default.Create,
                     label = stringResource(id = R.string.add_dialog_recipe_title),
                     onClick = { onAddRecipeClick() }

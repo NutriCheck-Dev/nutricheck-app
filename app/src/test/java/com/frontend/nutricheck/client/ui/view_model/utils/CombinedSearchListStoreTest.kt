@@ -2,7 +2,6 @@ package com.frontend.nutricheck.client.ui.view_model.utils
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
-import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

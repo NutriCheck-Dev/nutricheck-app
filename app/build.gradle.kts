@@ -86,7 +86,7 @@ android {
                 "arm64-v8a")
         }
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.nutricheck.frontend.client.CustomHiltTestRunner"
     }
 
     buildTypes {
@@ -151,9 +151,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.androidx.hilt.navigation.compose)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.compose)
     implementation(libs.vico.core)
     implementation(libs.androidx.camera.view)
@@ -164,11 +164,12 @@ dependencies {
     ksp(libs.androidx.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
+    kspAndroidTest(libs.hilt.compiler)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android.testing)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -193,10 +194,9 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
-    implementation (libs.androidx.exifinterface)
+    implementation(libs.androidx.exifinterface)
 
     testImplementation(libs.junit)
-    testImplementation(libs.androidx.core.testing)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.datastore.preferences)

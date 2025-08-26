@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,12 +34,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.view.widgets.BottomSheetSearchContent
 import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
+import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
 import com.frontend.nutricheck.client.ui.view.widgets.SheetScaffold
@@ -46,7 +52,6 @@ import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
-
 
 /**
  * A composable function that displays a recipe editor page.
@@ -75,48 +80,44 @@ fun RecipeEditorPage(
     SheetScaffold(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.background),
+            .background(colors.background)
+            .semantics { contentDescription = SemanticsTags.RECIPE_EDITOR_PAGE },
         showSheet = draft.expanded,
         onSheetHidden = { recipeEditorViewModel.onEvent(RecipeEditorEvent.HideBottomSheet) },
         topBar = {
             ViewsTopBar(
                 navigationIcon = { NavigateBackButton{ onBack() } },
-                title = { TextField(
-                    value = currentTitle,
-                    placeholder = {
-                        Text(
-                            text = if (draft.original != null) draft.original!!.name else
-                                stringResource(R.string.recipe_name_placeholder),
-                            style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                            color = colors.onSurfaceVariant
-                        )
-                    },
-                    onValueChange = { new ->
-                        recipeEditorViewModel.onEvent(RecipeEditorEvent.TitleChanged(new))
-                    },
-                    singleLine = true,
-                    textStyle = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        errorContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        errorIndicatorColor = Color.Transparent,
-                    )
+                title = {
+                    TextField(
+                        value = currentTitle,
+                        placeholder = {
+                            Text(
+                                text = if (draft.original != null) draft.original!!.name else
+                                    stringResource(R.string.recipe_name_placeholder),
+                                style = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                                color = colors.onSurfaceVariant
+                            )
+                        },
+                        onValueChange = { new ->
+                            recipeEditorViewModel.onEvent(RecipeEditorEvent.TitleChanged(new))
+                        },
+                        singleLine = true,
+                        textStyle = styles.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                        modifier = Modifier.fillMaxWidth().semantics { contentDescription = SemanticsTags.RECIPE_EDITOR_NAME },
+                        colors = TextFieldDefaults.colors(
+                            errorContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            errorIndicatorColor = Color.Transparent,
+                            )
                 ) },
                 actions = {
-                    IconButton(onClick = {
+                    CustomPersistButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.RECIPE_EDITOR_PERSIST }) {
                         recipeEditorViewModel.onEvent(RecipeEditorEvent.SaveRecipe)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = stringResource(R.string.save_recipe_content_description),
-                            tint = colors.onSurface
-                        )
                     }
                 }
             )
@@ -124,8 +125,10 @@ fun RecipeEditorPage(
         sheetContent = {
             BottomSheetSearchContent(
                 foodComponents = draft.results,
-                trailingContent = { item -> CustomAddButton { recipeEditorViewModel.onEvent(
-                    RecipeEditorEvent.IngredientAdded(item)) } },
+                trailingContent = { item -> CustomAddButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_ADD_PREFIX + item.name }) {
+                    recipeEditorViewModel.onEvent(
+                    RecipeEditorEvent.IngredientAdded(item)) }
+                                  },
                 onItemClick = { onItemClick(it) },
                 query = draft.query,
                 onQueryChange = { recipeEditorViewModel.onEvent(RecipeEditorEvent.QueryChanged(it)) },
@@ -211,8 +214,7 @@ fun RecipeEditorPage(
                                 )
                             )
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().semantics { contentDescription = SemanticsTags.RECIPE_EDITOR_DESCRIPTION }
                     )
                 }
             }
