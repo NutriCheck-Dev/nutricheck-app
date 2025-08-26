@@ -15,13 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -125,7 +119,7 @@ fun RecipeEditorPage(
         sheetContent = {
             BottomSheetSearchContent(
                 foodComponents = draft.results,
-                trailingContent = { item -> CustomAddButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_ADD_PREFIX + item.name }) {
+                trailingContent = { item -> CustomAddButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX + item.name }) {
                     recipeEditorViewModel.onEvent(
                     RecipeEditorEvent.IngredientAdded(item)) }
                                   },

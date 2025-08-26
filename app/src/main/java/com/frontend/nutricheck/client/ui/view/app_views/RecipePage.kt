@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -131,6 +130,7 @@ Surface(
                         trailingContent = { foodComponent ->
                             val recipe = foodComponent as Recipe
                             CustomDetailsButton(
+                                modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + recipe.name },
                                 dishItemButton = true,
                                 ownedRecipe = true,
                                 onOptionClick = { option ->
@@ -221,6 +221,7 @@ Surface(
                                             val recipe = foodComponent as Recipe
                                             val owned = recipe.id in ownedIds
                                             CustomDetailsButton(
+                                                modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + recipe.name },
                                                 dishItemButton = true,
                                                 ownedRecipe = owned,
                                                 publicRecipe = !owned,

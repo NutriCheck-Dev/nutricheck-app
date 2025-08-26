@@ -11,8 +11,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.frontend.nutricheck.client.MainActivity
@@ -87,11 +85,11 @@ class CreateRecipeTest {
         compose.onNodeWithContentDescription(SemanticsTags.SEARCH_BUTTON).performClick()
 
         compose.waitUntil(30_000) {
-            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_PREFIX))
+            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX))
                 .fetchSemanticsNodes().isNotEmpty()
         }
 
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_PREFIX))
+        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX))
             .onFirst()
             .performClick()
     }

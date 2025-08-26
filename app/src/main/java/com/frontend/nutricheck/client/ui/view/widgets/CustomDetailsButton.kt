@@ -36,6 +36,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTag
  */
 @Composable
 fun CustomDetailsButton(
+    modifier: Modifier = Modifier,
     dishItemButton: Boolean = false,
     ownedRecipe: Boolean = false,
     publicRecipe: Boolean = false,
@@ -76,7 +77,7 @@ fun CustomDetailsButton(
         IconButton(
             modifier = Modifier
                 .align(Alignment.Center)
-                .semantics { contentDescription = SemanticsTags.DETAILS_BUTTON },
+                .then(modifier),
             onClick = { onDetailsClick() }
         ) {
             if (dishItemButton) {
