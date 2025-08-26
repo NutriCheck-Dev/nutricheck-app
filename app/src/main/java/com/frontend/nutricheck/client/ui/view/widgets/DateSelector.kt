@@ -34,6 +34,9 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+/**
+ * A date selector bar that allows users to navigate through dates and open a calendar picker.
+ */
 @Composable
 fun DateSelectorBar(
     selectedDate: Date,
@@ -57,7 +60,9 @@ fun DateSelectorBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onPreviousDay) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous day", tint = Color(0xFF71727A))
+            Icon(Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Previous day",
+                tint = Color(0xFF71727A))
         }
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -73,7 +78,9 @@ fun DateSelectorBar(
         Spacer(modifier = Modifier.width(8.dp))
 
         IconButton(onClick = onNextDay) {
-            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next day", tint = Color(0xFF71727A))
+            Icon(Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Next day",
+                tint = Color(0xFF71727A))
         }
     }
 }

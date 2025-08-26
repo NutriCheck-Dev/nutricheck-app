@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.ui.view_model.utils
 
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -22,7 +22,7 @@ class CombinedSearchListStoreTest {
         carbohydrates = 30.0,
         protein = 10.0,
         fat = 5.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 

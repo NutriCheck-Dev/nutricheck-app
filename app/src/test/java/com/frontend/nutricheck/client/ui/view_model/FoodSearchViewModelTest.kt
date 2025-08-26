@@ -17,6 +17,7 @@ import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProduc
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -51,8 +53,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class MainDispatcherRule(
-    val dispatcher: TestDispatcher = StandardTestDispatcher()
+    val scheduler: TestCoroutineScheduler = TestCoroutineScheduler()
 ) : TestWatcher() {
+
+    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler)
+
     override fun starting(description: Description?) {
         super.starting(description)
         Dispatchers.setMain(dispatcher)
@@ -82,7 +87,7 @@ class FoodSearchViewModelTest {
         carbohydrates = 30.0,
         protein = 10.0,
         fat = 5.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -93,7 +98,7 @@ class FoodSearchViewModelTest {
         carbohydrates = 10.0,
         protein = 5.0,
         fat = 5.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -102,34 +107,37 @@ class FoodSearchViewModelTest {
         name = "Pasta Pesto",
         instructions = "Boil water",
         calories = 300.0, carbohydrates = 40.0, protein = 15.0, fat = 10.0,
-        servings = 1,
+        servings = 1.0,
         ingredients = listOf(
             Ingredient(
                 recipeId = "r1",
                 foodProduct = foodProduct1,
-                servings = 1,
+                servings = 1.0,
                 servingSize = foodProduct1.servingSize
             ),
             Ingredient(
                 recipeId = "r1",
                 foodProduct = foodProduct2,
-                servings = 1,
+                servings = 1.0,
                 servingSize = foodProduct2.servingSize
             )
         )
     )
 
+    private val recipe2= Recipe(id = "r2", name = "Pie Apple", calories = 250.0, carbohydrates = 35.0, protein = 8.0, fat = 9.0, servings = 1.0)
+    private val recipe3 = Recipe(id = "r3", name = "Pineapple Tart", calories = 200.0, carbohydrates = 30.0, protein = 5.0, fat = 7.0, servings = 1.0)
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
 
-        appSettings = mockk()
-        recipeRepository = mockk()
-        foodProductRepository = mockk()
-        historyRepository = mockk()
+        appSettings = mockk(relaxed = true)
+        recipeRepository = mockk(relaxed = true)
+        foodProductRepository = mockk(relaxed = true)
+        historyRepository = mockk(relaxed = true)
         snackbarManager = mockk(relaxed = true)
         combinedStore = mockk(relaxed = true)
-        context = mockk()
+        context = mockk(relaxed = true)
 
         every { appSettings.language } returns flowOf(Language.GERMAN)
         every { context.getString(any()) } returns "Test String"
@@ -153,7 +161,7 @@ class FoodSearchViewModelTest {
         )
 
     @Test
-    fun `init sets language and optional dayTime-date`() = runTest {
+    fun `init sets language and optional dayTime-date`() = runTest(mainDispatcherRule.scheduler) {
         val languageFlow = MutableStateFlow(Language.GERMAN)
         every { appSettings.language } returns languageFlow
         val handle = SavedStateHandle(
@@ -173,7 +181,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `QueryChanged updates query, ExpandBottomSheet and MealSelectorClick toggle flags`() = runTest {
+    fun `QueryChanged updates query, ExpandBottomSheet and MealSelectorClick toggle flags`() = runTest(mainDispatcherRule.scheduler) {
         val searchViewModel = makeViewModel()
         advanceUntilIdle()
 
@@ -182,19 +190,24 @@ class FoodSearchViewModelTest {
         var state = searchViewModel.searchState.value
         assertEquals("pa", state.parameters.query)
 
-        searchViewModel.onEvent(SearchEvent.ExpandBottomSheet)
+        searchViewModel.onEvent(SearchEvent.ShowBottomSheet)
         advanceUntilIdle()
         state = searchViewModel.searchState.value
         assertTrue(state.parameters.bottomSheetExpanded)
 
+        searchViewModel.onEvent(SearchEvent.HideBottomSheet)
+        advanceUntilIdle()
+        state = searchViewModel.searchState.value
+        assertTrue(!state.parameters.bottomSheetExpanded)
+
         searchViewModel.onEvent(SearchEvent.MealSelectorClick)
         advanceUntilIdle()
         state = searchViewModel.searchState.value
-        assertTrue(state.parameters.expanded)
+        assertTrue(state.parameters.mealSelectorExpanded)
     }
 
     @Test
-    fun `Search on All tab merges foodProducts and recipes`() = runTest {
+    fun `Search on All tab merges foodProducts and recipes`() = runTest(mainDispatcherRule.scheduler) {
         coEvery { foodProductRepository.searchFoodProducts("pasta", any())
         } returns flowOf(Result.Success(listOf(foodProduct1)))
         coEvery { recipeRepository.searchRecipes("pasta")
@@ -215,7 +228,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `Search on All tab - upstream exception sets error ui state`() = runTest {
+    fun `Search on All tab - upstream exception sets error ui state`() = runTest(mainDispatcherRule.scheduler) {
         coEvery {
             foodProductRepository.searchFoodProducts("boom", any())
         } returns flow {
@@ -234,8 +247,8 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `Search on MyRecipes tab filters local recipes and updates combined store`() = runTest {
-        coEvery { recipeRepository.observeMyRecipes() } returns flowOf(listOf(recipe1))
+    fun `QueryChanged filters and sorts local recipes by rank then position then name`() = runTest(mainDispatcherRule.scheduler) {
+        coEvery { recipeRepository.observeMyRecipes() } returns flowOf(listOf(recipe1, recipe2, recipe3))
 
         val searchViewModel = makeViewModel()
         advanceUntilIdle()
@@ -243,20 +256,29 @@ class FoodSearchViewModelTest {
         searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
         assertEquals(1, searchViewModel.searchState.value.parameters.selectedTab)
 
-        searchViewModel.onEvent(SearchEvent.QueryChanged("pasta"))
-        searchViewModel.onEvent(SearchEvent.Search)
+        searchViewModel.onEvent(SearchEvent.QueryChanged("apple"))
         advanceUntilIdle()
 
         val state = searchViewModel.searchState.value
-        assertEquals(listOf("r1"), state.parameters.localRecipesResults.map { it.id })
-
-        verify { combinedStore.update(
-            match { it.any { component -> component.id == "r1" } }
-        ) }
+        assertEquals(listOf("r2", "r3"), state.parameters.localRecipesResults.map { it.id })
     }
 
     @Test
-    fun `AddFoodComponent moves item from results to added and emits event`() = runTest {
+    fun `QueryChanged to no-match results in empty myRecipes`() = runTest {
+        val searchViewModel = makeViewModel()
+        advanceUntilIdle()
+
+        searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
+        assertEquals(1, searchViewModel.searchState.value.parameters.selectedTab)
+
+        searchViewModel.onEvent(SearchEvent.QueryChanged("xyz"))
+        advanceUntilIdle()
+
+        assertTrue(searchViewModel.searchState.value.parameters.localRecipesResults.isEmpty())
+    }
+
+        @Test
+    fun `AddFoodComponent moves item from results to added and emits event`() = runTest(mainDispatcherRule.scheduler) {
         coEvery { foodProductRepository.searchFoodProducts("pasta", "de") } returns flowOf(Result.Success(listOf(foodProduct1)))
         coEvery { recipeRepository.searchRecipes("pasta") } returns flowOf(Result.Success(emptyList()))
 
@@ -279,7 +301,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `AddFoodComponent twice for FoodProduct triggers replacement`() = runTest {
+    fun `AddFoodComponent twice for FoodProduct triggers replacement`() = runTest(mainDispatcherRule.scheduler) {
         every { appSettings.language } returns flowOf(Language.GERMAN)
 
         val searchViewModel = makeViewModel()
@@ -288,18 +310,18 @@ class FoodSearchViewModelTest {
         searchViewModel.onEvent(SearchEvent.AddFoodComponent(foodProduct1))
         advanceUntilIdle()
 
-        val updated = foodProduct1.copy(servings = 2)
+        val updated = foodProduct1.copy(servings = 2.0)
         searchViewModel.onEvent(SearchEvent.AddFoodComponent(updated))
         advanceUntilIdle()
 
         val state = searchViewModel.searchState.value
         val added = state.parameters.addedComponents.single { it.id == "fp1" } as FoodProduct
-        assertEquals(2, added.servings)
+        assertEquals(2.0, added.servings)
         verify(atLeast = 1) { combinedStore.update(any()) }
     }
 
     @Test
-    fun `AddFoodComponent twice for Recipe triggers replacement`() = runTest {
+    fun `AddFoodComponent twice for Recipe triggers replacement`() = runTest(mainDispatcherRule.scheduler) {
         every { appSettings.language } returns flowOf(Language.GERMAN)
 
         val searchViewModel = makeViewModel()
@@ -308,19 +330,19 @@ class FoodSearchViewModelTest {
         searchViewModel.onEvent(SearchEvent.AddFoodComponent(recipe1))
         advanceUntilIdle()
 
-        val changed = recipe1.copy(servings = 3)
+        val changed = recipe1.copy(servings = 3.0)
         searchViewModel.onEvent(SearchEvent.AddFoodComponent(changed))
         advanceUntilIdle()
 
         val state = searchViewModel.searchState.value
         val added = state.parameters.addedComponents.single { it.id == "r1" } as Recipe
-        assertEquals(3, added.servings)
+        assertEquals(3.0, added.servings)
         assertEquals(recipe1.ingredients.size, added.ingredients.size)
         verify(atLeast = 1) { combinedStore.update(any()) }
     }
 
     @Test
-    fun `RemoveFoodComponent moves item back to results`() = runTest {
+    fun `RemoveFoodComponent moves item back to results`() = runTest(mainDispatcherRule.scheduler) {
         coEvery { foodProductRepository.searchFoodProducts("pasta", "de") } returns flowOf(Result.Success(listOf(foodProduct1)))
         coEvery { recipeRepository.searchRecipes("pasta") } returns flowOf(Result.Success(emptyList()))
 
@@ -342,7 +364,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `Clear resets query and results`() = runTest {
+    fun `Clear resets query and results`() = runTest(mainDispatcherRule.scheduler) {
         val searchViewModel = makeViewModel()
         searchViewModel.onEvent(SearchEvent.QueryChanged("x"))
         advanceUntilIdle()
@@ -359,7 +381,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `SubmitComponentsToMeal without daytime sets error`() = runTest {
+    fun `SubmitComponentsToMeal without daytime sets error`() = runTest(mainDispatcherRule.scheduler) {
         val searchViewModel = makeViewModel()
         searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal)
         advanceUntilIdle()
@@ -370,7 +392,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `SubmitComponentsToMeal with items in LogNewMeal adds meal and emits MealsSaved`() = runTest {
+    fun `SubmitComponentsToMeal with items in LogNewMeal adds meal and emits MealsSaved`() = runTest(mainDispatcherRule.scheduler) {
         coEvery { historyRepository.addMeal(any()) } just Runs
 
         val searchViewModel = makeViewModel()
@@ -394,7 +416,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `SubmitComponentsToMeal in ComponentsForMeal updates existing meal`() = runTest {
+    fun `SubmitComponentsToMeal in ComponentsForMeal updates existing meal`() = runTest(mainDispatcherRule.scheduler) {
         val existing = Meal(
             id = "m1", calories = 0.0, carbohydrates = 0.0, protein = 0.0, fat = 0.0,
             date = Date(), dayTime = DayTime.BREAKFAST,
@@ -425,7 +447,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `ClickSearchMyRecipes and ClickSearchAll switch selectedTab`() = runTest {
+    fun `ClickSearchMyRecipes and ClickSearchAll switch selectedTab`() = runTest(mainDispatcherRule.scheduler) {
         val searchViewModel = makeViewModel()
         searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
         advanceUntilIdle()
@@ -437,7 +459,7 @@ class FoodSearchViewModelTest {
     }
 
     @Test
-    fun `ResetErrorState moves uiState to Ready`() = runTest {
+    fun `ResetErrorState moves uiState to Ready`() = runTest(mainDispatcherRule.scheduler) {
         val searchViewModel = makeViewModel()
         searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal)
         advanceUntilIdle()

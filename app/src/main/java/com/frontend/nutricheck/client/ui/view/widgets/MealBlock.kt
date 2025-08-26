@@ -28,9 +28,12 @@ import com.frontend.nutricheck.client.R
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+/**
+ *
+ */
 @Composable
 fun MealHeader(
-    titel: String,
+    title: String,
     modifier: Modifier = Modifier,
     calorieCount: Double
 ) {
@@ -48,7 +51,7 @@ fun MealHeader(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = titel,
+            text = title,
             color = colors.onSurfaceVariant,
             lineHeight = 16.sp,
             fontSize = 16.sp,

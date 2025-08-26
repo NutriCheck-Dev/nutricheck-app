@@ -18,7 +18,10 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.view_model.navigation.Screen
 
-
+/**
+ * Composable function that represents the bottom navigation bar of the application.
+ * It contains navigation items for Home, Diary, Profile, and Add.
+ */
 @Composable
 fun BottomNavigationBar(
     currentDestination: String,

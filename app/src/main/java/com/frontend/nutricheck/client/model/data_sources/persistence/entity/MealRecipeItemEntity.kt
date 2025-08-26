@@ -4,6 +4,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 
+/**
+ * Represents a many-to-many relationship between meals and recipes.
+ */
 @Entity(
     tableName = "meal_recipe_items",
     primaryKeys = ["mealId", "recipeId"],

@@ -7,6 +7,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibi
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.Converters
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -328,7 +329,7 @@ class ConvertersTest {
         val result = converters.fromServingSize(servingSize)
 
         // Then
-        assertEquals(ServingSize.ONEHOUNDREDGRAMS.ordinal, result)
+        assertEquals(ServingSize.ONEHOUNDREDGRAMS.name, result)
     }
 
     /**
@@ -347,12 +348,12 @@ class ConvertersTest {
      * Tests Int to ServingSize enum conversion.
      */
     @Test
-    fun `toServingSize should convert ordinal to ServingSize`() {
+    fun `toServingSize should convert name to ServingSize`() {
         // Given
-        val ordinal = ServingSize.TENGRAMS.ordinal
+        val name = ServingSize.TENGRAMS.name
 
         // When
-        val result = converters.toServingSize(ordinal)
+        val result = converters.toServingSize(name)
 
         // Then
         assertEquals(ServingSize.TENGRAMS, result)
@@ -374,12 +375,12 @@ class ConvertersTest {
      * Tests Int to ServingSize enum conversion with invalid ordinal.
      */
     @Test
-    fun `toServingSize should return null when ordinal is invalid`() {
+    fun `toServingSize should return null when name is invalid`() {
         // Given
-        val invalidOrdinal = 999
+        val invalidName = "999"
 
         // When
-        val result = converters.toServingSize(invalidOrdinal)
+        val result = converters.toServingSize(invalidName)
 
         // Then
         assertNull(result)
@@ -445,37 +446,37 @@ class ConvertersTest {
     @Test
     fun `should handle all enum values correctly`() {
         // Test all Gender values
-        Gender.values().forEach { gender ->
+        Gender.entries.forEach { gender ->
             val converted = converters.fromGender(gender)
             assertEquals(gender, converters.toGender(converted))
         }
 
         // Test all ActivityLevel values
-        ActivityLevel.values().forEach { level ->
+        ActivityLevel.entries.forEach { level ->
             val converted = converters.fromActivityLevel(level)
             assertEquals(level, converters.toActivityLevel(converted))
         }
 
         // Test all WeightGoal values
-        WeightGoal.values().forEach { goal ->
+        WeightGoal.entries.forEach { goal ->
             val converted = converters.fromWeightGoal(goal)
             assertEquals(goal, converters.toWeightGoal(converted))
         }
 
         // Test all RecipeVisibility values
-        RecipeVisibility.values().forEach { visibility ->
+        RecipeVisibility.entries.forEach { visibility ->
             val converted = converters.fromRecipeVisibility(visibility)
             assertEquals(visibility, converters.toRecipeVisibility(converted))
         }
 
         // Test all ServingSize values
-        ServingSize.values().forEach { servingSize ->
+        ServingSize.entries.forEach { servingSize ->
             val converted = converters.fromServingSize(servingSize)
             assertEquals(servingSize, converters.toServingSize(converted))
         }
 
         // Test all DayTime values
-        DayTime.values().forEach { dayTime ->
+        DayTime.entries.forEach { dayTime ->
             val converted = converters.fromDayTime(dayTime)
             assertEquals(dayTime, converters.toDayTime(converted))
         }

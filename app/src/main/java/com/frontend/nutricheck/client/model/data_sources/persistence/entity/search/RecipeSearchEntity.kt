@@ -5,6 +5,9 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 
+/**
+ * Represents a search index for recipes.
+ */
 @Entity(
     tableName = "recipe_search_index",
     primaryKeys = ["query", "recipeId"],

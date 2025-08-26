@@ -14,7 +14,7 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -46,7 +46,6 @@ data class RecipeDraft(
     val language: String = "",
     val query: String = "",
     val results: List<FoodComponent> = emptyList(),
-    val confirmationDialog : Boolean = false,
     val hasSearched: Boolean = false,
     val lastSearchedQuery: String? = null
 )
@@ -58,11 +57,11 @@ sealed interface RecipeEditorEvent {
     data class IngredientAdded(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
-    object ShowConfirmationDialog : RecipeEditorEvent
     object SearchIngredients : RecipeEditorEvent
     object SaveRecipe : RecipeEditorEvent
     object RecipeSaved : RecipeEditorEvent
-    object ExpandBottomSheet : RecipeEditorEvent
+    object ShowBottomSheet : RecipeEditorEvent
+    object HideBottomSheet : RecipeEditorEvent
     object ResetErrorState : RecipeEditorEvent
 }
 
@@ -147,14 +146,18 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.IngredientAdded -> addIngredients(event.foodProduct)
             is RecipeEditorEvent.IngredientRemoved -> removeIngredient(event.foodProduct)
             is RecipeEditorEvent.SaveRecipe -> saveRecipe()
-            is RecipeEditorEvent.ExpandBottomSheet -> {
+            is RecipeEditorEvent.ShowBottomSheet -> {
                 _draft.update { draft ->
-                    draft.copy(expanded = !draft.expanded)
+                    draft.copy(expanded = true)
+                }
+            }
+            is RecipeEditorEvent.HideBottomSheet -> {
+                _draft.update { draft ->
+                    draft.copy(expanded = false)
                 }
             }
             is RecipeEditorEvent.SearchIngredients -> onSearchIngredients()
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
-            is RecipeEditorEvent.ShowConfirmationDialog -> changeShowConfirmationDialog()
             is RecipeEditorEvent.ResetErrorState -> setReady()
             is RecipeEditorEvent.RecipeSaved -> null
         }
@@ -306,10 +309,6 @@ class RecipeEditorViewModel @Inject constructor(
         }
     }
 
-    private fun changeShowConfirmationDialog() =
-        _draft.update { draft ->
-            draft.copy(confirmationDialog = !_draft.value.confirmationDialog)
-        }
 
     private fun onQueryChanged(query: String) =
         _draft.update { draft ->

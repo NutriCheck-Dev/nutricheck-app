@@ -34,6 +34,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.ui.theme.extended
 import com.frontend.nutricheck.client.ui.view.widgets.ExitButton
+import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.ai_handling.AddAiMealEvent
 import com.frontend.nutricheck.client.ui.view_model.ai_handling.AddAiMealViewModel
@@ -183,22 +184,3 @@ fun CameraPreviewScreen(
             }
         }
     }
-
-
-@Composable
-private fun ShowErrorMessage(
-    title: String = stringResource(R.string.show_error_message_title),
-    error: String,
-    onClick: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = { onClick() },
-        title = { Text(title) },
-        text = { Text(error) },
-        confirmButton = {
-            Button(onClick = { onClick() }) {
-                Text(stringResource(R.string.label_ok))
-            }
-        }
-    )
-}

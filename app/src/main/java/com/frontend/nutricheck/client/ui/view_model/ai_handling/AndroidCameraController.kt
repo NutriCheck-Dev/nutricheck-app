@@ -1,9 +1,7 @@
 package com.frontend.nutricheck.client.ui.view_model.ai_handling
 
-import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -14,11 +12,7 @@ import androidx.camera.lifecycle.awaitInstance
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.frontend.nutricheck.client.R
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -98,21 +92,4 @@ class AndroidCameraController @Inject constructor(
             }
         )
     }
-}
-
-
-/**
- * Hilt module that provides bindings for camera and image processing dependencies.
- *
- * This module binds the Android-specific implementations to their respective interfaces,
- * enabling dependency injection throughout the application.
- */
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class CameraModule {
-
-    @Binds
-    abstract fun bindCameraController(
-        androidCameraController: AndroidCameraController
-    ): CameraController
 }

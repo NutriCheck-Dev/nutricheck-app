@@ -24,7 +24,7 @@ class MealItemMapperTest {
 
         assertEquals(mealId, mealFoodItem.mealId)
         assertEquals(1.0, mealFoodItem.quantity)
-        assertEquals(1, mealFoodItem.servings)
+        assertEquals(1.0, mealFoodItem.servings)
         assertEquals(ServingSize.ONEHOUNDREDGRAMS, mealFoodItem.servingSize)
         assertEquals(foodProduct.id, mealFoodItem.foodProduct.id)
 

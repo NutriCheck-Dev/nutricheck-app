@@ -30,6 +30,9 @@ import com.frontend.nutricheck.client.ui.view.widgets.AddOptionButton
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
+/**
+ * A dialog that allows the user to select an action to add a meal, recipe, or scan food.
+ */
 @Composable
 fun AddDialog(
     onAddMealClick: () -> Unit = {},
@@ -42,7 +45,7 @@ fun AddDialog(
         onDismissRequest = { onDismissRequest() },
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-        dragHandle = null, // Disable the drag handle
+        dragHandle = null, // Disable the drag handle to make it look like a full dialog
         scrimColor = Color.Black.copy(alpha = 0.3f) // Semi-transparent background
     ) {
         Surface(

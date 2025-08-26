@@ -12,10 +12,8 @@ import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRe
 import com.frontend.nutricheck.client.model.repositories.foodproducts.FoodProductRepository
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
-import com.frontend.nutricheck.client.ui.view_model.CombinedSearchListStore
+import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -59,7 +57,7 @@ class RecipeEditorViewModelTest {
         carbohydrates = 30.0,
         protein = 10.0,
         fat = 5.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -70,7 +68,7 @@ class RecipeEditorViewModelTest {
         carbohydrates = 10.0,
         protein = 5.0,
         fat = 5.0,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -81,7 +79,7 @@ class RecipeEditorViewModelTest {
         carbohydrates = 1.0,
         protein = 0.3,
         fat = 0.1,
-        servings = 1,
+        servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
 
@@ -133,7 +131,7 @@ class RecipeEditorViewModelTest {
         val draft = createViewModel.draft.value
         assertNull(draft.original)
         assertTrue(draft.ingredients.isEmpty())
-        assertEquals(1, draft.servings)
+        assertEquals(1.0, draft.servings)
         assertTrue(draft.ingredients.isEmpty())
     }
 
@@ -143,19 +141,17 @@ class RecipeEditorViewModelTest {
 
         createViewModel.onEvent(RecipeEditorEvent.TitleChanged("Pasta Pesto"))
         createViewModel.onEvent(RecipeEditorEvent.DescriptionChanged("Boil Pasta, mix with"))
-        createViewModel.onEvent(RecipeEditorEvent.ServingsChanged(3))
+        createViewModel.onEvent(RecipeEditorEvent.ServingsChanged(3.0))
         createViewModel.onEvent(RecipeEditorEvent.QueryChanged("tomato"))
-        createViewModel.onEvent(RecipeEditorEvent.ExpandBottomSheet)
-        createViewModel.onEvent(RecipeEditorEvent.ShowConfirmationDialog)
+        createViewModel.onEvent(RecipeEditorEvent.ShowBottomSheet)
         advanceUntilIdle()
 
         val draft = createViewModel.draft.value
         assertEquals("Pasta Pesto", draft.title)
         assertEquals("Boil Pasta, mix with", draft.description)
-        assertEquals(3, draft.servings)
+        assertEquals(3.0, draft.servings)
         assertEquals("tomato", draft.query)
         assertTrue(draft.expanded)
-        assertTrue(draft.confirmationDialog)
     }
 
     @Test
@@ -172,13 +168,13 @@ class RecipeEditorViewModelTest {
         verify { combinedSearchListStore.update(match {
             it.any { component -> component.id == "fp1" } }) }
 
-        val foodProduct1b = foodProduct1.copy(servings = 2)
+        val foodProduct1b = foodProduct1.copy(servings = 2.0)
         createViewModel.onEvent(RecipeEditorEvent.IngredientAdded(foodProduct1b))
         advanceUntilIdle()
 
         val draft2 = createViewModel.draft.value
         assertEquals(1, draft2.ingredients.size)
-        assertEquals(2, (draft2.ingredients.first() as FoodProduct).servings)
+        assertEquals(2.0, (draft2.ingredients.first() as FoodProduct).servings)
         assertTrue(awaited.await() is RecipeEditorEvent.IngredientAdded)
     }
 
@@ -253,7 +249,7 @@ class RecipeEditorViewModelTest {
     }
 
     @Test
-    fun `SaveRecipe with less that two ingredients sets error`() = testScope.runTest {
+    fun `SaveRecipe with less than two ingredients sets error`() = testScope.runTest {
         val createViewModel = makeCreateViewModel()
         createViewModel.onEvent(RecipeEditorEvent.TitleChanged("Pasta Pesto"))
         createViewModel.onEvent(RecipeEditorEvent.IngredientAdded(foodProduct1))
@@ -269,7 +265,7 @@ class RecipeEditorViewModelTest {
         val createViewModel = makeCreateViewModel()
         createViewModel.onEvent(RecipeEditorEvent.TitleChanged("Pasta Pesto"))
         createViewModel.onEvent(RecipeEditorEvent.DescriptionChanged("yummy"))
-        createViewModel.onEvent(RecipeEditorEvent.ServingsChanged(2))
+        createViewModel.onEvent(RecipeEditorEvent.ServingsChanged(2.0))
         createViewModel.onEvent(RecipeEditorEvent.IngredientAdded(foodProduct1))
         createViewModel.onEvent(RecipeEditorEvent.IngredientAdded(foodProduct2))
         advanceUntilIdle()
@@ -285,7 +281,7 @@ class RecipeEditorViewModelTest {
                 assertEquals(30.0 * 1 + 10.0 * 1, recipe.carbohydrates)
                 assertEquals(10.0 * 1 + 5.0 * 1, recipe.protein)
                 assertEquals(5.0 * 1 + 5.0 * 1, recipe.fat)
-                assertEquals(2, recipe.servings)
+                assertEquals(2.0, recipe.servings)
                 assertEquals(2, recipe.ingredients.size)
                 assertEquals(RecipeVisibility.OWNER, recipe.visibility)
             })
@@ -301,10 +297,10 @@ class RecipeEditorViewModelTest {
             name = "recipe1",
             instructions = "old",
             calories = 300.0, carbohydrates = 40.0, protein = 15.0, fat = 10.0,
-            servings = 1,
+            servings = 1.0,
             ingredients = listOf(
-                Ingredient(recipeId = "r1", foodProduct = foodProduct1, servings = 1, servingSize = foodProduct1.servingSize),
-                Ingredient(recipeId = "r1", foodProduct = foodProduct2, servings = 1, servingSize = foodProduct2.servingSize)
+                Ingredient(recipeId = "r1", foodProduct = foodProduct1, servings = 1.0, servingSize = foodProduct1.servingSize),
+                Ingredient(recipeId = "r1", foodProduct = foodProduct2, servings = 1.0, servingSize = foodProduct2.servingSize)
             ),
             visibility = RecipeVisibility.OWNER
         )
@@ -314,7 +310,7 @@ class RecipeEditorViewModelTest {
         advanceUntilIdle()
 
         editViewModel.onEvent(RecipeEditorEvent.TitleChanged("New Title"))
-        editViewModel.onEvent(RecipeEditorEvent.ServingsChanged(3))
+        editViewModel.onEvent(RecipeEditorEvent.ServingsChanged(3.0))
         advanceUntilIdle()
 
         val awaited = async { editViewModel.events.first() }
@@ -325,7 +321,7 @@ class RecipeEditorViewModelTest {
             recipeRepository.updateRecipe(withArg { recipe ->
                 assertEquals("r1", recipe.id)
                 assertEquals("New Title", recipe.name)
-                assertEquals(3, recipe.servings)
+                assertEquals(3.0, recipe.servings)
                 assertEquals(2, recipe.ingredients.size)
             })
         }

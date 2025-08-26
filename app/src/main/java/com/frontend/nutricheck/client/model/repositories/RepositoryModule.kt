@@ -16,9 +16,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Module for binding repository implementations to their interfaces.
+ * This allows for dependency injection of repository instances throughout the application.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+interface RepositoryModule {
 
     @Singleton
     @Binds

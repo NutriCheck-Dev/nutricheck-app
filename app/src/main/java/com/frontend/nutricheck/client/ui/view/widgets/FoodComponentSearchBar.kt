@@ -44,7 +44,8 @@ fun FoodComponentSearchBar(
     onQueryChange: (String) -> Unit = {},
     onSearch: (String) -> Unit = {},
     placeholder: @Composable () -> Unit = { Text(stringResource(R.string.searchbar_placeholder_regular)) },
-    trailingIcon: @Composable (() -> Unit)? = { Icon(Icons.Default.Search, contentDescription = stringResource(R.string.save)) },
+    trailingIcon: @Composable (() -> Unit)? = {
+        Icon(Icons.Default.Search, contentDescription = stringResource(R.string.save)) },
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 

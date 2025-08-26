@@ -6,6 +6,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+/**
+ * Mapper for converting between [Ingredient] and [IngredientDTO].
+ */
 object IngredientMapper {
     fun toDTO(ingredient: Ingredient) : IngredientDTO =
         IngredientDTO(

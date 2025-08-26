@@ -30,6 +30,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.stringResource
 import com.frontend.nutricheck.client.R
 
+/**
+ * A composable function that displays a summary of calorie intake, including the goal, consumed,
+ * and remaining calories.
+ */
 @Composable
 fun CalorieSummary(
     modifier: Modifier = Modifier,
@@ -76,11 +80,17 @@ fun CalorieSummary(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CalorieInfo(value = goalCalories, label = stringResource(R.string.label_calorie_goal), textColor = colors.onSurfaceVariant)
+                CalorieInfo(value = goalCalories,
+                    label = stringResource(R.string.label_calorie_goal),
+                    textColor = colors.onSurfaceVariant)
                 MinusEqualsSymbol("-", color = colors.onSurfaceVariant)
-                CalorieInfo(value = consumedCalories, label = stringResource(R.string.label_calories_consumed), textColor = colors.onSurfaceVariant)
+                CalorieInfo(value = consumedCalories,
+                    label = stringResource(R.string.label_calories_consumed),
+                    textColor = colors.onSurfaceVariant)
                 MinusEqualsSymbol("=", color = colors.onSurfaceVariant)
-                CalorieInfo(value = remainingCalories, label = stringResource(R.string.label_remaining), textColor = colors.onSurfaceVariant)
+                CalorieInfo(value = remainingCalories,
+                    label = stringResource(R.string.label_remaining),
+                    textColor = colors.onSurfaceVariant)
             }
         }
     }

@@ -3,6 +3,9 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.mapper
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.FoodProductEntity
 
+/**
+ * Mapper for converting between [FoodProduct] and [FoodProductEntity].
+ */
 object DbFoodProductMapper {
 
     fun toFoodProductEntity(foodProduct: FoodProduct): FoodProductEntity =

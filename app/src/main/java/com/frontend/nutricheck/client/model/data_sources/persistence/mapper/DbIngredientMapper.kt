@@ -4,6 +4,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.IngredientEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.relations.IngredientWithFoodProduct
 
+/**
+ * Mapper for converting between [Ingredient] and [IngredientEntity].
+ */
 object DbIngredientMapper {
 
     fun toIngredientEntity(ingredient: Ingredient) : IngredientEntity =

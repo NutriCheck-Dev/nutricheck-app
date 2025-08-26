@@ -4,7 +4,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLeve
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.frontend.nutricheck.client.ui.view_model.UserDataUtilsLogic
+import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk

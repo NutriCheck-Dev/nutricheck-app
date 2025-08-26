@@ -65,7 +65,7 @@ class Converters {
     @TypeConverter
     fun fromServingSize(servingSize: ServingSize?): String? = servingSize?.name
     @TypeConverter
-    fun toServingSize(name: String?): ServingSize? = name?.let { enumValueOf<ServingSize>(it) }
+    fun toServingSize(name: String?): ServingSize? = name?.let { runCatching { enumValueOf<ServingSize>(it) }.getOrNull() }
 
     @TypeConverter
     fun fromDayTime(dayTime: DayTime?): String? = dayTime?.name

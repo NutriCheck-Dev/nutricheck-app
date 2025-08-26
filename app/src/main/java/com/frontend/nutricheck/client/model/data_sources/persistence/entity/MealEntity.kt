@@ -2,9 +2,13 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import java.util.Date
 
+/**
+ *  Represents a [Meal] entity in the database.
+ */
 @Entity(
     tableName = "meals",
 )

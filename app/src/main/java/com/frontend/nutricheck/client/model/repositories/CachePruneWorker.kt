@@ -12,7 +12,9 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
-
+/**
+ * Worker that prunes expired and unreferenced food products and recipes from the local cache.
+ */
 @HiltWorker
 class CachePruneWorker @AssistedInject constructor(
     @Assisted context: Context,

@@ -1,10 +1,12 @@
-package com.frontend.nutricheck.client.ui.view_model
+package com.frontend.nutricheck.client.ui.view_model.utils
 
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
-import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
+import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
+import com.frontend.nutricheck.client.ui.view_model.OnboardingViewModel
+import com.frontend.nutricheck.client.ui.view_model.ProfileViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Period
@@ -104,7 +106,7 @@ object UserDataUtilsLogic {
      * @param birthdate The user's date of birth.
      * @return The user's age in years.
      */
-    fun calculateAge(birthdate:  Date) : Int {
+    fun calculateAge(birthdate: Date) : Int {
         val localBirthdate = Instant.ofEpochMilli(birthdate.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
@@ -154,5 +156,15 @@ object UserDataUtilsLogic {
             fatsGoal = newFats
         )
         return newUserData
+    }
+    /**
+     * Extension function to parse a String to Double, accepting both comma and dot as
+     * decimal separators.
+     *
+     * @param String The string to be converted to Double.
+     * @return The parsed Double value, or null if the string cannot be converted.
+     */
+   fun String.toDoubleOrNullFlexible(): Double? {
+        return this.replace(',', '.').toDoubleOrNull()
     }
 }
