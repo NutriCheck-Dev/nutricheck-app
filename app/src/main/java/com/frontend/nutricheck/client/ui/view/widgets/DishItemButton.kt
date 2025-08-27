@@ -232,7 +232,7 @@ fun DishItemMealButton(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
@@ -244,8 +244,7 @@ fun DishItemMealButton(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = colors.onSurfaceVariant,
-                    modifier = Modifier.weight(1f)
+                    color = colors.onSurfaceVariant
                 )
 
                 VerticalDivider(
@@ -259,7 +258,6 @@ fun DishItemMealButton(
                     text = roundedCalories + stringResource(R.string.kilocalories),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
-                    modifier = Modifier.weight(0.33f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
