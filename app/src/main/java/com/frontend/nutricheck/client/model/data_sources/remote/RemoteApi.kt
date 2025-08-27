@@ -19,7 +19,6 @@ import retrofit2.http.Query
 
 interface RemoteApi {
 
-    //User: Recipes
     /**
      * Uploads a personal recipe to the server.
      *
@@ -38,7 +37,6 @@ interface RemoteApi {
     @POST("/user/recipes/report")
     suspend fun reportRecipe(@Body recipeReport: ReportDTO): Response<ReportDTO>
 
-    //User: Search and Meal
     /**
      * Searches for food products by name.
      *

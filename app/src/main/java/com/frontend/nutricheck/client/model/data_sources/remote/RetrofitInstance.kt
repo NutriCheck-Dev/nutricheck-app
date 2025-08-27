@@ -36,5 +36,10 @@ object RetrofitInstance {
             .build()
     }
 
+    /**
+     * Provides the Retrofit instance for making API calls.
+     *
+     * @return Retrofit instance
+     */
     fun getInstance(): Retrofit = retrofitInstance
 }
