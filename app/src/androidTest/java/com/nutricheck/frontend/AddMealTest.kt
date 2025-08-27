@@ -10,12 +10,14 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.frontend.nutricheck.client.MainActivity
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
-import com.nutricheck.frontend.client.DbPersistRule
+import com.nutricheck.frontend.util.BypassOnboardingRule
+import com.nutricheck.frontend.util.DbPersistRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.After
@@ -40,7 +42,10 @@ class AddMealTest {
 
     @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
-    @get:Rule(order = 1) val compose = createAndroidComposeRule<MainActivity>()
+    @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
+        ApplicationProvider.getApplicationContext()
+    )
+    @get:Rule(order = 2) val compose = createAndroidComposeRule<MainActivity>()
 
     @Inject lateinit var db: LocalDatabase
 
@@ -51,7 +56,7 @@ class AddMealTest {
     @After fun tearDown() {
         db.close()
     }
-    // ---------- V1: Online + manuell ----------
+
     @Test
     fun addMeal_manual_online_updatesOverview() {
         openAddDialog()
@@ -61,9 +66,26 @@ class AddMealTest {
 
         addIngredientViaQuickAdd("Apfel")
         addIngredientViaQuickAdd("Banane")
-        /**
+        selectDayTime()
         persistMeal()
-        assertHomeOverviewUpdated()*/
+
+        addIngredientViaQuickAdd("Apfel")
+        addIngredientViaQuickAdd("Banane")
+
+
+
+        //assertHomeOverviewUpdated()*/
+    }
+
+    private fun selectDayTime() {
+        compose.onNodeWithContentDescription(SemanticsTags.DAYTIME_PICKER)
+            .assertIsDisplayed()
+            .performClick()
+
+        compose.onNodeWithContentDescription(SemanticsTags.DAYTIME_ITEM_PREFIX + SemanticsTags.DAYTIME_ITEM_BREAKFAST)
+            .assertIsDisplayed()
+            .performClick()
+
     }
 
     // ---------- V2: Online + Scannen (AI) ----------
@@ -153,11 +175,11 @@ class AddMealTest {
         compose.onNodeWithContentDescription(SemanticsTags.SEARCH_BUTTON).performClick()
 
         compose.waitUntil(30_000) {
-            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_PREFIX))
+            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX))
                 .fetchSemanticsNodes().isNotEmpty()
         }
 
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_PREFIX))
+        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX))
             .onFirst()
             .performClick()
     }
@@ -167,14 +189,14 @@ class AddMealTest {
         compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_NAME).performTextInput(name)
         compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_DESCRIPTION).performTextClearance()
         compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_DESCRIPTION).performTextInput(description)
-    }
+    }*/
 
     private fun persistMeal() {
         compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_PERSIST)
             .assertIsDisplayed()
             .performClick()
     }
-
+/**
     private fun assertHomeOverviewUpdated() {
         // Start/Home-Seite mit aktualisierten Tageswerten + Kalorienübersicht
         compose.onNodeWithContentDescription(SemanticsTags.HOME_PAGE).assertIsDisplayed()

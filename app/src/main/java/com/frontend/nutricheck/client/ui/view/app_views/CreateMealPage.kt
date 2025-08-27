@@ -57,9 +57,10 @@ fun CreateMealPage(
                 expanded = searchState.parameters.mealSelectorExpanded,
                 onExpandedChange = { searchViewModel.onEvent(SearchEvent.MealSelectorClick) },
                 trailingContent = {
-                    CustomPersistButton {
-                        searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal)
-                    }
+                    CustomPersistButton (
+                        modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_EDITOR_PERSIST },
+                        onClick = { searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal) }
+                    )
                 },
                 onBack = {
                     onBack()
