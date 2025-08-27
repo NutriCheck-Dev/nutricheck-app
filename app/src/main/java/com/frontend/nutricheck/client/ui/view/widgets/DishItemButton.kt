@@ -30,8 +30,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 /**
  * A composable function that displays a button for a food component
@@ -54,15 +52,11 @@ fun DishItemButton(
     val roundedCalories = when (foodComponent) {
         is Recipe -> {
             val calories = foodComponent.calories * foodComponent.servings
-            BigDecimal.valueOf(calories)
-                .setScale(2, RoundingMode.HALF_UP)
-                .toPlainString()
+            calories.toInt().toString()
         }
         is FoodProduct -> {
             val calories = foodComponent.servings * foodComponent.calories * (foodComponent.servingSize.getAmount() / 100)
-            BigDecimal.valueOf(calories)
-                .setScale(2, RoundingMode.HALF_UP)
-                .toPlainString()
+            calories.toInt().toString()
         }
     }
     Card(
@@ -92,7 +86,7 @@ fun DishItemButton(
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(0.4f)
+                    modifier = Modifier.weight(1f)
                 )
 
                 VerticalDivider(
@@ -109,7 +103,7 @@ fun DishItemButton(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .weight(0.6f)
+                        .weight(0.45f)
                         .padding(start = 8.dp, end = 8.dp)
                 )
             }
@@ -145,9 +139,7 @@ fun DishItemButton(
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     val calories = ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)
-    val roundedCalories = BigDecimal.valueOf(calories)
-        .setScale(2, RoundingMode.HALF_UP)
-        .toPlainString()
+    val roundedCalories = calories.toInt().toString()
 
     Card(
         modifier = modifier
@@ -176,7 +168,7 @@ fun DishItemButton(
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(0.4f)
+                    modifier = Modifier.weight(1f)
                 )
 
                 VerticalDivider(
@@ -193,7 +185,7 @@ fun DishItemButton(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .weight(0.6f)
+                        .weight(0.45f)
                         .padding(start = 8.dp)
                 )
             }
@@ -227,9 +219,7 @@ fun DishItemMealButton(
     onClick: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
-    val roundedCalories = BigDecimal.valueOf(calories)
-        .setScale(2, RoundingMode.HALF_UP)
-        .toPlainString()
+    val roundedCalories = calories.toInt().toString()
 
     Surface(
         modifier = modifier
@@ -242,7 +232,7 @@ fun DishItemMealButton(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
@@ -254,7 +244,8 @@ fun DishItemMealButton(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = colors.onSurfaceVariant
+                    color = colors.onSurfaceVariant,
+                    modifier = Modifier.weight(1f)
                 )
 
                 VerticalDivider(
@@ -268,6 +259,7 @@ fun DishItemMealButton(
                     text = roundedCalories + stringResource(R.string.kilocalories),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.weight(0.33f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -275,3 +267,4 @@ fun DishItemMealButton(
         }
     }
 }
+
