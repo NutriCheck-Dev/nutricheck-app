@@ -9,14 +9,12 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
 import com.frontend.nutricheck.client.MainActivity
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
 import com.frontend.nutricheck.client.ui.view_model.navigation.DiaryTab
-import com.nutricheck.frontend.client.DbPersistRule
+import com.nutricheck.frontend.util.DbPersistRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.After

@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.client
+package com.nutricheck.frontend.util
 
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.platform.app.InstrumentationRegistry
