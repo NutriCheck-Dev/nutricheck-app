@@ -41,7 +41,7 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
-            modifier = Modifier.semantics { SemanticsTags.DIARY_PAGE },
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.BOTTOM_NAV_DIARY_PAGE },
             selected = currentDestination == Screen.DiaryPage.createRoute(null),
             onClick = { onClickDiary() },
             icon = { Icon(Icons.Default.DateRange,
@@ -58,7 +58,7 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
-            modifier = Modifier.semantics { contentDescription = SemanticsTags.BOTTOM_NAV_ADD},
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.BOTTOM_NAV_ADD },
             selected = currentDestination == "add",
             onClick = { onClickAdd() },
             icon = { Icon(Icons.Default.AddCircle,

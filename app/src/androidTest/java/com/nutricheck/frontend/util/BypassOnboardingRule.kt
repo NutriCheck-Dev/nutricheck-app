@@ -21,7 +21,7 @@ class BypassOnboardingRule(
 
     override fun apply(base: Statement, description: Description) = object : Statement() {
         override fun evaluate() {
-            val entry = EntryPointAccessors.fromApplication(application, RepoEntryPoint::class.java)
+            val entry = EntryPointAccessors.fromApplication(application, OnboardingReposEntryPoint::class.java)
 
             runBlocking {
                 val now = Date()

@@ -23,6 +23,7 @@ object SemanticsTags {
     const val REPORT_DIALOG_INPUT = "Report_Dialog_Input"
     const val REPORT_DIALOG_CONFIRM = "Report_Dialog_Confirm"
     const val DIARY_PAGE = "DiaryPage"
+    const val BOTTOM_NAV_DIARY_PAGE = "BottomNav_DiaryPage"
     const val OVERVIEW_SWITCHER_TAB_PREFIX = "OverviewSwitcher_Tab_"
 
     const val SNACKBAR = "Snackbar"

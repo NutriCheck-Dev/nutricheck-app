@@ -8,7 +8,7 @@ import dagger.hilt.components.SingletonComponent
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
-interface RepoEntryPoint {
+interface OnboardingReposEntryPoint {
     fun appSettingsRepository(): AppSettingRepository
     fun userDataRepository(): UserDataRepository
 }

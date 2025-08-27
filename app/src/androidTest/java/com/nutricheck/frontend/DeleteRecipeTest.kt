@@ -4,17 +4,22 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.frontend.nutricheck.client.MainActivity
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
 import com.frontend.nutricheck.client.ui.view_model.navigation.DiaryTab
+import com.nutricheck.frontend.util.AndroidTestDataFactory.ownerRecipeFactory
+import com.nutricheck.frontend.util.BypassOnboardingRule
 import com.nutricheck.frontend.util.DbPersistRule
+import com.nutricheck.frontend.util.SeedOwnerRecipeRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.After
@@ -28,9 +33,15 @@ import javax.inject.Inject
 @RunWith(AndroidJUnit4::class)
 class DeleteRecipeTest {
 
+    val name = "Pasta Pesto"
+
     @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
-    @get:Rule(order = 1) val compose = createAndroidComposeRule<MainActivity>()
+    @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
+        ApplicationProvider.getApplicationContext()
+    )
+    @get:Rule(order = 2) val seedOwnerRecipe = SeedOwnerRecipeRule(buildRecipe = ownerRecipeFactory(name))
+    @get:Rule(order = 3) val compose = createAndroidComposeRule<MainActivity>()
 
     @Inject lateinit var db: LocalDatabase
 
@@ -62,33 +73,36 @@ class DeleteRecipeTest {
         val deleteOptionTag = SemanticsTags.DETAILS_MENU_OPTION_PREFIX + DropdownMenuOptions.DELETE.toString()
         compose.onNodeWithContentDescription(deleteOptionTag).assertIsDisplayed().performClick()
 
-//        val deleteMessage = compose.activity.getString(R.string.snackbar_message_recipe_deleted)
-//        compose.waitUntil(3_000) {
-//            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.SNACKBAR))
-//                .fetchSemanticsNodes()
-//                .any { node ->
-//                    val list = node.config.getOrNull(SemanticsProperties.ContentDescription)
-//                    list?.firstOrNull()?.contains(deleteMessage) == true
-//                }
-//        }
-
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX))
-            .fetchSemanticsNodes().isEmpty()
-
+        compose.waitUntil(5_000) {
+            compose.onAllNodes(
+                hasContentDescriptionPrefix(SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX),
+                useUnmergedTree = true
+            ).fetchSemanticsNodes().isEmpty()
+        }
 
     }
 
 
     private fun navigateToDiaryPageThenRecipePage() {
-        compose.onNodeWithContentDescription(SemanticsTags.DIARY_PAGE).performClick()
+        compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_DIARY_PAGE).performClick()
 
-        val recipesTabDescription = SemanticsTags.OVERVIEW_SWITCHER_TAB_PREFIX + DiaryTab.RECIPES.name
+        compose.waitUntil(5_000) {
+            compose.onAllNodes(
+                hasContentDescriptionPrefix(SemanticsTags.OVERVIEW_SWITCHER_TAB_PREFIX),
+                useUnmergedTree = true
+            ).fetchSemanticsNodes().isNotEmpty()
+        }
+
+        val recipesTab = SemanticsTags.OVERVIEW_SWITCHER_TAB_PREFIX + DiaryTab.RECIPES.name
         compose.onNode(
-            hasContentDescriptionPrefix(recipesTabDescription),
+            hasContentDescription(recipesTab),
             useUnmergedTree = true
         ).assertIsDisplayed().performClick()
 
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
+
+        val recipeTag = SemanticsTags.DISHITEM_PREFIX + name
+        compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
     }
 
     private fun hasContentDescriptionPrefix(prefix: String) : SemanticsMatcher =
