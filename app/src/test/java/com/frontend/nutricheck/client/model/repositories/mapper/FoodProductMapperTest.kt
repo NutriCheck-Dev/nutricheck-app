@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.model.repositories.mapper
 
 import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
+import org.junit.Assert.assertEquals
 
 class FoodProductMapperTest {
 
@@ -14,10 +14,10 @@ class FoodProductMapperTest {
         val dto = FoodProductMapper.toDTO(foodProduct)
         assertEquals(foodProduct.id, dto.id)
         assertEquals(foodProduct.name, dto.name)
-        assertEquals(foodProduct.calories, dto.calories)
-        assertEquals(foodProduct.carbohydrates, dto.carbohydrates)
-        assertEquals(foodProduct.protein, dto.protein)
-        assertEquals(foodProduct.fat, dto.fat)
+        assertEquals(foodProduct.calories, dto.calories, 0.0)
+        assertEquals(foodProduct.carbohydrates, dto.carbohydrates, 0.0)
+        assertEquals(foodProduct.protein, dto.protein, 0.0)
+        assertEquals(foodProduct.fat, dto.fat, 0.0)
     }
 
     @Test

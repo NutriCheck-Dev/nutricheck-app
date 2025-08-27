@@ -29,9 +29,9 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.test.runTest
 import okhttp3.MultipartBody
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions
 import retrofit2.Response
 import java.util.Date
 
@@ -89,10 +89,10 @@ class HistoryRepositoryImplTest {
 
         val calories = repository.getCaloriesOfDay(Date())
 
-        Assertions.assertEquals(
+        assertEquals(
             meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories } +
                     meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }.toInt(),
-            calories.toDouble()
+            calories.toDouble(), 0.0
         )
     }
 
@@ -108,7 +108,7 @@ class HistoryRepositoryImplTest {
         val result = repository.requestAiMeal(file, languageCode)
 
         if (result is Result.Success) {
-            Assertions.assertEquals(meal, result.data)
+            assertEquals(meal, result.data)
         }
     }
 
@@ -165,8 +165,8 @@ class HistoryRepositoryImplTest {
 
         val meals = repository.getMealsForDay(date)
 
-        Assertions.assertEquals(meal.id, meals.first().id)
-        Assertions.assertEquals(meal.calories, meals.first().calories, 0.0)
+        assertEquals(meal.id, meals.first().id)
+        assertEquals(meal.calories, meals.first().calories, 0.0)
     }
 
     @Test
@@ -177,8 +177,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealById(mealId)
 
-        Assertions.assertEquals(meal.id, result.id)
-        Assertions.assertEquals(meal.calories, result.calories, 0.0)
+        assertEquals(meal.id, result.id)
+        assertEquals(meal.calories, result.calories, 0.0)
     }
 
     @Test
@@ -217,9 +217,9 @@ class HistoryRepositoryImplTest {
 
         val macros = repository.getDailyMacros()
 
-        Assertions.assertEquals(meal.carbohydrates.toInt(), macros[0])
-        Assertions.assertEquals(meal.protein.toInt(), macros[1])
-        Assertions.assertEquals(meal.fat.toInt(), macros[2])
+        assertEquals(meal.carbohydrates.toInt(), macros[0])
+        assertEquals(meal.protein.toInt(), macros[1])
+        assertEquals(meal.fat.toInt(), macros[2])
     }
 
     @Test
@@ -233,8 +233,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealFoodItemById(mealId, foodProductId)
 
-        Assertions.assertEquals(mealId, result.mealId)
-        Assertions.assertEquals(foodProductId, result.foodProduct.id)
+        assertEquals(mealId, result.mealId)
+        assertEquals(foodProductId, result.foodProduct.id)
     }
 
     @Test
@@ -260,8 +260,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealRecipeItemById(mealId, recipeId)
 
-        Assertions.assertEquals(mealId, result.mealId)
-        Assertions.assertEquals(recipeId, result.recipe.id)
+        assertEquals(mealId, result.mealId)
+        assertEquals(recipeId, result.recipe.id)
     }
 
      @Test
