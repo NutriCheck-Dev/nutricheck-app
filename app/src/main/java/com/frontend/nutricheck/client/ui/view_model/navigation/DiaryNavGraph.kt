@@ -14,10 +14,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.view.widgets.OverviewSwitcher
 
 enum class DiaryTab(val stringResId: Int) {
@@ -61,10 +64,12 @@ fun DiaryNavGraph(
 
     val showHeader = currentRoute in headerVisibleRoutes
     Scaffold(
+        modifier = Modifier.semantics { contentDescription = SemanticsTags.DIARY_PAGE },
         topBar = {
             if (showHeader) {
                 OverviewSwitcher(
                     options = DiaryTab.entries.map { it.getDescription(context) },
+                    optionIds = DiaryTab.entries.map { it.name },
                     selectedOption = selectedTab.getDescription(context),
                     onSelect = { option ->
                         selectedTab = DiaryTab.entries.first { it.getDescription(context) == option }

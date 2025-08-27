@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.client
+package com.nutricheck.frontend.util
 
 import android.app.Application
 import android.content.Context

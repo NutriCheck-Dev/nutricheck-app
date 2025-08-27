@@ -11,14 +11,14 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.frontend.nutricheck.client.MainActivity
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
-import com.nutricheck.frontend.client.DbPersistRule
+import com.nutricheck.frontend.util.BypassOnboardingRule
+import com.nutricheck.frontend.util.DbPersistRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.After
@@ -35,7 +35,10 @@ class CreateRecipeTest {
 
     @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
-    @get:Rule(order = 1) val compose = createAndroidComposeRule<MainActivity>()
+    @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
+        ApplicationProvider.getApplicationContext()
+    )
+    @get:Rule(order = 2) val compose = createAndroidComposeRule<MainActivity>()
 
     @Inject lateinit var db: LocalDatabase
 
@@ -87,11 +90,11 @@ class CreateRecipeTest {
         compose.onNodeWithContentDescription(SemanticsTags.SEARCH_BUTTON).performClick()
 
         compose.waitUntil(30_000) {
-            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_PREFIX))
+            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX))
                 .fetchSemanticsNodes().isNotEmpty()
         }
 
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_PREFIX))
+        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX))
             .onFirst()
             .performClick()
     }

@@ -1,4 +1,4 @@
-package com.nutricheck.frontend.client
+package com.nutricheck.frontend.util
 
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.platform.app.InstrumentationRegistry
@@ -11,7 +11,6 @@ class DbPersistRule(
 ) : TestWatcher() {
 
     private val target = InstrumentationRegistry.getInstrumentation().targetContext
-    private val testContext = InstrumentationRegistry.getInstrumentation().context
 
     override fun starting(description: Description) {
         val backup = File(target.noBackupFilesDir, "$dbName-backup.db")
