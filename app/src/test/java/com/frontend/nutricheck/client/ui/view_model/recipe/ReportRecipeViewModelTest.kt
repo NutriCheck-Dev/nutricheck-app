@@ -8,8 +8,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.Result
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
-import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -24,7 +22,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.assertNull
+import org.junit.Assert.assertNull
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
