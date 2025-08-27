@@ -64,7 +64,6 @@ fun DiaryNavGraph(
 
     val showHeader = currentRoute in headerVisibleRoutes
     Scaffold(
-        modifier = Modifier.semantics { contentDescription = SemanticsTags.DIARY_PAGE },
         topBar = {
             if (showHeader) {
                 OverviewSwitcher(

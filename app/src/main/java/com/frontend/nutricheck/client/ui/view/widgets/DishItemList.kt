@@ -133,6 +133,7 @@ fun IngredientList(
         }
         ingredients.forEach { item ->
             DishItemButton(
+                modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_PREFIX + item.foodProduct.name },
                 ingredient = item,
                 trailingContent = { trailingContent?.invoke(item) },
                 onClick = { onItemClick(item) })

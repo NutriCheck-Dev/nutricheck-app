@@ -59,15 +59,37 @@ class EditRecipeTest {
     }
 
     @Test
-    fun editRecipe_changeName_persisted() {
+    fun editRecipe_changeName_and_deleteIngredient_persisted() {
         val newName = "Pasta Pomodoro"
 
         navigateToDiaryPageThenRecipePage()
         navigateToRecipeEditor()
-        editRecipeAndPersist(newName)
+        editRecipeNameAndPersist(newName)
     }
 
-    private fun editRecipeAndPersist(newName: String) {
+    @Test
+    fun editRecipe_deleteIngredient_persisted() {
+        val ingredientToDelete = "Pesto Sauce"
+        val updatedCalories = "500"
+
+        navigateToDiaryPageThenRecipePage()
+        navigateToRecipeEditor()
+        deleteIngredient(ingredientToDelete)
+
+        val recipeTag = SemanticsTags.DISHITEM_PREFIX + name
+        compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
+
+        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_CALORIES_PREFIX))
+            .fetchSemanticsNodes().isNotEmpty()
+
+        compose.onNode(
+            hasContentDescriptionPrefix(SemanticsTags.DISHITEM_CALORIES_PREFIX) and
+            hasContentDescContaining(updatedCalories)
+        )
+    }
+
+
+    private fun editRecipeNameAndPersist(newName: String) {
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PAGE).assertIsDisplayed()
 
         val nameField = SemanticsTags.RECIPE_EDITOR_NAME
@@ -80,6 +102,21 @@ class EditRecipeTest {
 
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
         compose.onNodeWithContentDescription(SemanticsTags.DISHITEM_PREFIX + newName).assertIsDisplayed()
+    }
+
+    private fun deleteIngredient(ingredientName: String) {
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PAGE).assertIsDisplayed()
+
+        val ingredientTag = SemanticsTags.DISHITEM_PREFIX + ingredientName
+        compose.onNodeWithContentDescription(ingredientTag).assertIsDisplayed()
+
+        val deleteButtonTag = SemanticsTags.DISHITEM_REMOVE_BUTTON_PREFIX + ingredientName
+        compose.onNodeWithContentDescription(deleteButtonTag).assertIsDisplayed().performClick()
+
+        val saveButton = SemanticsTags.RECIPE_EDITOR_PERSIST
+        compose.onNodeWithContentDescription(saveButton).assertIsDisplayed().performClick()
+
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
     }
 
     private fun navigateToRecipeEditor() {
@@ -120,9 +157,21 @@ class EditRecipeTest {
         compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
     }
 
+    private fun persistEditor() {
+        val save = SemanticsTags.RECIPE_EDITOR_PERSIST
+        compose.onNodeWithContentDescription(save).assertIsDisplayed().performClick()
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
+    }
+
     private fun hasContentDescriptionPrefix(prefix: String) : SemanticsMatcher =
         SemanticsMatcher("TestTag startsWith($prefix)") { node ->
             val list = node.config.getOrNull(SemanticsProperties.ContentDescription)
             list?.firstOrNull()?.startsWith(prefix) == true
         }
+
+    private fun hasContentDescContaining(substring: String) = SemanticsMatcher("cd contains $substring") { node ->
+        val cd = node.config.getOrNull(SemanticsProperties.ContentDescription)?.firstOrNull() ?:
+            return@SemanticsMatcher false
+        cd.contains(substring)
+    }
 }

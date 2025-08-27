@@ -50,6 +50,22 @@ object AndroidTestDataFactory {
                     quantity = 50.0,
                     servings = 5.0,
                     servingSize = ServingSize.TENGRAMS
+                ),
+                Ingredient(
+                    recipeId = "r1",
+                    foodProduct = FoodProduct(
+                        id = "fp3",
+                        name = "Olive Oil",
+                        calories = 50.0,
+                        carbohydrates = 0.0,
+                        protein = 0.0,
+                        fat = 5.0,
+                        servings = 1.0,
+                        servingSize = ServingSize.ONEHOUNDREDGRAMS
+                    ),
+                    quantity = 20.0,
+                    servings = 1.0,
+                    servingSize = ServingSize.TENGRAMS
                 )
             )
         )
