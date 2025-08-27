@@ -140,9 +140,9 @@ object UserDataUtilsLogic {
             ActivityLevel.FREQUENTLY -> 1.9
         }
         val calorieDiffOnGoal = when (userData.weightGoal) {
-            WeightGoal.LOSE_WEIGHT -> -500
+            WeightGoal.LOSE_WEIGHT -> -300
             WeightGoal.MAINTAIN_WEIGHT -> 0
-            WeightGoal.GAIN_WEIGHT -> 500
+            WeightGoal.GAIN_WEIGHT -> 300
         }
         val newDailyCalories = (bmr * pal + calorieDiffOnGoal).roundToInt()
         val newProtein = (userData.weight * 1.8).roundToInt()

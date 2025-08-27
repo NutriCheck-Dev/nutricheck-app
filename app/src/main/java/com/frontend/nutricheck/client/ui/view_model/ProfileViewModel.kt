@@ -104,6 +104,8 @@ class ProfileViewModel @Inject constructor(
     private val _selectedWeight = MutableStateFlow<Weight?>(null)
     val selectedWeight: StateFlow<Weight?> = _selectedWeight.asStateFlow()
 
+    private var _initWeightForComparison = 0.0
+
     /**
      * Handles profile events and updates the state accordingly.
      * @param event The profile event to handle.
@@ -148,6 +150,7 @@ class ProfileViewModel @Inject constructor(
                 age = UserDataUtilsLogic.calculateAge(storedUserData.birthdate),
                 )
             _dataDraft.value = _data.value
+            _initWeightForComparison = _data.value.weight
         }
     }
 
@@ -274,6 +277,13 @@ class ProfileViewModel @Inject constructor(
         ))
         viewModelScope.launch {
             userDataRepository.updateUserData(userDataWithCalories)
+            if (_initWeightForComparison != userDataWithCalories.weight) {
+                userDataRepository.addWeight(
+                    Weight(value = userDataWithCalories.weight, date = Date())
+                )
+                _initWeightForComparison = userDataWithCalories.weight
+                _weightData.value = userDataRepository.getWeightHistory()
+            }
         }
         _data.value = userDataWithCalories
         emitEvent(ProfileEvent.NavigateToProfileOverview)
