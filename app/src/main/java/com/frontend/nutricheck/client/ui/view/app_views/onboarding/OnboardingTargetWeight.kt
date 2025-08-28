@@ -141,7 +141,7 @@ fun OnboardingTargetWeight(
             })
         {
             Text(
-                text = stringResource(id = R.string.onboarding_button_next),
+                text = stringResource(id = R.string.onboarding_button_finish),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight(500),
