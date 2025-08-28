@@ -157,12 +157,6 @@ class EditRecipeTest {
         compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
     }
 
-    private fun persistEditor() {
-        val save = SemanticsTags.RECIPE_EDITOR_PERSIST
-        compose.onNodeWithContentDescription(save).assertIsDisplayed().performClick()
-        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
-    }
-
     private fun hasContentDescriptionPrefix(prefix: String) : SemanticsMatcher =
         SemanticsMatcher("TestTag startsWith($prefix)") { node ->
             val list = node.config.getOrNull(SemanticsProperties.ContentDescription)
