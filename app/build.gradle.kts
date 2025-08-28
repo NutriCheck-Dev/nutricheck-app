@@ -197,6 +197,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
     implementation(libs.androidx.exifinterface)
+    implementation(libs.commons.lang3)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

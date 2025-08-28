@@ -81,7 +81,7 @@ class ReportRecipeTest {
     private fun openReportDialogAndEnterInput(name: String, message: String) {
         val detailsButtonTag = SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + name
 
-        compose.waitForNode(hasContentDescription(detailsButtonTag), useUnmergedTree = true)
+        compose.waitForNode(hasContentDescription(detailsButtonTag))
 
         compose.onAllNodes(
             hasContentDescription(detailsButtonTag),
