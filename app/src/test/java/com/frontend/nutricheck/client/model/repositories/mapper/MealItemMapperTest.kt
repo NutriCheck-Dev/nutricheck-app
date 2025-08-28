@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
+import org.junit.Assert.assertEquals
 
 class MealItemMapperTest {
 
@@ -23,8 +23,8 @@ class MealItemMapperTest {
         val mealFoodItem = MealItemMapper.toData(mealItemDTO, mealId)
 
         assertEquals(mealId, mealFoodItem.mealId)
-        assertEquals(1.0, mealFoodItem.quantity)
-        assertEquals(1.0, mealFoodItem.servings)
+        assertEquals(1.0, mealFoodItem.quantity, 0.0)
+        assertEquals(1.0, mealFoodItem.servings, 0.0)
         assertEquals(ServingSize.ONEHOUNDREDGRAMS, mealFoodItem.servingSize)
         assertEquals(foodProduct.id, mealFoodItem.foodProduct.id)
 

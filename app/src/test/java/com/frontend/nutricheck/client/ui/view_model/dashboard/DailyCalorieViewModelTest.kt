@@ -2,8 +2,6 @@ package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieState
-import com.frontend.nutricheck.client.ui.view_model.dashboard.DailyCalorieViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,12 +16,12 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 import kotlin.math.abs
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Unit test class for DailyCalorieViewModel.

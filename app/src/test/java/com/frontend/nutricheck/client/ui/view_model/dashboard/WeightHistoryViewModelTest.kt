@@ -3,7 +3,6 @@ package com.frontend.nutricheck.client.ui.view_model.dashboard
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import com.frontend.nutricheck.client.ui.view.widgets.WeightRange
-import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -17,9 +16,9 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import java.util.Date
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Unit test class for WeightHistoryViewModel.
@@ -91,7 +90,7 @@ class WeightHistoryViewModelTest {
 
         // Should include entries from last 30 days only (current, 1 day, 1 week)
         assertEquals(3, state.weightData.size)
-        assertEquals(targetWeight, state.weightGoal)
+        assertEquals(targetWeight, state.weightGoal, 0.0)
 
         // Verify entries are sorted by date (oldest first)
         assertTrue(
@@ -123,7 +122,7 @@ class WeightHistoryViewModelTest {
 
         // Should include entries from last 180 days (current, 1 day, 1 week, 1 month, 3 months)
         assertEquals(5, state.weightData.size)
-        assertEquals(targetWeight, state.weightGoal)
+        assertEquals(targetWeight, state.weightGoal, 0.0)
 
         // Verify that 6+ months old entries are not included
         val cutoffDate = Date(currentDate.time - 180L * 24 * 60 * 60 * 1000)
@@ -149,7 +148,7 @@ class WeightHistoryViewModelTest {
 
         // Should include entries from last 365 days (current, 1 day, 1 week, 1 month, 3 months, 6 months)
         assertEquals(6, state.weightData.size)
-        assertEquals(targetWeight, state.weightGoal)
+        assertEquals(targetWeight, state.weightGoal, 0.0)
 
         // Verify that entries older than 1 year are not included
         val cutoffDate = Date(currentDate.time - 365L * 24 * 60 * 60 * 1000)
@@ -173,7 +172,7 @@ class WeightHistoryViewModelTest {
         val state = viewModel.weightHistoryState.first()
 
         assertEquals(0, state.weightData.size)
-        assertEquals(targetWeight, state.weightGoal)
+        assertEquals(targetWeight, state.weightGoal, 0.0)
 
         coVerify { mockUserDataRepository.getWeightHistory() }
         coVerify { mockUserDataRepository.getTargetWeight() }
@@ -189,8 +188,8 @@ class WeightHistoryViewModelTest {
     fun `initial state has correct default values`() = runTest {
         val initialState = viewModel.weightHistoryState.first()
 
-        assertEquals(emptyList(), initialState.weightData)
-        assertEquals(0.0, initialState.weightGoal)
+        assertEquals(emptyList<Int>(), initialState.weightData)
+        assertEquals(0.0, initialState.weightGoal, 0.0)
     }
 
     /**
@@ -237,7 +236,7 @@ class WeightHistoryViewModelTest {
 
         val state = viewModel.weightHistoryState.first()
 
-        assertEquals(0.0, state.weightGoal)
+        assertEquals(0.0, state.weightGoal, 0.0)
         assertTrue(state.weightData.isNotEmpty())
 
         coVerify { mockUserDataRepository.getWeightHistory() }

@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.assertEquals
 import java.util.Date
-import kotlin.test.assertEquals
 
 /**
  * Unit test class for UserDataRepositoryImpl.
@@ -97,10 +97,10 @@ class UserDataRepositoryImplTest {
         // Birthdate works with Date() so it is not checked here
         assertEquals("", result.username)
         assertEquals(Gender.DIVERS, result.gender)
-        assertEquals(0.0, result.height)
-        assertEquals(0.0, result.weight)
+        assertEquals(0.0, result.height, 0.0)
+        assertEquals(0.0, result.weight, 0.0)
         assertEquals(0, result.age)
-        assertEquals(0.0, result.targetWeight)
+        assertEquals(0.0, result.targetWeight, 0.0)
         assertEquals(0, result.dailyCaloriesGoal)
         assertEquals(0, result.proteinGoal)
         assertEquals(0, result.carbsGoal)
@@ -161,7 +161,7 @@ class UserDataRepositoryImplTest {
 
         val result = repository.getTargetWeight()
 
-        assertEquals(70.0, result)
+        assertEquals(70.0, result, 0.0)
         coVerify { mockUserDataDao.getUserData() }
     }
 
@@ -175,7 +175,7 @@ class UserDataRepositoryImplTest {
 
         val result = repository.getTargetWeight()
 
-        assertEquals(0.0, result)
+        assertEquals(0.0, result, 0.0)
         coVerify { mockUserDataDao.getUserData() }
     }
 
