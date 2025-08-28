@@ -390,7 +390,6 @@ class FoodSearchViewModel @Inject constructor(
             val newParams = state.parameters.copy(
                 query = "",
                 generalResults = emptyList(),
-                localRecipesResults = emptyList(),
                 hasSearched = false,
                 lastSearchedQuery = null
             )

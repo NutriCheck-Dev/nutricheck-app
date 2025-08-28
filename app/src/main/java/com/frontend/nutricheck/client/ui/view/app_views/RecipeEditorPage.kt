@@ -124,8 +124,12 @@ fun RecipeEditorPage(
         sheetContent = {
             BottomSheetSearchContent(
                 foodComponents = draft.results,
-                trailingContent = { item -> CustomAddButton { recipeEditorViewModel.onEvent(
-                    RecipeEditorEvent.IngredientAdded(item)) } },
+                trailingContent = { item ->
+                    CustomAddButton {
+                        recipeEditorViewModel.onEvent(RecipeEditorEvent.IngredientAdded(item))
+                        recipeEditorViewModel.onEvent(RecipeEditorEvent.Clear)
+                    }
+                                  },
                 onItemClick = { onItemClick(it) },
                 query = draft.query,
                 onQueryChange = { recipeEditorViewModel.onEvent(RecipeEditorEvent.QueryChanged(it)) },

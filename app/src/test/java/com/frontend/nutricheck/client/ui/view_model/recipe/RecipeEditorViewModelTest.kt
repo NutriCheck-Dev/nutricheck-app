@@ -32,6 +32,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.assertNull
@@ -68,17 +69,6 @@ class RecipeEditorViewModelTest {
         carbohydrates = 10.0,
         protein = 5.0,
         fat = 5.0,
-        servings = 1.0,
-        servingSize = ServingSize.ONEHOUNDREDGRAMS
-    )
-
-    private val foodProduct3 = FoodProduct(
-        id = "fp3",
-        name = "Basil",
-        calories = 5.0,
-        carbohydrates = 1.0,
-        protein = 0.3,
-        fat = 0.1,
         servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
@@ -326,6 +316,35 @@ class RecipeEditorViewModelTest {
             })
         }
         assertTrue(awaited.await() is RecipeEditorEvent.RecipeSaved)
+    }
+
+    @Test
+    fun `Clear resets search state and clears error`() = testScope.runTest {
+        val viewModel = makeCreateViewModel()
+
+        viewModel.onEvent(RecipeEditorEvent.QueryChanged("pasta"))
+        coEvery { foodProductRepository.searchFoodProducts("pasta", any()) } returns
+                flowOf(Result.Success(listOf(foodProduct1, foodProduct2)))
+
+        viewModel.onEvent(RecipeEditorEvent.SearchIngredients)
+        advanceUntilIdle()
+
+        val before = viewModel.draft.value
+        assertEquals("pasta", before.query)
+        assertTrue(before.hasSearched)
+        assertEquals("pasta", before.lastSearchedQuery)
+        assertEquals(listOf("fp1", "fp2"), before.results.map { it.id })
+
+        viewModel.onEvent(RecipeEditorEvent.Clear)
+        advanceUntilIdle()
+
+        val after = viewModel.draft.value
+        assertEquals("", after.query)
+        assertTrue(after.results.isEmpty())
+        assertFalse(after.hasSearched)
+        assertNull(after.lastSearchedQuery)
+
+        assertFalse(viewModel.uiState.value is BaseViewModel.UiState.Error)
     }
 
 }

@@ -25,6 +25,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.SheetScaffold
+import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
@@ -77,7 +78,12 @@ fun CreateMealPage(
                         1 -> searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
                     }
                 },
-                trailingContent = { item -> CustomAddButton { searchViewModel.onEvent(SearchEvent.AddFoodComponent(item)) } },
+                trailingContent = { item ->
+                    CustomAddButton {
+                        searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
+                        searchViewModel.onEvent(SearchEvent.Clear)
+                    }
+                                  },
                 onItemClick = { onItemClick(it) },
                 query = searchState.parameters.query,
                 onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
@@ -121,22 +127,4 @@ fun CreateMealPage(
             }
         }
     }
-}
-
-@Composable
-private fun ShowErrorMessage(
-    title: String = stringResource(R.string.show_error_message_title),
-    error: String,
-    onClick: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = { onClick() },
-        title = { Text(title) },
-        text = { Text(error) },
-        confirmButton = {
-            Button(onClick = { onClick() }) {
-                Text(stringResource(R.string.label_ok))
-            }
-        }
-    )
 }
