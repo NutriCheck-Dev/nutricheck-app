@@ -228,7 +228,7 @@ class RecipeOverviewViewModel @Inject constructor(
                 mealId = mode.mealId,
                 recipe = _recipeOverviewState.value.recipe,
                 servings = _recipeOverviewState.value.parameters.servings,
-                quantity = _recipeOverviewState.value.parameters.servings.toDouble(),
+                quantity = _recipeOverviewState.value.parameters.servings,
             )
             historyRepository.updateMealRecipeItem(mealRecipeItem)
         }
