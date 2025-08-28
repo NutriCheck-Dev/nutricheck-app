@@ -18,12 +18,15 @@ import com.frontend.nutricheck.client.R
  * @param onClick A lambda function that is called when the button is clicked.
  */
 @Composable
-fun CustomCloseButton(onClick: () -> Unit = {}) {
+fun CustomCloseButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
     val colors = MaterialTheme.colorScheme
 
     IconButton(
         onClick = { onClick() },
-        modifier = Modifier.clip(CircleShape)
+        modifier = Modifier.clip(CircleShape).then(modifier)
     ) {
         Icon(
             imageVector = Icons.Default.Close,

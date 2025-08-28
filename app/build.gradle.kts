@@ -86,7 +86,7 @@ android {
                 "arm64-v8a")
         }
 
-        testInstrumentationRunner = "com.nutricheck.frontend.client.CustomHiltTestRunner"
+        testInstrumentationRunner = "com.nutricheck.frontend.util.CustomHiltTestRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "false"
     }
 
@@ -134,6 +134,7 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 }
 configurations.all {
@@ -196,6 +197,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
     implementation(libs.androidx.exifinterface)
+    implementation(libs.commons.lang3)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
@@ -210,4 +212,5 @@ dependencies {
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
+    androidTestUtil(libs.androidx.orchestrator)
 }

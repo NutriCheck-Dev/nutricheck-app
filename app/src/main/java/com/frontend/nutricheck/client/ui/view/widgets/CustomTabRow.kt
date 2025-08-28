@@ -18,8 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A custom tab row that displays a list of options as tabs.
@@ -46,6 +49,7 @@ fun CustomTabRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         options.forEachIndexed { index, label ->
+            val id = options[index]
             val selected = index == selectedOption
             val textColor by animateColorAsState(
                 targetValue = if (selected) colors.onPrimaryContainer
@@ -62,7 +66,8 @@ fun CustomTabRow(
                     .weight(1f)
                     .fillMaxHeight()
                     .background(backgroundColor, RoundedCornerShape(4.dp))
-                    .clickable { onSelect(index) },
+                    .clickable { onSelect(index) }
+                    .semantics { contentDescription = SemanticsTags.RECIPE_PAGE_TAB_PREFIX + id },
                 contentAlignment = Alignment.Center
             ) {
                 Text(

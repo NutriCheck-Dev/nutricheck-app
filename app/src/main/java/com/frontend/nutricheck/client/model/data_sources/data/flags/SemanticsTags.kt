@@ -17,7 +17,9 @@ object SemanticsTags {
     const val RECIPE_EDITOR_PERSIST = "RecipeEditor_Persist"
     const val FOODCOMPONENT_LIST_ADD_BUTTON = "FoodComponentList_AddButton"
     const val DISHITEM_ADD_BUTTON_PREFIX = "DishItem_Add_"
+    const val DISHITEM_REMOVE_BUTTON_PREFIX = "DishItem_Remove_"
     const val DISHITEM_PREFIX = "DishItem_"
+    const val DISHITEM_CALORIES_PREFIX = "DishItem_Calories_"
     const val SEARCH_SHEET = "Search_Sheet"
     const val SEARCH_QUERY = "Search_Query"
     const val SEARCH_BUTTON = "Search_Button"
@@ -30,8 +32,7 @@ object SemanticsTags {
     const val REPORT_DIALOG = "Report_Dialog"
     const val REPORT_DIALOG_INPUT = "Report_Dialog_Input"
     const val REPORT_DIALOG_CONFIRM = "Report_Dialog_Confirm"
-    const val DIARY_PAGE = "DiaryPage"
+    const val BOTTOM_NAV_DIARY_PAGE = "BottomNav_DiaryPage"
     const val OVERVIEW_SWITCHER_TAB_PREFIX = "OverviewSwitcher_Tab_"
-
-    const val SNACKBAR = "Snackbar"
+    const val RECIPE_PAGE_TAB_PREFIX = "RecipePage_Tab_"
 }
