@@ -201,8 +201,6 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.datastore.preferences)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.mockk)
@@ -210,4 +208,5 @@ dependencies {
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.uiautomator)
 }
