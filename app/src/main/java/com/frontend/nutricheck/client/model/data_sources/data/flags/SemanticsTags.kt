@@ -2,6 +2,7 @@ package com.frontend.nutricheck.client.model.data_sources.data.flags
 
 object SemanticsTags {
     const val BOTTOM_NAV_ADD = "BottomNav_Add"
+    const val BOTTOM_NAV_PROFILE = "BottomNav_Profile"
     const val ADD_DIALOG = "AddDialog"
     const val ADD_DIALOG_ADD_MEAL = "AddDialog_Add_Meal"
     const val ADD_DIALOG_SCAN_MEAL = "AddDialog_Scan_Meal"
@@ -32,6 +33,12 @@ object SemanticsTags {
     const val REPORT_DIALOG_CONFIRM = "Report_Dialog_Confirm"
     const val DIARY_PAGE = "DiaryPage"
     const val OVERVIEW_SWITCHER_TAB_PREFIX = "OverviewSwitcher_Tab_"
+
+    const val PROFILE_DATA_AGE = "ProfilePage_Data_Age"
+    const val PROFILE_DATA_WEIGHT = "ProfilePage_Data_Weight"
+    const val PROFILE_DATA_HEIGHT = "ProfilePage_Data_Height"
+    const val PERSONAL_DATA_SAFE_BUTTON = "PersonalData_Safe_Button"
+
 
     const val SNACKBAR = "Snackbar"
 }

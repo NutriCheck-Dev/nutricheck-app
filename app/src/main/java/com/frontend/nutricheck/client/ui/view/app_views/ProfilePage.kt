@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.AppThemeState.currentTheme
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
@@ -132,7 +135,8 @@ fun ProfilePage(
                             fontSize = 16.sp)
                         Spacer(modifier = Modifier.weight(1f))
                         Text (userAgeText,
-                            fontSize = 16.sp)
+                            fontSize = 16.sp,
+                            modifier =  Modifier.semantics { contentDescription = SemanticsTags.PROFILE_DATA_AGE } )
                     }
                     Row (
                         modifier = Modifier.padding(8.dp)
@@ -141,7 +145,8 @@ fun ProfilePage(
                             fontSize = 16.sp)
                         Spacer(modifier = Modifier.weight(1f))
                         Text(userHeightText,
-                            fontSize = 16.sp)
+                            fontSize = 16.sp,
+                            modifier =  Modifier.semantics { contentDescription = SemanticsTags.PROFILE_DATA_HEIGHT } )
                     }
                     Row (
                         modifier = Modifier.padding(8.dp)
@@ -150,7 +155,8 @@ fun ProfilePage(
                             fontSize = 16.sp)
                         Spacer(modifier = Modifier.weight(1f))
                         Text(userWeightText,
-                            fontSize = 16.sp)
+                            fontSize = 16.sp,
+                            modifier =  Modifier.semantics { contentDescription = SemanticsTags.PROFILE_DATA_WEIGHT } )
                     }
                 }
             }

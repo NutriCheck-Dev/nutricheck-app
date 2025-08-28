@@ -33,7 +33,7 @@ class BypassOnboardingRule(
                     weight = 80.0,
                     activityLevel = ActivityLevel.FREQUENTLY,
                     weightGoal = WeightGoal.MAINTAIN_WEIGHT,
-                    targetWeight = 80.0,
+                    targetWeight = 81.0,
                     age = 24,
                     dailyCaloriesGoal = 0, proteinGoal = 0, carbsGoal = 0, fatsGoal = 0
                 )

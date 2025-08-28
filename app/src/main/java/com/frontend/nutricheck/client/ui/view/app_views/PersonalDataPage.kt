@@ -40,6 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +52,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
 import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
@@ -94,8 +97,9 @@ fun PersonalDataPage(
                     IconButton( onClick = { onEvent(ProfileEvent.OnSaveClick) },
                         modifier = Modifier.background(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            shape = CircleShape
-                    )) {
+                            shape = CircleShape)
+                            .semantics { contentDescription = SemanticsTags.PERSONAL_DATA_SAFE_BUTTON }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = stringResource(R.string.save),
