@@ -64,29 +64,30 @@ class StartAppTest {
 
 
     @Test
-    fun appStartsFromHomescreenAndShowsDashboardWithStoredData() {
-        device.pressHome()
-
+    fun appStartsAndShowsDashboardWithStoredData() {
+        // start app
         val launcherPackage: String = device.launcherPackageName
         compose.waitForIdle()
         device.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), 5000L)
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
         context.startActivity(intent)
+
+        // verify that the dashboard is displayed with the stored data
         device.wait(Until.hasObject(By.pkg(context.packageName).depth(0)), 5000L)
         compose.waitUntil(timeoutMillis = 20_000) {
             compose.onAllNodesWithText(InstrumentationRegistry.getInstrumentation().targetContext
                 .getString(R.string.homepage_calorie_history)).fetchSemanticsNodes().isNotEmpty()
         }
         verifyDailyNutritionValues()
-       compose.onNodeWithText(InstrumentationRegistry.getInstrumentation().targetContext
+        compose.onNodeWithText(InstrumentationRegistry.getInstrumentation().targetContext
             .getString(R.string.homepage_weight_progress)).assertIsDisplayed()
     }
 
     private fun verifyDailyNutritionValues() {
-        compose.onNodeWithText("1g").assertIsDisplayed()
-        compose.onNodeWithText("20g").assertIsDisplayed()
-        compose.onNodeWithText("0g").assertIsDisplayed()
+        compose.onNodeWithText("1g").assertIsDisplayed() // protein value
+        compose.onNodeWithText("20g").assertIsDisplayed() // carbohydrate value
+        compose.onNodeWithText("0g").assertIsDisplayed() // fat value
     }
 
 }
