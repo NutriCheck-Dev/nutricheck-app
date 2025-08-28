@@ -33,6 +33,7 @@ fun BottomNavigationBar(
     NavigationBar {
 
         NavigationBarItem(
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.HOME_PAGE },
             selected = currentDestination == Screen.HomePage.route,
             onClick = { onClickHome() },
             icon = { Icon(Icons.Default.Home,
@@ -58,7 +59,7 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
-            modifier = Modifier.semantics { contentDescription = SemanticsTags.BOTTOM_NAV_ADD },
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.BOTTOM_NAV_ADD},
             selected = currentDestination == "add",
             onClick = { onClickAdd() },
             icon = { Icon(Icons.Default.AddCircle,

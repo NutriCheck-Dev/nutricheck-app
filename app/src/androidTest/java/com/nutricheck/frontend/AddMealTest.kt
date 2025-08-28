@@ -3,10 +3,13 @@ package com.nutricheck.frontend
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
@@ -59,34 +62,22 @@ class AddMealTest {
 
     @Test
     fun addMeal_manual_online_updatesOverview() {
+        val firstIngredient = "Apfel"
+        val secondIngredient = "Banane"
         openAddDialog()
         openAddMeal()
 
         openIngredientSearch()
 
-        addIngredientViaQuickAdd("Apfel")
-        addIngredientViaQuickAdd("Banane")
+        addMealIngredientViaQuickAdd(firstIngredient)
+        addMealIngredientViaQuickAdd(secondIngredient)
         selectDayTime()
         persistMeal()
-
-        addIngredientViaQuickAdd("Apfel")
-        addIngredientViaQuickAdd("Banane")
-
-
-
-        //assertHomeOverviewUpdated()*/
-    }
-
-    private fun selectDayTime() {
-        compose.onNodeWithContentDescription(SemanticsTags.DAYTIME_PICKER)
-            .assertIsDisplayed()
-            .performClick()
-
-        compose.onNodeWithContentDescription(SemanticsTags.DAYTIME_ITEM_PREFIX + SemanticsTags.DAYTIME_ITEM_BREAKFAST)
-            .assertIsDisplayed()
-            .performClick()
+        assertOnHistoryPage()
+        Thread.sleep(20_000)
 
     }
+
 
     // ---------- V2: Online + Scannen (AI) ----------
     /**
@@ -104,34 +95,34 @@ class AddMealTest {
     }*/
 
     // ---------- V3: Offline + eigenes Rezept ----------
-    /**
+
     @Test
     fun addMeal_ownRecipe_offline_updatesOverview() {
+        val recipeName = "My Awesome Recipe"
+
+        openAddDialogThenRecipeEditor()
+        openIngredientSearch()
+        addRecipeIngredientViaQuickAdd("Apfel")
+        addRecipeIngredientViaQuickAdd("Banane")
+        fillAndPersistRecipe(name = recipeName, description = "This is my awesome recipe.")
+        assertOnRecipePage(name = recipeName)
+
         openAddDialog()
         openAddMeal()
 
-        // „Eigenes Rezept“ Flow
-        compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_ADD_OWN_RECIPE)
+        openIngredientSearch()
+        compose.onAllNodes(
+            hasContentDescriptionPrefix(SemanticsTags.RECIPE_PAGE_TAB_PREFIX),
+            useUnmergedTree = true
+        )[1]
             .assertIsDisplayed()
             .performClick()
-
-        fillOwnRecipe(name = "Offline Bowl", description = "Hafer + Banane")
+        addMealIngredientViaQuickAdd(recipeName)
+        selectDayTime()
         persistMeal()
-
-        assertHomeOverviewUpdated()
+        assertOnHistoryPage(recipeName)
+        Thread.sleep(20_000)
     }
-
-    // ---------- V4: Offline + Scannen -> Fehler ----------
-    @Test
-    fun addMeal_scan_offline_showsError() {
-        openAddDialog()
-        tapScanMeal()
-
-        compose.onNodeWithContentDescription(SemanticsTags.ERROR_SNACKBAR)
-            .assertIsDisplayed()
-
-    }*/
-
 
     private fun openAddDialog() {
         compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_ADD)
@@ -169,7 +160,21 @@ class AddMealTest {
             .assertIsDisplayed()
     }
 
-    private fun addIngredientViaQuickAdd(query: String) {
+    private fun addMealIngredientViaQuickAdd(query: String) {
+        compose.onNodeWithContentDescription(SemanticsTags.SEARCH_QUERY).performTextClearance()
+        compose.onNodeWithContentDescription(SemanticsTags.SEARCH_QUERY).performTextInput(query)
+        compose.onNodeWithContentDescription(SemanticsTags.SEARCH_BUTTON).performClick()
+
+        compose.waitUntil(30_000) {
+            compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.MEAL_SEARCH_PREFIX))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+
+        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.MEAL_SEARCH_PREFIX))
+            .onFirst()
+            .performClick()
+    }
+    private fun addRecipeIngredientViaQuickAdd(query: String) {
         compose.onNodeWithContentDescription(SemanticsTags.SEARCH_QUERY).performTextClearance()
         compose.onNodeWithContentDescription(SemanticsTags.SEARCH_QUERY).performTextInput(query)
         compose.onNodeWithContentDescription(SemanticsTags.SEARCH_BUTTON).performClick()
@@ -183,6 +188,27 @@ class AddMealTest {
             .onFirst()
             .performClick()
     }
+
+    private fun selectDayTime() {
+        compose.onNodeWithContentDescription(SemanticsTags.DAYTIME_PICKER)
+            .assertExists()
+            .performClick()
+
+
+        compose.waitUntil(5_000) {
+            compose.onAllNodes(
+                hasContentDescriptionPrefix(SemanticsTags.DAYTIME_ITEM_PREFIX),
+                useUnmergedTree = true
+            ).fetchSemanticsNodes().isNotEmpty()
+        }
+
+        compose.onNodeWithTag("DAYTIME_ITEM_LUNCH")
+            .assertExists()
+            .assertHasClickAction()
+            .performClick()
+        compose.mainClock.advanceTimeBy(500)
+    }
+
     /**
     private fun fillOwnRecipe(name: String, description: String) {
         compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_NAME).performTextClearance()
@@ -193,8 +219,39 @@ class AddMealTest {
 
     private fun persistMeal() {
         compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_PERSIST)
+            .performClick()
+        compose.mainClock.advanceTimeBy(1000)
+    }
+    private fun assertOnHistoryPage() {
+        compose.onNodeWithContentDescription(SemanticsTags.HISTORY_PAGE).assertIsDisplayed()
+    }
+    private fun openAddDialogThenRecipeEditor() {
+
+        compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_ADD)
             .assertIsDisplayed()
             .performClick()
+
+        compose.onNodeWithContentDescription(SemanticsTags.ADD_DIALOG_ADD_RECIPE)
+            .assertIsDisplayed()
+            .performClick()
+
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PAGE).assertIsDisplayed()
+    }
+    private fun fillAndPersistRecipe(name: String, description: String) {
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_NAME).performTextClearance()
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_NAME).performTextInput(name)
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_DESCRIPTION).performTextClearance()
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_DESCRIPTION).performTextInput(description)
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PERSIST).performClick()
+    }
+    private fun assertOnRecipePage(name: String) {
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
+        compose.onNodeWithText(name, substring = false).assertIsDisplayed()
+    }
+
+    private fun assertOnHistoryPage(name: String) {
+        compose.onNodeWithContentDescription(SemanticsTags.HISTORY_PAGE).assertIsDisplayed()
+        compose.onNodeWithText(name, substring = false).assertIsDisplayed()
     }
 /**
     private fun assertHomeOverviewUpdated() {
