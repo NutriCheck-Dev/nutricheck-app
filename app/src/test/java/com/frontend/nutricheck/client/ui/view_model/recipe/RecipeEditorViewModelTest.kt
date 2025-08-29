@@ -32,11 +32,12 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.assertNull
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipeEditorViewModelTest {
@@ -68,17 +69,6 @@ class RecipeEditorViewModelTest {
         carbohydrates = 10.0,
         protein = 5.0,
         fat = 5.0,
-        servings = 1.0,
-        servingSize = ServingSize.ONEHOUNDREDGRAMS
-    )
-
-    private val foodProduct3 = FoodProduct(
-        id = "fp3",
-        name = "Basil",
-        calories = 5.0,
-        carbohydrates = 1.0,
-        protein = 0.3,
-        fat = 0.1,
         servings = 1.0,
         servingSize = ServingSize.ONEHOUNDREDGRAMS
     )
@@ -131,7 +121,7 @@ class RecipeEditorViewModelTest {
         val draft = createViewModel.draft.value
         assertNull(draft.original)
         assertTrue(draft.ingredients.isEmpty())
-        assertEquals(1.0, draft.servings)
+        assertEquals(1.0, draft.servings, 0.0)
         assertTrue(draft.ingredients.isEmpty())
     }
 
@@ -149,7 +139,7 @@ class RecipeEditorViewModelTest {
         val draft = createViewModel.draft.value
         assertEquals("Pasta Pesto", draft.title)
         assertEquals("Boil Pasta, mix with", draft.description)
-        assertEquals(3.0, draft.servings)
+        assertEquals(3.0, draft.servings, 0.0)
         assertEquals("tomato", draft.query)
         assertTrue(draft.expanded)
     }
@@ -174,7 +164,7 @@ class RecipeEditorViewModelTest {
 
         val draft2 = createViewModel.draft.value
         assertEquals(1, draft2.ingredients.size)
-        assertEquals(2.0, (draft2.ingredients.first() as FoodProduct).servings)
+        assertEquals(2.0, (draft2.ingredients.first() as FoodProduct).servings, 0.0)
         assertTrue(awaited.await() is RecipeEditorEvent.IngredientAdded)
     }
 
@@ -277,11 +267,11 @@ class RecipeEditorViewModelTest {
         coVerify {
             recipeRepository.insertRecipe(withArg { recipe ->
                 assertEquals("Pasta Pesto", recipe.name)
-                assertEquals(200.0 * 1 + 100.0 * 1, recipe.calories)
-                assertEquals(30.0 * 1 + 10.0 * 1, recipe.carbohydrates)
-                assertEquals(10.0 * 1 + 5.0 * 1, recipe.protein)
-                assertEquals(5.0 * 1 + 5.0 * 1, recipe.fat)
-                assertEquals(2.0, recipe.servings)
+                assertEquals(200.0 * 1 + 100.0 * 1, recipe.calories, 0.0)
+                assertEquals(30.0 * 1 + 10.0 * 1, recipe.carbohydrates, 0.0)
+                assertEquals(10.0 * 1 + 5.0 * 1, recipe.protein, 0.0)
+                assertEquals(5.0 * 1 + 5.0 * 1, recipe.fat, 0.0)
+                assertEquals(2.0, recipe.servings, 0.0)
                 assertEquals(2, recipe.ingredients.size)
                 assertEquals(RecipeVisibility.OWNER, recipe.visibility)
             })
@@ -321,11 +311,40 @@ class RecipeEditorViewModelTest {
             recipeRepository.updateRecipe(withArg { recipe ->
                 assertEquals("r1", recipe.id)
                 assertEquals("New Title", recipe.name)
-                assertEquals(3.0, recipe.servings)
+                assertEquals(3.0, recipe.servings, 0.0)
                 assertEquals(2, recipe.ingredients.size)
             })
         }
         assertTrue(awaited.await() is RecipeEditorEvent.RecipeSaved)
+    }
+
+    @Test
+    fun `Clear resets search state and clears error`() = testScope.runTest {
+        val viewModel = makeCreateViewModel()
+
+        viewModel.onEvent(RecipeEditorEvent.QueryChanged("pasta"))
+        coEvery { foodProductRepository.searchFoodProducts("pasta", any()) } returns
+                flowOf(Result.Success(listOf(foodProduct1, foodProduct2)))
+
+        viewModel.onEvent(RecipeEditorEvent.SearchIngredients)
+        advanceUntilIdle()
+
+        val before = viewModel.draft.value
+        assertEquals("pasta", before.query)
+        assertTrue(before.hasSearched)
+        assertEquals("pasta", before.lastSearchedQuery)
+        assertEquals(listOf("fp1", "fp2"), before.results.map { it.id })
+
+        viewModel.onEvent(RecipeEditorEvent.Clear)
+        advanceUntilIdle()
+
+        val after = viewModel.draft.value
+        assertEquals("", after.query)
+        assertTrue(after.results.isEmpty())
+        assertFalse(after.hasSearched)
+        assertNull(after.lastSearchedQuery)
+
+        assertFalse(viewModel.uiState.value is BaseViewModel.UiState.Error)
     }
 
 }

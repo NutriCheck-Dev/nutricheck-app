@@ -34,11 +34,10 @@ import okhttp3.MultipartBody
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import java.util.Date
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
-
 /**
  * Unit test class for [AddAiMealViewModel] using MockK framework.
  *

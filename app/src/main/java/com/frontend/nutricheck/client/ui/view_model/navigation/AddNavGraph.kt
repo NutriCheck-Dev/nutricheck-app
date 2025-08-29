@@ -13,7 +13,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
-import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.app_views.CameraPreviewScreen
 import com.frontend.nutricheck.client.ui.view.app_views.CreateMealPage
 import com.frontend.nutricheck.client.ui.view.app_views.RecipeEditorPage
@@ -60,8 +59,6 @@ sealed class AddScreens(val route: String) {
 fun AddNavGraph(
     mainNavController: NavHostController,
     origin: AddDialogOrigin,
-    date: Long?,
-    dayTime: DayTime?
 ) {
     val addNavController = rememberNavController()
 
@@ -78,7 +75,6 @@ fun AddNavGraph(
             AddDialogOrigin.BOTTOM_NAV_BAR_ADD_RECIPE -> AddScreens.AddRecipeGraph.route
             AddDialogOrigin.BOTTOM_NAV_BAR_ADD_AI_MEAL -> AddScreens.AddAiMealGraph.route
             AddDialogOrigin.RECIPE_PAGE -> AddScreens.AddRecipe.route
-            AddDialogOrigin.HISTORY_PAGE -> AddScreens.AddMeal.DEFAULT
         },
         route = "add_graph"
     ) {
@@ -90,18 +86,7 @@ fun AddNavGraph(
                 val parentEntry = remember(backStackEntry) {
                     addNavController.getBackStackEntry("add_meal_graph")
                 }
-                LaunchedEffect(Unit) {
-                    date?.let {
-                        if (parentEntry.savedStateHandle.get<String>("date") == null) {
-                            parentEntry.savedStateHandle["date"] = it
-                        }
-                    }
-                    dayTime?.let {
-                        if (parentEntry.savedStateHandle.get<String>("dayTime") == null) {
-                            parentEntry.savedStateHandle["dayTime"] = it
-                        }
-                    }
-                }
+
                 val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
 
                 LaunchedEffect(searchViewModel) {

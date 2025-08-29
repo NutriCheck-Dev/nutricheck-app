@@ -121,7 +121,9 @@ fun RecipeEditorPage(
                 foodComponents = draft.results,
                 trailingContent = { item -> CustomAddButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX + item.name }) {
                     recipeEditorViewModel.onEvent(
-                    RecipeEditorEvent.IngredientAdded(item)) }
+                    RecipeEditorEvent.IngredientAdded(item)) 
+                    recipeEditorViewModel.onEvent(RecipeEditorEvent.Clear)
+                    }
                                   },
                 onItemClick = { onItemClick(it) },
                 query = draft.query,
