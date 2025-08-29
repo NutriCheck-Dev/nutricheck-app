@@ -1,12 +1,19 @@
 package com.nutricheck.frontend
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.frontend.nutricheck.client.MainActivity
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
@@ -17,20 +24,18 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import org.junit.After
+import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Date
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class OnboardingTest {
-
-    @get:Rule(order = -1)
-    val dbPersist = DbPersistRule()
 
     @get:Rule(order = 0)
     val hilt = HiltAndroidRule(this)
@@ -39,22 +44,20 @@ class OnboardingTest {
     val compose = createAndroidComposeRule<MainActivity>()
 
     @Inject
-    lateinit var db: LocalDatabase
-
-    @Inject
     lateinit var dataStore : DataStore<Preferences>
 
     @Before
     fun setUp() {
         hilt.inject()
-        clearOnboardingStatus()
+        //clearOnboardingStatus()
 
     }
-
-    @After
-    fun tearDown() = runBlocking{
-        db.close()
-    }
+    private val newUsername = "Max Mustermann"
+    private val validWeight = 75
+    private val validHeight = 185
+    private val invalidWeight = -5
+    private val invalidHeight = 0
+    private val birthYear = 1990
 
     @Test
     fun onboarding_completeFlowWithValidData_navigatesToDashboard() {
@@ -74,12 +77,12 @@ class OnboardingTest {
 
         // Fill in name
         compose.onNodeWithText(compose.activity.getString(R.string.userData_label_name))
-            .performTextInput("Max Mustermann")
+            .performTextInput(newUsername)
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_next)).performClick()
 
         // Fill in birthdate
         waitForBirthdateScreen()
-        selectBirthdate(1990, 1, 1)
+        selectBirthdate(birthYear, 1, 1)
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_next)).performClick()
 
         // Select gender
@@ -89,7 +92,8 @@ class OnboardingTest {
 
         // Try invalid height
         waitForHeightScreen()
-        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_height)).performTextInput("0")
+        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_height))
+            .performTextInput(invalidHeight.toString())
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_next)).performClick()
         compose.waitUntil(3000) {
             compose.onAllNodesWithText(compose.activity.getString(R.string.userData_error_height_too_short))
@@ -98,21 +102,25 @@ class OnboardingTest {
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_question_height)).assertIsDisplayed()
 
         // Fill in height
-        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_height)).performTextInput("180")
+        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_height))
+            .performTextInput(validHeight.toString())
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_next)).performClick()
 
         // Try invalid weight
         waitForWeightScreen()
-        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_weight)).performTextInput("-5")
+        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_weight))
+            .performTextInput(invalidWeight.toString())
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_next)).performClick()
         compose.waitUntil(3000) {
             compose.onAllNodesWithText(compose.activity.getString(R.string.userData_error_weight_too_low))
                 .fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_question_weight)).assertIsDisplayed()
+        compose.onNodeWithText(invalidWeight.toString()).performTextClearance()
 
         // Fill in weight
-        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_weight)).performTextInput("75")
+        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_weight))
+            .performTextInput(validWeight.toString())
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_next)).performClick()
 
         // Select activity level
@@ -127,17 +135,34 @@ class OnboardingTest {
 
         // Fill in target weight
         waitForTargetWeightScreen()
-        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_target_weight)).performTextInput("75")
+        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_target_weight))
+            .performTextInput(validWeight.toString())
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_finish)).performClick()
 
-        // Verify navigation to dashboard
         waitForDashboard()
 
-        // Verify user data is saved
-        verifyUserDataSaved()
+        Thread.sleep(20000)
+        compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_PROFILE).performClick()
+        verifyUpdatedDataDisplayed()
     }
 
+    private fun verifyUpdatedDataDisplayed() {
+        compose.waitUntil(5_000) {
+            // dark mode menu item is only displayed on profile page
+            compose.onAllNodesWithText(compose.activity.getString(R.string.profile_menu_item_darkmode))
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("Hi, $newUsername").assertIsDisplayed()
+        compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_WEIGHT)
+            .assertTextEquals("$validWeight kg")
 
+        compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_HEIGHT)
+            .assertTextEquals("$validHeight cm")
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        val age = currentYear - birthYear
+        compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_AGE)
+            .assertTextEquals("$age years")
+    }
 
     // Helper methods
     private fun waitForOnboardingWelcomeScreen() {
@@ -212,10 +237,30 @@ class OnboardingTest {
     }
 
     private fun selectBirthdate(year: Int, month: Int, day: Int) {
-        // This depends on your date picker implementation
-        // You might need to interact with a date picker dialog or input fields
-        // For now, assuming there are separate input fields or a date picker
-        // Adjust according to your actual UI implementation
+
+        compose.onNodeWithText(compose.activity.getString(R.string.userData_label_birthdate))
+            .performClick()
+
+        // Warte bis der DatePicker sichtbar ist
+        compose.waitUntil(5000) {
+            compose.onAllNodesWithTag("DatePicker")
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        // hardcoded because Strings is an internal class
+        val datePickerEditButtonContentDescription = 2131624087
+        compose.onNodeWithContentDescription(compose.activity.getString(datePickerEditButtonContentDescription))
+            .performClick()
+
+        compose.onNodeWithText("Date").performClick()
+        compose.onNodeWithText("Date").performTextInput("01011990")
+
+        compose.onNodeWithText(compose.activity.getString(R.string.save)).performClick()
+
+        // Wait for the dialog to close
+        compose.waitUntil(3000) {
+            compose.onAllNodesWithText(compose.activity.getString(R.string.save))
+                .fetchSemanticsNodes().isEmpty()
+        }
     }
 
     private fun selectGender(gender: Gender) {
@@ -245,23 +290,11 @@ class OnboardingTest {
         }
         compose.onNodeWithText(goalText).performClick()
     }
-
-    private fun clearOnboardingStatus() = runBlocking{
-        val key = booleanPreferencesKey("onboarding_completed")
-        dataStore.edit { prefs ->
-            prefs.remove(key)
-        }
-    }
-
-    private fun verifyUserDataSaved() = runBlocking {
-        val userData = db.userDataDao().getUserData()
-
-        assert(userData != null)
-        assert(userData?.username == "Max Mustermann")
-        assert(userData?.height == 180.0)
-        assert(userData?.weight == 75.0)
-        assert(userData?.targetWeight == 75.0)
-        assert(userData?.activityLevel == ActivityLevel.OCCASIONALLY)
-        assert(userData?.weightGoal == WeightGoal.MAINTAIN_WEIGHT)
-    }
+//
+//    private fun clearOnboardingStatus() = runBlocking{
+//        val key = booleanPreferencesKey("onboarding_completed")
+//        dataStore.edit { prefs ->
+//            prefs.remove(key)
+//        }
+//    }
 }

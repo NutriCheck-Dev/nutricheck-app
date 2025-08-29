@@ -50,6 +50,7 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.BOTTOM_NAV_PROFILE },
             selected = currentDestination == Screen.ProfilePage.route,
             onClick = { onClickProfile() },
             icon = { Icon((Icons.Default.AccountCircle),
