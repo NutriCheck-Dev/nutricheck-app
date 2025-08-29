@@ -232,10 +232,11 @@ class RecipeEditorViewModel @Inject constructor(
                 "fat" to 0.0
             )
         ) { acc, ingredient ->
-            acc["calories"] = acc["calories"]!! + ingredient.calories * ingredient.servings
-            acc["carbohydrates"] = acc["carbohydrates"]!! + ingredient.carbohydrates * ingredient.servings
-            acc["protein"] = acc["protein"]!! + ingredient.protein * ingredient.servings
-            acc["fat"] = acc["fat"]!! + ingredient.fat * ingredient.servings
+            val ingredient = ingredient as FoodProduct
+            acc["calories"] = acc["calories"]!! + ingredient.calories * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
+            acc["carbohydrates"] = acc["carbohydrates"]!! + ingredient.carbohydrates * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
+            acc["protein"] = acc["protein"]!! + ingredient.protein * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
+            acc["fat"] = acc["fat"]!! + ingredient.fat * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
             acc
         }
         val actualIngredients = draft.ingredients.map { foodComponent ->
@@ -327,7 +328,6 @@ class RecipeEditorViewModel @Inject constructor(
         _draft.update { draft ->
             draft.copy(
                 query = "",
-                results = emptyList(),
                 hasSearched = false,
                 lastSearchedQuery = null
             )

@@ -388,7 +388,6 @@ class FoodSearchViewModel @Inject constructor(
         _searchState.update { state ->
             val newParams = state.parameters.copy(
                 query = "",
-                generalResults = emptyList(),
                 hasSearched = false,
                 lastSearchedQuery = null
             )

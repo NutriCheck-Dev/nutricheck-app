@@ -340,7 +340,6 @@ class RecipeEditorViewModelTest {
 
         val after = viewModel.draft.value
         assertEquals("", after.query)
-        assertTrue(after.results.isEmpty())
         assertFalse(after.hasSearched)
         assertNull(after.lastSearchedQuery)
 
