@@ -59,7 +59,7 @@ class EditRecipeTest {
     }
 
     @Test
-    fun editRecipe_changeName_and_deleteIngredient_persisted() {
+    fun editRecipe_changeName_persisted() {
         val newName = "Pasta Pomodoro"
 
         navigateToDiaryPageThenRecipePage()
@@ -79,6 +79,7 @@ class EditRecipeTest {
         val recipeTag = SemanticsTags.DISHITEM_PREFIX + name
         compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
 
+        Thread.sleep(5_000)
         compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_CALORIES_PREFIX))
             .fetchSemanticsNodes().isNotEmpty()
 
@@ -101,6 +102,7 @@ class EditRecipeTest {
         compose.onNodeWithContentDescription(saveButton).assertIsDisplayed().performClick()
 
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
+        Thread.sleep(5_000)
         compose.onNodeWithContentDescription(SemanticsTags.DISHITEM_PREFIX + newName).assertIsDisplayed()
     }
 
@@ -116,16 +118,19 @@ class EditRecipeTest {
         val saveButton = SemanticsTags.RECIPE_EDITOR_PERSIST
         compose.onNodeWithContentDescription(saveButton).assertIsDisplayed().performClick()
 
+        Thread.sleep(5_000)
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
     }
 
     private fun navigateToRecipeEditor() {
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX))
-            .fetchSemanticsNodes().isNotEmpty()
+        val detailsButtonTag = SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + name
 
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX))
-            .onFirst()
+        compose.onNodeWithContentDescription(detailsButtonTag, useUnmergedTree = true)
+            .assertIsDisplayed()
             .performClick()
+
+        compose.onNodeWithContentDescription(SemanticsTags.DETAILS_MENU)
+            .assertIsDisplayed()
 
         compose.onNodeWithContentDescription(SemanticsTags.DETAILS_MENU).assertIsDisplayed()
 
@@ -155,6 +160,7 @@ class EditRecipeTest {
 
         val recipeTag = SemanticsTags.DISHITEM_PREFIX + name
         compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
+        Thread.sleep(2_000)
     }
 
     private fun hasContentDescriptionPrefix(prefix: String) : SemanticsMatcher =
