@@ -3,6 +3,7 @@ package com.frontend.nutricheck.client.model.repositories.history
 import android.content.Context
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.dto.ErrorResponseDTO
+import com.frontend.nutricheck.client.model.IoDispatcher
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Meal
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
@@ -25,7 +26,7 @@ import com.frontend.nutricheck.client.model.data_sources.remote.RemoteApi
 import com.frontend.nutricheck.client.model.repositories.mapper.MealMapper
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -47,10 +48,11 @@ class HistoryRepositoryImpl @Inject constructor(
     private val foodDao: FoodDao,
     private val recipeDao: RecipeDao,
     private val ingredientDao: IngredientDao,
-    private val api: RemoteApi
+    private val api: RemoteApi,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : HistoryRepository {
 
-    override suspend fun getCaloriesOfDay(date: Date): Int = withContext(Dispatchers.IO) {
+    override suspend fun getCaloriesOfDay(date: Date): Int = withContext(dispatcher) {
         val meals = mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
         meals.sumOf { meal ->
             val foodItemsCalories = meal.mealFoodItems.sumOf { ingredient ->
@@ -66,7 +68,7 @@ class HistoryRepositoryImpl @Inject constructor(
 
 
     override suspend fun requestAiMeal(file: MultipartBody.Part, language : String): Result<Meal> =
-        withContext(Dispatchers.IO) {
+        withContext(dispatcher) {
         try {
             val response = api.estimateMeal(file, language)
             val body = response.body()
@@ -88,11 +90,11 @@ class HistoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteMeal(meal: Meal) = withContext(Dispatchers.IO) {
+    override suspend fun deleteMeal(meal: Meal) = withContext(dispatcher) {
         mealDao.delete(DbMealMapper.toMealEntity(meal))
     }
 
-    override suspend fun updateMeal(meal: Meal) = withContext(Dispatchers.IO) {
+    override suspend fun updateMeal(meal: Meal) = withContext(dispatcher) {
 
         mealDao.update(DbMealMapper.toMealEntity(meal))
 
@@ -108,11 +110,11 @@ class HistoryRepositoryImpl @Inject constructor(
         mealRecipeItemDao.insertAll(mealRecipeItemEntities)
     }
 
-    override suspend fun getMealsForDay(date: Date): List<Meal> = withContext(Dispatchers.IO) {
+    override suspend fun getMealsForDay(date: Date): List<Meal> = withContext(dispatcher) {
         mealDao.getMealsWithAllForDay(date).map { DbMealMapper.toMeal(it) }
     }
 
-    override suspend fun removeMealItem(mealItem: MealItem) = withContext(Dispatchers.IO) {
+    override suspend fun removeMealItem(mealItem: MealItem) = withContext(dispatcher) {
         val mealId = mealItem.mealId
         val mealWithAll = mealDao.getById(mealId)
         val meal = DbMealMapper.toMeal(mealWithAll)
@@ -129,14 +131,14 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getMealById(mealId: String): Meal = withContext(Dispatchers.IO) {
+    override suspend fun getMealById(mealId: String): Meal = withContext(dispatcher) {
         DbMealMapper.toMeal(mealDao.getById(mealId))
     }
 
-    override suspend fun addMeal(meal: Meal) = withContext(Dispatchers.IO) {
+    override suspend fun addMeal(meal: Meal) = withContext(dispatcher) {
         //check if meal exists
         val mealEntities = mealDao.getMealsWithAllForDay(meal.date)
-        mealEntities.forEach { mealEntity -> if (mealEntity.meal.id == meal.id) throw Exception() }//error duplicate meal//TODO
+        mealEntities.forEach { mealEntity -> if (mealEntity.meal.id == meal.id) throw Exception() }
 
 
         val mealEntity = DbMealMapper.toMealEntity(meal)
@@ -166,36 +168,36 @@ class HistoryRepositoryImpl @Inject constructor(
     override suspend fun getMealFoodItemById(
         mealId: String,
         foodProductId: String
-    ): MealFoodItem = withContext(Dispatchers.IO) {
+    ): MealFoodItem = withContext(dispatcher) {
         val mealFoodItemWithProduct = mealFoodItemDao.getItemOfMealById(mealId, foodProductId)
         DbMealFoodItemMapper.toMealFoodItem(mealFoodItemWithProduct)
     }
 
     override suspend fun updateMealFoodItem(mealFoodItem: MealFoodItem) =
-        withContext(Dispatchers.IO) {
+        withContext(dispatcher) {
     mealFoodItemDao.update(DbMealFoodItemMapper.toMealFoodItemEntity(mealFoodItem))
     }
 
     override suspend fun getMealRecipeItemById(
         mealId: String,
         recipeId: String
-    ): MealRecipeItem = withContext(Dispatchers.IO) {
+    ): MealRecipeItem = withContext(dispatcher) {
         val mealRecipeItemWithRecipe = mealRecipeItemDao.getItemOfMealById(mealId)
         DbMealRecipeItemMapper.toMealRecipeItem(mealRecipeItemWithRecipe)
     }
 
-    override suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem) = withContext(Dispatchers.IO) {
+    override suspend fun updateMealRecipeItem(mealRecipeItem: MealRecipeItem) = withContext(dispatcher) {
         mealRecipeItemDao.update(DbMealRecipeItemMapper.toMealRecipeItemEntity(mealRecipeItem))
     }
 
-    override suspend fun observeMealsForDay(date: Date): Flow<List<Meal>> =
+    override fun observeMealsForDay(date: Date): Flow<List<Meal>> =
          mealDao.observeMealsForDay(date)
             .map { list ->
                 list.map(DbMealMapper:: toMeal) }
-            .flowOn(Dispatchers.IO)
+            .flowOn(dispatcher)
 
 
-    override suspend fun observeCaloriesOfDay(date: Date): Flow<Int> =
+    override fun observeCaloriesOfDay(date: Date): Flow<Int> =
         mealDao.observeMealsForDay(date) // Flow<List<DbMealWithAll>>
             .map { dbMeals ->
                 val meals = dbMeals.map { DbMealMapper.toMeal(it) }
@@ -209,10 +211,10 @@ class HistoryRepositoryImpl @Inject constructor(
                     foodItemsCalories + recipeItemsCalories
                 }.toInt()
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(dispatcher)
 
 
-    private suspend fun checkForFoodProducts(mealFoodItems: List<MealFoodItem>) = withContext(Dispatchers.IO) {
+    private suspend fun checkForFoodProducts(mealFoodItems: List<MealFoodItem>) = withContext(dispatcher) {
         for (mealFoodItem in mealFoodItems) {
             if (!foodDao.exists(mealFoodItem.foodProduct.id)) {
                 foodDao.insert(DbFoodProductMapper.toFoodProductEntity(mealFoodItem.foodProduct))
@@ -220,13 +222,13 @@ class HistoryRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun checkForFoodProducts(ingredient: Ingredient) = withContext(Dispatchers.IO) {
+    private suspend fun checkForFoodProducts(ingredient: Ingredient) = withContext(dispatcher) {
         if (!foodDao.exists(ingredient.foodProduct.id)) {
             foodDao.insert(DbFoodProductMapper.toFoodProductEntity(ingredient.foodProduct))
         }
     }
 
-    private suspend fun copyRecipe(mealRecipeItem: MealRecipeItem) : MealRecipeItem = withContext(Dispatchers.IO) {
+    private suspend fun copyRecipe(mealRecipeItem: MealRecipeItem) : MealRecipeItem = withContext(dispatcher) {
         val recipe = mealRecipeItem.recipe
         val id = UUID.randomUUID().toString()
         val copiedRecipe = recipe.copy(

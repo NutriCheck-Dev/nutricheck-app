@@ -34,10 +34,6 @@ class AndroidCameraController @Inject constructor(
     @ApplicationContext private val appContext: Context
 ) : CameraController {
 
-    companion object {
-        private const val MIME_TYPE_JPEG = "image/jpeg"
-    }
-
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     override val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest.asStateFlow()
 

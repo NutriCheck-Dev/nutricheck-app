@@ -7,4 +7,5 @@ plugins {
     id("com.google.devtools.ksp") version "2.1.0-1.0.29" apply false
     id("com.osacky.doctor") version "0.11.0" apply false
     id("org.jetbrains.kotlinx.kover") version "0.9.1" apply false
+    kotlin("jvm") version "1.9.10" apply false
  }

@@ -40,18 +40,18 @@ sealed interface OnboardingEvent {
     data class EnterWeightGoal(val weightGoal: WeightGoal?) : OnboardingEvent
     data class EnterTargetWeight(val targetWeight: String) : OnboardingEvent
     // collected events, which lead to navigation
-    object CompleteOnboarding : OnboardingEvent
+    data object CompleteOnboarding : OnboardingEvent
     // Navigation events
-    object StartOnboarding : OnboardingEvent
-    object NavigateToName : OnboardingEvent
-    object NavigateToBirthdate : OnboardingEvent
-    object NavigateToGender : OnboardingEvent
-    object NavigateToHeight : OnboardingEvent
-    object NavigateToWeight : OnboardingEvent
-    object NavigateToSportFrequency : OnboardingEvent
-    object NavigateToWeightGoal : OnboardingEvent
-    object NavigateToTargetWeight : OnboardingEvent
-    object NavigateToDashboard : OnboardingEvent
+    data object StartOnboarding : OnboardingEvent
+    data object NavigateToName : OnboardingEvent
+    data object NavigateToBirthdate : OnboardingEvent
+    data object NavigateToGender : OnboardingEvent
+    data object NavigateToHeight : OnboardingEvent
+    data object NavigateToWeight : OnboardingEvent
+    data object NavigateToSportFrequency : OnboardingEvent
+    data object NavigateToWeightGoal : OnboardingEvent
+    data object NavigateToTargetWeight : OnboardingEvent
+    data object NavigateToDashboard : OnboardingEvent
 }
 
 /**

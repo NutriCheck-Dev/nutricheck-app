@@ -198,10 +198,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
     implementation(libs.androidx.exifinterface)
-    implementation(libs.androidx.exifinterface)
     implementation(libs.commons.lang3)
-
-    implementation(libs.androidx.exifinterface)
+    implementation("org.apache.commons:commons-text:1.14.0")
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)

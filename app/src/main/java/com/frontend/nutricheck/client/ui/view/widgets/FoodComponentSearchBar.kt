@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -36,7 +35,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTag
  * @param placeholder Composable content to display as a placeholder in the search bar.
  * @param trailingIcon Optional trailing icon for the search bar.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodComponentSearchBar(
     modifier: Modifier = Modifier,

@@ -20,11 +20,11 @@ import com.frontend.nutricheck.client.ui.view_model.ProfileEvent
 import com.frontend.nutricheck.client.ui.view_model.ProfileViewModel
 
 sealed class ProfileScreens(val route: String) {
-    object ProfilePage : ProfileScreens("profile_page_route")
-    object WeightHistoryPage : ProfileScreens("weight_history_page_route")
-    object PersonalDataPage : ProfileScreens("personal_data_page_route")
-    object AddWeightDialog : ProfileScreens("add_weight_dialog_route")
-    object DeleteWeightDialog : ProfileScreens("delete_weight_dialog_route")
+    data object ProfilePage : ProfileScreens("profile_page_route")
+    data object WeightHistoryPage : ProfileScreens("weight_history_page_route")
+    data object PersonalDataPage : ProfileScreens("personal_data_page_route")
+    data object AddWeightDialog : ProfileScreens("add_weight_dialog_route")
+    data object DeleteWeightDialog : ProfileScreens("delete_weight_dialog_route")
 
 }
 

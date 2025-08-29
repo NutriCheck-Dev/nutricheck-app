@@ -73,9 +73,9 @@ interface HistoryRepository {
     /**
      * Returns a flow that emits the list of meals for a specific day whenever there is a change in the data.
      */
-    suspend fun observeMealsForDay(date: Date): Flow<List<Meal>>
+    fun observeMealsForDay(date: Date): Flow<List<Meal>>
     /**
      * Returns a flow that emits the total calories for a specific day whenever there is a change in the data.
      */
-    suspend fun observeCaloriesOfDay(date: Date): Flow<Int>
+    fun observeCaloriesOfDay(date: Date): Flow<Int>
 }

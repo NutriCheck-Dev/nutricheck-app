@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.appsetting
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -12,6 +11,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +26,8 @@ class AppSettingRepositoryImplTest {
 
     private val mockDataStore = mockk<DataStore<Preferences>>()
     private val mockPreferences = mockk<Preferences>()
-    private val mockMutablePreferences = mockk<MutablePreferences>(relaxed = true)
+
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     private lateinit var repository: AppSettingRepositoryImpl
 
@@ -45,7 +46,7 @@ class AppSettingRepositoryImplTest {
         every { mockDataStore.data } returns flowOf(mockPreferences)
 
         // Initialize the repository. Now it has a valid mock to work with.
-        repository = AppSettingRepositoryImpl(mockDataStore)
+        repository = AppSettingRepositoryImpl(mockDataStore, testDispatcher)
     }
 
     /**

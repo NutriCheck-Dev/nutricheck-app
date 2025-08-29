@@ -79,7 +79,7 @@ fun NutrientChart(
         (actualValue.toFloat() / totalValue).coerceIn(0f, 1f)
     } else 0f
     val styles = MaterialTheme.typography
-    val extendedColors = MaterialTheme.extended
+    val extendedColors = extended
 
     Card(
         modifier = modifier

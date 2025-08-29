@@ -51,7 +51,6 @@ data class NutrientEntry(
  * @param totalProtein Total protein recommended for the day.
  * @param totalFat Total fat recommended for the day.
  */
-@OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun RecipeNutrientChartsWidget(
     modifier: Modifier = Modifier,
@@ -143,7 +142,6 @@ fun RecipeNutrientChartsWidget(
  * @param totalProtein Total protein recommended for the day.
  * @param totalFat Total fat recommended for the day.
  */
-@OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun FoodProductNutrientChartsWidget(
     actualCalories: Double,

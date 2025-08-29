@@ -124,7 +124,8 @@ fun RecipeEditorPage(
                     RecipeEditorEvent.IngredientAdded(item))
                     recipeEditorViewModel.onEvent(RecipeEditorEvent.Clear)
                 }
-                                  },
+                selectedTab = 0,
+                onSelectTab = {},
                 onItemClick = { onItemClick(it) },
                 query = draft.query,
                 onQueryChange = { recipeEditorViewModel.onEvent(RecipeEditorEvent.QueryChanged(it)) },
@@ -132,9 +133,7 @@ fun RecipeEditorPage(
                 showTabRow = false,
                 isLoading = uiState == BaseViewModel.UiState.Loading,
                 showEmptyState = draft.hasSearched &&
-                        draft.lastSearchedQuery == draft.query,
-                onSelectTab = {},
-                selectedTab = 0
+                        draft.lastSearchedQuery == draft.query
             )
         }
     ) { innerPadding ->

@@ -33,21 +33,21 @@ import java.util.Calendar
  */
 sealed interface ProfileEvent {
     // Navigation events
-    object NavigateToPersonalData : ProfileEvent
-    object NavigateToAddNewWeight : ProfileEvent
-    object NavigateToProfileOverview : ProfileEvent
-    object NavigateToDeleteWeightDialog : ProfileEvent
-    object RestartApp : ProfileEvent
+    data object NavigateToPersonalData : ProfileEvent
+    data object NavigateToAddNewWeight : ProfileEvent
+    data object NavigateToProfileOverview : ProfileEvent
+    data object NavigateToDeleteWeightDialog : ProfileEvent
+    data object RestartApp : ProfileEvent
     // collected events, which lead to navigation
-    object OnPersonalDataClick : ProfileEvent
-    object OnAddNewWeightClick : ProfileEvent
-    object OnDisplayProfileOverview : ProfileEvent
-    object OnRestartApp : ProfileEvent
+    data object OnPersonalDataClick : ProfileEvent
+    data object OnAddNewWeightClick : ProfileEvent
+    data object OnDisplayProfileOverview : ProfileEvent
+    data object OnRestartApp : ProfileEvent
     data class OnWeightClick(val weight: Weight) : ProfileEvent
     // collected events, which handle data changes
-    object DisplayWeightHistory : ProfileEvent
-    object OnSaveClick : ProfileEvent
-    object DeleteWeight : ProfileEvent
+    data object DisplayWeightHistory : ProfileEvent
+    data object OnSaveClick : ProfileEvent
+    data object DeleteWeight : ProfileEvent
     data class ChangeTheme(val theme: ThemeSetting) : ProfileEvent
     data class SaveNewWeight(val weight: String, val date: Date) : ProfileEvent
     data class UpdateUserNameDraft(val username: String) : ProfileEvent
@@ -292,10 +292,10 @@ class ProfileViewModel @Inject constructor(
     private fun Date.atStartOfDay(): Date {
         val calendar = Calendar.getInstance()
         calendar.time = this
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
+        calendar[Calendar.HOUR_OF_DAY] = 0
+        calendar[Calendar.MINUTE] = 0
+        calendar[Calendar.SECOND] = 0
+        calendar[Calendar.MILLISECOND] = 0
         return calendar.time
     }
 }

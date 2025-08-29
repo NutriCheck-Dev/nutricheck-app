@@ -2,7 +2,6 @@ package com.frontend.nutricheck.client.ui.view.app_views.foodcomponent
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,10 +36,10 @@ import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewMode
 import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewViewModel
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
+import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorViewModel
 
 /**
  * Displays an overview of a food product, including its nutritional information,

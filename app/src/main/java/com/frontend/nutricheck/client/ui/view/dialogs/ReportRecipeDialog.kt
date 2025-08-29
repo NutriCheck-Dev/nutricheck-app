@@ -46,7 +46,7 @@ fun ReportRecipeDialog(
     reportTextPlaceholder: String = "This is a test report."
 ) {
     val colors = MaterialTheme.colorScheme
-    val extendedColors = MaterialTheme.extended
+    val extendedColors = extended
     MaterialTheme.typography
 
     AlertDialog(
