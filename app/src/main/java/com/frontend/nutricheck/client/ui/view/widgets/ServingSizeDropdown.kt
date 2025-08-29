@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -55,11 +56,12 @@ fun ServingSizeDropdown(
     var anchorPosition by remember { mutableStateOf(Offset.Zero) }
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
+    val context = LocalContext.current
 
-    val list = options.map { it.getDisplayName() }
+    val list = options.map { it.getDisplayName(context = context) }
     val visibleCount = 8
 
-    val initialIndex = list.indexOf(currentServingSize.getDisplayName()).coerceAtLeast(0)
+    val initialIndex = list.indexOf(currentServingSize.getDisplayName(context)).coerceAtLeast(0)
 
     val state = rememberLazyListState()
     val fling = rememberSnapFlingBehavior(lazyListState = state, snapPosition = SnapPosition.Center)
@@ -82,7 +84,7 @@ fun ServingSizeDropdown(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = currentServingSize.getDisplayName(),
+                text = currentServingSize.getDisplayName(context),
                 color = colors.onSurfaceVariant,
                 style = styles.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
             )

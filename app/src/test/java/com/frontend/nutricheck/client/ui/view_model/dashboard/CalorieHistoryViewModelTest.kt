@@ -2,8 +2,6 @@ package com.frontend.nutricheck.client.ui.view_model.dashboard
 
 import com.frontend.nutricheck.client.model.repositories.history.HistoryRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
-import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryEvent
-import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,11 +16,11 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import java.util.Calendar
 import java.util.Date
 import kotlin.math.abs
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Unit test class for CalorieHistoryViewModel.
@@ -73,7 +71,7 @@ class CalorieHistoryViewModelTest {
     fun `initial state has correct default values`() = runTest {
         val initialState = viewModel.calorieHistoryState.first()
 
-        assertEquals(emptyList(), initialState.calorieHistory)
+        assertEquals(emptyList<Int>(), initialState.calorieHistory)
         assertEquals(0, initialState.calorieGoal)
     }
 
@@ -163,8 +161,8 @@ class CalorieHistoryViewModelTest {
         // Verify dates are in chronological order (oldest first)
         for (i in 0 until dateSlot.size - 1) {
             assertTrue(
-                dateSlot[i].before(dateSlot[i + 1]) || dateSlot[i] == dateSlot[i + 1],
-                "Date at index $i should be before or equal to date at index ${i + 1}"
+                "Date at index $i should be before or equal to date at index ${i + 1}",
+                dateSlot[i].before(dateSlot[i + 1]) || dateSlot[i] == dateSlot[i + 1]
             )
         }
 
@@ -285,7 +283,7 @@ class CalorieHistoryViewModelTest {
         val state = viewModel.calorieHistoryState.first()
 
         // With negative days, no history calls should be made
-        assertEquals(emptyList(), state.calorieHistory)
+        assertEquals(emptyList<Int>(), state.calorieHistory)
         assertEquals(sampleCalorieGoal, state.calorieGoal)
 
         coVerify(exactly = 0) { mockHistoryRepository.getCaloriesOfDay(any()) }

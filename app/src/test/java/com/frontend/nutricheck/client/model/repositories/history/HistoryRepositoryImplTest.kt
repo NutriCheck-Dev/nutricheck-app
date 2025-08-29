@@ -25,13 +25,15 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.runs
 import io.mockk.unmockkObject
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import okhttp3.MultipartBody
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions
 import retrofit2.Response
 import java.util.Date
 
@@ -85,14 +87,14 @@ class HistoryRepositoryImplTest {
     @Test
     fun `get calories of the day`() = runTest {
         every { DbMealMapper.toMeal(mealWithAll) } returns meal
-        coEvery { mealDao.getMealsWithAllForDay(Date()) } returns listOf(mealWithAll)
+        coEvery { mealDao.getMealsWithAllForDay(any()) } returns listOf(mealWithAll)
 
         val calories = repository.getCaloriesOfDay(Date())
 
-        Assertions.assertEquals(
+        assertEquals(
             meal.mealFoodItems.sumOf { it.quantity * it.foodProduct.calories } +
                     meal.mealRecipeItems.sumOf { it.quantity * it.recipe.calories }.toInt(),
-            calories.toDouble()
+            calories.toDouble(), 0.0
         )
     }
 
@@ -108,7 +110,7 @@ class HistoryRepositoryImplTest {
         val result = repository.requestAiMeal(file, languageCode)
 
         if (result is Result.Success) {
-            Assertions.assertEquals(meal, result.data)
+            assertEquals(meal, result.data)
         }
     }
 
@@ -165,8 +167,21 @@ class HistoryRepositoryImplTest {
 
         val meals = repository.getMealsForDay(date)
 
-        Assertions.assertEquals(meal.id, meals.first().id)
-        Assertions.assertEquals(meal.calories, meals.first().calories, 0.0)
+        assertEquals(meal.id, meals.first().id)
+        assertEquals(meal.calories, meals.first().calories, 0.0)
+    }
+
+    @Test
+    fun `remove meal item`() = runTest {
+        val mealId = meal.id
+        coEvery { mealDao.getById(mealId) } returns mealWithAll
+        every { DbMealMapper.toMeal(mealWithAll) } returns meal
+        coEvery { mealFoodItemDao.deleteItemOfMeal(mealId, meal.mealFoodItems.first().foodProduct.id) } just runs
+        coEvery { mealRecipeItemDao.deleteItemOfMeal(mealId, meal.mealRecipeItems.first().recipe.id) } just runs
+
+        repository.removeMealItem(meal.mealFoodItems.first())
+
+        coVerify { mealFoodItemDao.deleteItemOfMeal(mealId, meal.mealFoodItems.first().foodProduct.id) }
     }
 
     @Test
@@ -177,8 +192,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealById(mealId)
 
-        Assertions.assertEquals(meal.id, result.id)
-        Assertions.assertEquals(meal.calories, result.calories, 0.0)
+        assertEquals(meal.id, result.id)
+        assertEquals(meal.calories, result.calories, 0.0)
     }
 
     @Test
@@ -217,9 +232,9 @@ class HistoryRepositoryImplTest {
 
         val macros = repository.getDailyMacros()
 
-        Assertions.assertEquals(meal.carbohydrates.toInt(), macros[0])
-        Assertions.assertEquals(meal.protein.toInt(), macros[1])
-        Assertions.assertEquals(meal.fat.toInt(), macros[2])
+        assertEquals(meal.carbohydrates.toInt(), macros[0])
+        assertEquals(meal.protein.toInt(), macros[1])
+        assertEquals(meal.fat.toInt(), macros[2])
     }
 
     @Test
@@ -233,8 +248,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealFoodItemById(mealId, foodProductId)
 
-        Assertions.assertEquals(mealId, result.mealId)
-        Assertions.assertEquals(foodProductId, result.foodProduct.id)
+        assertEquals(mealId, result.mealId)
+        assertEquals(foodProductId, result.foodProduct.id)
     }
 
     @Test
@@ -260,8 +275,8 @@ class HistoryRepositoryImplTest {
 
         val result = repository.getMealRecipeItemById(mealId, recipeId)
 
-        Assertions.assertEquals(mealId, result.mealId)
-        Assertions.assertEquals(recipeId, result.recipe.id)
+        assertEquals(mealId, result.mealId)
+        assertEquals(recipeId, result.recipe.id)
     }
 
      @Test
@@ -275,4 +290,18 @@ class HistoryRepositoryImplTest {
 
          coVerify { mealRecipeItemDao.update(mealRecipeItemEntity) }
      }
+
+    @Test
+    fun `observe meals for day`(): Unit = runTest {
+        coEvery { mealDao.observeMealsForDay(any()) } returns
+                flowOf(listOf(mealWithAll))
+        every { DbMealMapper.toMeal(mealWithAll) } returns meal
+
+        val flow = repository.observeMealsForDay(Date())
+
+        flow.collect { meals ->
+            Assertions.assertEquals(meal.id, meals.first().id)
+            Assertions.assertEquals(meal.calories, meals.first().calories, 0.0)
+        }
+    }
 }

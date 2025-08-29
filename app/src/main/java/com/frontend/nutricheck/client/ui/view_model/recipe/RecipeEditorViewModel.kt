@@ -63,6 +63,7 @@ sealed interface RecipeEditorEvent {
     object ShowBottomSheet : RecipeEditorEvent
     object HideBottomSheet : RecipeEditorEvent
     object ResetErrorState : RecipeEditorEvent
+    object Clear : RecipeEditorEvent
 }
 
 /**
@@ -160,6 +161,7 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
             is RecipeEditorEvent.ResetErrorState -> setReady()
             is RecipeEditorEvent.RecipeSaved -> null
+            is RecipeEditorEvent.Clear -> clearSearch()
         }
     }
 
@@ -321,4 +323,15 @@ class RecipeEditorViewModel @Inject constructor(
         }
     }
 
+    private fun clearSearch() {
+        _draft.update { draft ->
+            draft.copy(
+                query = "",
+                results = emptyList(),
+                hasSearched = false,
+                lastSearchedQuery = null
+            )
+        }
+        setReady()
+    }
 }
