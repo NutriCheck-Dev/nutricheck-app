@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.model.repositories.mapper
 
 import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
+import org.junit.Assert.assertEquals
 
 class ReportMapperTest {
 

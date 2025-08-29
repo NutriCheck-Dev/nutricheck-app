@@ -2,6 +2,7 @@
 
 package com.frontend.nutricheck.client.ui.view_model
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
@@ -29,7 +30,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.jupiter.params.shadow.com.univocity.parsers.common.Context
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

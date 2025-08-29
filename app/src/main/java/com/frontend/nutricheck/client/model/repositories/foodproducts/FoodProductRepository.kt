@@ -4,6 +4,9 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Result
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Repository interface for managing food products.
+ */
 interface FoodProductRepository {
 
     /**

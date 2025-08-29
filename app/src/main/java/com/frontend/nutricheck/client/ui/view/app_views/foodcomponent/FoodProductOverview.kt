@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -83,6 +84,7 @@ fun FoodProductOverview(
                         CustomPersistButton {
                             if (foodProductState.mode is FoodProductOverviewMode.FromSearch) {
                                 foodSearchViewModel?.onEvent(SearchEvent.AddFoodComponent(foodProductState.submitFoodProduct()))
+                                    foodSearchViewModel?.onEvent(SearchEvent.Clear)
                                     ?: recipeEditorViewModel?.onEvent(
                                         RecipeEditorEvent.IngredientAdded(foodProductState.submitFoodProduct())
                                     )
@@ -115,7 +117,7 @@ fun FoodProductOverview(
             }
             BaseViewModel.UiState.Ready -> {
 
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
@@ -123,66 +125,72 @@ fun FoodProductOverview(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
 
-                    FoodProductNutrientChartsWidget(
-                        actualCalories = foodProductState.parameters.calories,
-                        actualCarbs = foodProductState.parameters.carbohydrates,
-                        actualProtein = foodProductState.parameters.protein,
-                        actualFat = foodProductState.parameters.fat
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    ) {
-                        Text(
-                            text = stringResource(R.string.foodproduct_servingsize_label),
-                            style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = colors.onSurfaceVariant,
-                            modifier = Modifier.align(Alignment.CenterVertically)
+                    item {
+                        FoodProductNutrientChartsWidget(
+                            actualCalories = foodProductState.parameters.calories,
+                            actualCarbs = foodProductState.parameters.carbohydrates,
+                            actualProtein = foodProductState.parameters.protein,
+                            actualFat = foodProductState.parameters.fat
                         )
-                        Spacer(modifier = Modifier.weight(1f))
-                        if (foodProductState.parameters.editable) {
-                            ServingSizeDropdown(
-                                currentServingSize = foodProductState.parameters.servingSize,
-                                onValueChange = {
-                                    foodProductOverviewViewModel.onEvent(
-                                        FoodProductOverviewEvent.ServingSizeChanged(it)
-                                    )
-                                }
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.foodproduct_servingsize_label),
+                                style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = colors.onSurfaceVariant,
+                                modifier = Modifier.align(Alignment.CenterVertically)
                             )
-                        } else {
-                            ServingSizeField(
-                                servingSize = foodProductState.parameters.servingSize
-                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            if (foodProductState.parameters.editable) {
+                                ServingSizeDropdown(
+                                    currentServingSize = foodProductState.parameters.servingSize,
+                                    onValueChange = {
+                                        foodProductOverviewViewModel.onEvent(
+                                            FoodProductOverviewEvent.ServingSizeChanged(it)
+                                        )
+                                    }
+                                )
+                            } else {
+                                ServingSizeField(
+                                    servingSize = foodProductState.parameters.servingSize
+                                )
+                            }
                         }
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    ) {
-                        Text(
-                            text = stringResource(R.string.foodcomponent_servings_label),
-                            style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = colors.onSurfaceVariant,
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        if (foodProductState.parameters.editable) {
-                            ServingsPicker(
-                                value = foodProductState.parameters.servings,
-                                onValueChange = {
-                                    foodProductOverviewViewModel.onEvent(
-                                        FoodProductOverviewEvent.ServingsChanged(it)
-                                    )
-                                }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.foodcomponent_servings_label),
+                                style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = colors.onSurfaceVariant,
+                                modifier = Modifier.align(Alignment.CenterVertically)
                             )
-                        } else {
-                            ServingsField(
-                                value = foodProductState.parameters.servings
-                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            if (foodProductState.parameters.editable) {
+                                ServingsPicker(
+                                    value = foodProductState.parameters.servings,
+                                    onValueChange = {
+                                        foodProductOverviewViewModel.onEvent(
+                                            FoodProductOverviewEvent.ServingsChanged(it)
+                                        )
+                                    }
+                                )
+                            } else {
+                                ServingsField(
+                                    value = foodProductState.parameters.servings
+                                )
+                            }
                         }
                     }
                 }

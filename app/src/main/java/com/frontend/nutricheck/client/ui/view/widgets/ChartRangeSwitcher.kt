@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,8 @@ fun ChartRangeSwitcher(
     modifier: Modifier = Modifier,
     options: List<String>,
     selectedOption: Int = 0,
-    onSelect: (Int) -> Unit = {}
+    onSelect: (Int) -> Unit = {},
+    testTagPrefix: String
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -74,7 +76,8 @@ fun ChartRangeSwitcher(
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(7.dp))
                         .background(bgColor)
-                        .clickable { onSelect(index) },
+                        .clickable { onSelect(index) }
+                        .testTag("${testTagPrefix}_INTERVAL_$index"),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

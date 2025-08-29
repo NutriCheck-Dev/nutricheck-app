@@ -99,7 +99,7 @@ fun CustomDetailsButton(
         ) {
             optionsList.forEach { option ->
                 DropdownMenuItem(
-                    modifier = Modifier.semantics { SemanticsTags.DETAILS_MENU_OPTION_PREFIX + option.toString() },
+                    modifier = Modifier.semantics { contentDescription = SemanticsTags.DETAILS_MENU_OPTION_PREFIX + option.toString() },
                     text = {
                         Text(
                             text = option.toString(),

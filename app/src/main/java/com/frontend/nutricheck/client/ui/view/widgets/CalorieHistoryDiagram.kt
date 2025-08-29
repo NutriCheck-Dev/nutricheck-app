@@ -22,11 +22,15 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.CalorieHistoryState
 import java.time.LocalDate
@@ -75,7 +79,8 @@ fun CalorieHistoryDiagram(
             ChartRangeSwitcher(
                 options = options.map { stringResource(it.labelResId) },
                 selectedOption = options.indexOf(selectedRange),
-                onSelect = { index -> onPeriodSelected(options[index]) }
+                onSelect = { index -> onPeriodSelected(options[index]) },
+                testTagPrefix = SemanticsTags.CALORIE_HISTORY_RANGE_SELECTOR
             )
         }
 
@@ -133,6 +138,14 @@ fun CalorieBarChart(
                 .fillMaxWidth()
                 .height(82.dp)
                 .padding(horizontal = 30.dp)
+                .testTag(SemanticsTags.CALORIE_HISTORY_CHART)
+                .semantics {
+                    contentDescription = when (selectedRange) {
+                        CalorieRange.LAST_7_DAYS -> SemanticsTags.RANGE_CALORIE_LAST_7_DAYS
+                        CalorieRange.LAST_30_DAYS -> SemanticsTags.RANGE_CALORIE_LAST_30_DAYS
+                        CalorieRange.LAST_60_DAYS -> SemanticsTags.RANGE_CALORIE_LAST_60_DAYS
+                    }
+                }
         ) {
             val barWidth = 12.dp.toPx()
 

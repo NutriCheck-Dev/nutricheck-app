@@ -30,19 +30,12 @@ import javax.inject.Singleton
 )
 object TestDatabaseModule {
 
-    private const val PROD_DB_NAME = "nutricheck_database"
-
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context) : LocalDatabase {
-        val productionDb = context.getDatabasePath(PROD_DB_NAME)
-        val seed = File(context.cacheDir, "seed-${System.currentTimeMillis()}.db")
-        if (productionDb.exists()) snapshotDatabase(context, productionDb, seed)
-
-        val builder = Room.databaseBuilder(context, LocalDatabase::class.java,"test_database")
-        if (seed.exists()) builder.createFromFile(seed)
-        return builder.allowMainThreadQueries().build()
-    }
+    fun provideDatabase(@ApplicationContext context: Context) : LocalDatabase =
+        Room.inMemoryDatabaseBuilder(context, LocalDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
 
     @Singleton
     @Provides
@@ -83,15 +76,4 @@ object TestDatabaseModule {
     @Singleton
     @Provides
     fun provideFoodSearchDao(database: LocalDatabase): FoodSearchDao = database.foodSearchDao()
-
-    private fun snapshotDatabase(context: Context, source: File, destination: File) {
-
-        val database = SQLiteDatabase.openDatabase(
-            source.absolutePath, null, SQLiteDatabase.OPEN_READWRITE
-        )
-        database.rawQuery("PRAGMA wal_checkpoint(FULL);", null).use {  }
-        val escapedPath = destination.absolutePath.replace("'", "''")
-        database.execSQL("VACUUM INTO '$escapedPath'")
-        database.close()
-    }
 }

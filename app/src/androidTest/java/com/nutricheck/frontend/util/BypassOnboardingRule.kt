@@ -21,7 +21,7 @@ class BypassOnboardingRule(
 
     override fun apply(base: Statement, description: Description) = object : Statement() {
         override fun evaluate() {
-            val entry = EntryPointAccessors.fromApplication(application, RepoEntryPoint::class.java)
+            val entry = EntryPointAccessors.fromApplication(application, OnboardingReposEntryPoint::class.java)
 
             runBlocking {
                 val now = Date()
@@ -33,7 +33,7 @@ class BypassOnboardingRule(
                     weight = 80.0,
                     activityLevel = ActivityLevel.FREQUENTLY,
                     weightGoal = WeightGoal.MAINTAIN_WEIGHT,
-                    targetWeight = 80.0,
+                    targetWeight = 81.0,
                     age = 24,
                     dailyCaloriesGoal = 0, proteinGoal = 0, carbsGoal = 0, fatsGoal = 0
                 )
@@ -42,7 +42,6 @@ class BypassOnboardingRule(
                 entry.userDataRepository()
                     .addUserDataAndAddWeight(userWithCalc, Weight(user.weight, now))
             }
-
             base.evaluate()
         }
     }

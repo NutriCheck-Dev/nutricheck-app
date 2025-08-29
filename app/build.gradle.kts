@@ -128,13 +128,13 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
         }
     }
+
 }
 configurations.all {
     exclude(group = "com.intellij", module = "annotations")
@@ -162,11 +162,11 @@ dependencies {
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.rules)
     ksp(libs.androidx.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
     kspAndroidTest(libs.hilt.compiler)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
@@ -196,13 +196,14 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
     implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.commons.lang3)
 
+    implementation(libs.androidx.exifinterface)
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.datastore.preferences)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.mockk)
@@ -210,4 +211,7 @@ dependencies {
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
+    androidTestUtil(libs.androidx.orchestrator)
+    androidTestImplementation(libs.androidx.uiautomator)
+    androidTestImplementation(libs.androidx.uiautomator)
 }

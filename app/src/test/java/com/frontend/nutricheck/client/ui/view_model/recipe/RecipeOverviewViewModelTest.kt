@@ -15,8 +15,6 @@ import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -36,8 +34,8 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipeOverviewViewModelTest {
@@ -130,10 +128,10 @@ class RecipeOverviewViewModelTest {
         val state = viewModel.recipeOverviewState.value
         assertEquals(testRecipe.id, state.recipe.id)
         assertEquals(testRecipe.ingredients.size, state.recipe.ingredients.size)
-        assertEquals(600.0, state.parameters.calories)
-        assertEquals(80.0, state.parameters.carbohydrates)
-        assertEquals(30.0, state.parameters.protein)
-        assertEquals(20.0, state.parameters.fat)
+        assertEquals(600.0, state.parameters.calories, 0.0)
+        assertEquals(80.0, state.parameters.carbohydrates, 0.0)
+        assertEquals(30.0, state.parameters.protein, 0.0)
+        assertEquals(20.0, state.parameters.fat, 0.0)
 
         coVerify(exactly = 0) { recipeRepository.getRecipeById(any()) }
     }
@@ -148,8 +146,8 @@ class RecipeOverviewViewModelTest {
 
         val state = viewModel.recipeOverviewState.value
         assertEquals(testRecipe.id, state.recipe.id)
-        assertEquals(testRecipe.servings, state.parameters.servings)
-        assertEquals(600.0, state.parameters.calories)
+        assertEquals(testRecipe.servings, state.parameters.servings, 0.0)
+        assertEquals(600.0, state.parameters.calories, 0.0)
         coVerify { recipeRepository.observeRecipeById(testRecipe.id) }
     }
 
@@ -188,11 +186,11 @@ class RecipeOverviewViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.recipeOverviewState.value
-        assertEquals(3.0, state.parameters.servings)
-        assertEquals(900.0, state.parameters.calories)
-        assertEquals(120.0, state.parameters.carbohydrates)
-        assertEquals(45.0, state.parameters.protein)
-        assertEquals(30.0, state.parameters.fat)
+        assertEquals(3.0, state.parameters.servings, 0.0)
+        assertEquals(900.0, state.parameters.calories, 0.0)
+        assertEquals(120.0, state.parameters.carbohydrates, 0.0)
+        assertEquals(45.0, state.parameters.protein, 0.0)
+        assertEquals(30.0, state.parameters.fat, 0.0)
     }
 
     @Test
@@ -220,7 +218,7 @@ class RecipeOverviewViewModelTest {
         advanceUntilIdle()
 
         val submitted = viewModel.recipeOverviewState.value.submitRecipe()
-        assertEquals(4.0, submitted.servings)
+        assertEquals(4.0, submitted.servings, 0.0)
     }
 
     @Test
@@ -272,7 +270,7 @@ class RecipeOverviewViewModelTest {
         viewModel.onEvent(RecipeOverviewEvent.ClickDetailsOption(DropdownMenuOptions.UPLOAD))
         advanceUntilIdle()
 
-        assertTrue { viewModel.uiState.value is BaseViewModel.UiState.Error }
+        assertTrue(viewModel.uiState.value is BaseViewModel.UiState.Error)
     }
 
     @Test
@@ -302,5 +300,97 @@ class RecipeOverviewViewModelTest {
 
         val event = awaited.await() as RecipeOverviewEvent.NavigateToEditRecipe
         assertEquals(testRecipe.id, event.recipeId)
+    }
+
+    @Test
+    fun `FromSearch fallback loads via repository when list store has no match`() = testScope.runTest {
+
+        every { combinedSearchListStore.state } returns MutableStateFlow(emptyList())
+        coEvery { recipeRepository.getRecipeById(testRecipe.id) } returns testRecipe
+
+        val vm = makeViewModel(SavedStateHandle(mapOf(
+            "recipeId" to testRecipe.id,
+            "fromSearch" to true
+        )))
+        advanceUntilIdle()
+
+        val s = vm.recipeOverviewState.value
+        assertEquals(testRecipe.id, s.recipe.id)
+        coVerify(exactly = 1) { recipeRepository.getRecipeById(testRecipe.id) }
+    }
+
+    @Test
+    fun `UpdateMealRecipeItem updates history with current servings in FromMeal mode`() = testScope.runTest {
+        val mealId = "m1"
+        val mealItem = MealRecipeItem(
+            mealId = mealId, recipe = testRecipe, quantity = 1.0, servings = 1.0
+        )
+        coEvery { historyRepository.getMealRecipeItemById(mealId, testRecipe.id) } returns mealItem
+
+        val vm = makeViewModel(SavedStateHandle(mapOf(
+            "recipeId" to testRecipe.id,
+            "mealId" to mealId
+        )))
+        advanceUntilIdle()
+
+        vm.onEvent(RecipeOverviewEvent.ServingsChanged(2.5))
+        advanceUntilIdle()
+
+        vm.onEvent(RecipeOverviewEvent.UpdateMealRecipeItem)
+        advanceUntilIdle()
+
+        coVerify {
+            historyRepository.updateMealRecipeItem(withArg { updated ->
+                assertEquals(mealId, updated.mealId)
+                assertEquals(testRecipe, updated.recipe)
+                assertEquals(2.5, updated.servings, 0.0)
+                assertEquals(2.5, updated.quantity, 0.0)
+            })
+        }
+    }
+
+    @Test
+    fun `ResetErrorState sets UI back to Ready after an error`() = testScope.runTest {
+        coEvery { recipeRepository.observeRecipeById(testRecipe.id) } returns flowOf(testRecipe)
+        coEvery { recipeRepository.uploadRecipe(testRecipe) } returns Result.Error(409, "Conflict")
+
+        val vm = makeViewModel(SavedStateHandle(mapOf("recipeId" to testRecipe.id)))
+        advanceUntilIdle()
+
+        vm.onEvent(RecipeOverviewEvent.ClickDetailsOption(DropdownMenuOptions.UPLOAD))
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value is BaseViewModel.UiState.Error)
+
+        vm.onEvent(RecipeOverviewEvent.ResetErrorState)
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value is BaseViewModel.UiState.Ready)
+    }
+
+    @Test
+    fun `NavigateToEditRecipe event is emitted from onEvent`() = testScope.runTest {
+        coEvery { recipeRepository.observeRecipeById(testRecipe.id) } returns flowOf(testRecipe)
+        val vm = makeViewModel(SavedStateHandle(mapOf("recipeId" to testRecipe.id)))
+        advanceUntilIdle()
+
+        val awaited = async { vm.events.first() }
+        vm.onEvent(RecipeOverviewEvent.NavigateToEditRecipe(testRecipe.id))
+        advanceUntilIdle()
+
+        val event = awaited.await() as RecipeOverviewEvent.NavigateToEditRecipe
+        assertEquals(testRecipe.id, event.recipeId)
+    }
+
+    @Test
+    fun `RecipeUploaded and RecipeDeleted are no-ops but covered`() = testScope.runTest {
+        coEvery { recipeRepository.observeRecipeById(testRecipe.id) } returns flowOf(testRecipe)
+        val vm = makeViewModel(SavedStateHandle(mapOf("recipeId" to testRecipe.id)))
+        advanceUntilIdle()
+
+        val before = vm.uiState.value
+        vm.onEvent(RecipeOverviewEvent.RecipeUploaded)
+        vm.onEvent(RecipeOverviewEvent.RecipeDeleted)
+        advanceUntilIdle()
+
+        assertEquals(before, vm.uiState.value)
     }
 }

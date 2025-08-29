@@ -3,20 +3,11 @@ package com.frontend.nutricheck.client.ui.view.widgets
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +22,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 @Composable
-fun ColumnScope.BottomSheetSearchContent(
+fun BottomSheetSearchContent(
     foodComponents: List<FoodComponent>,
     selectedTab: Int?,
     onSelectTab: (Int) -> Unit,
@@ -74,7 +65,7 @@ fun ColumnScope.BottomSheetSearchContent(
 
             showEmptyState && foodComponents.isEmpty() -> Box(
                 Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.TopCenter
             ) {
                 Text(
                     text = stringResource(R.string.error_search_result_empty),

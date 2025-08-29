@@ -2,7 +2,7 @@ package com.frontend.nutricheck.client.model.data_sources.persistence.mapper
 
 import com.frontend.nutricheck.client.ui.view_model.TestDataFactory
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
+import org.junit.Assert.assertEquals
 
 class DbMealMapperTest {
 
@@ -14,10 +14,10 @@ class DbMealMapperTest {
         val entity = DbMealMapper.toMealEntity(meal)
         assertEquals(mealEntity.id, entity.id)
         assertEquals(mealEntity.dayTime, entity.dayTime)
-        assertEquals(mealEntity.calories, entity.calories)
-        assertEquals(mealEntity.carbohydrates, entity.carbohydrates)
-        assertEquals(mealEntity.protein, entity.protein)
-        assertEquals(mealEntity.fat, entity.fat)
+        assertEquals(mealEntity.calories, entity.calories, 0.0)
+        assertEquals(mealEntity.carbohydrates, entity.carbohydrates, 0.0)
+        assertEquals(mealEntity.protein, entity.protein, 0.0)
+        assertEquals(mealEntity.fat, entity.fat, 0.0)
         assertEquals(mealEntity.historyDayDate.toString(), entity.historyDayDate.toString())
     }
 
@@ -26,10 +26,10 @@ class DbMealMapperTest {
         val mealWithContents = TestDataFactory.createDefaultMealWithAll()
         val mealResult = DbMealMapper.toMeal(mealWithContents)
         assertEquals(meal.id, mealResult.id)
-        assertEquals(meal.calories, mealResult.calories)
-        assertEquals(meal.carbohydrates, mealResult.carbohydrates)
-        assertEquals(meal.protein, mealResult.protein)
-        assertEquals(meal.fat, mealResult.fat)
+        assertEquals(meal.calories, mealResult.calories, 0.0)
+        assertEquals(meal.carbohydrates, mealResult.carbohydrates, 0.0)
+        assertEquals(meal.protein, mealResult.protein, 0.0)
+        assertEquals(meal.fat, mealResult.fat, 0.0)
         assertEquals(meal.date.toString(), mealResult.date.toString())
         assertEquals(meal.dayTime, mealResult.dayTime)
         assertEquals(meal.mealFoodItems.size, mealResult.mealFoodItems.size)
