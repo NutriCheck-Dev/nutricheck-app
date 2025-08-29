@@ -25,11 +25,11 @@ import org.junit.runner.RunWith
 import javax.inject.Inject
 
 /**
- * ⟨T X⟩ Testfall Gewichtshistorie Diagramm Intervall ändern
- * Varianten:
- * 1) Nutzer wählt 7 Tage → 7 Punkte
- * 2) Nutzer wählt 30 Tage → 30 Punkte
- * 3) Nutzer wählt 90 Tage → 90 Punkte
+ * Test case: Change weight history chart interval
+ * Variants:
+ * 1) User selects 1 month
+ * 2) User selects 6 months
+ * 3) User selects 12 months
  */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)

@@ -27,9 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
@@ -148,7 +147,7 @@ fun CameraPreviewScreen(
                         .align(Alignment.BottomCenter)
                         .padding(24.dp)
                         .size(80.dp)
-                        .semantics{ contentDescription = SemanticsTags.MEAL_SCAN_TAKE_PHOTO }
+                        .testTag(SemanticsTags.MEAL_SCAN_TAKE_PHOTO)
                 ) {
                     Icon(
                         imageVector = Icons.Default.RadioButtonChecked,

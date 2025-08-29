@@ -25,16 +25,16 @@ import org.junit.runner.RunWith
 import javax.inject.Inject
 
 /**
- * ⟨T X⟩ Testfall Kalorienübersicht Intervall ändern
- * Varianten:
- * 1) Nutzer wählt 7 Tage → 7 Punkte
- * 2) Nutzer wählt 30 Tage → 30 Punkte
- * 3) Nutzer wählt 90 Tage → 90 Punkte
+ * Test case: Change calorie overview interval
+ * Variants:
+ * 1) User selects 7 days
+ * 2) User selects 30 days
+ * 3) User selects 60 days
  */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class CalorieOverviewTest {
+class CalorieHistoryDiagramTest {
 
     @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
@@ -64,7 +64,7 @@ class CalorieOverviewTest {
     }
 
     @Test
-    fun interval90days_setsCorrectRange() {
+    fun interval60days_setsCorrectRange() {
         selectInterval(SemanticsTags.CALORIE_HISTORY_RANGE_SELECTOR + SemanticsTags.DIAGRAM_THIRD_INTERVAL)
         waitForChartUpdate(SemanticsTags.RANGE_CALORIE_LAST_60_DAYS)
         assertChartInterval(SemanticsTags.RANGE_CALORIE_LAST_60_DAYS)

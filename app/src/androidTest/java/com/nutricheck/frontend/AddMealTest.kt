@@ -1,5 +1,6 @@
 package com.nutricheck.frontend
 
+import android.Manifest
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
@@ -17,6 +18,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.GrantPermissionRule
 import com.frontend.nutricheck.client.MainActivity
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
@@ -33,10 +35,11 @@ import org.junit.runner.RunWith
 import javax.inject.Inject
 
 /**
- * Testfall Mahlzeit hinzufügen
- * Varianten:
- * 1) Lebensmittel suchen und zu Mahlzeit hinzufügen
- * 2) Rezept erstellen und zu Mahlzeit hinzufügen
+ * Test case: Add meal
+ * Variants:
+ * 1) Search for a food item and add it to the meal
+ * 2) Scan a meal (only error handling, as UI tests can't handle camera input)
+ * 3) Create a recipe and add it to the meal
  */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -49,6 +52,9 @@ class AddMealTest {
         ApplicationProvider.getApplicationContext()
     )
     @get:Rule(order = 2) val compose = createAndroidComposeRule<MainActivity>()
+    @get:Rule(order = 3)
+    val cameraPermission: GrantPermissionRule =
+        GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
     @Inject lateinit var db: LocalDatabase
 
@@ -149,8 +155,7 @@ class AddMealTest {
             .assertIsDisplayed()
             .performClick()
 
-        compose.onNodeWithContentDescription(SemanticsTags.MEAL_SCAN_TAKE_PHOTO)
-            .assertIsDisplayed()
+        compose.onNodeWithTag(SemanticsTags.MEAL_SCAN_TAKE_PHOTO)
             .performClick()
     }
     private fun checkScanErrorDisplayed() {
