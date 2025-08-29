@@ -1,6 +1,8 @@
 package com.nutricheck.frontend.util
 
 import android.app.Application
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
@@ -42,7 +44,15 @@ class BypassOnboardingRule(
                 entry.userDataRepository()
                     .addUserDataAndAddWeight(userWithCalc, Weight(user.weight, now))
             }
-            base.evaluate()
+            try {
+                base.evaluate()
+            } finally {
+                runBlocking {
+                    entry.dataStore().edit { preferences ->
+                        preferences.remove(booleanPreferencesKey("onboarding_completed"))
+                    }
+                }
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.nutricheck.frontend.util
 
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.core.DataStore
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
 import dagger.hilt.EntryPoint
@@ -11,4 +13,5 @@ import dagger.hilt.components.SingletonComponent
 interface OnboardingReposEntryPoint {
     fun appSettingsRepository(): AppSettingRepository
     fun userDataRepository(): UserDataRepository
+    fun dataStore() : DataStore<Preferences>
 }
