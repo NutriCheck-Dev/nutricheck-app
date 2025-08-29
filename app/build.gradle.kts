@@ -199,7 +199,7 @@ dependencies {
     implementation(libs.compose.numberpicker)
     implementation(libs.androidx.exifinterface)
     implementation(libs.commons.lang3)
-    implementation("org.apache.commons:commons-text:1.14.0")
+    implementation(libs.commons.text)
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)

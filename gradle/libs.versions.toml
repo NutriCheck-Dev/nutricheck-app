@@ -2,6 +2,7 @@
 agp = "8.10.1"
 coilCompose = "2.7.0"
 commonsLang3 = "3.18.0"
+commonsText = "1.14.0"
 compose = "1.13.0"
 convertergson = "2.11.0"
 core = "1.13.0"
@@ -63,6 +64,7 @@ androidx-orchestrator = { module = "androidx.test:orchestrator", version.ref = "
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
