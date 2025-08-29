@@ -103,7 +103,7 @@ fun MealSelector(
                     mealOptions.forEach { dayTime ->
                         DropdownMenuItem(
                             modifier = Modifier
-                                .testTag("DAYTIME_ITEM_${dayTime.name}"),
+                                .testTag(SemanticsTags.DAYTIME_ITEM_PREFIX + dayTime.name),
                             text = {
                                 Text(
                                     dayTime.getDescription(context = LocalContext.current),
