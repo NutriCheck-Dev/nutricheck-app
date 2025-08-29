@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import org.apache.commons.text.similarity.LevenshteinDistance
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -34,13 +36,19 @@ class FoodProductRepositoryImpl @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : FoodProductRepository {
     private val timeToLive = TimeUnit.MINUTES.toMillis(15)
+    private val levenshteinDistance = LevenshteinDistance.getDefaultInstance()
     override fun searchFoodProducts(foodProductName: String, language: String): Flow<Result<List<FoodProduct>>> = flow {
         val cached = foodSearchDao.resultsFor(foodProductName)
             .firstOrNull()
             ?.map { DbFoodProductMapper.toFoodProduct(it) }
             ?: emptyList()
         if (cached.isNotEmpty()) {
-            emit(Result.Success(cached))
+            val sortedCache = cached.sortedBy {
+                levenshteinDistance.apply(
+                    it.name.lowercase(Locale.ROOT),
+                    foodProductName.lowercase(Locale.ROOT))
+            }
+            emit(Result.Success(sortedCache))
         }
             val lastUpdate = foodSearchDao.getLatestUpdatedFor(foodProductName)
             if (isExpired(lastUpdate)) {

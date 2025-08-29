@@ -31,7 +31,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import org.apache.commons.text.similarity.LevenshteinDistance
 import java.io.IOException
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.jvm.java
@@ -49,14 +51,19 @@ class RecipeRepositoryImpl @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : RecipeRepository {
     private val timeToLive = TimeUnit.MINUTES.toMillis(15)
-
+    private val levenshteinDistance = LevenshteinDistance.getDefaultInstance()
     override fun searchRecipes(recipeName: String): Flow<Result<List<Recipe>>> = flow {
         val cached = recipeSearchDao.resultsFor(recipeName)
             .firstOrNull()
             ?.map { DbRecipeMapper.toRecipe(it) }
             ?: emptyList()
         if (cached.isNotEmpty()) {
-            emit(Result.Success(cached))
+            val sortedCache = cached.sortedBy {
+                levenshteinDistance.apply(
+                    it.name.lowercase(Locale.ROOT),
+                    recipeName.lowercase(Locale.ROOT))
+            }
+            emit(Result.Success(sortedCache))
         }
 
         val lastUpdate = recipeSearchDao.getLatestUpdatedFor(recipeName)
