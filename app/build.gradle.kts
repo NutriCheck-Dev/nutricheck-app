@@ -128,15 +128,13 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
         }
-        execution = "ANDROIDX_TEST_ORCHESTRATOR"
-        animationsDisabled = true
     }
+
 }
 configurations.all {
     exclude(group = "com.intellij", module = "annotations")
@@ -169,7 +167,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
     kspAndroidTest(libs.hilt.compiler)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
@@ -202,6 +199,7 @@ dependencies {
     implementation(libs.androidx.exifinterface)
     implementation(libs.commons.lang3)
 
+    implementation(libs.androidx.exifinterface)
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
@@ -214,5 +212,6 @@ dependencies {
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
     androidTestUtil(libs.androidx.orchestrator)
+    androidTestImplementation(libs.androidx.uiautomator)
     androidTestImplementation(libs.androidx.uiautomator)
 }
