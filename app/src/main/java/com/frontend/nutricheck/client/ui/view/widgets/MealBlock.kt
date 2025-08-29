@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,10 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  *
@@ -120,7 +123,9 @@ fun MealBlock(
                 when (item) {
                     is MealFoodItem -> {
                         DishItemMealButton(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics { contentDescription = "${SemanticsTags.MEAL_FOOD_ITEM_PREFIX}${item.foodProduct.id}" },
                             title = item.foodProduct.name,
                             calories = item.servings * item.foodProduct.calories * (item.servingSize.getAmount() / 100),
                             onClick = { onItemClick(item) }
@@ -129,7 +134,9 @@ fun MealBlock(
 
                     is MealRecipeItem -> {
                         DishItemMealButton(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics { contentDescription = "${SemanticsTags.MEAL_RECIPE_ITEM_PREFIX}${item.recipe.id}" },
                             title = item.recipe.name,
                             calories = item.quantity * item.recipe.calories,
                             onClick = { onItemClick(item) }

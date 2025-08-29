@@ -54,10 +54,8 @@ fun CreateMealPage(
                 expanded = searchState.parameters.mealSelectorExpanded,
                 onExpandedChange = { searchViewModel.onEvent(SearchEvent.MealSelectorClick) },
                 trailingContent = {
-                    CustomPersistButton (
-                        modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_EDITOR_PERSIST },
-                        onClick = { searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal) }
-                    )
+                    CustomPersistButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_EDITOR_PERSIST })
+                        { searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal) }
                 },
                 onBack = {
                     onBack()
@@ -79,12 +77,15 @@ fun CreateMealPage(
                         1 -> searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
                     }
                 },
-                trailingContent = { item ->
-                    CustomAddButton {
+                trailingContent = { item -> CustomAddButton(
+                    modifier = Modifier.semantics {
+                        contentDescription = SemanticsTags.MEAL_SEARCH_PREFIX + item.name
+                    },
+                    onClick = {
                         searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
                         searchViewModel.onEvent(SearchEvent.Clear)
                     }
-                                  },
+                ) },
                 onItemClick = { onItemClick(it) },
                 query = searchState.parameters.query,
                 onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },

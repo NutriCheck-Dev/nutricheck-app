@@ -119,11 +119,11 @@ fun RecipeEditorPage(
         sheetContent = {
             BottomSheetSearchContent(
                 foodComponents = draft.results,
-                trailingContent = { item ->
-                    CustomAddButton {
-                        recipeEditorViewModel.onEvent(RecipeEditorEvent.IngredientAdded(item))
-                        recipeEditorViewModel.onEvent(RecipeEditorEvent.Clear)
-                    }
+                trailingContent = { item -> CustomAddButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_ADD_BUTTON_PREFIX + item.name }) {
+                    recipeEditorViewModel.onEvent(
+                    RecipeEditorEvent.IngredientAdded(item))
+                    recipeEditorViewModel.onEvent(RecipeEditorEvent.Clear)
+                }
                                   },
                 onItemClick = { onItemClick(it) },
                 query = draft.query,
