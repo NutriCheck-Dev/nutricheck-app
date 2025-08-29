@@ -34,7 +34,6 @@ import javax.inject.Inject
 class DeleteRecipeTest {
 
     val name = "Pasta Pesto"
-
     @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
     @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
@@ -59,25 +58,30 @@ class DeleteRecipeTest {
     fun deleteRecipe() {
         navigateToDiaryPageThenRecipePage()
 
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX))
-            .fetchSemanticsNodes().isNotEmpty()
+        val detailsButtonTag = SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + name
 
-        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX))
-            .onFirst()
+        compose.onNodeWithContentDescription(detailsButtonTag, useUnmergedTree = true)
+            .assertIsDisplayed()
             .performClick()
 
-        compose.onNodeWithContentDescription(SemanticsTags.DETAILS_MENU).assertIsDisplayed()
+        compose.onNodeWithContentDescription(SemanticsTags.DETAILS_MENU)
+            .assertIsDisplayed()
 
-        val deleteOptionTag = SemanticsTags.DETAILS_MENU_OPTION_PREFIX + DropdownMenuOptions.DELETE.toString()
-        compose.onNodeWithContentDescription(deleteOptionTag).assertIsDisplayed().performClick()
+        val deleteOptionTag =
+            SemanticsTags.DETAILS_MENU_OPTION_PREFIX + DropdownMenuOptions.DELETE.toString()
+        compose.onNodeWithContentDescription(deleteOptionTag)
+            .assertIsDisplayed()
+            .performClick()
 
         compose.waitUntil(5_000) {
             compose.onAllNodes(
-                hasContentDescriptionPrefix(SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX),
+                hasContentDescription(detailsButtonTag),
                 useUnmergedTree = true
             ).fetchSemanticsNodes().isEmpty()
         }
 
+        compose.onNodeWithContentDescription(detailsButtonTag, useUnmergedTree = true)
+            .assertDoesNotExist()
     }
 
 
@@ -101,6 +105,7 @@ class DeleteRecipeTest {
 
         val recipeTag = SemanticsTags.DISHITEM_PREFIX + name
         compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
+        Thread.sleep(2_000)
     }
 
     private fun hasContentDescriptionPrefix(prefix: String) : SemanticsMatcher =

@@ -59,11 +59,7 @@ class UploadRecipeTest {
 
     @Test
     fun createAndUploadRecipe() {
-        val recipeName = RandomStringUtils.random(
-            8,
-            true,
-            false
-        )
+        val recipeName = RandomStringUtils.insecure().nextAlphabetic(8)
         createRecipe_viaQuickAdd(recipeName)
         uploadRecipe(recipeName)
         checkIfRecipeIsUploaded(recipeName)

@@ -4,6 +4,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -25,6 +26,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import javax.inject.Inject
 
@@ -32,6 +34,8 @@ import javax.inject.Inject
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class CreateRecipeTest {
+
+    val recipeName = "My Awesome Recipe"
 
     @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
@@ -52,8 +56,6 @@ class CreateRecipeTest {
 
     @Test
     fun createRecipe_viaQuickAdd() {
-        val recipeName = "My Awesome Recipe"
-
         openAddDialogThenRecipeEditor()
         openIngredientSearch()
         addIngredientViaQuickAdd("Apfel")
@@ -104,10 +106,15 @@ class CreateRecipeTest {
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_NAME).performTextInput(name)
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_DESCRIPTION).performTextClearance()
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_DESCRIPTION).performTextInput(description)
-        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PERSIST).performClick()
+
+        waitForNode(hasContentDescription(SemanticsTags.RECIPE_EDITOR_PERSIST))
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PERSIST)
+            .assertIsDisplayed()
+            .performClick()
     }
 
     private fun assertOnRecipePage(name: String) {
+        waitForNode(hasContentDescription(SemanticsTags.RECIPE_PAGE))
         compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
         compose.onNodeWithText(name, substring = false).assertIsDisplayed()
     }
@@ -117,4 +124,12 @@ class CreateRecipeTest {
             val list = node.config.getOrNull(SemanticsProperties.ContentDescription)
             list?.firstOrNull()?.startsWith(prefix) == true
         }
+
+    private fun waitForNode(matcher: SemanticsMatcher, timeout: Long = 5_000) {
+        compose.waitUntil(timeout) {
+            compose.onAllNodes(matcher, useUnmergedTree = true)
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+    }
 }
