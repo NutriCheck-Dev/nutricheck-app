@@ -6,15 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import com.frontend.nutricheck.client.model.IoDispatcher
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ThemeSetting
-import com.frontend.nutricheck.client.model.repositories.CachePruneWorker
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
+import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import com.frontend.nutricheck.client.model.repositories.appSetting.AppSettingRepository
 import dagger.Module
 import dagger.Provides
@@ -22,6 +17,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,16 +32,15 @@ import javax.inject.Singleton
  * application's theme setting to allow for dynamic theme changes.
  */
 @HiltAndroidApp
-class NutriCheckApplication :
-    Application(), Configuration.Provider {
+class NutriCheckApplication : Application() {
 
-        @Inject lateinit var workerFactory: HiltWorkerFactory
         @Inject lateinit var appSettingRepository: AppSettingRepository
 
-    override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
+        @Inject lateinit var foodDao: FoodDao
+        @Inject lateinit var recipeDao: RecipeDao
+
+        @Inject @IoDispatcher lateinit var ioDispatcher: CoroutineDispatcher
+        @Inject lateinit var appScope: CoroutineScope
 
     override fun onCreate() {
         super.onCreate()
@@ -55,26 +50,20 @@ class NutriCheckApplication :
                     if (isDarkMode) ThemeSetting.DARK else ThemeSetting.LIGHT
             }
         }
-        scheduleCachePrune()
+        pruneCacheOnStartup()
     }
 
-    private fun scheduleCachePrune() {
-        val request = PeriodicWorkRequestBuilder<CachePruneWorker>(
-            1, TimeUnit.HOURS,
-            15, TimeUnit.MINUTES)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-                    .build()
-            )
-            .build()
+    private fun pruneCacheOnStartup() {
+        appScope.launch(ioDispatcher) {
+            val timeToLive = TimeUnit.DAYS.toMillis(7)
+            val now = System.currentTimeMillis()
+            val cutoff = now - timeToLive
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "cache_prune",
-            ExistingPeriodicWorkPolicy.KEEP,
-            request
-        )
+            foodDao.deleteExpiredUnreferencedFoodProducts(cutoff)
+            recipeDao.deleteExpiredUnreferencedRecipes(cutoff)
+        }
     }
+
 }
 /**
  * A singleton object that holds the global state for the application's current theme.
@@ -105,4 +94,12 @@ object DataStoreModule {
             produceFile = { File(context.filesDir, "settings.preferences_pb") }
         )
     }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+    @Provides
+    @Singleton
+    fun provideApplicationScope(@IoDispatcher io: CoroutineDispatcher): CoroutineScope = CoroutineScope(io)
 }

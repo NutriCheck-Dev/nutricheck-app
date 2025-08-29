@@ -60,7 +60,5 @@ object SemanticsTags {
     const val PROFILE_DATA_WEIGHT = "ProfilePage_Data_Weight"
     const val PROFILE_DATA_HEIGHT = "ProfilePage_Data_Height"
     const val PERSONAL_DATA_SAFE_BUTTON = "PersonalData_Safe_Button"
-
-    const val SNACKBAR = "Snackbar"
     const val RECIPE_PAGE_TAB_PREFIX = "RecipePage_Tab_"
 }

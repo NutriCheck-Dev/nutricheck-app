@@ -123,7 +123,7 @@ fun RecipeEditorPage(
                     recipeEditorViewModel.onEvent(
                     RecipeEditorEvent.IngredientAdded(item))
                     recipeEditorViewModel.onEvent(RecipeEditorEvent.Clear)
-                }
+                } },
                 selectedTab = 0,
                 onSelectTab = {},
                 onItemClick = { onItemClick(it) },
