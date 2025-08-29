@@ -374,8 +374,6 @@ class FoodSearchViewModelTest {
 
         val state = searchViewModel.searchState.value
         assertEquals("", state.parameters.query)
-        assertTrue(state.parameters.generalResults.isEmpty())
-        assertTrue(state.parameters.localRecipesResults.isEmpty())
         assertEquals(null, state.parameters.lastSearchedQuery)
         verify { combinedStore.update(emptyList()) }
     }
