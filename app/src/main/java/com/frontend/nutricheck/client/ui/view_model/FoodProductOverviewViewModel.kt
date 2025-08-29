@@ -76,7 +76,7 @@ sealed interface FoodProductOverviewEvent {
  * @property recipeRepository Repository for accessing recipe data.
  * @property historyRepository Repository for accessing meal history data.
  * @property combinedSearchListStore Store for managing the combined search list state.
- * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ * @param savedStateHandle Saved state handle for managing state across configuration changes.
  */
 @HiltViewModel
 class FoodProductOverviewViewModel @Inject constructor(
@@ -88,7 +88,7 @@ class FoodProductOverviewViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val mode: FoodProductOverviewMode = savedStateHandle.run {
-        val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf { it.isNotBlank() }
+        val recipeId: String? = savedStateHandle.get<String>("recipeId")?.takeIf {it.isNotBlank()}
         val mealId: String? = savedStateHandle.get<String>("mealId")?.takeIf { it.isNotBlank() }
         val foodProductId = get<String>("foodProductId")
 
@@ -170,8 +170,7 @@ class FoodProductOverviewViewModel @Inject constructor(
             is FoodProductOverviewEvent.SaveAndAddClick -> viewModelScope.launch { onSaveChanges() }
             is FoodProductOverviewEvent.ServingSizeDropDownClick -> onServingSizeDropDownClick()
             is FoodProductOverviewEvent.DeleteAiMeal -> deleteAiMeal()
-            is FoodProductOverviewEvent.SubmitMealItem -> null
-            is FoodProductOverviewEvent.UpdateIngredient -> null
+            else -> { /* Other Events are not handled here */ }
         }
     }
 
@@ -202,7 +201,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                 historyRepository.updateMealFoodItem(mealFoodItem)
                 _events.emit(FoodProductOverviewEvent.SubmitMealItem)
             }
-            is FoodProductOverviewMode.FromSearch -> null
+            is FoodProductOverviewMode.FromSearch -> { /* other options are not used here */ }
         }
     }
 
@@ -255,7 +254,7 @@ class FoodProductOverviewViewModel @Inject constructor(
                     val meal = historyRepository.getMealById(mode.mealId)
                     historyRepository.deleteMeal(meal)
                 }
-                else -> null
+                else -> { /* Other options are not used here */ }
             }
         }
     }

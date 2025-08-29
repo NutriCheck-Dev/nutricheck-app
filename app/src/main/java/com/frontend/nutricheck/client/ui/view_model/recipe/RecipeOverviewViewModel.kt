@@ -79,7 +79,7 @@ sealed interface RecipeOverviewEvent {
  * @property snackbarManager Manager for displaying snackbars.
  * @property combinedSearchListStore Store for managing combined search list state.
  * @property context Application context for accessing resources and services.
- * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ * @param savedStateHandle Saved state handle for managing state across configuration changes.
  */
 @HiltViewModel
 class RecipeOverviewViewModel @Inject constructor(
@@ -184,10 +184,9 @@ class RecipeOverviewViewModel @Inject constructor(
             is RecipeOverviewEvent.NavigateToEditRecipe -> viewModelScope.launch {
                 _events.emit(RecipeOverviewEvent.NavigateToEditRecipe(event.recipeId))
             }
-            is RecipeOverviewEvent.RecipeUploaded -> null
             is RecipeOverviewEvent.ResetErrorState -> setReady()
-            is RecipeOverviewEvent.RecipeDeleted -> null
             is RecipeOverviewEvent.UpdateMealRecipeItem -> viewModelScope.launch { updateMealRecipeItem() }
+            else -> { /* Other Events are not handled here */ }
         }
     }
 
@@ -228,7 +227,7 @@ class RecipeOverviewViewModel @Inject constructor(
                 mealId = mode.mealId,
                 recipe = _recipeOverviewState.value.recipe,
                 servings = _recipeOverviewState.value.parameters.servings,
-                quantity = _recipeOverviewState.value.parameters.servings.toDouble(),
+                quantity = _recipeOverviewState.value.parameters.servings,
             )
             historyRepository.updateMealRecipeItem(mealRecipeItem)
         }

@@ -135,7 +135,6 @@ class HistoryViewModelTest {
 
         val ev = awaited.await()
         assertTrue(ev is HistoryEvent.AddEntryClick)
-        ev as HistoryEvent.AddEntryClick
         assertEquals(targetDate, ev.day)
         assertEquals(targetTime, ev.dayTime)
     }
@@ -147,7 +146,6 @@ class HistoryViewModelTest {
         advanceUntilIdle()
         val ev = awaited.await()
         assertTrue(ev is HistoryEvent.FoodClicked)
-        ev as HistoryEvent.FoodClicked
         assertEquals("meal-1", ev.mealId)
         assertEquals("food-9", ev.foodId)
     }
@@ -168,7 +166,6 @@ class HistoryViewModelTest {
         advanceUntilIdle()
         val ev = awaited.await()
         assertTrue(ev is HistoryEvent.DetailsClick)
-        ev as HistoryEvent.DetailsClick
         assertEquals("detail-xyz", ev.detailsId)
     }
 

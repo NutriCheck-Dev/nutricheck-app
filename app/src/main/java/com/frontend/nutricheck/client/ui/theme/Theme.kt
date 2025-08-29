@@ -20,7 +20,7 @@ val LocalExtendedColors = staticCompositionLocalOf<ExtendedColorScheme> {
     error("No ExtendedColorScheme provided")
 }
 
-val MaterialTheme.extended: ExtendedColorScheme
+val extended: ExtendedColorScheme
     @Composable inline get() = LocalExtendedColors.current
 
 private val lightScheme = lightColorScheme(
@@ -139,7 +139,7 @@ data class ColorFamily(
 
 @Composable
 fun AppTheme(
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val isDarkTheme = AppThemeState.currentTheme.value == ThemeSetting.DARK
 

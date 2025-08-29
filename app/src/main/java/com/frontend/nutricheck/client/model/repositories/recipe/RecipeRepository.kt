@@ -14,7 +14,7 @@ interface RecipeRepository {
     /**
      * Searches for recipes by name using the API.
      */
-    suspend fun searchRecipes(recipeName: String): Flow<Result<List<Recipe>>>
+    fun searchRecipes(recipeName: String): Flow<Result<List<Recipe>>>
     /**
      * Inserts a new recipe into the database.
      */
@@ -62,7 +62,7 @@ interface RecipeRepository {
      * Returns a flow that emits the list of all local saved recipes whenever it changes in the data.
      */
 
-    suspend fun observeMyRecipes(): Flow<List<Recipe>>
+    fun observeMyRecipes(): Flow<List<Recipe>>
     /**
      * Downloads a recipe from the server and saves it to the local database.
      */

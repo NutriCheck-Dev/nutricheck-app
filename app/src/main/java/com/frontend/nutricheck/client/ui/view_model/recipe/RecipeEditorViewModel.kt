@@ -31,7 +31,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 sealed class RecipeMode {
-    object Create : RecipeMode()
+    data object Create : RecipeMode()
     data class Edit(val recipeId: String) : RecipeMode()
 }
 
@@ -57,13 +57,13 @@ sealed interface RecipeEditorEvent {
     data class IngredientAdded(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class IngredientRemoved(val foodProduct: FoodComponent) : RecipeEditorEvent
     data class QueryChanged(val query: String) : RecipeEditorEvent
-    object SearchIngredients : RecipeEditorEvent
-    object SaveRecipe : RecipeEditorEvent
-    object RecipeSaved : RecipeEditorEvent
-    object ShowBottomSheet : RecipeEditorEvent
-    object HideBottomSheet : RecipeEditorEvent
-    object ResetErrorState : RecipeEditorEvent
-    object Clear : RecipeEditorEvent
+    data object SearchIngredients : RecipeEditorEvent
+    data object SaveRecipe : RecipeEditorEvent
+    data object RecipeSaved : RecipeEditorEvent
+    data object ShowBottomSheet : RecipeEditorEvent
+    data object HideBottomSheet : RecipeEditorEvent
+    data object ResetErrorState : RecipeEditorEvent
+    data object Clear : RecipeEditorEvent
 }
 
 /**
@@ -77,7 +77,7 @@ sealed interface RecipeEditorEvent {
  * @property snackbarManager Manager for displaying snackbars.
  * @property combinedSearchListStore Store for managing the combined search list of ingredients.
  * @property context Application context for accessing resources.
- * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ * @param savedStateHandle Saved state handle for managing state across configuration changes.
  */
 @HiltViewModel
 class RecipeEditorViewModel @Inject constructor(
@@ -160,8 +160,8 @@ class RecipeEditorViewModel @Inject constructor(
             is RecipeEditorEvent.SearchIngredients -> onSearchIngredients()
             is RecipeEditorEvent.QueryChanged -> onQueryChanged(event.query)
             is RecipeEditorEvent.ResetErrorState -> setReady()
-            is RecipeEditorEvent.RecipeSaved -> null
             is RecipeEditorEvent.Clear -> clearSearch()
+            else -> { /* Other Events are not handled here */ }
         }
     }
 
@@ -231,11 +231,12 @@ class RecipeEditorViewModel @Inject constructor(
                 "protein" to 0.0,
                 "fat" to 0.0
             )
-        ) { acc, ingredient ->
-            acc["calories"] = acc["calories"]!! + ingredient.calories * ingredient.servings
-            acc["carbohydrates"] = acc["carbohydrates"]!! + ingredient.carbohydrates * ingredient.servings
-            acc["protein"] = acc["protein"]!! + ingredient.protein * ingredient.servings
-            acc["fat"] = acc["fat"]!! + ingredient.fat * ingredient.servings
+        ) { acc, foodProduct ->
+            val ingredient = foodProduct as FoodProduct
+            acc["calories"] = acc["calories"]!! + ingredient.calories * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
+            acc["carbohydrates"] = acc["carbohydrates"]!! + ingredient.carbohydrates * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
+            acc["protein"] = acc["protein"]!! + ingredient.protein * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
+            acc["fat"] = acc["fat"]!! + ingredient.fat * ingredient.servings * (ingredient.servingSize.getAmount() / 100.0)
             acc
         }
         val actualIngredients = draft.ingredients.map { foodComponent ->
@@ -327,7 +328,6 @@ class RecipeEditorViewModel @Inject constructor(
         _draft.update { draft ->
             draft.copy(
                 query = "",
-                results = emptyList(),
                 hasSearched = false,
                 lastSearchedQuery = null
             )

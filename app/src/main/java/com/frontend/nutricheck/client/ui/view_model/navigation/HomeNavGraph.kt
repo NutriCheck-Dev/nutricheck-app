@@ -13,7 +13,7 @@ import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryViewM
 
 
 sealed class HomeScreens(val route: String) {
-    object HomePage : HomeScreens("home_page_route")
+    data object HomePage : HomeScreens("home_page_route")
 
 }
 

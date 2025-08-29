@@ -27,7 +27,9 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.unmockkObject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okhttp3.MultipartBody
 import org.junit.After
@@ -36,7 +38,7 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 import java.util.Date
-
+@ExperimentalCoroutinesApi
 class HistoryRepositoryImplTest {
 
     private lateinit var repository: HistoryRepositoryImpl
@@ -51,6 +53,8 @@ class HistoryRepositoryImplTest {
     lateinit var meal: Meal
     lateinit var mealWithAll: MealWithAll
 
+    private val testDispatcher = UnconfinedTestDispatcher()
+
     @Before
     fun setUp() {
         repository = HistoryRepositoryImpl(
@@ -61,7 +65,8 @@ class HistoryRepositoryImplTest {
             foodDao,
             recipeDao,
             ingredientDao,
-            api
+            api,
+            testDispatcher
         )
         this.meal = TestDataFactory.createDefaultMeal()
         this.mealWithAll = TestDataFactory.createDefaultMealWithAll()
@@ -300,8 +305,8 @@ class HistoryRepositoryImplTest {
         val flow = repository.observeMealsForDay(Date())
 
         flow.collect { meals ->
-            Assertions.assertEquals(meal.id, meals.first().id)
-            Assertions.assertEquals(meal.calories, meals.first().calories, 0.0)
+            assertEquals(meal.id, meals.first().id)
+            assertEquals(meal.calories, meals.first().calories, 0.0)
         }
     }
 }

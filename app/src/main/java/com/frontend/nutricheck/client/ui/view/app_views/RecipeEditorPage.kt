@@ -124,6 +124,8 @@ fun RecipeEditorPage(
         sheetContent = {
             BottomSheetSearchContent(
                 foodComponents = draft.results,
+                selectedTab = 0,
+                onSelectTab = {},
                 trailingContent = { item ->
                     CustomAddButton {
                         recipeEditorViewModel.onEvent(RecipeEditorEvent.IngredientAdded(item))
@@ -137,9 +139,7 @@ fun RecipeEditorPage(
                 showTabRow = false,
                 isLoading = uiState == BaseViewModel.UiState.Loading,
                 showEmptyState = draft.hasSearched &&
-                        draft.lastSearchedQuery == draft.query,
-                onSelectTab = {},
-                selectedTab = 0
+                        draft.lastSearchedQuery == draft.query
             )
         }
     ) { innerPadding ->

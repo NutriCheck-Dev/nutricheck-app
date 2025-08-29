@@ -26,31 +26,31 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindRecipeRepository(
+    fun bindRecipeRepository(
         recipeRepositoryImpl: RecipeRepositoryImpl
     ): RecipeRepository
 
     @Singleton
     @Binds
-    abstract fun bindFoodProductRepository(
+    fun bindFoodProductRepository(
         foodProductRepositoryImpl: FoodProductRepositoryImpl
     ): FoodProductRepository
 
     @Singleton
     @Binds
-    abstract fun bindUserDataRepository(
+    fun bindUserDataRepository(
         userDataRepositoryImpl: UserDataRepositoryImpl
     ): UserDataRepository
 
     @Singleton
     @Binds
-    abstract fun bindHistoryRepository(
+    fun bindHistoryRepository(
         historyRepositoryImpl: HistoryRepositoryImpl
     ): HistoryRepository
 
     @Singleton
     @Binds
-    abstract fun bindAppSettingRepository(
+    fun bindAppSettingRepository(
         appSettingRepositoryImpl: AppSettingRepositoryImpl
     ): AppSettingRepository
 }

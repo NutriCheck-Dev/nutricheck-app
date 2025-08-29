@@ -1,11 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.frontend.nutricheck.client.ui.view.widgets
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -36,7 +33,6 @@ import kotlin.math.floor
  * A composable function that displays a servings picker.
  *
  * @param value The current number of servings selected.
- * @param range The range of valid servings that can be selected.
  * @param onValueChange Callback function to be invoked when the selected number of servings
  */
 @Composable
@@ -141,8 +137,8 @@ fun digitsToScaledLong(digits: String, decimals: Int, intSlots: Int): Long {
 
 fun scaledLongToDigits(scaled: Long, decimals: Int, intSlots: Int): String {
     val maxDigits = intSlots + decimals
-    val scaled = scaled.coerceAtLeast(0L).toString()
-    return clampDigits(scaled, maxDigits)
+    val scaledDigit = scaled.coerceAtLeast(0L).toString()
+    return clampDigits(scaledDigit, maxDigits)
 }
 
 private fun clampDigits(digits: String, maxDigits: Int): String =

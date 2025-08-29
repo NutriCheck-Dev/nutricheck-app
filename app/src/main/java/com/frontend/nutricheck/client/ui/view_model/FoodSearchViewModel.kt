@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -46,7 +45,7 @@ import java.util.UUID
 
 sealed class SearchMode {
     data class ComponentsForMeal(val mealId: String) : SearchMode()
-    object LogNewMeal : SearchMode()
+    data object LogNewMeal : SearchMode()
 }
 
 data class CommonSearchParameters(
@@ -81,15 +80,15 @@ sealed interface SearchEvent {
     data class QueryChanged(val query: String) : SearchEvent
     data class AddFoodComponent(val foodComponent: FoodComponent) : SearchEvent
     data class RemoveFoodComponent(val foodComponent: FoodComponent) : SearchEvent
-    object Search : SearchEvent
-    object Clear : SearchEvent
-    object ClickSearchAll : SearchEvent
-    object ClickSearchMyRecipes : SearchEvent
-    object SubmitComponentsToMeal : SearchEvent
-    object MealSelectorClick: SearchEvent
-    object ShowBottomSheet : SearchEvent
-    object HideBottomSheet : SearchEvent
-    object ResetErrorState : SearchEvent
+    data object Search : SearchEvent
+    data object Clear : SearchEvent
+    data object ClickSearchAll : SearchEvent
+    data object ClickSearchMyRecipes : SearchEvent
+    data object SubmitComponentsToMeal : SearchEvent
+    data object MealSelectorClick: SearchEvent
+    data object ShowBottomSheet : SearchEvent
+    data object HideBottomSheet : SearchEvent
+    data object ResetErrorState : SearchEvent
     data object MealSaved : SearchEvent
 }
 
@@ -103,7 +102,7 @@ sealed interface SearchEvent {
  * @property combinedSearchListStore Store for managing the combined search list state.
  * @property snackbarManager Manager for displaying snackbars to the user.
  * @property context Application context for resource access.
- * @property savedStateHandle Saved state handle for managing state across configuration changes.
+ * @param savedStateHandle Saved state handle for managing state across configuration changes.
  */
 @HiltViewModel
 class FoodSearchViewModel @Inject constructor(
@@ -227,7 +226,7 @@ class FoodSearchViewModel @Inject constructor(
             is SearchEvent.ClickSearchAll -> onSearchAllClick()
             is SearchEvent.ClickSearchMyRecipes -> onSearchMyRecipesClick()
             is SearchEvent.ResetErrorState -> setReady()
-            is SearchEvent.MealSaved -> null
+            else -> { /* Other Events are not handled here */ }
         }
     }
 
@@ -389,7 +388,6 @@ class FoodSearchViewModel @Inject constructor(
         _searchState.update { state ->
             val newParams = state.parameters.copy(
                 query = "",
-                generalResults = emptyList(),
                 hasSearched = false,
                 lastSearchedQuery = null
             )
@@ -505,7 +503,7 @@ class FoodSearchViewModel @Inject constructor(
         if (i < 0) return SortKey(Int.MAX_VALUE, Int.MAX_VALUE, normedName)
         val rank = when {
             i == 0 -> 0
-            i > 0 && normedName[i - 1].isWhitespace() -> 1
+            normedName[i - 1].isWhitespace() -> 1
             else -> 2
         }
         return SortKey(rank, i, normedName)

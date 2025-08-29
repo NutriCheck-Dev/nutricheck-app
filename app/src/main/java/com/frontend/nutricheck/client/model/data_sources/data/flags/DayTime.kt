@@ -21,7 +21,7 @@ enum class DayTime(val stringResId: Int) {
     companion object {
     fun dateToDayTime(date: Date): DayTime {
         val calendar = Calendar.getInstance().apply { time = date }
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val hour = calendar[Calendar.HOUR_OF_DAY]
         return when (hour) {
             in 5..10 -> BREAKFAST
             in 11..15 -> LUNCH

@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -60,13 +61,15 @@ class UserDataRepositoryImplTest {
         )
     )
 
+    private val testDispatcher = UnconfinedTestDispatcher()
+
     /**
      * Sets up the test environment before each test.
      * Initializes the repository with mocked dependencies.
      */
     @Before
     fun setUp() {
-        repository = UserDataRepositoryImpl(mockWeightDao, mockUserDataDao)
+        repository = UserDataRepositoryImpl(mockWeightDao, mockUserDataDao, testDispatcher)
     }
 
     /**
