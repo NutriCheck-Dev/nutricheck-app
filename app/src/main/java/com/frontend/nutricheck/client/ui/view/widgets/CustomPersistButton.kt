@@ -18,16 +18,20 @@ import com.frontend.nutricheck.client.R
  * @param onClick A lambda function that is called when the button is clicked.
  */
 @Composable
-fun CustomPersistButton(onClick: () -> Unit = {}) {
+fun CustomPersistButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
     val colors = MaterialTheme.colorScheme
     IconButton(
         onClick = { onClick() },
         modifier = Modifier
             .clip(CircleShape)
+            .then(modifier)
     ) {
         Icon(
             imageVector = Icons.Default.Check,
-            contentDescription = stringResource(R.string.save),
+            contentDescription = stringResource(R.string.persist_description),
             tint = colors.onSurfaceVariant
         )
     }

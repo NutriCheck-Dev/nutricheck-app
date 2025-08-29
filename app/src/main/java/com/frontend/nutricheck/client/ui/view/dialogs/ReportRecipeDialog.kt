@@ -14,7 +14,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.theme.extended
 
 /**
@@ -47,6 +50,7 @@ fun ReportRecipeDialog(
     MaterialTheme.typography
 
     AlertDialog(
+        modifier = Modifier.semantics { contentDescription = SemanticsTags.REPORT_DIALOG },
         icon = {
             Icon(imageVector = Icons.Default.Report,
                 contentDescription = null) },
@@ -65,13 +69,18 @@ fun ReportRecipeDialog(
                         )
                     },
                     onValueChange = onValueChange,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics { contentDescription = SemanticsTags.REPORT_DIALOG_INPUT }
                 )
             }
         },
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = onConfirm) {
+            TextButton(
+                modifier = Modifier.semantics { contentDescription = SemanticsTags.REPORT_DIALOG_CONFIRM },
+                onClick = onConfirm
+            ) {
                 Text(text = confirmText, color = extendedColors.confirmation.color)
             }
         },

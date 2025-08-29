@@ -33,9 +33,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A composable function that displays a switcher for selecting between different overview options.
@@ -50,6 +53,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun OverviewSwitcher(
     options: List<String> = emptyList(),
+    optionIds: List<String> = emptyList(),
     selectedOption: String = "",
     onSelect: (String) -> Unit = {},
     tonalElevation: Dp = 0.dp,
@@ -99,8 +103,11 @@ fun OverviewSwitcher(
                 divider = {}
             ) {
                 options.forEachIndexed { index, title ->
+                    val id = optionIds[index]
                     Tab(
-                        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .semantics { contentDescription = SemanticsTags.OVERVIEW_SWITCHER_TAB_PREFIX + id },
                         selected = index == selectedIndex,
                         onClick = { onSelect(title) },
                         selectedContentColor = colors.onSurfaceVariant,

@@ -21,11 +21,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Weight
 import com.frontend.nutricheck.client.ui.theme.LocalExtendedColors
 import com.frontend.nutricheck.client.ui.view_model.dashboard.WeightHistoryState
@@ -77,7 +81,8 @@ fun WeightHistoryDiagram(
             ChartRangeSwitcher(
                 options = options.map { stringResource(it.labelResId) },
                 selectedOption = options.indexOf(selectedRange),
-                onSelect = { index -> onPeriodSelected(options[index]) }
+                onSelect = { index -> onPeriodSelected(options[index]) },
+                testTagPrefix = SemanticsTags.WEIGHT_HISTORY_RANGE_SELECTOR
             )
         }
 
@@ -165,6 +170,14 @@ fun WeightLineChart(
                 .fillMaxWidth()
                 .height(70.dp)
                 .padding(horizontal = 30.dp)
+                .testTag(SemanticsTags.WEIGHT_HISTORY_CHART)
+                .semantics {
+                    contentDescription = when (selectedRange) {
+                        WeightRange.LAST_1_MONTH -> SemanticsTags.RANGE_WEIGHT_LAST_1_MONTH
+                        WeightRange.LAST_6_MONTHS -> SemanticsTags.RANGE_WEIGHT_LAST_6_MONTHS
+                        WeightRange.LAST_12_MONTHS -> SemanticsTags.RANGE_WEIGHT_LAST_12_MONTHS
+                    }
+                }
         ) {
             val heightRatio = size.height / (chartMax - chartMin)
             val dayWidth = size.width / daysInRange.coerceAtLeast(1)

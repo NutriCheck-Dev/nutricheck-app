@@ -24,11 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A composable function that displays a meal selector with a dropdown menu.
@@ -70,7 +74,8 @@ fun MealSelector(
                 Row(
                     modifier = Modifier
                         .menuAnchor(MenuAnchorType.PrimaryEditable)
-                        .padding(vertical = 12.dp, horizontal = 8.dp),
+                        .padding(vertical = 12.dp, horizontal = 8.dp)
+                        .semantics { contentDescription = SemanticsTags.DAYTIME_PICKER },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -97,7 +102,16 @@ fun MealSelector(
                 ) {
                     mealOptions.forEach { dayTime ->
                         DropdownMenuItem(
-                            text = { Text(dayTime.getDescription(context = LocalContext.current)) },
+                            modifier = Modifier
+                                .testTag(SemanticsTags.DAYTIME_ITEM_PREFIX + dayTime.name),
+                            text = {
+                                Text(
+                                    dayTime.getDescription(context = LocalContext.current),
+                                    modifier = Modifier.semantics {
+                                        contentDescription = SemanticsTags.DAYTIME_ITEM_PREFIX + dayTime.name
+                                    }
+                                )
+                            },
                             onClick = {
                                 onMealSelected(dayTime)
                                 onExpandedChange()

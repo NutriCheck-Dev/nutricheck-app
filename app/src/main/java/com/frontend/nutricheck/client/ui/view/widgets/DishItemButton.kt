@@ -23,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.frontend.nutricheck.client.R
@@ -30,6 +32,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A composable function that displays a button for a food component
@@ -49,6 +52,7 @@ fun DishItemButton(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
+    val kilocaloriesDescription = stringResource(R.string.kilocalories)
     val roundedCalories = when (foodComponent) {
         is Recipe -> {
             val calories = foodComponent.calories * foodComponent.servings
@@ -98,13 +102,18 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = roundedCalories + stringResource(R.string.kilocalories),
+                    text = roundedCalories + kilocaloriesDescription,
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .weight(0.45f)
                         .padding(start = 8.dp, end = 8.dp)
+                        .semantics {
+                            contentDescription = SemanticsTags.DISHITEM_CALORIES_PREFIX +
+                                    roundedCalories +
+                                    kilocaloriesDescription
+                        }
                 )
             }
 
@@ -140,6 +149,7 @@ fun DishItemButton(
     val styles = MaterialTheme.typography
     val calories = ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)
     val roundedCalories = calories.toInt().toString()
+    val kilocaloriesDescription = stringResource(R.string.kilocalories)
 
     Card(
         modifier = modifier
@@ -180,7 +190,7 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = roundedCalories + stringResource(R.string.kilocalories),
+                    text = roundedCalories + kilocaloriesDescription,
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -220,6 +230,7 @@ fun DishItemMealButton(
 ) {
     val colors = MaterialTheme.colorScheme
     val roundedCalories = calories.toInt().toString()
+    val kilocaloriesDescription = stringResource(R.string.kilocalories)
 
     Surface(
         modifier = modifier
@@ -255,7 +266,7 @@ fun DishItemMealButton(
                 )
 
                 Text(
-                    text = roundedCalories + stringResource(R.string.kilocalories),
+                    text = roundedCalories + kilocaloriesDescription,
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,
@@ -265,4 +276,3 @@ fun DishItemMealButton(
         }
     }
 }
-

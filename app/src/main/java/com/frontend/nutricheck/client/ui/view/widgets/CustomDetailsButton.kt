@@ -15,8 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  * A custom details button that displays a dropdown menu with options based on the context.
@@ -33,6 +36,7 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenu
  */
 @Composable
 fun CustomDetailsButton(
+    modifier: Modifier = Modifier,
     dishItemButton: Boolean = false,
     ownedRecipe: Boolean = false,
     publicRecipe: Boolean = false,
@@ -83,7 +87,9 @@ fun CustomDetailsButton(
 
     Box {
         IconButton(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .then(modifier),
             onClick = { onDetailsClick() }
         ) {
             if (dishItemButton) {
@@ -99,11 +105,13 @@ fun CustomDetailsButton(
             }
         }
         DropdownMenu(
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.DETAILS_MENU },
             expanded = expanded,
             onDismissRequest = { onDismissClick() }
         ) {
             optionsList.forEach { option ->
                 DropdownMenuItem(
+                    modifier = Modifier.semantics { contentDescription = SemanticsTags.DETAILS_MENU_OPTION_PREFIX + option.toString() },
                     text = {
                         Text(
                             text = option.toString(),

@@ -166,4 +166,5 @@
     <string name="error_servings_range">Please choose a value between %1$s and %2$s.</string>
     <string name="serving_size_gram">%1$d gram</string>
     <string name="serving_size_grams">%1$d grams</string>
+    <string name="onboarding_button_finish">Finish</string>
 </resources>

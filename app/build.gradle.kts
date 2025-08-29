@@ -86,7 +86,8 @@ android {
                 "arm64-v8a")
         }
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.nutricheck.frontend.client.CustomHiltTestRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "false"
     }
 
     buildTypes {
@@ -102,6 +103,19 @@ android {
             )
         }
     }
+
+    flavorDimensions += "version"
+    productFlavors {
+        create("prod") {
+            dimension = "version"
+            buildConfigField("String", "BASE_URL","\"https://1d25b66e-2926-4996-bb00-2d7fe74c098f.ka.bw-cloud-instance.org\"")
+        }
+        create("dev") {
+            dimension = "version"
+            buildConfigField("String", "BASE_URL","\"http://10.0.2.2:8080\"")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -114,13 +128,15 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
         }
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        animationsDisabled = true
     }
-
 }
 configurations.all {
     exclude(group = "com.intellij", module = "annotations")
@@ -138,9 +154,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.androidx.hilt.navigation.compose)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.compose)
     implementation(libs.vico.core)
     implementation(libs.androidx.camera.view)
@@ -148,14 +164,15 @@ dependencies {
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.rules)
     ksp(libs.androidx.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    kspAndroidTest(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android.testing)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -180,10 +197,10 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
-    implementation (libs.androidx.exifinterface)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.commons.lang3)
     implementation("org.apache.commons:commons-text:1.14.0")
     testImplementation(libs.junit)
-    testImplementation(libs.androidx.core.testing)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.datastore.preferences)
@@ -194,4 +211,7 @@ dependencies {
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
+    androidTestUtil(libs.androidx.orchestrator)
+    androidTestImplementation(libs.androidx.uiautomator)
+    androidTestImplementation(libs.androidx.uiautomator)
 }

@@ -1,7 +1,10 @@
-package com.frontend.nutricheck.client.model.data_sources.persistence
+package com.nutricheck.frontend
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
+import com.frontend.nutricheck.client.model.data_sources.persistence.DatabaseModule
+import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.IngredientDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.MealDao
@@ -14,35 +17,25 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.search.RecipeSearchDao
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
+import java.io.File
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [DatabaseModule::class]
+)
+object TestDatabaseModule {
 
-    private var Instance: LocalDatabase? = null
-
-    @Singleton
     @Provides
-    fun provideDatabase(
-        @ApplicationContext context: Context
-    ): LocalDatabase {
-        return Instance ?: synchronized(this) {
-            Room.databaseBuilder(
-                context.applicationContext,
-                LocalDatabase::class.java,
-                "nutricheck_database"
-            )
-                .addMigrations(Migrations.MIGRATION_15_16, Migrations.MIGRATION_16_17)
-                .build()
-                .also { Instance = it }
-
-        }
-
-    }
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context) : LocalDatabase =
+        Room.inMemoryDatabaseBuilder(context, LocalDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
 
     @Singleton
     @Provides

@@ -195,6 +195,8 @@
     <string name="save_recipe_content_description" translatable="false">save recipe</string>
     <string name="details" translatable="false">Details</string>
     <string name="error_servings_range">Bitte wähle einen Wert zwischen %1$s und %2$s.</string>
+    <string name="persist_description" translatable="false">Persist</string>
     <string name="serving_size_gram">%1$d Gramm</string>
     <string name="serving_size_grams">%1$d Gramm</string>
+    <string name="onboarding_button_finish">Abschließen</string>
 </resources>
