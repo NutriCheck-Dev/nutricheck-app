@@ -48,17 +48,21 @@ fun CustomDetailsButton(
     val optionsList = when {
         ownedRecipe -> {
             DropdownMenuOptions.entries
-                .minus(listOf(
-                    DropdownMenuOptions.DOWNLOAD,
-                    DropdownMenuOptions.REPORT))
+                .minus(
+                    listOf(
+                        DropdownMenuOptions.DOWNLOAD,
+                        DropdownMenuOptions.REPORT).toSet()
+                )
                 .sortedBy { it.name }
         }
         publicRecipe -> {
             DropdownMenuOptions.entries
-                .minus(listOf(
-                    DropdownMenuOptions.EDIT,
-                    DropdownMenuOptions.DELETE,
-                    DropdownMenuOptions.UPLOAD))
+                .minus(
+                    listOf(
+                        DropdownMenuOptions.EDIT,
+                        DropdownMenuOptions.DELETE,
+                        DropdownMenuOptions.UPLOAD).toSet()
+                )
                 .sortedBy { it.name }
         }
         foodItem -> {
@@ -66,10 +70,12 @@ fun CustomDetailsButton(
         }
         ingredientButton -> {
             DropdownMenuOptions.entries
-                .minus(listOf(
-                    DropdownMenuOptions.DOWNLOAD,
-                    DropdownMenuOptions.UPLOAD,
-                    DropdownMenuOptions.REPORT))
+                .minus(
+                    listOf(
+                        DropdownMenuOptions.DOWNLOAD,
+                        DropdownMenuOptions.UPLOAD,
+                        DropdownMenuOptions.REPORT).toSet()
+                )
                 .sortedBy { it.name }
         }
         else -> {emptyList()}

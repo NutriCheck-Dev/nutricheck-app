@@ -24,10 +24,10 @@ import java.io.File
 import javax.inject.Inject
 
 sealed interface AddAiMealEvent {
-    object OnRetakePhoto : AddAiMealEvent
-    object OnSubmitPhoto : AddAiMealEvent
-    object OnTakePhoto : AddAiMealEvent
-    object ResetErrorState : AddAiMealEvent
+    data object OnRetakePhoto : AddAiMealEvent
+    data object OnSubmitPhoto : AddAiMealEvent
+    data object OnTakePhoto : AddAiMealEvent
+    data object ResetErrorState : AddAiMealEvent
 
     data class ShowMealOverview(val mealId : String, val foodProductId: String) : AddAiMealEvent
 }

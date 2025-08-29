@@ -28,13 +28,13 @@ import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewMod
 import com.frontend.nutricheck.client.ui.view_model.recipe.ReportRecipeViewModel
 
 sealed class HistoryPageScreens(val route: String) {
-    object HistoryPage : HistoryPageScreens("history_page")
-    object AddMeal : HistoryPageScreens("add_meal?dayTime={dayTime}&date={date}") {
+    data object HistoryPage : HistoryPageScreens("history_page")
+    data object AddMeal : HistoryPageScreens("add_meal?dayTime={dayTime}&date={date}") {
         fun createRoute(dayTime: DayTime, date: Long): String {
             return "add_meal?dayTime=${dayTime.name}&date=$date"
         }
     }
-    object FoodOverview : HistoryPageScreens(
+    data object FoodOverview : HistoryPageScreens(
         "food_product_overview/{foodProductId}?recipeId={recipeId}&editable={editable}"
     ) {
         fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId?editable=true"
@@ -42,17 +42,17 @@ sealed class HistoryPageScreens(val route: String) {
             "food_product_overview/$foodProductId?recipeId=$recipeId&editable=false"
     }
 
-    object RecipeOverview : HistoryPageScreens("recipe_overview/{recipeId}?fromSearch={fromSearch}") {
+    data object RecipeOverview : HistoryPageScreens("recipe_overview/{recipeId}?fromSearch={fromSearch}") {
         fun createRoute(recipeId: String, fromSearch: Boolean): String {
             return "recipe_overview/$recipeId?fromSearch=$fromSearch"
         }
     }
-    object FoodDetails : HistoryPageScreens("food_details?mealId={mealId}&foodProductId={foodProductId}") {
+    data object FoodDetails : HistoryPageScreens("food_details?mealId={mealId}&foodProductId={foodProductId}") {
         fun createRoute(mealId: String, foodProductId: String): String {
             return "food_details?mealId=$mealId&foodProductId=$foodProductId"
         }
     }
-    object RecipeDetails : HistoryPageScreens("recipe_details?recipeId={recipeId}&mealId={mealId}") {
+    data object RecipeDetails : HistoryPageScreens("recipe_details?recipeId={recipeId}&mealId={mealId}") {
         fun createRoute(recipeId: String, mealId: String): String {
             return "recipe_details?recipeId=$recipeId&mealId=$mealId"
         }

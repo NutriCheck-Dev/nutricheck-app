@@ -66,7 +66,7 @@ class HistoryRepositoryImplTest {
             recipeDao,
             ingredientDao,
             api,
-            UnconfinedTestDispatcher()
+            testDispatcher
         )
         this.meal = TestDataFactory.createDefaultMeal()
         this.mealWithAll = TestDataFactory.createDefaultMealWithAll()

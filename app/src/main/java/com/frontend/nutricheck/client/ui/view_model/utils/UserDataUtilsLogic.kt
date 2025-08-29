@@ -161,7 +161,6 @@ object UserDataUtilsLogic {
      * Extension function to parse a String to Double, accepting both comma and dot as
      * decimal separators.
      *
-     * @param String The string to be converted to Double.
      * @return The parsed Double value, or null if the string cannot be converted.
      */
    fun String.toDoubleOrNullFlexible(): Double? {

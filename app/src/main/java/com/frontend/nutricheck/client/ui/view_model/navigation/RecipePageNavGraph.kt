@@ -28,16 +28,16 @@ import com.frontend.nutricheck.client.ui.view_model.FoodProductOverviewEvent
 import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeEditorEvent
 
 sealed class RecipePageScreens(val route: String) {
-    object RecipePage : RecipePageScreens("recipe_page")
-    object RecipeOverview : RecipePageScreens("recipe_overview/{recipeId}") {
+    data object RecipePage : RecipePageScreens("recipe_page")
+    data object RecipeOverview : RecipePageScreens("recipe_overview/{recipeId}") {
         fun createRoute(recipeId: String) = "recipe_overview/$recipeId"
     }
-    object FoodProductOverview : AddScreens("food_product_overview/{foodProductId}?recipeId={recipeId}&editable={editable}") {
+    data object FoodProductOverview : AddScreens("food_product_overview/{foodProductId}?recipeId={recipeId}&editable={editable}") {
         fun fromSearch(foodProductId: String) = "food_product_overview/$foodProductId?editable=true"
         fun fromIngredient(recipeId: String, foodProductId: String) =
             "food_product_overview/$foodProductId?recipeId=$recipeId&editable=false"
     }
-    object RecipeEditorPage : RecipePageScreens("recipe_editor") {
+    data object RecipeEditorPage : RecipePageScreens("recipe_editor") {
         const val ARGUMENT = "recipeId"
         const val PATTERN =  "recipe_editor?$ARGUMENT={$ARGUMENT}"
         const val NEW_RECIPE = "recipe_editor"
@@ -209,7 +209,6 @@ private fun NavGraphBuilder.foodProductOverviewFromEditorRoute(
     }
 }
 
-// Event Handlers
 @Composable
 private fun HandleRecipePageEvents(
     viewModel: RecipePageViewModel,
@@ -286,7 +285,6 @@ private fun HandleIngredientAddedEvent(
     }
 }
 
-// Helper Functions
 @Composable
 private fun rememberParentEntry(
     navController: NavHostController,
@@ -319,7 +317,6 @@ private fun rememberFoodProductGraphEntry(
     navController.getBackStackEntry(route)
 }
 
-// Navigation Functions
 private fun navigateToNewRecipe(navController: NavHostController) {
     navController.navigate(RecipePageScreens.RecipeEditorPage.NEW_RECIPE)
 }
@@ -349,7 +346,6 @@ private fun navigateToFoodProductFromSearch(
     navController.navigate(RecipePageScreens.FoodProductOverview.fromSearch(foodProductId))
 }
 
-// Argument Helpers
 private fun foodProductOverviewArguments() = listOf(
     navArgument("foodProductId") { type = NavType.StringType },
     navArgument("recipeId") {
@@ -372,6 +368,5 @@ private data class FoodProductOverviewArgs(
     )
 }
 
-// Constants
 private const val RECIPE_PAGE_GRAPH_ROUTE = "recipe_page_graph"
 private const val RECIPE_EDITOR_GRAPH_ROUTE = "recipe_editor_page_graph"

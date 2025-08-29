@@ -23,15 +23,15 @@ import com.frontend.nutricheck.client.ui.view_model.OnboardingViewModel
 
 
 sealed class OnboardingScreen(val route: String) {
-    object Welcome : OnboardingScreen("welcome_route")
-    object Name : OnboardingScreen("name_route")
-    object Birthdate : OnboardingScreen("birthdate_route")
-    object Gender : OnboardingScreen("gender_route")
-    object Height : OnboardingScreen("height_route")
-    object Weight : OnboardingScreen("weight_route")
-    object SportFrequency : OnboardingScreen("sport_frequency_route")
-    object WeightGoal : OnboardingScreen("weight_goal_route")
-    object TargetWeight : OnboardingScreen("target_weight_route")
+    data object Welcome : OnboardingScreen("welcome_route")
+    data object Name : OnboardingScreen("name_route")
+    data object Birthdate : OnboardingScreen("birthdate_route")
+    data object Gender : OnboardingScreen("gender_route")
+    data object Height : OnboardingScreen("height_route")
+    data object Weight : OnboardingScreen("weight_route")
+    data object SportFrequency : OnboardingScreen("sport_frequency_route")
+    data object WeightGoal : OnboardingScreen("weight_goal_route")
+    data object TargetWeight : OnboardingScreen("target_weight_route")
 }
 
 @Composable
