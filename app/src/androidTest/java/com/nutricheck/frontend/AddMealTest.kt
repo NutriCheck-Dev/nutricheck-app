@@ -6,6 +6,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -17,6 +18,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.frontend.nutricheck.client.MainActivity
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
 import com.nutricheck.frontend.util.BypassOnboardingRule
@@ -31,12 +33,10 @@ import org.junit.runner.RunWith
 import javax.inject.Inject
 
 /**
- * ⟨T 5⟩ Testfall Mahlzeit hinzufügen
+ * Testfall Mahlzeit hinzufügen
  * Varianten:
- * 1) Online + manuell Zutaten → Übersicht aktualisiert
- * 2) Online + Scannen (AI) → Übersicht aktualisiert
- * 3) Offline + eigenes Rezept → Übersicht aktualisiert
- * 4) Offline + Scannen → Fehlermeldung
+ * 1) Lebensmittel suchen und zu Mahlzeit hinzufügen
+ * 2) Rezept erstellen und zu Mahlzeit hinzufügen
  */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -68,42 +68,39 @@ class AddMealTest {
         openAddMeal()
 
         openIngredientSearch()
-
         addMealIngredientViaQuickAdd(firstIngredient)
         addMealIngredientViaQuickAdd(secondIngredient)
+
         selectDayTime()
         persistMeal()
-        assertOnHistoryPage()
-        Thread.sleep(20_000)
 
+        assertOnHistoryPage()
+        val itemCount = compose.onAllNodes(
+            hasContentDescriptionPrefix(SemanticsTags.MEAL_FOOD_ITEM_PREFIX),
+            useUnmergedTree = true
+        ).fetchSemanticsNodes().size
+
+        assert(itemCount == 2)
     }
 
-
-    // ---------- V2: Online + Scannen (AI) ----------
-    /**
     @Test
     fun addMeal_scan_online_updatesOverview() {
         openAddDialog()
         tapScanMeal()
 
-        // AI-Vorschlag bestätigen
-        compose.onNodeWithContentDescription(SemanticsTags.SCAN_CONFIRM)
-            .assertIsDisplayed()
-            .performClick()
+        checkScanErrorDisplayed()
+    }
 
-        assertHomeOverviewUpdated()
-    }*/
-
-    // ---------- V3: Offline + eigenes Rezept ----------
 
     @Test
     fun addMeal_ownRecipe_offline_updatesOverview() {
         val recipeName = "My Awesome Recipe"
-
+        val firstIngredient = "Apfel"
+        val secondIngredient = "Banane"
         openAddDialogThenRecipeEditor()
         openIngredientSearch()
-        addRecipeIngredientViaQuickAdd("Apfel")
-        addRecipeIngredientViaQuickAdd("Banane")
+        addRecipeIngredientViaQuickAdd(firstIngredient)
+        addRecipeIngredientViaQuickAdd(secondIngredient)
         fillAndPersistRecipe(name = recipeName, description = "This is my awesome recipe.")
         assertOnRecipePage(name = recipeName)
 
@@ -121,7 +118,12 @@ class AddMealTest {
         selectDayTime()
         persistMeal()
         assertOnHistoryPage(recipeName)
-        Thread.sleep(20_000)
+        val itemCount = compose.onAllNodes(
+            hasContentDescriptionPrefix(SemanticsTags.MEAL_RECIPE_ITEM_PREFIX),
+            useUnmergedTree = true
+        ).fetchSemanticsNodes().size
+
+        assert(itemCount == 1)
     }
 
     private fun openAddDialog() {
@@ -142,15 +144,22 @@ class AddMealTest {
             .assertIsDisplayed()
     }
 
-    /**private fun tapScanMeal() {
+    private fun tapScanMeal() {
         compose.onNodeWithContentDescription(SemanticsTags.ADD_DIALOG_SCAN_MEAL)
             .assertIsDisplayed()
             .performClick()
 
-        compose.onNodeWithContentDescription(SemanticsTags.SCAN_SHEET)
+        compose.onNodeWithContentDescription(SemanticsTags.MEAL_SCAN_TAKE_PHOTO)
             .assertIsDisplayed()
-    }*/
-
+            .performClick()
+    }
+    private fun checkScanErrorDisplayed() {
+        val expectedError = compose.activity.getString(R.string.error_encoding_image)
+        compose.waitUntil(20_000) {
+            compose.onAllNodesWithText(expectedError).fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText(expectedError).assertIsDisplayed()
+    }
     private fun openIngredientSearch() {
         compose.onNodeWithContentDescription(SemanticsTags.FOODCOMPONENT_LIST_ADD_BUTTON)
             .assertIsDisplayed()
@@ -202,20 +211,14 @@ class AddMealTest {
             ).fetchSemanticsNodes().isNotEmpty()
         }
 
-        compose.onNodeWithTag("DAYTIME_ITEM_LUNCH")
+        compose.onNodeWithTag("${SemanticsTags.DAYTIME_ITEM_PREFIX}LUNCH")
             .assertExists()
             .assertHasClickAction()
             .performClick()
+
         compose.mainClock.advanceTimeBy(500)
     }
 
-    /**
-    private fun fillOwnRecipe(name: String, description: String) {
-        compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_NAME).performTextClearance()
-        compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_NAME).performTextInput(name)
-        compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_DESCRIPTION).performTextClearance()
-        compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_DESCRIPTION).performTextInput(description)
-    }*/
 
     private fun persistMeal() {
         compose.onNodeWithContentDescription(SemanticsTags.MEAL_EDITOR_PERSIST)
@@ -268,6 +271,5 @@ class AddMealTest {
             val list = node.config.getOrNull(SemanticsProperties.ContentDescription)
             list?.firstOrNull()?.startsWith(prefix) == true
         }
-
 }
 

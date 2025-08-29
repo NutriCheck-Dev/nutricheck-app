@@ -24,7 +24,10 @@ import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -125,7 +128,9 @@ fun MealBlock(
                 when (item) {
                     is MealFoodItem -> {
                         DishItemMealButton(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics { contentDescription = "${SemanticsTags.MEAL_FOOD_ITEM_PREFIX}${item.foodProduct.id}" },
                             title = item.foodProduct.name,
                             calories = item.servings * item.foodProduct.calories * (item.servingSize.getAmount() / 100),
                             onClick = { onItemClick(item) }
@@ -134,7 +139,9 @@ fun MealBlock(
 
                     is MealRecipeItem -> {
                         DishItemMealButton(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics { contentDescription = "${SemanticsTags.MEAL_RECIPE_ITEM_PREFIX}${item.recipe.id}" },
                             title = item.recipe.name,
                             calories = item.quantity * item.recipe.calories,
                             onClick = { onItemClick(item) }

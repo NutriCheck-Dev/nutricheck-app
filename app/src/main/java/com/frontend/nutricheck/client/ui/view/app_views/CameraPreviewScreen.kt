@@ -28,10 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.theme.extended
 import com.frontend.nutricheck.client.ui.view.widgets.ExitButton
 import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
@@ -145,6 +148,7 @@ fun CameraPreviewScreen(
                         .align(Alignment.BottomCenter)
                         .padding(24.dp)
                         .size(80.dp)
+                        .semantics{ contentDescription = SemanticsTags.MEAL_SCAN_TAKE_PHOTO }
                 ) {
                     Icon(
                         imageVector = Icons.Default.RadioButtonChecked,
