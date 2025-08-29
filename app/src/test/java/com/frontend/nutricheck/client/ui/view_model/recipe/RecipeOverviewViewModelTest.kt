@@ -15,8 +15,6 @@ import com.frontend.nutricheck.client.model.repositories.recipe.RecipeRepository
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.utils.CombinedSearchListStore
 import com.frontend.nutricheck.client.ui.view_model.snackbar.SnackbarManager
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewEvent
-import com.frontend.nutricheck.client.ui.view_model.recipe.RecipeOverviewViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -36,8 +34,8 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipeOverviewViewModelTest {
@@ -130,10 +128,10 @@ class RecipeOverviewViewModelTest {
         val state = viewModel.recipeOverviewState.value
         assertEquals(testRecipe.id, state.recipe.id)
         assertEquals(testRecipe.ingredients.size, state.recipe.ingredients.size)
-        assertEquals(600.0, state.parameters.calories)
-        assertEquals(80.0, state.parameters.carbohydrates)
-        assertEquals(30.0, state.parameters.protein)
-        assertEquals(20.0, state.parameters.fat)
+        assertEquals(600.0, state.parameters.calories, 0.0)
+        assertEquals(80.0, state.parameters.carbohydrates, 0.0)
+        assertEquals(30.0, state.parameters.protein, 0.0)
+        assertEquals(20.0, state.parameters.fat, 0.0)
 
         coVerify(exactly = 0) { recipeRepository.getRecipeById(any()) }
     }
@@ -148,8 +146,8 @@ class RecipeOverviewViewModelTest {
 
         val state = viewModel.recipeOverviewState.value
         assertEquals(testRecipe.id, state.recipe.id)
-        assertEquals(testRecipe.servings, state.parameters.servings)
-        assertEquals(600.0, state.parameters.calories)
+        assertEquals(testRecipe.servings, state.parameters.servings, 0.0)
+        assertEquals(600.0, state.parameters.calories, 0.0)
         coVerify { recipeRepository.observeRecipeById(testRecipe.id) }
     }
 
@@ -188,11 +186,11 @@ class RecipeOverviewViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.recipeOverviewState.value
-        assertEquals(3.0, state.parameters.servings)
-        assertEquals(900.0, state.parameters.calories)
-        assertEquals(120.0, state.parameters.carbohydrates)
-        assertEquals(45.0, state.parameters.protein)
-        assertEquals(30.0, state.parameters.fat)
+        assertEquals(3.0, state.parameters.servings, 0.0)
+        assertEquals(900.0, state.parameters.calories, 0.0)
+        assertEquals(120.0, state.parameters.carbohydrates, 0.0)
+        assertEquals(45.0, state.parameters.protein, 0.0)
+        assertEquals(30.0, state.parameters.fat, 0.0)
     }
 
     @Test
@@ -220,7 +218,7 @@ class RecipeOverviewViewModelTest {
         advanceUntilIdle()
 
         val submitted = viewModel.recipeOverviewState.value.submitRecipe()
-        assertEquals(4.0, submitted.servings)
+        assertEquals(4.0, submitted.servings, 0.0)
     }
 
     @Test
@@ -272,7 +270,7 @@ class RecipeOverviewViewModelTest {
         viewModel.onEvent(RecipeOverviewEvent.ClickDetailsOption(DropdownMenuOptions.UPLOAD))
         advanceUntilIdle()
 
-        assertTrue { viewModel.uiState.value is BaseViewModel.UiState.Error }
+        assertTrue(viewModel.uiState.value is BaseViewModel.UiState.Error)
     }
 
     @Test

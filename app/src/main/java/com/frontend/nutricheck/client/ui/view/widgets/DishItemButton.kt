@@ -33,8 +33,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 /**
  * A composable function that displays a button for a food component
@@ -58,15 +56,11 @@ fun DishItemButton(
     val roundedCalories = when (foodComponent) {
         is Recipe -> {
             val calories = foodComponent.calories * foodComponent.servings
-            BigDecimal.valueOf(calories)
-                .setScale(2, RoundingMode.HALF_UP)
-                .toPlainString()
+            calories.toInt().toString()
         }
         is FoodProduct -> {
             val calories = foodComponent.servings * foodComponent.calories * (foodComponent.servingSize.getAmount() / 100)
-            BigDecimal.valueOf(calories)
-                .setScale(2, RoundingMode.HALF_UP)
-                .toPlainString()
+            calories.toInt().toString()
         }
     }
     Card(
@@ -96,7 +90,7 @@ fun DishItemButton(
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(0.4f)
+                    modifier = Modifier.weight(1f)
                 )
 
                 VerticalDivider(
@@ -113,7 +107,7 @@ fun DishItemButton(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .weight(0.6f)
+                        .weight(0.45f)
                         .padding(start = 8.dp, end = 8.dp)
                         .semantics {
                             contentDescription = SemanticsTags.DISHITEM_CALORIES_PREFIX +
@@ -154,9 +148,8 @@ fun DishItemButton(
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
     val calories = ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)
-    val roundedCalories = BigDecimal.valueOf(calories)
-        .setScale(2, RoundingMode.HALF_UP)
-        .toPlainString()
+    val roundedCalories = calories.toInt().toString()
+    val kilocaloriesDescription = stringResource(R.string.kilocalories)
 
     Card(
         modifier = modifier
@@ -185,7 +178,7 @@ fun DishItemButton(
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(0.4f)
+                    modifier = Modifier.weight(1f)
                 )
 
                 VerticalDivider(
@@ -197,12 +190,12 @@ fun DishItemButton(
                 )
 
                 Text(
-                    text = roundedCalories + stringResource(R.string.kilocalories),
+                    text = roundedCalories + kilocaloriesDescription,
                     style = styles.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .weight(0.6f)
+                        .weight(0.45f)
                         .padding(start = 8.dp)
                 )
             }
@@ -236,9 +229,8 @@ fun DishItemMealButton(
     onClick: () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
-    val roundedCalories = BigDecimal.valueOf(calories)
-        .setScale(2, RoundingMode.HALF_UP)
-        .toPlainString()
+    val roundedCalories = calories.toInt().toString()
+    val kilocaloriesDescription = stringResource(R.string.kilocalories)
 
     Surface(
         modifier = modifier
@@ -274,7 +266,7 @@ fun DishItemMealButton(
                 )
 
                 Text(
-                    text = roundedCalories + stringResource(R.string.kilocalories),
+                    text = roundedCalories + kilocaloriesDescription,
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1,

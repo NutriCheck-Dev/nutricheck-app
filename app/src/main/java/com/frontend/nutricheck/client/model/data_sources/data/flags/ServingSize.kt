@@ -1,5 +1,8 @@
 package com.frontend.nutricheck.client.model.data_sources.data.flags
 
+import android.content.Context
+import com.frontend.nutricheck.client.R
+
 /**
  * Enum representing the serving sizes for food products.
  * Each enum constant corresponds to a specific serving size in grams.
@@ -10,14 +13,13 @@ enum class ServingSize(private val amount: Double) {
     ONEHOUNDREDGRAMS(100.0),
     TWOHOUNDREDGRAMS(200.0);
 
-    fun getDisplayName(): String {
+    fun getDisplayName(context: Context): String {
         return if (this == ONEGRAM) {
-            "${amount.toInt()} gram"
+            context.getString(R.string.serving_size_gram, amount.toInt())
         } else {
-            "${amount.toInt()} grams"
+            context.getString(R.string.serving_size_grams, amount.toInt())
         }
     }
-    fun getAmount(): Double {
-        return amount
-    }
+
+    fun getAmount(): Double = amount
 }
