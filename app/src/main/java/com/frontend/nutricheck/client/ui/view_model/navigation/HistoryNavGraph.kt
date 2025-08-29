@@ -1,10 +1,10 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.FoodProduct
+import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DayTime
 import com.frontend.nutricheck.client.ui.view.app_views.CreateMealPage
 import com.frontend.nutricheck.client.ui.view.app_views.HistoryPage
@@ -56,210 +57,239 @@ sealed class HistoryPageScreens(val route: String) {
             return "recipe_details?recipeId=$recipeId&mealId=$mealId"
         }
     }
+    companion object {
+        const val ADD_MEAL_GRAPH_ROUTE = "add_meal_graph"
+    }
 }
 
 @Composable
 fun HistoryPageNavGraph(
     historyPageNavController: NavHostController
 ) {
-
-    fun navigateToFoodComponent(foodComponent: FoodComponent) {
-        if (foodComponent is FoodProduct) {
-            historyPageNavController.navigate(HistoryPageScreens.FoodOverview.fromSearch(foodComponent.id))
-        } else { historyPageNavController.navigate(HistoryPageScreens.RecipeOverview.createRoute(foodComponent.id, true))}
-    }
-
     NavHost(
         navController = historyPageNavController,
         startDestination = HistoryPageScreens.HistoryPage.route
     ) {
-        composable(HistoryPageScreens.HistoryPage.route) {
-            val hiltViewModel: HistoryViewModel = hiltViewModel()
-            HistoryPage(
-                historyViewModel = hiltViewModel,
-                historyNavController = historyPageNavController,
-            )
+        // Defines the main history page destination
+        historyPageScreen(historyPageNavController)
+
+        // Defines the nested graph for adding a meal
+        addMealGraph(historyPageNavController)
+
+        // Defines screens for viewing details of an existing meal item
+        mealItemDetailsGraph(historyPageNavController)
+    }
+}
+
+/**
+ * Encapsulates the navigation logic for moving from a search result to its overview screen.
+ */
+private fun navigateToFoodComponent(
+    navController: NavHostController,
+    foodComponent: FoodComponent
+) {
+    val route = when (foodComponent) {
+        is FoodProduct -> HistoryPageScreens.FoodOverview.fromSearch(foodComponent.id)
+        is Recipe -> HistoryPageScreens.RecipeOverview.createRoute(foodComponent.id, fromSearch = true)
+    }
+    navController.navigate(route)
+}
+
+/**
+ * Defines the main history page screen.
+ */
+private fun NavGraphBuilder.historyPageScreen(navController: NavHostController) {
+    composable(HistoryPageScreens.HistoryPage.route) {
+        val hiltViewModel: HistoryViewModel = hiltViewModel()
+        HistoryPage(
+            historyViewModel = hiltViewModel,
+            historyNavController = navController,
+        )
+    }
+}
+
+/**
+ * Defines the nested navigation graph for the "add meal" flow.
+ * This graph includes searching for food and viewing product/recipe overviews before adding them.
+ */
+private fun NavGraphBuilder.addMealGraph(navController: NavHostController) {
+    navigation(
+        startDestination = HistoryPageScreens.AddMeal.route,
+        route = HistoryPageScreens.ADD_MEAL_GRAPH_ROUTE,
+    ) {
+        addMealScreen(navController)
+        foodOverviewScreen(navController)
+        recipeOverviewScreen(navController)
+    }
+}
+
+/**
+ * Defines the screen for creating a meal (search, etc.).
+ */
+private fun NavGraphBuilder.addMealScreen(navController: NavHostController) {
+    composable(
+        route = HistoryPageScreens.AddMeal.route,
+        arguments = listOf(
+            navArgument("date") { type = NavType.StringType; nullable = true },
+            navArgument("dayTime") { type = NavType.StringType; nullable = true }
+        )
+    ) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            navController.getBackStackEntry(HistoryPageScreens.ADD_MEAL_GRAPH_ROUTE)
         }
-        navigation(
-            startDestination = HistoryPageScreens.AddMeal.route,
-            route = "add_meal_graph",
+        val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
 
-        ) {
-            composable(route = HistoryPageScreens.AddMeal.route,
-                arguments = listOf(
-                    navArgument("date") {
-                        type = NavType.StringType
-                        nullable = true
-                    },
-                    navArgument("dayTime") {
-                        type = NavType.StringType
-                        nullable = true
-                    }
-                )
-            ) { backStackEntry ->
-                val dateArg = backStackEntry.arguments?.getString("date")?.toLongOrNull()
-                val dayTimeArg = backStackEntry.arguments?.getString("dayTime")
-                    ?.let { runCatching { DayTime.valueOf(it) }.getOrNull() }
-                val parentEntry = remember(backStackEntry) {
-                    historyPageNavController.getBackStackEntry("add_meal_graph")
+        // Pop back when a meal is successfully saved
+        LaunchedEffect(searchViewModel) {
+            searchViewModel.events.collect { event ->
+                if (event is SearchEvent.MealSaved) {
+                    navController.popBackStack()
                 }
-                Log.v("RootNavGraph", "→ HistoryNavGraph mit $dateArg / $dayTimeArg")
-
-                val searchViewModel: FoodSearchViewModel = hiltViewModel(parentEntry)
-                LaunchedEffect(searchViewModel) {
-                    searchViewModel.events.collect { event ->
-                        if (event is SearchEvent.MealSaved) {
-                            historyPageNavController.popBackStack()
-                        }
-                    }
-                }
-                CreateMealPage(
-                    searchViewModel = searchViewModel,
-                    onItemClick = { foodComponent -> navigateToFoodComponent(foodComponent) },
-                    onBack = { historyPageNavController.popBackStack() }
-                )
             }
+        }
 
-            composable (
-                route = HistoryPageScreens.RecipeOverview.route,
-                arguments = listOf(
-                    navArgument("recipeId") { type = NavType.StringType },
-                    navArgument("fromSearch") { type = NavType.BoolType }
-                )
-            ) { backStack ->
-                val recipeId = backStack.arguments!!.getString("recipeId")!!
-                val fromSearch = backStack.arguments!!.getBoolean("fromSearch")
-                val graphEntry = remember(backStack) {
-                    historyPageNavController.getBackStackEntry(
-                        HistoryPageScreens.RecipeOverview.createRoute(recipeId, fromSearch)
+        CreateMealPage(
+            searchViewModel = searchViewModel,
+            onItemClick = { foodComponent -> navigateToFoodComponent(navController, foodComponent) },
+            onBack = { navController.popBackStack() }
+        )
+    }
+}
+
+/**
+ * Defines the food product overview screen, used within the "add meal" flow.
+ */
+private fun NavGraphBuilder.foodOverviewScreen(navController: NavHostController) {
+    composable(
+        route = HistoryPageScreens.FoodOverview.route,
+        arguments = listOf(
+            navArgument("foodProductId") { type = NavType.StringType },
+            navArgument("recipeId") { type = NavType.StringType; nullable = true },
+            navArgument("editable") { type = NavType.StringType; nullable = true; defaultValue = "true" }
+        )
+    ) { backStack ->
+        val searchGraphEntry = remember(backStack) {
+            navController.getBackStackEntry(HistoryPageScreens.ADD_MEAL_GRAPH_ROUTE)
+        }
+        val foodSearchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
+        val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel() // Scoped to this destination
+
+        // Pop back when a food component is added to the meal
+        LaunchedEffect(foodSearchViewModel) {
+            foodSearchViewModel.events.collect { event ->
+                if (event is SearchEvent.AddFoodComponent) {
+                    navController.popBackStack()
+                }
+            }
+        }
+
+        FoodProductOverview(
+            foodProductOverviewViewModel = foodProductOverviewViewModel,
+            foodSearchViewModel = foodSearchViewModel,
+            onBack = { navController.popBackStack() }
+        )
+    }
+}
+
+/**
+ * Defines the recipe overview screen, used within the "add meal" flow.
+ */
+private fun NavGraphBuilder.recipeOverviewScreen(navController: NavHostController) {
+    composable(
+        route = HistoryPageScreens.RecipeOverview.route,
+        arguments = listOf(
+            navArgument("recipeId") { type = NavType.StringType },
+            navArgument("fromSearch") { type = NavType.BoolType }
+        )
+    ) { backStack ->
+        val searchGraphEntry = remember(backStack) {
+            navController.getBackStackEntry(HistoryPageScreens.ADD_MEAL_GRAPH_ROUTE)
+        }
+        val searchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
+        // These ViewModels are scoped to this specific destination
+        val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
+        val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel()
+
+        RecipeOverview(
+            recipeOverviewViewModel = recipeOverviewViewModel,
+            reportRecipeViewModel = reportRecipeViewModel,
+            searchViewModel = searchViewModel,
+            onItemClick = { ingredient ->
+                navController.navigate(
+                    HistoryPageScreens.FoodOverview.fromIngredient(
+                        ingredient.recipeId,
+                        ingredient.foodProduct.id
                     )
-                }
-                val searchGraphEntry = remember(backStack) {
-                    historyPageNavController.getBackStackEntry("add_meal_graph")
-                }
-                val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel(graphEntry)
-                val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel(graphEntry)
-                val searchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
-                RecipeOverview(
-                    recipeOverviewViewModel = recipeOverviewViewModel,
-                    reportRecipeViewModel = reportRecipeViewModel,
-                    searchViewModel = searchViewModel,
-                    onItemClick = { ingredient ->
-                        historyPageNavController
-                            .navigate(HistoryPageScreens.FoodOverview.fromIngredient(ingredient.recipeId, ingredient.foodProduct.id))
-                    },
-                    onPersist = { historyPageNavController.popBackStack() },
-                    onBack = { historyPageNavController.popBackStack() }
                 )
-            }
+            },
+            onPersist = { navController.popBackStack() },
+            onBack = { navController.popBackStack() }
+        )
+    }
+}
 
-            composable (
-                route = HistoryPageScreens.FoodOverview.route,
-                arguments = listOf(
-                    navArgument("foodProductId") { type = NavType.StringType },
-                    navArgument("recipeId") {
-                        type = NavType.StringType
-                        nullable = true
-                        defaultValue = null
-                    },
-                    navArgument("editable") {
-                        type = NavType.StringType
-                        nullable = true
-                        defaultValue = "true"
-                    }
-                )
-            ) { backStack ->
-                val foodProductId = backStack.arguments!!.getString("foodProductId")!!
-                val recipeId = backStack.arguments!!.getString("recipeId")
 
-                val mode = when {
-                    recipeId != null -> HistoryPageScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
-                    else -> HistoryPageScreens.FoodOverview.fromSearch(foodProductId)
-                }
+/**
+ * A separate graph for viewing details of items *already* in a meal.
+ * This avoids mixing concerns with the "add meal" flow.
+ */
+private fun NavGraphBuilder.mealItemDetailsGraph(navController: NavHostController) {
+    foodDetailsScreen(navController)
+    recipeDetailsScreen(navController)
+}
 
-                val graphEntry = remember(backStack) {
-                    historyPageNavController.getBackStackEntry(mode)
-                }
-                val searchGraphEntry = remember(backStack) {
-                    historyPageNavController.getBackStackEntry("add_meal_graph")
-                }
-                val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel(graphEntry)
-                val foodSearchViewModel: FoodSearchViewModel = hiltViewModel(searchGraphEntry)
+private fun NavGraphBuilder.foodDetailsScreen(navController: NavHostController) {
+    composable(
+        route = HistoryPageScreens.FoodDetails.route,
+        arguments = listOf(
+            navArgument("mealId") { type = NavType.StringType },
+            navArgument("foodProductId") { type = NavType.StringType }
+        )
+    ) {
+        val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel()
 
-                LaunchedEffect(foodSearchViewModel) {
-                    foodSearchViewModel.events.collect { event ->
-                        if (event is SearchEvent.AddFoodComponent) {
-                            historyPageNavController.popBackStack()
-                        }
-                    }
+        // Pop back when the meal item is updated/submitted
+        LaunchedEffect(foodProductOverviewViewModel) {
+            foodProductOverviewViewModel.events.collect { event ->
+                if (event is FoodProductOverviewEvent.SubmitMealItem) {
+                    navController.popBackStack()
                 }
-                FoodProductOverview(
-                    foodProductOverviewViewModel = foodProductOverviewViewModel,
-                    foodSearchViewModel = foodSearchViewModel,
-                    onBack = { historyPageNavController.popBackStack() }
-                )
-            }
-
-            composable(
-                route = "food_details?mealId={mealId}&foodProductId={foodProductId}",
-                arguments = listOf(
-                    navArgument("mealId") {
-                        type = NavType.StringType
-                        nullable = false
-                    },
-                    navArgument("foodProductId") {
-                        type = NavType.StringType
-                        nullable = false
-                    }
-                )
-            ) { _ ->
-                val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel()
-                LaunchedEffect(foodProductOverviewViewModel) {
-                    foodProductOverviewViewModel.events.collect { event ->
-                        if (event is FoodProductOverviewEvent.SubmitMealItem) {
-                            historyPageNavController.popBackStack()
-                        }
-                    }
-                }
-
-                FoodProductOverview(
-                    foodProductOverviewViewModel = foodProductOverviewViewModel,
-                    onBack = { historyPageNavController.popBackStack() }
-                )
-            }
-            composable(
-                route = "recipe_details?recipeId={recipeId}&mealId={mealId}",
-                arguments = listOf(
-                    navArgument("recipeId") {
-                        type = NavType.StringType
-                        nullable = false
-                    },
-                    navArgument("mealId") {
-                        type = NavType.StringType
-                        nullable = false
-                    }
-                )
-            ) {
-                val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
-                val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel()
-                val searchViewModel: FoodSearchViewModel = hiltViewModel()
-                RecipeOverview(
-                    recipeOverviewViewModel = recipeOverviewViewModel,
-                    reportRecipeViewModel = reportRecipeViewModel,
-                    searchViewModel = searchViewModel,
-                    onItemClick = { ingredient ->
-                        historyPageNavController.navigate(
-                            HistoryPageScreens.FoodOverview.fromIngredient(
-                                ingredient.recipeId,
-                                ingredient.foodProduct.id
-                            )
-                        )
-                    },
-                    onPersist = { historyPageNavController.popBackStack() },
-                    onBack = { historyPageNavController.popBackStack() }
-                )
             }
         }
 
+        FoodProductOverview(
+            foodProductOverviewViewModel = foodProductOverviewViewModel,
+            onBack = { navController.popBackStack() }
+        )
+    }
+}
+
+private fun NavGraphBuilder.recipeDetailsScreen(navController: NavHostController) {
+    composable(
+        route = HistoryPageScreens.RecipeDetails.route,
+        arguments = listOf(
+            navArgument("recipeId") { type = NavType.StringType },
+            navArgument("mealId") { type = NavType.StringType }
+        )
+    ) {
+        val recipeOverviewViewModel: RecipeOverviewViewModel = hiltViewModel()
+        val reportRecipeViewModel: ReportRecipeViewModel = hiltViewModel()
+        val searchViewModel: FoodSearchViewModel = hiltViewModel()
+
+        RecipeOverview(
+            recipeOverviewViewModel = recipeOverviewViewModel,
+            reportRecipeViewModel = reportRecipeViewModel,
+            searchViewModel = searchViewModel,
+            onItemClick = { ingredient ->
+                navController.navigate(
+                    HistoryPageScreens.FoodOverview.fromIngredient(
+                        ingredient.recipeId,
+                        ingredient.foodProduct.id
+                    )
+                )
+            },
+            onPersist = { navController.popBackStack() },
+            onBack = { navController.popBackStack() }
+        )
     }
 }
