@@ -18,6 +18,8 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
@@ -48,8 +50,7 @@ class OnboardingTest {
     @Before
     fun setUp() {
         hilt.inject()
-        //clearOnboardingStatus()
-
+        clearOnboardingStatus()
     }
     private val newUsername = "Max Mustermann"
     private val validWeight = 75.0
@@ -294,11 +295,11 @@ class OnboardingTest {
         }
         compose.onNodeWithText(goalText).performClick()
     }
-//
-//    private fun clearOnboardingStatus() = runBlocking{
-//        val key = booleanPreferencesKey("onboarding_completed")
-//        dataStore.edit { prefs ->
-//            prefs.remove(key)
-//        }
-//    }
+
+    private fun clearOnboardingStatus() = runBlocking{
+        val key = booleanPreferencesKey("onboarding_completed")
+        dataStore.edit { prefs ->
+            prefs.remove(key)
+        }
+    }
 }
