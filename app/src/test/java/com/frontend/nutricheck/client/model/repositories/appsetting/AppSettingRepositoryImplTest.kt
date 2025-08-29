@@ -1,7 +1,6 @@
 package com.frontend.nutricheck.client.model.repositories.appsetting
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -27,7 +26,6 @@ class AppSettingRepositoryImplTest {
 
     private val mockDataStore = mockk<DataStore<Preferences>>()
     private val mockPreferences = mockk<Preferences>()
-    private val mockMutablePreferences = mockk<MutablePreferences>(relaxed = true)
 
     private val testDispatcher = UnconfinedTestDispatcher()
 

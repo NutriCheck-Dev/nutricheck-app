@@ -42,9 +42,9 @@ sealed interface RecipePageEvent {
     data class ClickDetailsOption(val recipe: Recipe, val option: DropdownMenuOptions) : RecipePageEvent
     data class NavigateToEditRecipe(val recipeId: String) : RecipePageEvent
     data class ShowDetailsMenu(val recipeId: String?) : RecipePageEvent
-    object SearchOnline : RecipePageEvent
-    object RecipeUploaded : RecipePageEvent
-    object ResetErrorState : RecipePageEvent
+    data object SearchOnline : RecipePageEvent
+    data object RecipeUploaded : RecipePageEvent
+    data object ResetErrorState : RecipePageEvent
 }
 
 /**
@@ -90,12 +90,22 @@ class RecipePageViewModel @Inject constructor(
                 _recipePageState.update { it.copy(query = event.query) }
                 queryFlow.value = event.query
             }
+
             is RecipePageEvent.SearchOnline -> viewModelScope.launch { performOnlineSearch() }
-            is RecipePageEvent.ClickDetailsOption -> onDetailsOptionClick(event.recipe, event.option)
+            is RecipePageEvent.ClickDetailsOption -> onDetailsOptionClick(
+                event.recipe,
+                event.option
+            )
+
             is RecipePageEvent.ShowDetailsMenu -> onDetailsClick(event.recipeId)
-            is RecipePageEvent.NavigateToEditRecipe -> emitEvent(RecipePageEvent.NavigateToEditRecipe(event.recipeId))
+            is RecipePageEvent.NavigateToEditRecipe -> emitEvent(
+                RecipePageEvent.NavigateToEditRecipe(
+                    event.recipeId
+                )
+            )
+
             is RecipePageEvent.ResetErrorState -> setReady()
-            is RecipePageEvent.RecipeUploaded -> null
+        else -> { /* other Events are not handles here */ }
 
         }
     }
@@ -190,7 +200,7 @@ class RecipePageViewModel @Inject constructor(
         if (i < 0) return SortKey(Int.MAX_VALUE, Int.MAX_VALUE, normedName)
         val rank = when {
             i == 0 -> 0
-            i > 0 && normedName[i - 1].isWhitespace() -> 1
+            normedName[i - 1].isWhitespace() -> 1
             else -> 2
         }
         return SortKey(rank, i, normedName)

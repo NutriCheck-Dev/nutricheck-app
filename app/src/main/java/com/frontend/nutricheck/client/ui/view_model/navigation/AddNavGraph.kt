@@ -34,11 +34,11 @@ sealed class AddScreens(
     val route: String,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
-    object AddAiMeal : AddScreens("add_ai_meal")
+    data object AddAiMeal : AddScreens("add_ai_meal")
 
-    object AddMeal : AddScreens("add_meal")
+    data object AddMeal : AddScreens("add_meal")
 
-    object AddRecipe : AddScreens(
+    data object AddRecipe : AddScreens(
         route = "add_recipe",
         arguments = listOf(
             navArgument("recipeId") {
@@ -48,7 +48,7 @@ sealed class AddScreens(
         )
     )
 
-    object FoodOverview : AddScreens(
+    data object FoodOverview : AddScreens(
         route = "food_product_overview/{foodProductId}?" +
                 "recipeId={recipeId}&" +
                 "mealId={mealId}&editable={editable}",
@@ -79,7 +79,7 @@ sealed class AddScreens(
             "food_product_overview/$foodProductId?mealId=$mealId&editable=true"
     }
 
-    object RecipeOverview : AddScreens(
+    data object RecipeOverview : AddScreens(
         route = "recipe_overview/{recipeId}?fromSearch={fromSearch}",
         arguments = listOf(
             navArgument("recipeId") { type = NavType.StringType },

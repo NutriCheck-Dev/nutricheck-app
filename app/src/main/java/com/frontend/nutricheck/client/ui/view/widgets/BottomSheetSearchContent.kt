@@ -23,7 +23,7 @@ fun BottomSheetSearchContent(
     foodComponents: List<FoodComponent>,
     selectedTab: Int?,
     onSelectTab: (Int) -> Unit,
-    trailingContent: @Composable() ((FoodComponent) -> Unit)?,
+    trailingContent: @Composable ((FoodComponent) -> Unit)?,
     onItemClick: (FoodComponent) -> Unit,
     query: String,
     onQueryChange: (String) -> Unit,
