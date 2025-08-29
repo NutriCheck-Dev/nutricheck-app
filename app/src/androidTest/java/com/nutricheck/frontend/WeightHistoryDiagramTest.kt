@@ -69,7 +69,7 @@ class WeightHistoryDiagramTest {
     }
 
 
-    // -------- Helper-Funktionen --------
+    // helper functions
 
     private fun selectInterval(tag: String) {
         compose.onNodeWithTag(tag)

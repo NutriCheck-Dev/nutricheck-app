@@ -68,7 +68,7 @@ class CalorieHistoryDiagramTest {
         assertChartInterval(SemanticsTags.RANGE_CALORIE_LAST_60_DAYS)
     }
 
-    // -------- Helper-Funktionen --------
+    // helper functions
 
     private fun selectInterval(tag: String) {
         compose.onNodeWithTag(tag)

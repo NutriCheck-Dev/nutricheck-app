@@ -268,15 +268,6 @@ class AddMealTest {
         compose.onNodeWithContentDescription(SemanticsTags.HISTORY_PAGE).assertIsDisplayed()
         compose.onNodeWithText(name, substring = false).assertIsDisplayed()
     }
-/**
-    private fun assertHomeOverviewUpdated() {
-        // Start/Home-Seite mit aktualisierten Tageswerten + Kalorienübersicht
-        compose.onNodeWithContentDescription(SemanticsTags.HOME_PAGE).assertIsDisplayed()
-        compose.onNodeWithContentDescription(SemanticsTags.DAILY_NUTRI_OVERVIEW).assertIsDisplayed()
-        compose.onNodeWithContentDescription(SemanticsTags.CALORIES_OVERVIEW).assertIsDisplayed()
-        // Falls ihr konkrete Werte prüfen wollt, könnt ihr z. B. auf einen Text matchen:
-        // compose.onNodeWithText("Kalorienübersicht").assertIsDisplayed()
-    }*/
 
     private fun hasContentDescriptionPrefix(prefix: String): SemanticsMatcher =
         SemanticsMatcher("ContentDescription startsWith($prefix)") { node ->
