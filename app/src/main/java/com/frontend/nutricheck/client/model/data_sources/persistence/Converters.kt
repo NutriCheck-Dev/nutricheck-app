@@ -13,7 +13,7 @@ import java.util.Date
 class Converters {
 
     @TypeConverter
-    fun fromDate(date: Date): Long? {
+    fun fromDate(date: Date): Long {
         val calendar = Calendar.getInstance().apply {
             time = date
             set(Calendar.HOUR_OF_DAY, 0)

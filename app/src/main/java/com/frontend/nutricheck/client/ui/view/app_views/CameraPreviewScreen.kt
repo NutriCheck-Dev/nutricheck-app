@@ -150,7 +150,7 @@ fun CameraPreviewScreen(
                         imageVector = Icons.Default.RadioButtonChecked,
                         contentDescription = stringResource(R.string.take_photo),
                         modifier = Modifier.size(80.dp),
-                        tint = MaterialTheme.extended.chartBlue.color
+                        tint = extended.chartBlue.color
                     )
                 }
             } else {

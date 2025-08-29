@@ -149,7 +149,6 @@ fun RecipePageNavGraph(
             Log.v("RecipePageNavGraph", "FoodProductOverview called with arguments: ${backStack.arguments}")
             val foodProductId = backStack.arguments!!.getString("foodProductId")!!
             val recipeId = backStack.arguments?.getString("recipeId")
-            val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
 
             val graphEntry = remember(backStack) {
                 recipePageNavController.getBackStackEntry(

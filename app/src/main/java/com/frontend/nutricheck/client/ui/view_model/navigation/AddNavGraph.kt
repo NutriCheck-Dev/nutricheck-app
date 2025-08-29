@@ -163,7 +163,6 @@ fun AddNavGraph(
                 val foodProductId = backStack.arguments!!.getString("foodProductId")!!
                 val recipeId = backStack.arguments!!.getString("recipeId")
                 val mealId = backStack.arguments!!.getString("mealId")
-                val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
                 val mode = when {
                     recipeId != null -> AddScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
                     mealId != null -> AddScreens.FoodOverview.fromAiMeal(mealId, foodProductId)

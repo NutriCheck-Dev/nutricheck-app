@@ -9,7 +9,6 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class CombinedSearchListStoreTest {
 
     private lateinit var store: CombinedSearchListStore

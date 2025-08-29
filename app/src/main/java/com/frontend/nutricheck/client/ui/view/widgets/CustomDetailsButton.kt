@@ -45,29 +45,35 @@ fun CustomDetailsButton(
 ) {
     val colors = MaterialTheme.colorScheme
     val styles = MaterialTheme.typography
-    val optionsList = if (ownedRecipe) {
-        DropdownMenuOptions.entries
-            .minus(listOf(
-                DropdownMenuOptions.DOWNLOAD,
-                DropdownMenuOptions.REPORT))
-            .sortedBy { it.name }
-    } else if (publicRecipe) {
-        DropdownMenuOptions.entries
-            .minus(listOf(
-                DropdownMenuOptions.EDIT,
-                DropdownMenuOptions.DELETE,
-                DropdownMenuOptions.UPLOAD))
-            .sortedBy { it.name }
-    } else if (foodItem) {
-        listOf(DropdownMenuOptions.EDIT)
-    } else if (ingredientButton) {
-        DropdownMenuOptions.entries
-            .minus(listOf(
-                DropdownMenuOptions.DOWNLOAD,
-                DropdownMenuOptions.UPLOAD,
-                DropdownMenuOptions.REPORT))
-            .sortedBy { it.name }
-    } else {emptyList()}
+    val optionsList = when {
+        ownedRecipe -> {
+            DropdownMenuOptions.entries
+                .minus(listOf(
+                    DropdownMenuOptions.DOWNLOAD,
+                    DropdownMenuOptions.REPORT))
+                .sortedBy { it.name }
+        }
+        publicRecipe -> {
+            DropdownMenuOptions.entries
+                .minus(listOf(
+                    DropdownMenuOptions.EDIT,
+                    DropdownMenuOptions.DELETE,
+                    DropdownMenuOptions.UPLOAD))
+                .sortedBy { it.name }
+        }
+        foodItem -> {
+            listOf(DropdownMenuOptions.EDIT)
+        }
+        ingredientButton -> {
+            DropdownMenuOptions.entries
+                .minus(listOf(
+                    DropdownMenuOptions.DOWNLOAD,
+                    DropdownMenuOptions.UPLOAD,
+                    DropdownMenuOptions.REPORT))
+                .sortedBy { it.name }
+        }
+        else -> {emptyList()}
+    }
 
     Box {
         IconButton(

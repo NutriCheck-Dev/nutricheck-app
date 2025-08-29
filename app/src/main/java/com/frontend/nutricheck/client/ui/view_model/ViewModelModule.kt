@@ -18,7 +18,7 @@ import dagger.hilt.components.SingletonComponent
 interface ViewModelModule {
 
     @Binds
-    abstract fun bindCameraController(
+    fun bindCameraController(
         androidCameraController: AndroidCameraController
     ): CameraController
 }

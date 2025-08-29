@@ -16,8 +16,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -26,6 +28,7 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 
+@ExperimentalCoroutinesApi
 class FoodProductRepositoryImplTest {
 
     private lateinit var repository: FoodProductRepositoryImpl
@@ -37,11 +40,12 @@ class FoodProductRepositoryImplTest {
     private lateinit var foodProductDTO: FoodProductDTO
     private lateinit var foodProduct: FoodProduct
     private lateinit var foodProductEntity: FoodProductEntity
+    private val testDispatcher = UnconfinedTestDispatcher()
 
 
     @Before
     fun setUp() {
-        repository = FoodProductRepositoryImpl(context, foodDao, foodSearchDao, api)
+        repository = FoodProductRepositoryImpl(context, foodDao, foodSearchDao, api, testDispatcher)
         this.query = "test"
         this.foodProductDTO = TestDataFactory.createDefaultFoodProductDTO()
         this.foodProduct = TestDataFactory.createDefaultFoodProduct()

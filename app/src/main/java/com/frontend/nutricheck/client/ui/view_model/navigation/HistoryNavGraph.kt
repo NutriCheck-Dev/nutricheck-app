@@ -171,7 +171,6 @@ fun HistoryPageNavGraph(
             ) { backStack ->
                 val foodProductId = backStack.arguments!!.getString("foodProductId")!!
                 val recipeId = backStack.arguments!!.getString("recipeId")
-                val editable = backStack.arguments?.getString("editable")?.toBoolean() ?: true
 
                 val mode = when {
                     recipeId != null -> HistoryPageScreens.FoodOverview.fromIngredient(recipeId, foodProductId)
@@ -213,7 +212,7 @@ fun HistoryPageNavGraph(
                         nullable = false
                     }
                 )
-            ) { backStackEntry ->
+            ) { _ ->
                 val foodProductOverviewViewModel: FoodProductOverviewViewModel = hiltViewModel()
                 LaunchedEffect(foodProductOverviewViewModel) {
                     foodProductOverviewViewModel.events.collect { event ->

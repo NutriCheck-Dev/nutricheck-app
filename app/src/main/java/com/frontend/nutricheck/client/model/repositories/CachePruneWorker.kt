@@ -5,11 +5,12 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.frontend.nutricheck.client.model.IoDispatcher
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.FoodDao
 import com.frontend.nutricheck.client.model.data_sources.persistence.dao.RecipeDao
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 /**
@@ -20,11 +21,12 @@ class CachePruneWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val foodDao: FoodDao,
-    private val recipeDao: RecipeDao
+    private val recipeDao: RecipeDao,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ): CoroutineWorker(context, workerParams) {
     private val timeToLive = TimeUnit.MINUTES.toMillis(15)
 
-    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+    override suspend fun doWork(): Result = withContext(dispatcher) {
         val cutoff = System.currentTimeMillis() - timeToLive
         val foods = foodDao.deleteExpiredUnreferencedFoodProducts(cutoff)
         val recipes = recipeDao.deleteExpiredUnreferencedRecipes(cutoff)
