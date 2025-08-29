@@ -10,18 +10,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.frontend.nutricheck.client.MainActivity
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLevel
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
-import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
-import com.nutricheck.frontend.util.DbPersistRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.runBlocking
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.frontend.nutricheck.client.R
@@ -58,6 +53,7 @@ class OnboardingTest {
     private val invalidWeight = -5
     private val invalidHeight = 0
     private val birthYear = 1990
+    private val birthdate = "01011990"
 
     @Test
     fun onboarding_completeFlowWithValidData_navigatesToDashboard() {
@@ -82,7 +78,7 @@ class OnboardingTest {
 
         // Fill in birthdate
         waitForBirthdateScreen()
-        selectBirthdate(birthYear, 1, 1)
+        selectBirthdate()
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_next)).performClick()
 
         // Select gender
@@ -152,16 +148,16 @@ class OnboardingTest {
             compose.onAllNodesWithText(compose.activity.getString(R.string.profile_menu_item_darkmode))
                 .fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onNodeWithText("Hi, $newUsername").assertIsDisplayed()
+        compose.onNodeWithText(compose.activity.getString(R.string.profile_name)).assertIsDisplayed()
         compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_WEIGHT)
-            .assertTextEquals("$validWeight kg")
+            .assertTextEquals(compose.activity.getString(R.string.weight_kg, validWeight))
 
         compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_HEIGHT)
-            .assertTextEquals("$validHeight cm")
+            .assertTextEquals(compose.activity.getString(R.string.height_cm, validHeight))
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         val age = currentYear - birthYear
         compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_AGE)
-            .assertTextEquals("$age years")
+            .assertTextEquals(compose.activity.getString(R.string.age_years, age))
     }
 
     // Helper methods
@@ -236,12 +232,9 @@ class OnboardingTest {
         }
     }
 
-    private fun selectBirthdate(year: Int, month: Int, day: Int) {
-
+    private fun selectBirthdate() {
         compose.onNodeWithText(compose.activity.getString(R.string.userData_label_birthdate))
             .performClick()
-
-        // Warte bis der DatePicker sichtbar ist
         compose.waitUntil(5000) {
             compose.onAllNodesWithTag("DatePicker")
                 .fetchSemanticsNodes().isNotEmpty()
@@ -251,8 +244,10 @@ class OnboardingTest {
         compose.onNodeWithContentDescription(compose.activity.getString(datePickerEditButtonContentDescription))
             .performClick()
 
-        compose.onNodeWithText("Date").performClick()
-        compose.onNodeWithText("Date").performTextInput("01011990")
+        // hardcoded because Strings is an internal class
+        val datePickerInputLabel = 2131624076
+        compose.onNodeWithText(compose.activity.getString(datePickerInputLabel)).performClick()
+        compose.onNodeWithText(compose.activity.getString(datePickerInputLabel)).performTextInput(birthdate)
 
         compose.onNodeWithText(compose.activity.getString(R.string.save)).performClick()
 
