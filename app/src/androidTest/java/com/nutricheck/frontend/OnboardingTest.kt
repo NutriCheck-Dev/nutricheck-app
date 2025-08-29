@@ -1,7 +1,6 @@
 package com.nutricheck.frontend
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
@@ -21,6 +20,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
+import com.frontend.nutricheck.client.model.repositories.user.UserDataRepository
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +42,9 @@ class OnboardingTest {
     @Inject
     lateinit var dataStore : DataStore<Preferences>
 
+    @Inject
+    lateinit var userdataRepository : UserDataRepository
+
     @Before
     fun setUp() {
         hilt.inject()
@@ -48,8 +52,8 @@ class OnboardingTest {
 
     }
     private val newUsername = "Max Mustermann"
-    private val validWeight = 75
-    private val validHeight = 185
+    private val validWeight = 75.0
+    private val validHeight = 185.0
     private val invalidWeight = -5
     private val invalidHeight = 0
     private val birthYear = 1990
@@ -135,11 +139,19 @@ class OnboardingTest {
             .performTextInput(validWeight.toString())
         compose.onNodeWithText(compose.activity.getString(R.string.onboarding_button_finish)).performClick()
 
+        waitForDataToBeSaved()
         waitForDashboard()
 
-        Thread.sleep(20000)
         compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_PROFILE).performClick()
         verifyUpdatedDataDisplayed()
+    }
+    private fun waitForDataToBeSaved() {
+        compose.waitUntil(5_000) {
+            runBlocking {
+                val userData = userdataRepository.getUserData()
+                userData.username == newUsername
+            }
+        }
     }
 
     private fun verifyUpdatedDataDisplayed() {
@@ -148,16 +160,13 @@ class OnboardingTest {
             compose.onAllNodesWithText(compose.activity.getString(R.string.profile_menu_item_darkmode))
                 .fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onNodeWithText(compose.activity.getString(R.string.profile_name)).assertIsDisplayed()
-        compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_WEIGHT)
-            .assertTextEquals(compose.activity.getString(R.string.weight_kg, validWeight))
 
-        compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_HEIGHT)
-            .assertTextEquals(compose.activity.getString(R.string.height_cm, validHeight))
+        compose.onNodeWithText(compose.activity.getString(R.string.profile_name, newUsername)).assertIsDisplayed()
+        compose.onNodeWithText(compose.activity.getString(R.string.weight_kg, validWeight)).assertIsDisplayed()
+        compose.onNodeWithText(compose.activity.getString(R.string.height_cm, validHeight)).assertIsDisplayed()
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         val age = currentYear - birthYear
-        compose.onNodeWithContentDescription(SemanticsTags.PROFILE_DATA_AGE)
-            .assertTextEquals(compose.activity.getString(R.string.age_years, age))
+        compose.onNodeWithText(compose.activity.getString(R.string.age_years, age.toString())).assertIsDisplayed()
     }
 
     // Helper methods
