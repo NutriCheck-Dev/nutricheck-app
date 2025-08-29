@@ -13,6 +13,8 @@ object SemanticsTags {
     const val DAYTIME_ITEM_PREFIX = "Daytime_Item_"
     const val MEAL_EDITOR_PERSIST = "MealEditor_Persist"
     const val MEAL_SCAN_TAKE_PHOTO = "MealScan_Take_Photo"
+    const val MEAL_SCAN_SEND_PHOTO = "MealScan_Send_Photo"
+    const val MEAL_SCAN_ERROR_DIALOG = "MealScan_Error_Dialog"
     const val MEAL_FOOD_ITEM_PREFIX = "MealFoodItem_"
     const val MEAL_RECIPE_ITEM_PREFIX = "MealRecipeItem_"
     const val WEIGHT_HISTORY_RANGE_SELECTOR = "WeightHistory_Range_Selector"

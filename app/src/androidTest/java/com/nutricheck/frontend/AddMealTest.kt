@@ -6,8 +6,9 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -20,11 +21,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.frontend.nutricheck.client.MainActivity
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
 import com.nutricheck.frontend.util.BypassOnboardingRule
-import com.nutricheck.frontend.util.DbPersistRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.After
@@ -46,7 +45,6 @@ import javax.inject.Inject
 @LargeTest
 class AddMealTest {
 
-    @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
     @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
         ApplicationProvider.getApplicationContext()
@@ -157,13 +155,22 @@ class AddMealTest {
 
         compose.onNodeWithTag(SemanticsTags.MEAL_SCAN_TAKE_PHOTO)
             .performClick()
+
+        compose.waitUntil(5_000) {
+            compose.onAllNodesWithContentDescription(SemanticsTags.MEAL_SCAN_SEND_PHOTO)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithContentDescription(SemanticsTags.MEAL_SCAN_SEND_PHOTO)
+            .assertIsDisplayed()
+            .performClick()
     }
     private fun checkScanErrorDisplayed() {
-        val expectedError = compose.activity.getString(R.string.error_encoding_image)
+        val expectedError = SemanticsTags.MEAL_SCAN_ERROR_DIALOG
         compose.waitUntil(20_000) {
-            compose.onAllNodesWithText(expectedError).fetchSemanticsNodes().isNotEmpty()
+            compose.onAllNodes(hasContentDescription(expectedError))
+                .fetchSemanticsNodes().isNotEmpty()
         }
-        compose.onNodeWithText(expectedError).assertIsDisplayed()
+        compose.onNodeWithContentDescription(expectedError).assertIsDisplayed()
     }
     private fun openIngredientSearch() {
         compose.onNodeWithContentDescription(SemanticsTags.FOODCOMPONENT_LIST_ADD_BUTTON)

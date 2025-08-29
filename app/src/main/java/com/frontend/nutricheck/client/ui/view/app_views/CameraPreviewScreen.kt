@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
@@ -122,6 +124,7 @@ fun CameraPreviewScreen(
     }
     if (uiState is BaseViewModel.UiState.Error) {
         ShowErrorMessage(
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_SCAN_ERROR_DIALOG },
             error = (uiState as BaseViewModel.UiState.Error).message,
             onClick = {
                 addAiMealViewModel.onEvent(AddAiMealEvent.ResetErrorState)
@@ -176,7 +179,9 @@ fun CameraPreviewScreen(
                         enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.retake_photo))
                     }
-                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) },
+                    Button(
+                        modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_SCAN_SEND_PHOTO },
+                        onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) },
                         enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.submit_photo))
                     }

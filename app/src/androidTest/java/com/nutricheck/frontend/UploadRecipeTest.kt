@@ -21,7 +21,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenu
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDatabase
 import com.nutricheck.frontend.util.BypassOnboardingRule
-import com.nutricheck.frontend.util.DbPersistRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.apache.commons.lang3.RandomStringUtils
@@ -37,7 +36,6 @@ import javax.inject.Inject
 @LargeTest
 class UploadRecipeTest {
 
-    @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
     @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
         ApplicationProvider.getApplicationContext()

@@ -42,7 +42,6 @@ class BypassOnboardingRule(
                 entry.userDataRepository()
                     .addUserDataAndAddWeight(userWithCalc, Weight(user.weight, now))
             }
-
             base.evaluate()
         }
     }

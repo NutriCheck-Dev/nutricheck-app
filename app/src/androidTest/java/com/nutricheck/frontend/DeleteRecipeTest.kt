@@ -18,7 +18,6 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.LocalDataba
 import com.frontend.nutricheck.client.ui.view_model.navigation.DiaryTab
 import com.nutricheck.frontend.util.AndroidTestDataFactory.ownerRecipeFactory
 import com.nutricheck.frontend.util.BypassOnboardingRule
-import com.nutricheck.frontend.util.DbPersistRule
 import com.nutricheck.frontend.util.SeedOwnerRecipeRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -34,7 +33,6 @@ import javax.inject.Inject
 class DeleteRecipeTest {
 
     val name = "Pasta Pesto"
-    @get:Rule(order = -1) val dbPersist = DbPersistRule()
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
     @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
         ApplicationProvider.getApplicationContext()
