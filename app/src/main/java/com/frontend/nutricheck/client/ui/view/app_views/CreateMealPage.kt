@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.FoodComponent
 import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.view.widgets.BottomSheetSearchContent
@@ -28,6 +24,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.CustomAddButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
 import com.frontend.nutricheck.client.ui.view.widgets.MealSelector
 import com.frontend.nutricheck.client.ui.view.widgets.SheetScaffold
+import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
 import com.frontend.nutricheck.client.ui.view_model.SearchEvent
@@ -57,10 +54,8 @@ fun CreateMealPage(
                 expanded = searchState.parameters.mealSelectorExpanded,
                 onExpandedChange = { searchViewModel.onEvent(SearchEvent.MealSelectorClick) },
                 trailingContent = {
-                    CustomPersistButton (
-                        modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_EDITOR_PERSIST },
-                        onClick = { searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal) }
-                    )
+                    CustomPersistButton(modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_EDITOR_PERSIST })
+                        { searchViewModel.onEvent(SearchEvent.SubmitComponentsToMeal) }
                 },
                 onBack = {
                     onBack()
@@ -82,15 +77,27 @@ fun CreateMealPage(
                         1 -> searchViewModel.onEvent(SearchEvent.ClickSearchMyRecipes)
                     }
                 },
-                trailingContent = { item -> CustomAddButton { searchViewModel.onEvent(SearchEvent.AddFoodComponent(item)) } },
+                trailingContent = { item -> CustomAddButton(
+                    modifier = Modifier.semantics {
+                        contentDescription = SemanticsTags.MEAL_SEARCH_PREFIX + item.name
+                    },
+                    onClick = {
+                        searchViewModel.onEvent(SearchEvent.AddFoodComponent(item))
+                        searchViewModel.onEvent(SearchEvent.Clear)
+                    }
+                ) },
                 onItemClick = { onItemClick(it) },
                 query = searchState.parameters.query,
                 onQueryChange = { searchViewModel.onEvent(SearchEvent.QueryChanged(it)) },
                 onSearch = { searchViewModel.onEvent(SearchEvent.Search) },
                 showTabRow = true,
                 isLoading = uiState == BaseViewModel.UiState.Loading,
-                showEmptyState = searchState.parameters.hasSearched &&
-                        searchState.parameters.lastSearchedQuery == searchState.parameters.query
+                showEmptyState = when (searchState.parameters.selectedTab) {
+                    0 -> searchState.parameters.hasSearched &&
+                            searchState.parameters.lastSearchedQuery == searchState.parameters.query
+                    1 -> searchState.parameters.localRecipesResults.isEmpty()
+                    else -> false
+                }
             )
         }
     ) { innerPadding ->
@@ -126,22 +133,4 @@ fun CreateMealPage(
             }
         }
     }
-}
-
-@Composable
-private fun ShowErrorMessage(
-    title: String = stringResource(R.string.show_error_message_title),
-    error: String,
-    onClick: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = { onClick() },
-        title = { Text(title) },
-        text = { Text(error) },
-        confirmButton = {
-            Button(onClick = { onClick() }) {
-                Text(stringResource(R.string.label_ok))
-            }
-        }
-    )
 }

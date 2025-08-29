@@ -9,6 +9,9 @@ import com.frontend.nutricheck.client.model.data_sources.persistence.entity.Meal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.MealRecipeItemEntity
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.RecipeEntity
 
+/**
+ * Represents a Meal with all its related entities
+ */
 data class MealWithAll(
     @Embedded val meal: MealEntity,
     @Relation(
@@ -26,7 +29,9 @@ data class MealWithAll(
     val mealRecipeItems: List<MealRecipeItemWithRecipe>
 )
 
-// 1. FoodItem + Product
+/**
+ * Represents a single MealFoodItem with its associated FoodProduct
+ */
 data class MealFoodItemWithProduct(
     @Embedded val mealFoodItem: MealFoodItemEntity,
 
@@ -37,7 +42,9 @@ data class MealFoodItemWithProduct(
     val foodProduct: FoodProductEntity
 )
 
-// 2. RecipeItem + Recipe (+ Ingredients + FoodProducts)
+/**
+ * Represents a single MealRecipeItem with its associated Recipe (including Ingredients and FoodProducts)
+ */
 data class MealRecipeItemWithRecipe(
     @Embedded val mealRecipeItem: MealRecipeItemEntity,
 
@@ -49,7 +56,9 @@ data class MealRecipeItemWithRecipe(
     val recipeWithIngredients: RecipeWithIngredients
 )
 
-// 3. Rezept + alle Ingredients (mit ihren FoodProducts)
+/**
+ * Represents a Recipe with its associated Ingredients (including FoodProducts)
+ */
 data class RecipeWithIngredients(
     @Embedded val recipe: RecipeEntity,
 
@@ -61,7 +70,9 @@ data class RecipeWithIngredients(
     val ingredients: List<IngredientWithFoodProduct>
 )
 
-// 4. Ingredient + zugehöriges FoodProduct
+/**
+ * Represents an Ingredient with its associated FoodProduct
+ */
 data class IngredientWithFoodProduct(
     @Embedded val ingredient: IngredientEntity,
 

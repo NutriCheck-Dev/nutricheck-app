@@ -9,7 +9,7 @@
     <string name="userData_label_birthdate">Birthdate</string>
     <string name="userData_label_height">Height (cm)</string>
     <string name="userData_label_weight">Weight (kg)</string>
-    <string name="userData_label_target_weight">"TargetWeight (kg) "</string>
+    <string name="userData_label_target_weight">"TargetWeight (kg)"</string>
     <string name="userData_label_gender_male">Male</string>
     <string name="userData_label_gender_female">Female</string>
     <string name="userData_label_gender_diverse">Divers</string>
@@ -17,8 +17,8 @@
     <string name="userData_label_goal_lose_weight">Lose weight</string>
     <string name="userData_label_goal_gain_weight">Gain weight</string>
     <string name="userData_error_goal_required">Please choose your goal.</string>
-    <string name="userData_label_activity_level_occasionally">1-2/week</string>
-    <string name="userData_label_activity_level_regularly">3-4/week</string>
+    <string name="userData_label_activity_level_occasionally">1–2/week</string>
+    <string name="userData_label_activity_level_regularly">3–4/week</string>
     <string name="userData_label_activity_level_frequently">5+/week</string>
     <string name="profile_name">Hi, %1$s</string>
     <string name="profile_menu_age">Age</string>
@@ -131,7 +131,7 @@
     <string name="error_search_result_empty">No results found</string>
     <string name="label_delete">Delete</string>
     <string name="delete_weight_dialog_title">"Do you really want to delete the weight? "</string>
-    <string name="kilocalories">kcal</string>
+    <string name="kilocalories">" kcal"</string>
     <string name="searchbar_placeholder_regular">Search</string>
     <string name="search_tab_all">All</string>
     <string name="search_tab_my_recipes">My Recipes</string>
@@ -164,4 +164,6 @@
     <string name="report_dialog_persist">Send</string>
     <string name="report_text_placeholder">Please provide a reason for reporting this recipe.</string>
     <string name="error_servings_range">Please choose a value between %1$s and %2$s.</string>
+    <string name="serving_size_gram">%1$d gram</string>
+    <string name="serving_size_grams">%1$d grams</string>
 </resources>

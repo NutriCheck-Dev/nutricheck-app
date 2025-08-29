@@ -66,7 +66,7 @@ fun HomePage(
                 .height(36.dp),
             painter = painterResource(id = R.drawable.nutricheck_logo),
             contentDescription = "Nutricheck Logo",
-            colorFilter = ColorFilter.tint(colors.onBackground) // theme-fähig
+            colorFilter = ColorFilter.tint(colors.onBackground)
         )
 
         Spacer(modifier = Modifier.height(7.dp))

@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
+import org.junit.Assert.assertEquals
 
 class RecipeMapperTest {
 
@@ -24,7 +24,7 @@ class RecipeMapperTest {
         assertEquals(recipe.id, dto.id)
         assertEquals(recipe.name, dto.name)
         assertEquals(recipe.instructions, dto.instructions)
-        assertEquals(recipe.servings, dto.servings.toDouble())
+        assertEquals(recipe.servings, dto.servings.toDouble(), 0.0)
         assertEquals(recipe.calories, dto.calories, 0.0)
         assertEquals(recipe.carbohydrates, dto.carbohydrates, 0.0)
         assertEquals(recipe.protein, dto.protein, 0.0)

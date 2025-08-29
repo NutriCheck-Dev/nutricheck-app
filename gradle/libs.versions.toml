@@ -1,6 +1,7 @@
 [versions]
 agp = "8.10.1"
 coilCompose = "2.7.0"
+commonsLang3 = "3.18.0"
 compose = "1.13.0"
 convertergson = "2.11.0"
 core = "1.13.0"
@@ -9,7 +10,6 @@ desugar_jdk_libs = "2.1.5"
 gson = "2.11.0"
 hilt = "2.57.1"
 hiltNavigationCompose = "1.2.0"
-junitJupiter = "5.13.4"
 kotlin = "2.1.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -27,6 +27,7 @@ materialIconsExtendedAndroid = "1.6.7"
 mockwebserver = "5.1.0"
 moshiKotlin = "1.15.2"
 numberpicker = "1.0.3"
+orchestrator = "1.6.1"
 playServicesBase = "18.7.1"
 runner = "1.7.0"
 serialization = "1.7.3"
@@ -49,6 +50,7 @@ hiltCommon = "1.2.0"
 workRuntimeKtx = "2.10.3"
 hiltWork = "1.2.0"
 androidxHilt = "1.2.0"
+rules = "1.7.0"
 
 [libraries]
 androidx-core = { module = "androidx.test:core", version.ref = "runner" }
@@ -57,12 +59,12 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material-icons-extended-android = { module = "androidx.compose.material:material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
+androidx-orchestrator = { module = "androidx.test:orchestrator", version.ref = "orchestrator" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiter" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
@@ -113,6 +115,7 @@ androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "androidxHilt"}
+androidx-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

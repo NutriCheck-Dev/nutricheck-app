@@ -25,6 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,7 @@ import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.model.data_sources.data.Ingredient
 import com.frontend.nutricheck.client.model.data_sources.data.flags.DropdownMenuOptions
 import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibility
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.view.dialogs.ReportRecipeDialog
 import com.frontend.nutricheck.client.ui.view.widgets.CustomDetailsButton
 import com.frontend.nutricheck.client.ui.view.widgets.CustomPersistButton
@@ -40,6 +43,7 @@ import com.frontend.nutricheck.client.ui.view.widgets.NavigateBackButton
 import com.frontend.nutricheck.client.ui.view.widgets.RecipeNutrientChartsWidget
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsField
 import com.frontend.nutricheck.client.ui.view.widgets.ServingsPicker
+import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
 import com.frontend.nutricheck.client.ui.view.widgets.ViewsTopBar
 import com.frontend.nutricheck.client.ui.view_model.BaseViewModel
 import com.frontend.nutricheck.client.ui.view_model.FoodSearchViewModel
@@ -150,7 +154,6 @@ fun RecipeOverview(
             if (uiState is BaseViewModel.UiState.Error) {
                 item {
                     ShowErrorMessage(
-                        title = stringResource(R.string.show_error_message_title),
                         error = (uiState as BaseViewModel.UiState.Error).message,
                         onClick = { recipeOverviewViewModel.onEvent(RecipeOverviewEvent.ResetErrorState) }
                     )
@@ -264,23 +267,5 @@ fun RecipeOverview(
             }
         }
     }
-}
-
-@Composable
-private fun ShowErrorMessage(
-    title: String = stringResource(R.string.show_error_message_title),
-    error: String,
-    onClick: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = { onClick() },
-        title = { Text(title) },
-        text = { Text(error) },
-        confirmButton = {
-            Button(onClick = { onClick() }) {
-                Text(stringResource(R.string.label_ok))
-            }
-        }
-    )
 }
 

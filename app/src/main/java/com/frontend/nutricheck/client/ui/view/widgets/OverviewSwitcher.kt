@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -106,7 +107,7 @@ fun OverviewSwitcher(
                     Tab(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
-                            .semantics { SemanticsTags.OVERVIEW_SWITCHER_TAB_PREFIX + id },
+                            .semantics { contentDescription = SemanticsTags.OVERVIEW_SWITCHER_TAB_PREFIX + id },
                         selected = index == selectedIndex,
                         onClick = { onSelect(title) },
                         selectedContentColor = colors.onSurfaceVariant,

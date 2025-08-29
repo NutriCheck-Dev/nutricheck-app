@@ -7,7 +7,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.RecipeVisibi
 import com.frontend.nutricheck.client.model.data_sources.data.flags.ServingSize
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.Converters
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -15,7 +14,8 @@ import io.mockk.unmockkAll
 import org.junit.Test
 import org.junit.Before
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import java.util.Calendar
 import java.util.Date
 

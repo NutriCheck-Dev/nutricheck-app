@@ -1,6 +1,7 @@
 package com.frontend.nutricheck.client.model.repositories.recipe
 
 import android.content.Context
+import com.frontend.nutricheck.client.R
 import com.frontend.nutricheck.client.dto.RecipeDTO
 import com.frontend.nutricheck.client.model.data_sources.data.Recipe
 import com.frontend.nutricheck.client.model.data_sources.data.Result
@@ -28,6 +29,8 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -103,6 +106,19 @@ class RecipeRepositoryImplTest {
     }
 
     @Test
+    fun `search recipes in api with error`() = runTest {
+        every { recipeSearchDao.resultsFor(query) } returns flowOf(listOf())
+        coEvery { recipeSearchDao.getLatestUpdatedFor(query) } returns null
+        coEvery { api.searchRecipes(query) } returns Response.error(400,
+            TestDataFactory.createDefaultErrorMessage()
+                .toResponseBody("application/json".toMediaTypeOrNull()))
+
+        val result = repository.searchRecipes(query).first()
+
+        Assert.assertTrue(result is Result.Error)
+    }
+
+    @Test
     fun `get my recipes`() = runTest {
         every { recipeDao.getAllRecipesWithIngredients(RecipeVisibility.OWNER) } returns flowOf(
             listOf(recipeWithIngredients)
@@ -147,6 +163,22 @@ class RecipeRepositoryImplTest {
         compareRecipes(recipe, result.first())
     }
 
+     @Test
+     fun `download recipe`() = runTest {
+         val recipeEntity = TestDataFactory.createDefaultRecipeEntity()
+         val ingredientEntity = TestDataFactory.createDefaultIngredientEntity()
+         every { DbRecipeMapper.toRecipeEntity(recipe, false) } returns recipeEntity
+         coEvery { recipeDao.insert(recipeEntity) } just Runs
+         every { DbIngredientMapper.toIngredientEntity(recipe.ingredients.first()) } returns ingredientEntity
+         coEvery { ingredientDao.insert(ingredientEntity) } just Runs
+
+         val result = repository.downloadRecipe(recipe)
+
+         coVerify { recipeDao.insert(recipeEntity) }
+         coVerify { ingredientDao.insert(ingredientEntity) }
+     }
+
+
     @Test
     fun `get recipe by id`() = runTest {
         every { recipeDao.getRecipeWithIngredientsById(recipe.id) } returns flowOf(
@@ -168,6 +200,18 @@ class RecipeRepositoryImplTest {
         if (result is Result.Success) {
             compareRecipes(recipe, result.data)
         }
+    }
+
+    @Test
+    fun `upload recipe with error`() = runTest {
+        coEvery { api.uploadRecipe(recipeDTO) } returns Response.error(409, mockk(relaxed = true))
+        every { RecipeMapper.toDto(recipe) } returns recipeDTO
+
+        val result = repository.uploadRecipe(recipe)
+
+        Assert.assertTrue(result is Result.Error)
+        Assert.assertEquals(context.getString(R.string.upload_recipe_409_error_message),
+            (result as Result.Error).message)
     }
 
     @Test

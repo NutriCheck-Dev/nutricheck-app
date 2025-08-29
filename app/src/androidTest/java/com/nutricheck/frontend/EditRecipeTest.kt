@@ -9,6 +9,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.frontend.nutricheck.client.MainActivity
@@ -30,14 +32,16 @@ import javax.inject.Inject
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-class DeleteRecipeTest {
+class EditRecipeTest {
 
     val name = "Pasta Pesto"
+
     @get:Rule(order = 0) val hilt = HiltAndroidRule(this)
     @get:Rule(order = 1) val bypassOnboarding = BypassOnboardingRule(
         ApplicationProvider.getApplicationContext()
     )
-    @get:Rule(order = 2) val seedOwnerRecipe = SeedOwnerRecipeRule(buildRecipe = ownerRecipeFactory(name))
+    @get:Rule(order = 2) val seedOwnerRecipe =
+        SeedOwnerRecipeRule(buildRecipe = ownerRecipeFactory(name))
     @get:Rule(order = 3) val compose = createAndroidComposeRule<MainActivity>()
 
     @Inject lateinit var db: LocalDatabase
@@ -53,9 +57,70 @@ class DeleteRecipeTest {
     }
 
     @Test
-    fun deleteRecipe() {
-        navigateToDiaryPageThenRecipePage()
+    fun editRecipe_changeName_persisted() {
+        val newName = "Pasta Pomodoro"
 
+        navigateToDiaryPageThenRecipePage()
+        navigateToRecipeEditor()
+        editRecipeNameAndPersist(newName)
+    }
+
+    @Test
+    fun editRecipe_deleteIngredient_persisted() {
+        val ingredientToDelete = "Pesto Sauce"
+        val updatedCalories = "500"
+
+        navigateToDiaryPageThenRecipePage()
+        navigateToRecipeEditor()
+        deleteIngredient(ingredientToDelete)
+
+        val recipeTag = SemanticsTags.DISHITEM_PREFIX + name
+        compose.onNodeWithContentDescription(recipeTag).assertIsDisplayed()
+
+        Thread.sleep(5_000)
+        compose.onAllNodes(hasContentDescriptionPrefix(SemanticsTags.DISHITEM_CALORIES_PREFIX))
+            .fetchSemanticsNodes().isNotEmpty()
+
+        compose.onNode(
+            hasContentDescriptionPrefix(SemanticsTags.DISHITEM_CALORIES_PREFIX) and
+            hasContentDescContaining(updatedCalories)
+        )
+    }
+
+
+    private fun editRecipeNameAndPersist(newName: String) {
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PAGE).assertIsDisplayed()
+
+        val nameField = SemanticsTags.RECIPE_EDITOR_NAME
+        compose.onNodeWithContentDescription(nameField).assertIsDisplayed().performClick()
+        compose.onNodeWithContentDescription(nameField).performTextClearance()
+        compose.onNodeWithContentDescription(nameField).performTextInput(newName)
+
+        val saveButton = SemanticsTags.RECIPE_EDITOR_PERSIST
+        compose.onNodeWithContentDescription(saveButton).assertIsDisplayed().performClick()
+
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
+        Thread.sleep(5_000)
+        compose.onNodeWithContentDescription(SemanticsTags.DISHITEM_PREFIX + newName).assertIsDisplayed()
+    }
+
+    private fun deleteIngredient(ingredientName: String) {
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PAGE).assertIsDisplayed()
+
+        val ingredientTag = SemanticsTags.DISHITEM_PREFIX + ingredientName
+        compose.onNodeWithContentDescription(ingredientTag).assertIsDisplayed()
+
+        val deleteButtonTag = SemanticsTags.DISHITEM_REMOVE_BUTTON_PREFIX + ingredientName
+        compose.onNodeWithContentDescription(deleteButtonTag).assertIsDisplayed().performClick()
+
+        val saveButton = SemanticsTags.RECIPE_EDITOR_PERSIST
+        compose.onNodeWithContentDescription(saveButton).assertIsDisplayed().performClick()
+
+        Thread.sleep(5_000)
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_PAGE).assertIsDisplayed()
+    }
+
+    private fun navigateToRecipeEditor() {
         val detailsButtonTag = SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + name
 
         compose.onNodeWithContentDescription(detailsButtonTag, useUnmergedTree = true)
@@ -65,23 +130,13 @@ class DeleteRecipeTest {
         compose.onNodeWithContentDescription(SemanticsTags.DETAILS_MENU)
             .assertIsDisplayed()
 
-        val deleteOptionTag =
-            SemanticsTags.DETAILS_MENU_OPTION_PREFIX + DropdownMenuOptions.DELETE.toString()
-        compose.onNodeWithContentDescription(deleteOptionTag)
-            .assertIsDisplayed()
-            .performClick()
+        compose.onNodeWithContentDescription(SemanticsTags.DETAILS_MENU).assertIsDisplayed()
 
-        compose.waitUntil(5_000) {
-            compose.onAllNodes(
-                hasContentDescription(detailsButtonTag),
-                useUnmergedTree = true
-            ).fetchSemanticsNodes().isEmpty()
-        }
+        val editOptionTag = SemanticsTags.DETAILS_MENU_OPTION_PREFIX + DropdownMenuOptions.EDIT.toString()
+        compose.onNodeWithContentDescription(editOptionTag).assertIsDisplayed().performClick()
 
-        compose.onNodeWithContentDescription(detailsButtonTag, useUnmergedTree = true)
-            .assertDoesNotExist()
+        compose.onNodeWithContentDescription(SemanticsTags.RECIPE_EDITOR_PAGE).assertIsDisplayed()
     }
-
 
     private fun navigateToDiaryPageThenRecipePage() {
         compose.onNodeWithContentDescription(SemanticsTags.BOTTOM_NAV_DIARY_PAGE).performClick()
@@ -111,4 +166,10 @@ class DeleteRecipeTest {
             val list = node.config.getOrNull(SemanticsProperties.ContentDescription)
             list?.firstOrNull()?.startsWith(prefix) == true
         }
+
+    private fun hasContentDescContaining(substring: String) = SemanticsMatcher("cd contains $substring") { node ->
+        val cd = node.config.getOrNull(SemanticsProperties.ContentDescription)?.firstOrNull() ?:
+            return@SemanticsMatcher false
+        cd.contains(substring)
+    }
 }

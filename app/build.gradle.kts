@@ -134,6 +134,8 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        animationsDisabled = true
     }
 }
 configurations.all {
@@ -162,6 +164,7 @@ dependencies {
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.rules)
     ksp(libs.androidx.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
@@ -196,6 +199,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.compose.numberpicker)
     implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.commons.lang3)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
@@ -208,5 +213,6 @@ dependencies {
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
+    androidTestUtil(libs.androidx.orchestrator)
     androidTestImplementation(libs.androidx.uiautomator)
 }

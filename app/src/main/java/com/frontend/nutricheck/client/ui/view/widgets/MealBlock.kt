@@ -15,18 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.frontend.nutricheck.client.model.data_sources.data.MealFoodItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealItem
 import com.frontend.nutricheck.client.model.data_sources.data.MealRecipeItem
-
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.frontend.nutricheck.client.R
-import java.math.BigDecimal
-import java.math.RoundingMode
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 
 /**
  *
@@ -38,9 +38,7 @@ fun MealHeader(
     calorieCount: Double
 ) {
     val colors = MaterialTheme.colorScheme
-    val roundedCalories = BigDecimal.valueOf(calorieCount)
-        .setScale(2, RoundingMode.HALF_UP)
-        .toPlainString()
+    val roundedCalories = calorieCount.toInt().toString()
 
     Row(
         modifier = modifier
@@ -78,7 +76,8 @@ fun MealFooter(
             .fillMaxWidth()
             .height(40.dp)
             .background(colors.surfaceContainer)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clickable(onClick = onAddClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -87,7 +86,6 @@ fun MealFooter(
             color = colors.primary,
             lineHeight = 16.sp,
             fontSize = 12.sp,
-            modifier = Modifier.clickable(onClick = onAddClick),
         )
     }
 }
@@ -125,7 +123,9 @@ fun MealBlock(
                 when (item) {
                     is MealFoodItem -> {
                         DishItemMealButton(
-                            modifier = Modifier.weight(1f), // gibt Platz frei für die drei Punkte
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics { contentDescription = "${SemanticsTags.MEAL_FOOD_ITEM_PREFIX}${item.foodProduct.id}" },
                             title = item.foodProduct.name,
                             calories = item.servings * item.foodProduct.calories * (item.servingSize.getAmount() / 100),
                             onClick = { onItemClick(item) }
@@ -134,7 +134,9 @@ fun MealBlock(
 
                     is MealRecipeItem -> {
                         DishItemMealButton(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics { contentDescription = "${SemanticsTags.MEAL_RECIPE_ITEM_PREFIX}${item.recipe.id}" },
                             title = item.recipe.name,
                             calories = item.quantity * item.recipe.calories,
                             onClick = { onItemClick(item) }

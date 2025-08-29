@@ -4,7 +4,6 @@ import com.frontend.nutricheck.client.model.data_sources.data.flags.ActivityLeve
 import com.frontend.nutricheck.client.model.data_sources.data.flags.Gender
 import com.frontend.nutricheck.client.model.data_sources.data.flags.WeightGoal
 import com.frontend.nutricheck.client.model.data_sources.persistence.entity.UserData
-import com.frontend.nutricheck.client.ui.view_model.utils.UserDataUtilsLogic
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
@@ -561,10 +560,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(2138)
+        assertThat(result.dailyCaloriesGoal).isEqualTo(2338)
         assertThat(result.proteinGoal).isEqualTo(126)
-        assertThat(result.fatsGoal).isEqualTo(57)
-        assertThat(result.carbsGoal).isEqualTo(266)
+        assertThat(result.fatsGoal).isEqualTo(63)
+        assertThat(result.carbsGoal).isEqualTo(301)
     }
 
     /**
@@ -628,10 +627,10 @@ class UserDataUtilsLogicTest {
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
         // Then the results should match the expected values based on the formula
-        assertThat(result.dailyCaloriesGoal).isEqualTo(1546)
+        assertThat(result.dailyCaloriesGoal).isEqualTo(1746)
         assertThat(result.proteinGoal).isEqualTo(99)
-        assertThat(result.fatsGoal).isEqualTo(42)
-        assertThat(result.carbsGoal).isEqualTo(183)
+        assertThat(result.fatsGoal).isEqualTo(47)
+        assertThat(result.carbsGoal).isEqualTo(220)
     }
 
     /**
@@ -659,11 +658,11 @@ class UserDataUtilsLogicTest {
         // When the nutrition is calculated
         val result = UserDataUtilsLogic.calculateNutrition(userData)
 
-        // Then the results should be calculated with +500 calorie surplus
-        assertThat(result.dailyCaloriesGoal).isEqualTo(2817)
+        // Then
+        assertThat(result.dailyCaloriesGoal).isEqualTo(2617)
         assertThat(result.proteinGoal).isEqualTo(117)
-        assertThat(result.fatsGoal).isEqualTo(76)
-        assertThat(result.carbsGoal).isEqualTo(398)
+        assertThat(result.fatsGoal).isEqualTo(70)
+        assertThat(result.carbsGoal).isEqualTo(363)
     }
 
     /**

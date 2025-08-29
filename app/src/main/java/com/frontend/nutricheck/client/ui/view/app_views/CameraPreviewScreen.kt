@@ -27,11 +27,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
 import com.frontend.nutricheck.client.R
+import com.frontend.nutricheck.client.model.data_sources.data.flags.SemanticsTags
 import com.frontend.nutricheck.client.ui.theme.extended
 import com.frontend.nutricheck.client.ui.view.widgets.ExitButton
 import com.frontend.nutricheck.client.ui.view.widgets.ShowErrorMessage
@@ -120,6 +124,7 @@ fun CameraPreviewScreen(
     }
     if (uiState is BaseViewModel.UiState.Error) {
         ShowErrorMessage(
+            modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_SCAN_ERROR_DIALOG },
             error = (uiState as BaseViewModel.UiState.Error).message,
             onClick = {
                 addAiMealViewModel.onEvent(AddAiMealEvent.ResetErrorState)
@@ -145,6 +150,7 @@ fun CameraPreviewScreen(
                         .align(Alignment.BottomCenter)
                         .padding(24.dp)
                         .size(80.dp)
+                        .testTag(SemanticsTags.MEAL_SCAN_TAKE_PHOTO)
                 ) {
                     Icon(
                         imageVector = Icons.Default.RadioButtonChecked,
@@ -173,7 +179,9 @@ fun CameraPreviewScreen(
                         enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.retake_photo))
                     }
-                    Button(onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) },
+                    Button(
+                        modifier = Modifier.semantics { contentDescription = SemanticsTags.MEAL_SCAN_SEND_PHOTO },
+                        onClick = { addAiMealViewModel.onEvent(AddAiMealEvent.OnSubmitPhoto) },
                         enabled = uiState !is BaseViewModel.UiState.Loading) {
                         Text(stringResource(R.string.submit_photo))
                     }
