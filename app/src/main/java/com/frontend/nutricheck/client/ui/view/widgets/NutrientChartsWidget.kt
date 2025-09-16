@@ -98,8 +98,8 @@ fun RecipeNutrientChartsWidget(
                         subtitle = entry.unit,
                         actualValue = entry.actualValue.toInt(),
                         totalValue = entry.dailyValue.toInt(),
-                        baseHeight = 180.dp,
-                        baseWidth = 160.dp,
+                        baseHeight = 200.dp,
+                        baseWidth = 180.dp,
                         modifier = Modifier.weight(1f)
                     )
                 }

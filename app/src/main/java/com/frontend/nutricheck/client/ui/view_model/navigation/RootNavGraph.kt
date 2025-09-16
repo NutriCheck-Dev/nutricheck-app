@@ -1,6 +1,6 @@
 package com.frontend.nutricheck.client.ui.view_model.navigation
 
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -23,7 +23,6 @@ sealed class Screen(val route: String) {
         fun createRoute(destination: DiaryGraphDestination?): String =
             if (destination == null) "diary"
             else "diary?destination=${destination.name}"
-
     }
     data object ProfilePage : Screen("profile")
     data object AddButton : Screen("add_button")

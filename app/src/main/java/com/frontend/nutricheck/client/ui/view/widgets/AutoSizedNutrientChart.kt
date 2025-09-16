@@ -32,7 +32,7 @@ fun AutoSizedNutrientChart(
     actualValue: Int = 700,
     totalValue: Int = 2000,
     baseHeight: Dp = 200.dp,
-    baseWidth: Dp = 160.dp
+    baseWidth: Dp = 180.dp
 ) {
     val baseHeight = baseHeight
     val baseWidth = baseWidth
