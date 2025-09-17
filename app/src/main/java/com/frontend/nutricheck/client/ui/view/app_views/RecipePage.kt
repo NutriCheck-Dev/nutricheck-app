@@ -122,48 +122,58 @@ Surface(
         ) {
             when (recipePageState.selectedTab) {
                 0 -> {
-                    FoodComponentList(
-                        foodComponents = recipes,
-                        onItemClick = { recipe ->
-                            onItemClick(recipe as Recipe)
-                        },
-                        trailingContent = { foodComponent ->
-                            val recipe = foodComponent as Recipe
-                            CustomDetailsButton(
-                                modifier = Modifier.semantics { contentDescription = SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + recipe.name },
-                                dishItemButton = true,
-                                ownedRecipe = true,
-                                onOptionClick = { option ->
-                                    recipePageViewModel.onEvent(
-                                        RecipePageEvent.ClickDetailsOption(recipe, option)
-                                    )
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        item {
+                            FoodComponentList(
+                                foodComponents = recipes,
+                                onItemClick = { recipe ->
+                                    onItemClick(recipe as Recipe)
                                 },
-                                expanded = recipePageState.expandedRecipeId == recipe.id,
-                                onDetailsClick = {
-                                    recipePageViewModel.onEvent(
-                                        RecipePageEvent.ShowDetailsMenu(recipe.id)
-                                    )
-                                },
-                                onDismissClick = {
-                                    recipePageViewModel.onEvent(
-                                        RecipePageEvent.ShowDetailsMenu(null)
+                                trailingContent = { foodComponent ->
+                                    val recipe = foodComponent as Recipe
+                                    CustomDetailsButton(
+                                        modifier = Modifier.semantics {
+                                            contentDescription =
+                                                SemanticsTags.DISHITEM_DETAILS_BUTTON_PREFIX + recipe.name
+                                        },
+                                        dishItemButton = true,
+                                        ownedRecipe = true,
+                                        onOptionClick = { option ->
+                                            recipePageViewModel.onEvent(
+                                                RecipePageEvent.ClickDetailsOption(recipe, option)
+                                            )
+                                        },
+                                        expanded = recipePageState.expandedRecipeId == recipe.id,
+                                        onDetailsClick = {
+                                            recipePageViewModel.onEvent(
+                                                RecipePageEvent.ShowDetailsMenu(recipe.id)
+                                            )
+                                        },
+                                        onDismissClick = {
+                                            recipePageViewModel.onEvent(
+                                                RecipePageEvent.ShowDetailsMenu(null)
+                                            )
+                                        }
                                     )
                                 }
                             )
                         }
-                    )
-                    ExtendedFloatingActionButton(
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.BottomEnd),
-                        onClick = { onAddRecipeClick() }
-                    ) {
-                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                        Text(
-                            text = stringResource(R.string.label_add_recipe),
-                            modifier = Modifier.padding(2.dp),
-                            style = MaterialTheme.typography.labelLarge
-                        )
+
+                        item {
+                            ExtendedFloatingActionButton(
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .align(Alignment.BottomEnd),
+                                onClick = { onAddRecipeClick() }
+                            ) {
+                                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                                Text(
+                                    text = stringResource(R.string.label_add_recipe),
+                                    modifier = Modifier.padding(2.dp),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        }
                     }
                 }
 
