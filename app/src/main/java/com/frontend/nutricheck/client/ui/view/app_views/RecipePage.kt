@@ -158,23 +158,22 @@ Surface(
                                 }
                             )
                         }
-
-                        item {
-                            ExtendedFloatingActionButton(
-                                modifier = Modifier
-                                    .padding(12.dp)
-                                    .align(Alignment.BottomEnd),
-                                onClick = { onAddRecipeClick() }
-                            ) {
-                                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                                Text(
-                                    text = stringResource(R.string.label_add_recipe),
-                                    modifier = Modifier.padding(2.dp),
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            }
-                        }
                     }
+
+                    ExtendedFloatingActionButton(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .align(Alignment.BottomEnd),
+                        onClick = { onAddRecipeClick() },
+                        icon = { Icon(imageVector = Icons.Filled.Add, contentDescription = null) },
+                        text = {
+                            Text(
+                                text = stringResource(R.string.label_add_recipe),
+                                modifier = Modifier.padding(2.dp),
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    )
                 }
 
                 1 -> {

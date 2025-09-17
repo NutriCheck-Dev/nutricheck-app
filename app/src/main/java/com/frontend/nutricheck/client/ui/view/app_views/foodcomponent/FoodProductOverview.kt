@@ -146,19 +146,21 @@ fun FoodProductOverview(
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             Spacer(modifier = Modifier.weight(1f))
-                            if (foodProductState.parameters.editable && !foodProductState.foodProduct.name.endsWith("(AI)")) {
-                                ServingSizeDropdown(
-                                    currentServingSize = foodProductState.parameters.servingSize,
-                                    onValueChange = {
-                                        foodProductOverviewViewModel.onEvent(
-                                            FoodProductOverviewEvent.ServingSizeChanged(it)
-                                        )
-                                    }
-                                )
-                            } else {
-                                ServingSizeField(
-                                    servingSize = foodProductState.parameters.servingSize
-                                )
+                            if (!foodProductState.foodProduct.name.endsWith("(AI)")) {
+                                if (foodProductState.parameters.editable) {
+                                    ServingSizeDropdown(
+                                        currentServingSize = foodProductState.parameters.servingSize,
+                                        onValueChange = {
+                                            foodProductOverviewViewModel.onEvent(
+                                                FoodProductOverviewEvent.ServingSizeChanged(it)
+                                            )
+                                        }
+                                    )
+                                } else {
+                                    ServingSizeField(
+                                        servingSize = foodProductState.parameters.servingSize
+                                    )
+                                }
                             }
                         }
                     }
