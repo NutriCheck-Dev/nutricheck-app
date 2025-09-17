@@ -34,6 +34,7 @@
     <string name="profile_menu_age">Alter</string>
     <string name="profile_menu_height">Größe</string>
     <string name="profile_menu_weight">Gewicht</string>
+    <string name="profile_menu_target_weight">Zielgewicht</string>
     <string name="age_years">%1$s Jahre</string>
     <string name="height_cm" translatable="false">%1$s cm</string>
     <string name="weight_kg" translatable="false">%1$s kg</string>

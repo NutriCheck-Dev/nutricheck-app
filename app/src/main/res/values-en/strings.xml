@@ -24,6 +24,7 @@
     <string name="profile_menu_age">Age</string>
     <string name="profile_menu_height">Height</string>
     <string name="profile_menu_weight">Weight</string>
+    <string name="profile_menu_target_weight">Targetweight</string>
     <string name="age_years">%1$s years</string>
     <string name="profile_menu_item_weight_history">Weighthistory</string>
     <string name="profile_menu_item_darkmode">Darkmode</string>
