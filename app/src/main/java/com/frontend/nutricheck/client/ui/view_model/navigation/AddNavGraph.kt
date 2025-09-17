@@ -238,6 +238,15 @@ private fun NavGraphBuilder.foodProductOverviewScreen(
                 val searchViewModel: FoodSearchViewModel = hiltViewModel(
                     remember(backStackEntry) { navController.getBackStackEntry(parentGraphRoute) }
                 )
+
+                LaunchedEffect(searchViewModel) {
+                    searchViewModel.events.collect { event ->
+                        if (event is SearchEvent.AddFoodComponent) {
+                            navController.popBackStack()
+                        }
+                    }
+                }
+
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     foodSearchViewModel = searchViewModel,
@@ -248,6 +257,15 @@ private fun NavGraphBuilder.foodProductOverviewScreen(
                 val recipeEditorViewModel: RecipeEditorViewModel = hiltViewModel(
                     remember(backStackEntry) { navController.getBackStackEntry(parentGraphRoute) }
                 )
+
+                LaunchedEffect(recipeEditorViewModel) {
+                    recipeEditorViewModel.events.collect { event ->
+                        if (event is RecipeEditorEvent.IngredientAdded) {
+                            navController.popBackStack()
+                        }
+                    }
+                }
+
                 FoodProductOverview(
                     foodProductOverviewViewModel = foodProductOverviewViewModel,
                     recipeEditorViewModel = recipeEditorViewModel,
