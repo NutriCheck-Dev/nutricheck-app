@@ -146,7 +146,7 @@ fun FoodProductOverview(
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             Spacer(modifier = Modifier.weight(1f))
-                            if (foodProductState.parameters.editable) {
+                            if (foodProductState.parameters.editable && !foodProductState.foodProduct.name.endsWith("(AI)")) {
                                 ServingSizeDropdown(
                                     currentServingSize = foodProductState.parameters.servingSize,
                                     onValueChange = {

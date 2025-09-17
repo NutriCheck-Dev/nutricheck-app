@@ -55,7 +55,7 @@ fun DishItemButton(
     val kilocaloriesDescription = stringResource(R.string.kilocalories)
     val roundedCalories = when (foodComponent) {
         is Recipe -> {
-            val calories = foodComponent.calories * foodComponent.servings
+            val calories = foodComponent.calories
             calories.toInt().toString()
         }
         is FoodProduct -> {
