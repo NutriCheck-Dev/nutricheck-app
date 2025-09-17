@@ -60,7 +60,7 @@ class HistoryRepositoryImpl @Inject constructor(
             }
 
             val recipeItemsCalories = meal.mealRecipeItems.sumOf { recipe ->
-                recipe.quantity * recipe.recipe.calories
+                recipe.recipe.calories
             }
             foodItemsCalories + recipeItemsCalories
         }.toInt()
@@ -206,7 +206,7 @@ class HistoryRepositoryImpl @Inject constructor(
                         ingredient.servings * ingredient.foodProduct.calories * (ingredient.servingSize.getAmount() / 100)
                     }
                     val recipeItemsCalories = meal.mealRecipeItems.sumOf { recipe ->
-                        recipe.quantity * recipe.recipe.calories
+                        recipe.recipe.calories
                     }
                     foodItemsCalories + recipeItemsCalories
                 }.toInt()

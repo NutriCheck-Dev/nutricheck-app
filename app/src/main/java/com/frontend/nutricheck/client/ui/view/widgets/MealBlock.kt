@@ -138,7 +138,7 @@ fun MealBlock(
                                 .weight(1f)
                                 .semantics { contentDescription = "${SemanticsTags.MEAL_RECIPE_ITEM_PREFIX}${item.recipe.id}" },
                             title = item.recipe.name,
-                            calories = item.quantity * item.recipe.calories,
+                            calories = item.recipe.calories,
                             onClick = { onItemClick(item) }
                         )
                     }
