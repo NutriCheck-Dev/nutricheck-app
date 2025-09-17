@@ -99,9 +99,7 @@ fun CalorieBarChart(
     val colors = MaterialTheme.colorScheme
     val extendedColors = LocalExtendedColors.current
     val progressBarColor = extendedColors.chartBlue.color
-    val rawMin = data.minOrNull() ?: 0
     val rawMax = data.maxOrNull() ?: 1
-    val range = rawMax - rawMin
     val today = LocalDate.now()
     val locale = when(Locale.getDefault().language) {
         "de" -> Locale.GERMAN
@@ -149,12 +147,7 @@ fun CalorieBarChart(
         ) {
             val barWidth = 12.dp.toPx()
 
-            val visualMin = if (range < 400) {
-                (rawMin - 100).coerceAtLeast(0)
-            } else {
-                (rawMin * 90 / 100).coerceAtLeast(0)
-            }
-
+            val visualMin = 0
             val visualMax = maxOf(rawMax, calorieGoal)
             val heightRatio = if (visualMax - visualMin == 0) 1f else size.height /
                     (visualMax - visualMin).toFloat()

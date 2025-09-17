@@ -64,6 +64,7 @@ fun ProfilePage(
     val userHeightText = stringResource(id = R.string.height_cm, state.height.toString())
     val userWeightText = stringResource(id = R.string.weight_kg, state.weight.toString())
     val userAgeText = stringResource(id = R.string.age_years, state.age)
+    val userTargetWeightText = stringResource(id = R.string.weight_kg, state.targetWeight.toString())
     val scrollState = rememberScrollState()
     val darkmode = currentTheme.value == ThemeSetting.DARK
     val colors = MaterialTheme.colorScheme
@@ -158,6 +159,16 @@ fun ProfilePage(
                             fontSize = 16.sp,
                             modifier =  Modifier.semantics { contentDescription = SemanticsTags.PROFILE_DATA_WEIGHT } )
                     }
+                    Row (
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text(text = stringResource(id = R.string.profile_menu_target_weight),
+                            fontSize = 16.sp)
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(userTargetWeightText,
+                            fontSize = 16.sp)
+                    }
+
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
