@@ -133,20 +133,20 @@ fun FoodProductOverview(
                         )
                     }
 
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                        ) {
-                            Text(
-                                text = stringResource(R.string.foodproduct_servingsize_label),
-                                style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = colors.onSurfaceVariant,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            if (!foodProductState.foodProduct.name.endsWith("(AI)")) {
+                    if (!foodProductState.foodProduct.name.endsWith("(AI)")) {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.foodproduct_servingsize_label),
+                                    style = styles.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                                    color = colors.onSurfaceVariant,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
                                 if (foodProductState.parameters.editable) {
                                     ServingSizeDropdown(
                                         currentServingSize = foodProductState.parameters.servingSize,
