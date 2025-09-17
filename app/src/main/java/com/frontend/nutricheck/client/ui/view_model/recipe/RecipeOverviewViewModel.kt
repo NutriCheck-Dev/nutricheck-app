@@ -132,7 +132,6 @@ class RecipeOverviewViewModel @Inject constructor(
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
-                    convertNutrients()
                 }
                 is RecipeOverviewMode.General ->
                     recipeRepository.observeRecipeById(mode.recipeId)
@@ -148,7 +147,6 @@ class RecipeOverviewViewModel @Inject constructor(
                                 )
                                 state.copy(recipe = recipe, parameters = params)
                             }
-                            convertNutrients()
                         }
                 is RecipeOverviewMode.FromMeal -> {
                     val meal = historyRepository.getMealRecipeItemById(mode.mealId, mode.recipeId)
@@ -164,7 +162,6 @@ class RecipeOverviewViewModel @Inject constructor(
                         )
                         state.copy(recipe = recipe, parameters = params)
                     }
-                    convertNutrients()
                 }
             }
         }
@@ -191,12 +188,14 @@ class RecipeOverviewViewModel @Inject constructor(
     }
 
     private fun onServingsChanged(servings: Double) {
+        val actualServings = _recipeOverviewState.value.recipe.servings
+        val newServings = servings / actualServings
         _recipeOverviewState.update { state ->
             state.copy(
                 parameters = state.parameters.copy(servings = servings)
             )
         }
-        convertNutrients()
+        convertNutrients(newServings)
     }
 
     private fun onDetailsClicked() {
@@ -207,11 +206,9 @@ class RecipeOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun convertNutrients() {
+    private fun convertNutrients(servings: Double) {
         _recipeOverviewState.update { state ->
-            val parameters = state.parameters
             val initialRecipe = state.recipe
-            val servings = parameters.servings
             state.copy(parameters = state.parameters.copy(
                 calories = servings * initialRecipe.calories,
                 protein = servings * initialRecipe.protein,
