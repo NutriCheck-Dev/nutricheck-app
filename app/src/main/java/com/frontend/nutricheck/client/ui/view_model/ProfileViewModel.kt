@@ -235,6 +235,11 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userDataRepository.addWeight(Weight(value = weightValue, date = date))
             _weightData.value = userDataRepository.getWeightHistory()
+            userDataRepository.updateUserData(
+                dataDraft.value.copy(weight = weightValue)
+            )
+            _data.value = _data.value.copy(weight = weightValue)
+            _dataDraft.value = _dataDraft.value.copy(weight = weightValue)
         }
         setReady()
     }
